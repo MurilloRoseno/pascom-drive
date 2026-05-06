@@ -1,0 +1,210 @@
+/* ============================================================
+   Paróquia São Rafael — Design Tokens
+   Colors & Typography
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ───────── Brand colors ─────────
+     Liturgical purple (Advent / Lent) + dorado (gold) reflect Catholic
+     liturgical tradition. Paper warm-cream + ink as the parchment ground. */
+  --parish-purple:        #6D2077;
+  --parish-purple-dark:   #461356;
+  --parish-purple-light:  rgba(109, 32, 119, 0.08);
+  --parish-purple-100:    #9B87F5;  /* nested alias from tailwind */
+
+  --parish-yellow:        #F7C848;  /* primary CTA / accent */
+  --parish-yellow-light:  #FFDA85;
+  --parish-yellow-dark:   #C8A020;
+
+  --parish-green:         #3C7A5A;  /* status: confirmado */
+  --parish-paper:         #FAF6EF;  /* warm bg */
+  --parish-ink:           #18150F;  /* near-black text */
+
+  /* ───────── Semantic (HSL — matches shadcn/Radix pattern) ─────────
+     Used throughout the codebase via hsl(var(--token)) */
+  --background:           0 0% 100%;
+  --foreground:           270 4% 20%;
+  --card:                 0 0% 100%;
+  --card-foreground:      270 4% 20%;
+  --primary:              48 92% 63%;        /* yellow */
+  --primary-foreground:   270 4% 20%;
+  --secondary:            270 58% 29%;       /* purple */
+  --secondary-foreground: 0 0% 98%;
+  --muted:                48 20% 93%;
+  --muted-foreground:     270 4% 43%;
+  --accent:               48 80% 76%;
+  --accent-foreground:    270 58% 29%;
+  --destructive:          0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border:               48 30% 85%;
+  --input:                48 30% 85%;
+  --ring:                 48 92% 63%;
+
+  /* ───────── Functional aliases ───────── */
+  --fg-1:        var(--parish-ink);              /* primary text */
+  --fg-2:        rgba(24, 21, 15, 0.70);         /* body text */
+  --fg-3:        rgba(24, 21, 15, 0.50);         /* meta / supporting */
+  --fg-4:        rgba(24, 21, 15, 0.40);         /* disabled / hint */
+  --fg-on-dark:  #ffffff;
+  --fg-on-dark-2: rgba(255, 255, 255, 0.80);
+  --fg-on-dark-3: rgba(255, 255, 255, 0.50);
+
+  --bg-1:        #ffffff;                        /* default surface */
+  --bg-2:        var(--parish-paper);            /* warm secondary */
+  --bg-3:        hsl(48 20% 93%);                /* muted */
+  --bg-purple:   var(--parish-purple);           /* hero / dark sections */
+  --bg-purple-deep: var(--parish-purple-dark);   /* dashboard sidebar */
+
+  /* ───────── Spacing / shape ───────── */
+  --radius:      0.5rem;       /* base 8px */
+  --radius-sm:   calc(var(--radius) - 4px);  /* 4 */
+  --radius-md:   calc(var(--radius) - 2px);  /* 6 */
+  --radius-lg:   var(--radius);              /* 8 */
+  --radius-xl:   1rem;                       /* 16 — cards w/ ornaments */
+  --radius-2xl:  1.5rem;                     /* 24 — hero card */
+  --radius-full: 9999px;
+
+  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --shadow-xl:   0 20px 25px -5px rgb(0 0 0 / 0.10), 0 8px 10px -6px rgb(0 0 0 / 0.10);
+  --shadow-2xl:  0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* ───────── Typography ─────────
+     Playfair Display = display / headers (serif, devotional feel)
+     Nunito           = body / UI (warm humanist sans, easy to read)
+     JetBrains Mono   = "eyebrow" mono labels (uppercase tracked) */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Nunito', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  --tracking-tight:   -0.01em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.05em;
+  --tracking-widest:  0.20em;       /* eyebrows */
+
+  --leading-tight:   1.15;
+  --leading-snug:    1.3;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+
+  /* ───────── Motion ───────── */
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast:  150ms;
+  --duration-base:  200ms;   /* default — almost everything */
+  --duration-slow:  300ms;   /* header, shadow */
+}
+
+/* ============================================================
+   Base styles
+   ============================================================ */
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--fg-1);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================
+   Semantic type ramp
+   Use as classes (.h1, .h2, .eyebrow, .body, .caption) OR via styles.
+   ============================================================ */
+
+/* Display — hero headlines */
+.display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 5vw, 4rem);    /* 40 → 64 */
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+}
+
+.h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.875rem, 3vw, 2.5rem); /* 30 → 40 */
+  line-height: var(--leading-tight);
+  color: var(--fg-1);
+}
+
+.h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);   /* 24 → 32 */
+  line-height: var(--leading-snug);
+  color: var(--parish-purple);
+}
+
+.h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;                       /* 20 */
+  line-height: var(--leading-snug);
+  color: var(--parish-purple);
+}
+
+.h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.125rem;                      /* 18 */
+  line-height: var(--leading-snug);
+  color: var(--fg-1);
+}
+
+/* Eyebrow — uppercase mono labels above titles. Hallmark of the system. */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.75rem;                       /* 12 */
+  line-height: 1;
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--parish-yellow-dark);
+}
+.eyebrow--on-dark { color: var(--parish-yellow); }
+
+/* Body */
+.body {
+  font-family: var(--font-body);
+  font-size: 1rem;                          /* 16 */
+  line-height: var(--leading-relaxed);
+  color: var(--fg-2);
+}
+
+.body-sm {
+  font-family: var(--font-body);
+  font-size: 0.875rem;                      /* 14 */
+  line-height: var(--leading-normal);
+  color: var(--fg-2);
+}
+
+.caption {
+  font-family: var(--font-body);
+  font-size: 0.75rem;                       /* 12 */
+  line-height: var(--leading-normal);
+  color: var(--fg-3);
+}
+
+/* Italic scripture — Mt 18:20 style pull quotes */
+.scripture {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: var(--leading-relaxed);
+  color: var(--parish-yellow-dark);
+}
+
+/* Default heading bindings (when not classed) */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+p { margin: 0; }

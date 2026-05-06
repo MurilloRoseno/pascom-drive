@@ -1,0 +1,11 @@
+{
+  "name": "pascom-drive-gas",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

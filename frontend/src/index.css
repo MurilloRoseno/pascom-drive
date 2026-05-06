@@ -1,0 +1,183 @@
+/* ============================================================
+   Pascom Drive — Foto Venda Design System
+   Paleta Derivada (roxo magenta + ouro saturado)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ───────── Brand colors — Paleta Derivada ─────────
+     Roxo Magenta (photo venda especial) + Ouro Saturado
+     Diferencia visualmente do site da paróquia */
+  --photo-primary:        #8B3E7A;      /* roxo magenta */
+  --photo-primary-dark:   #5C2650;
+  --photo-primary-light:  rgba(139, 62, 122, 0.08);
+
+  --photo-accent:         #E8B923;      /* ouro saturado */
+  --photo-accent-light:   #FFD966;
+  --photo-accent-dark:    #B8860B;
+
+  --photo-success:        #2B7A8E;      /* teal para status */
+  --photo-success-light:  rgba(43, 122, 142, 0.08);
+
+  --photo-paper:          #F9F5F0;      /* warm cream */
+  --photo-ink:            #1A1410;      /* near-black */
+
+  /* ───────── Typography ───────── */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body:    'Nunito', system-ui, -apple-system, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
+
+  /* ───────── Spacing / Shape ───────── */
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   16px;
+  --radius-2xl:  24px;
+  --radius-full: 9999px;
+
+  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md:   0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --shadow-lg:   0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --shadow-2xl:  0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* ───────── Motion ───────── */
+  --duration-fast:  150ms;
+  --duration-base:  200ms;
+  --duration-slow:  300ms;
+}
+
+/* ============================================================
+   Base styles
+   ============================================================ */
+* {
+  @apply border-photo-primary-light;
+}
+
+body {
+  @apply bg-white font-body text-photo-ink antialiased;
+  margin: 0;
+  padding: 0;
+}
+
+/* ============================================================
+   Typography — Semantic Classes
+   ============================================================ */
+
+.display {
+  @apply font-display font-bold text-display leading-tight -tracking-tight text-photo-ink;
+}
+
+.h1 {
+  @apply font-display font-bold text-h1 leading-tight text-photo-ink;
+}
+
+.h2 {
+  @apply font-display font-bold text-h2 leading-snug text-photo-primary;
+}
+
+.h3 {
+  @apply font-display font-bold text-h3 leading-snug text-photo-primary;
+}
+
+.h4 {
+  @apply font-display font-semibold text-h4 leading-snug text-photo-ink;
+}
+
+/* Eyebrow — uppercase mono labels (hallmark of system) */
+.eyebrow {
+  @apply font-mono font-medium text-eyebrow leading-none uppercase tracking-widest text-photo-accent-dark;
+}
+
+.eyebrow--on-dark {
+  @apply text-photo-accent;
+}
+
+/* Body copy */
+.body {
+  @apply font-body text-base leading-relaxed text-photo-ink/70;
+}
+
+.body-sm {
+  @apply font-body text-sm leading-normal text-photo-ink/70;
+}
+
+.caption {
+  @apply font-body text-xs leading-normal text-photo-ink/50;
+}
+
+/* Scripture / Pull quotes */
+.scripture {
+  @apply font-display italic font-normal text-base leading-relaxed text-photo-accent-dark;
+}
+
+/* ============================================================
+   Interactive Components (buttons, links)
+   ============================================================ */
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-colors duration-base cursor-pointer;
+}
+
+.btn-primary {
+  @apply bg-photo-accent text-photo-ink hover:bg-photo-accent-dark;
+}
+
+.btn-secondary {
+  @apply bg-photo-primary text-white hover:bg-photo-primary-dark;
+}
+
+.btn-outline {
+  @apply border border-photo-primary text-photo-primary hover:bg-photo-primary-light;
+}
+
+/* Form inputs */
+input, textarea, select {
+  @apply rounded-lg border border-photo-primary-light bg-white px-4 py-2 font-body text-photo-ink transition-all duration-base;
+}
+
+input:focus, textarea:focus, select:focus {
+  @apply outline-none ring-2 ring-photo-accent ring-offset-2;
+}
+
+/* Links */
+a {
+  @apply text-photo-primary hover:text-photo-primary-dark transition-colors duration-base;
+}
+
+/* ============================================================
+   Card patterns
+   ============================================================ */
+
+.card {
+  @apply bg-white rounded-lg border border-photo-primary-light shadow-md p-6;
+}
+
+.card:hover {
+  @apply shadow-lg transition-shadow duration-base;
+}
+
+/* ============================================================
+   Utility patterns
+   ============================================================ */
+
+.container {
+  @apply max-w-7xl mx-auto px-8;
+}
+
+.section-spacing {
+  @apply py-16;
+}
+
+.ornament-divider {
+  @apply flex items-center gap-3 my-6 opacity-60;
+}
+
+.ornament-divider::before,
+.ornament-divider::after {
+  @apply flex-1 h-px bg-photo-primary-light content-[''];
+}

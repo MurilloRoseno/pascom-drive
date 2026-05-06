@@ -1,0 +1,113 @@
+/* Shared UI kit styles for Paróquia São Rafael
+   Loads brand tokens from project root and adds a few helpers. */
+@import url('../../colors_and_type.css');
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--fg-1);
+  background: var(--bg-1);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+
+/* lucide-style stroke icons */
+.icon { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2;
+  stroke-linecap: round; stroke-linejoin: round; fill: none; flex-shrink: 0; }
+.icon-sm { width: 14px; height: 14px; }
+.icon-lg { width: 20px; height: 20px; }
+.icon-xl { width: 24px; height: 24px; }
+
+/* Container */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* Eyebrow */
+.eyebrow {
+  font-family: var(--font-mono); font-weight: 500; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.20em; color: var(--parish-yellow-dark);
+}
+.eyebrow.on-dark { color: var(--parish-yellow); }
+
+/* Section title block */
+.section-title { text-align: center; margin-bottom: 40px; }
+.section-title .h2 { font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(28px, 3vw, 36px); line-height: 1.2; color: var(--parish-purple);
+  margin: 8px 0 0; }
+.section-title.on-dark .h2 { color: #fff; }
+.section-title .lede { font-family: var(--font-body); color: rgba(24,21,15,0.6);
+  max-width: 560px; margin: 12px auto 0; line-height: 1.6; }
+
+/* Ornament divider */
+.divider {
+  display: flex; align-items: center; justify-content: center;
+  gap: 12px; margin: 16px auto; max-width: 220px;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(247,200,72,0.5);
+}
+.divider svg { color: var(--parish-yellow); width: 22px; height: 22px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 24px; border: 0; border-radius: 6px;
+  font-family: var(--font-body); font-weight: 600; font-size: 14px;
+  transition: background-color 200ms, color 200ms, box-shadow 200ms;
+  text-decoration: none; cursor: pointer;
+}
+.btn-primary { background: var(--parish-yellow); color: var(--parish-purple); font-weight: 700; }
+.btn-primary:hover { background: var(--parish-yellow-dark); }
+.btn-secondary { background: var(--parish-purple); color: #fff; }
+.btn-secondary:hover { background: var(--parish-purple-dark); }
+.btn-outline { background: transparent; color: var(--parish-purple); border: 2px solid var(--parish-purple); padding: 10px 22px; }
+.btn-outline:hover { background: var(--parish-purple); color: #fff; }
+.btn-block { display: flex; width: 100%; justify-content: center; }
+
+/* Card */
+.card { background: #fff; border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.10);
+  transition: box-shadow 300ms; overflow: hidden;
+}
+.card:hover { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.10), 0 4px 6px -4px rgb(0 0 0 / 0.10); }
+
+/* Pills */
+.pill { display: inline-flex; align-items: center; padding: 4px 12px;
+  border-radius: 9999px; font-family: var(--font-mono); font-size: 11px;
+  font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.pill-yellow { background: var(--parish-yellow); color: var(--parish-purple); }
+.pill-ink { background: rgba(24,21,15,0.85); color: #fff; }
+.chip { display: inline-flex; padding: 4px 8px; border-radius: 4px;
+  background: rgba(255,255,255,0.95); color: var(--parish-purple);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.tag { display: inline-flex; padding: 2px 10px; border-radius: 9999px;
+  font-family: var(--font-body); font-size: 12px; font-weight: 600; }
+.tag-yellow { background: rgba(247,200,72,0.20); color: var(--parish-yellow-dark); }
+.tag-mute { background: #f5f5f4; color: rgba(24,21,15,0.4); }
+
+/* Status badges */
+.status { display: inline-flex; padding: 2px 10px; border-radius: 9999px;
+  font-family: var(--font-body); font-size: 12px; font-weight: 500; }
+.status-confirmado { background: #dcfce7; color: var(--parish-green); }
+.status-pendente { background: #fef9c3; color: var(--parish-yellow-dark); }
+.status-fila { background: #f3e8ff; color: var(--parish-purple); }
+.status-cancelado { background: #fee2e2; color: #dc2626; }
+
+/* Inputs */
+.input { width: 100%; padding: 10px 14px;
+  border: 1px solid hsl(48 30% 85%); border-radius: 8px;
+  font-family: var(--font-body); font-size: 14px;
+  color: var(--fg-1); background: #fff; outline: none;
+  transition: border-color 200ms, box-shadow 200ms; }
+.input:focus { border-color: var(--parish-purple); box-shadow: 0 0 0 3px rgba(109,32,119,0.20); }
+.input::placeholder { color: rgba(24,21,15,0.4); }
+
+/* Field group */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-family: var(--font-body); font-weight: 600; font-size: 13px; color: var(--fg-1); }
+
+/* Util */
+.row { display: flex; }
+.col { display: flex; flex-direction: column; }
+.gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; } .gap-6 { gap: 24px; }
