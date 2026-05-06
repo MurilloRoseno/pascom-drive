@@ -17,8 +17,8 @@ function carrinhoReducer(state, action) {
   }
 }
 
-export function CarrinhoProvider({ children }) {
-  const [state, dispatch] = useReducer(carrinhoReducer, { fotos: [] });
+export function CarrinhoProvider({ children, initialFotos = [] }) {
+  const [state, dispatch] = useReducer(carrinhoReducer, { fotos: initialFotos });
   return (
     <CarrinhoContext.Provider value={{ state, dispatch }}>
       {children}
@@ -26,7 +26,7 @@ export function CarrinhoProvider({ children }) {
   );
 }
 
-CarrinhoProvider.propTypes = { children: PropTypes.node.isRequired };
+CarrinhoProvider.propTypes = { children: PropTypes.node.isRequired, initialFotos: PropTypes.array };
 
 export function useCarrinhoContext() {
   const ctx = useContext(CarrinhoContext);

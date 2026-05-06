@@ -5,10 +5,19 @@ import { useFotos } from '../hooks/useFotos.js';
 
 export default function Gallery() {
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
-  const { fotos, isLoading, eventos } = useFotos(eventoSelecionado);
+  const { fotos, isLoading, error, eventos } = useFotos(eventoSelecionado);
 
   if (isLoading) {
     return <div className="text-center py-12 text-photo-ink">Carregando fotos...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-red-600">
+        <p>Não foi possível carregar as fotos.</p>
+        <p className="text-sm mt-1">{error}</p>
+      </div>
+    );
   }
 
   return (
