@@ -14,36 +14,48 @@ export default function PhotoCard({ foto }) {
       aria-checked={selected}
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && toggle()}
-      className={`relative cursor-pointer rounded-lg overflow-hidden transition-all duration-200
-        ${selected
-          ? 'ring-4 shadow-lg'
-          : 'hover:shadow-md'
-        }`}
-      style={selected ? { ringColor: 'var(--photo-accent)', boxShadow: '0 0 0 4px var(--photo-accent)' } : {}}
+      className="relative cursor-pointer rounded-lg overflow-hidden transition-all duration-200 select-none"
+      style={selected ? { boxShadow: '0 0 0 3px var(--photo-accent), 0 4px 12px rgba(0,0,0,0.2)' } : {}}
     >
-      <img src={foto.url} alt={foto.event} className="w-full aspect-[2/3] object-cover" />
+      <img
+        src={foto.url}
+        alt={foto.event}
+        className="w-full aspect-[2/3] object-cover block"
+        loading="lazy"
+      />
 
-      {/* Checkmark */}
-      <div
-        className="absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center"
-        style={selected
-          ? { background: 'var(--photo-accent)', borderColor: 'var(--photo-accent)' }
-          : { background: 'rgba(255,255,255,0.85)', borderColor: 'white' }
-        }
-      >
-        {selected && <span className="text-xs font-bold" style={{ color: 'var(--photo-primary-dark)' }}>✓</span>}
-      </div>
-
-      {/* Selected badge */}
       {selected && (
-        <div className="absolute top-2 left-2">
-          <span className="badge badge--ok">Selecionado</span>
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ background: 'rgba(109,32,119,0.35)' }}
+        >
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--photo-accent)' }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+              style={{ color: 'var(--photo-primary-dark)' }}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
         </div>
       )}
 
-      {/* Price overlay */}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 flex items-end justify-between">
-        <span className="badge badge--amarelo">
+      <div
+        className="absolute bottom-0 left-0 right-0 px-2 py-1.5"
+        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.65), transparent)' }}
+      >
+        <span
+          className="font-mono font-bold text-xs"
+          style={{ color: '#fff' }}
+        >
           R$ {foto.price.toFixed(2).replace('.', ',')}
         </span>
       </div>
