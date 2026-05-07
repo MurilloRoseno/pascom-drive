@@ -1,13 +1,14 @@
 // google-drive.js — Drive API v3 wrapper using service-account credentials.
+// Uses top-level google-auth-library (JWT) for OpenSSL 3 compatibility (Node.js 18+ / Vercel).
+// googleapis-common bundles an older google-auth-library that fails RSA signing on OpenSSL 3.
 const { google } = require('googleapis');
+const { JWT } = require('google-auth-library');
 const { Readable } = require('stream');
 
-function getAuth() {
-  return new google.auth.GoogleAuth({
-    credentials: {
-      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    },
+function createAuth() {
+  return new JWT({
+    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
     scopes: ['https://www.googleapis.com/auth/drive'],
   });
 }
@@ -18,7 +19,7 @@ function getAuth() {
  * @returns {Promise<{buffer: Buffer, mimeType: string}>}
  */
 async function downloadFile(fileId) {
-  const auth = getAuth();
+  const auth = createAuth();
   const drive = google.drive({ version: 'v3', auth });
   const response = await drive.files.get(
     { fileId, alt: 'media' },
@@ -39,7 +40,7 @@ async function downloadFile(fileId) {
  * @returns {Promise<string>} Shareable link
  */
 async function uploadFile(buffer, mimeType, filename, folderId) {
-  const auth = getAuth();
+  const auth = createAuth();
   const drive = google.drive({ version: 'v3', auth });
   const stream = Readable.from(buffer);
   const response = await drive.files.create({
