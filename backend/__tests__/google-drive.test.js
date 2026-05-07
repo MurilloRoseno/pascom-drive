@@ -3,7 +3,6 @@ jest.mock('googleapis');
 
 const { google } = require('googleapis');
 const { downloadFile, uploadFile } = require('../lib/google-drive');
-const googleDrive = require('../lib/google-drive');
 
 describe('google-drive', () => {
   let mockDriveGet, mockDriveCreate, mockDriveFiles;
