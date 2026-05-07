@@ -1,6 +1,11 @@
 // google-drive.test.js
 // Mocks: global fetch (Node.js 18+) and crypto module.
 
+// Provide env vars before any require so parsePrivateKey has valid input
+process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL = 'test@test.iam.gserviceaccount.com';
+process.env.GOOGLE_PRIVATE_KEY =
+  '-----BEGIN PRIVATE KEY-----\nMIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEA\n-----END PRIVATE KEY-----\n';
+
 const crypto = require('crypto');
 jest.spyOn(crypto, 'createPrivateKey').mockReturnValue({});
 jest.spyOn(crypto, 'sign').mockReturnValue(Buffer.from('fake-sig'));
