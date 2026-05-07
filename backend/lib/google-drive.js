@@ -15,6 +15,46 @@ let _cachedToken = null;
 let _tokenExpiry = 0;
 
 /**
+ * Parse and normalize the GOOGLE_PRIVATE_KEY env var into a valid PEM string.
+ * Handles all common Vercel env var formatting issues:
+ *   - Literal \n (escaped) not yet converted to real newlines
+ *   - CRLF line endings
+ *   - Surrounding double/single quotes (common copy-paste from JSON)
+ *   - No line breaks in the base64 body (one long line)
+ *
+ * Strategy: extract the raw base64 content between PEM markers, strip ALL
+ * whitespace, then reformat into standard 64-char lines.
+ * This guarantees OpenSSL 3 can parse it regardless of original formatting.
+ */
+function parsePrivateKey(raw) {
+  let key = (raw || '').trim();
+
+  // Strip surrounding quotes if the value was copied including JSON string delimiters
+  key = key.replace(/^["']|["']$/g, '');
+
+  // Convert escape sequences → actual characters
+  key = key.replace(/\\n/g, '\n').replace(/\\r/g, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+  const BEGIN = '-----BEGIN PRIVATE KEY-----';
+  const END   = '-----END PRIVATE KEY-----';
+
+  if (!key.includes(BEGIN) || !key.includes(END)) {
+    // Log safe diagnostic info (no key content exposed)
+    console.error('[drive] Key missing PEM markers. Length:', key.length,
+      'Starts with:', JSON.stringify(key.substring(0, 30)));
+    throw new Error('GOOGLE_PRIVATE_KEY is missing PEM markers (-----BEGIN/END PRIVATE KEY-----)');
+  }
+
+  // Extract base64 body, strip ALL whitespace, reformat into 64-char lines
+  const start  = key.indexOf(BEGIN) + BEGIN.length;
+  const end    = key.indexOf(END);
+  const body   = key.slice(start, end).replace(/\s+/g, '');
+  const lines  = body.match(/.{1,64}/g) || [];
+
+  return `${BEGIN}\n${lines.join('\n')}\n${END}\n`;
+}
+
+/**
  * Exchange a service-account JWT for a Google OAuth2 access token.
  * Token is cached for the duration of its validity (1 hour).
  * @returns {Promise<string>} Access token
@@ -23,10 +63,8 @@ async function getAccessToken() {
   const now = Math.floor(Date.now() / 1000);
   if (_cachedToken && now < _tokenExpiry - 60) return _cachedToken;
 
-  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const rawKey = (process.env.GOOGLE_PRIVATE_KEY || '')
-    .replace(/\\n/g, '\n')
-    .replace(/\r/g, '');
+  const email  = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const rawKey = parsePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
 
   // Build JWT: header + payload
   const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
