@@ -5,16 +5,17 @@ const {
   processarFoto,
 } = require('../Watermark');
 
-const mockCopyFileToFolder = jest.fn();
-const mockGetShareableLink = jest.fn();
+const mockCopyFileToFolder  = jest.fn();
+const mockGetShareableLink  = jest.fn();
 const mockGetOriginaisFolder = jest.fn();
-const mockRegistrarFoto = jest.fn();
+const mockGetAmostrasFolder  = jest.fn();
+const mockRegistrarFoto      = jest.fn();
 
 jest.mock('../Drive', () => ({
-  copyFileToFolder: (...a) => mockCopyFileToFolder(...a),
-  getShareableLink: (...a) => mockGetShareableLink(...a),
+  copyFileToFolder:   (...a) => mockCopyFileToFolder(...a),
+  getShareableLink:   (...a) => mockGetShareableLink(...a),
   getOriginaisFolder: (...a) => mockGetOriginaisFolder(...a),
-  getAmostrasFolder: jest.fn(),
+  getAmostrasFolder:  (...a) => mockGetAmostrasFolder(...a),
 }));
 jest.mock('../Sheet', () => ({
   registrarFoto: (...a) => mockRegistrarFoto(...a),
@@ -26,9 +27,8 @@ global.PropertiesService = {
   getScriptProperties: jest.fn().mockReturnValue({
     getProperty: jest.fn((key) => {
       const props = {
-        BACKEND_URL:        'https://pascom-drive.vercel.app',
-        AMOSTRAS_FOLDER_ID: 'amostras-folder-id',
-        ADMIN_EMAIL:        'admin@example.com',
+        BACKEND_URL:  'https://pascom-drive.vercel.app',
+        ADMIN_EMAIL:  'admin@example.com',
       };
       return props[key] || null;
     }),
@@ -55,7 +55,7 @@ describe('gerarNomeAmostra', () => {
 });
 
 describe('processarFoto', () => {
-  let mockArquivo;
+  let mockArquivo, mockAmostraFile, mockAmostrasFolder;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -63,12 +63,16 @@ describe('processarFoto', () => {
     const mockOriginaisFolder = { getId: () => 'originais-folder-id' };
     mockGetOriginaisFolder.mockReturnValue(mockOriginaisFolder);
 
+    mockAmostraFile  = { getId: jest.fn().mockReturnValue('amostra-file-id') };
+    mockAmostrasFolder = { createFile: jest.fn().mockReturnValue(mockAmostraFile) };
+    mockGetAmostrasFolder.mockReturnValue(mockAmostrasFolder);
+
     mockArquivo = {
-      getId: jest.fn().mockReturnValue('file-drive-id'),
-      getName: jest.fn().mockReturnValue('foto.jpg'),
+      getId:      jest.fn().mockReturnValue('file-drive-id'),
+      getName:    jest.fn().mockReturnValue('foto.jpg'),
       getParents: jest.fn().mockReturnValue({
         hasNext: jest.fn().mockReturnValue(true),
-        next: jest.fn().mockReturnValue({ getName: () => 'Evento2026' }),
+        next:    jest.fn().mockReturnValue({ getName: () => 'Evento2026' }),
       }),
       moveTo: jest.fn(),
     };
@@ -77,11 +81,11 @@ describe('processarFoto', () => {
     mockCopyFileToFolder.mockReturnValue(mockCopiaOriginal);
     mockGetShareableLink.mockReturnValue('https://drive.google.com/file/d/copia-original-id/view');
 
+    const mockBlob = { setName: jest.fn() };
     global.UrlFetchApp.fetch.mockReturnValue({
       getResponseCode: jest.fn().mockReturnValue(200),
-      getContentText: jest.fn().mockReturnValue(
-        JSON.stringify({ linkAmostra: 'https://drive.google.com/file/d/amostra-id/view' })
-      ),
+      getContentText:  jest.fn().mockReturnValue(''),
+      getBlob:         jest.fn().mockReturnValue(mockBlob),
     });
   });
 
@@ -94,35 +98,41 @@ describe('processarFoto', () => {
     );
   });
 
-  it('calls backend /api/watermark with correct payload', () => {
+  it('calls backend /api/watermark with fileId in payload', () => {
     processarFoto(mockArquivo);
     expect(global.UrlFetchApp.fetch).toHaveBeenCalledWith(
       'https://pascom-drive.vercel.app/api/watermark',
       expect.objectContaining({
-        method: 'POST',
+        method:  'POST',
         payload: expect.stringContaining('"fileId":"file-drive-id"'),
+      })
+    );
+  });
+
+  it('saves returned blob to AMOSTRAS folder via createFile', () => {
+    processarFoto(mockArquivo);
+    expect(mockAmostrasFolder.createFile).toHaveBeenCalled();
+  });
+
+  it('registers foto with linkAmostra derived from saved file id', () => {
+    processarFoto(mockArquivo);
+    expect(mockRegistrarFoto).toHaveBeenCalledWith(
+      expect.objectContaining({
+        linkAmostra: expect.stringContaining('amostra-file-id'),
       })
     );
   });
 
   it('moves the arquivo to ORIGINAIS folder after success (prevents duplicate processing)', () => {
     processarFoto(mockArquivo);
-    expect(mockArquivo.moveTo).toHaveBeenCalledWith(expect.anything());
-  });
-
-  it('registers foto with linkAmostra from API response', () => {
-    processarFoto(mockArquivo);
-    expect(mockRegistrarFoto).toHaveBeenCalledWith(
-      expect.objectContaining({
-        linkAmostra: 'https://drive.google.com/file/d/amostra-id/view',
-      })
-    );
+    expect(mockArquivo.moveTo).toHaveBeenCalled();
   });
 
   it('sends admin email on API error instead of throwing', () => {
     global.UrlFetchApp.fetch.mockReturnValue({
       getResponseCode: jest.fn().mockReturnValue(500),
-      getContentText: jest.fn().mockReturnValue('Internal Server Error'),
+      getContentText:  jest.fn().mockReturnValue('Internal Server Error'),
+      getBlob:         jest.fn().mockReturnValue(null),
     });
     processarFoto(mockArquivo);
     expect(global.MailApp.sendEmail).toHaveBeenCalledWith(
@@ -135,7 +145,8 @@ describe('processarFoto', () => {
   it('does NOT move arquivo when API fails (source file stays for retry)', () => {
     global.UrlFetchApp.fetch.mockReturnValue({
       getResponseCode: jest.fn().mockReturnValue(500),
-      getContentText: jest.fn().mockReturnValue('error'),
+      getContentText:  jest.fn().mockReturnValue('error'),
+      getBlob:         jest.fn().mockReturnValue(null),
     });
     processarFoto(mockArquivo);
     expect(mockArquivo.moveTo).not.toHaveBeenCalled();
