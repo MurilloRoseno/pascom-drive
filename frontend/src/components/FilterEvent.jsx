@@ -5,7 +5,14 @@ export default function FilterEvent({ eventos, eventoSelecionado, onSelect }) {
     <div className="flex flex-wrap gap-2 mb-6">
       <button
         onClick={() => onSelect(null)}
-        className={`btn ${!eventoSelecionado ? 'btn-primary' : 'btn-outline'}`}
+        className={`badge cursor-pointer border transition-colors duration-base ${
+          !eventoSelecionado ? 'badge--roxo' : ''
+        }`}
+        style={!eventoSelecionado ? {} : {
+          borderColor: 'rgba(109,32,119,0.3)',
+          color: 'var(--photo-primary)',
+          background: 'transparent',
+        }}
       >
         Todos
       </button>
@@ -13,7 +20,14 @@ export default function FilterEvent({ eventos, eventoSelecionado, onSelect }) {
         <button
           key={evento}
           onClick={() => onSelect(evento)}
-          className={`btn ${eventoSelecionado === evento ? 'btn-primary' : 'btn-outline'}`}
+          className={`badge cursor-pointer border transition-colors duration-base ${
+            eventoSelecionado === evento ? 'badge--roxo' : ''
+          }`}
+          style={eventoSelecionado === evento ? {} : {
+            borderColor: 'rgba(109,32,119,0.3)',
+            color: 'var(--photo-primary)',
+            background: 'transparent',
+          }}
         >
           {evento}
         </button>
