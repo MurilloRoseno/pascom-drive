@@ -4,9 +4,9 @@ const sharp = require('sharp');
 const path = require('path');
 
 // --- Tunable constants ---
-const TILE_WIDTH   = 600;   // logo width in pixels; increase for larger tiles
-const TILE_OPACITY = 0.30;  // 0 = invisible, 1 = fully opaque (0.30 = subtle)
-const TILE_SPACING = 200;   // transparent gap (px) around each tile
+const TILE_WIDTH   = 1000;   // logo width in pixels; increase for larger tiles
+const TILE_OPACITY = 1;  // 0 = invisible, 1 = fully opaque (0.30 = subtle)
+const TILE_SPACING = 100;   // transparent gap (px) around each tile
 
 const ASSETS = {
   color: path.join(__dirname, '../assets/watermark-color.png'),
