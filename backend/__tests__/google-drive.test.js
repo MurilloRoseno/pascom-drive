@@ -1,7 +1,9 @@
 // google-drive.test.js
 jest.mock('googleapis');
+jest.mock('google-auth-library');
 
 const { google } = require('googleapis');
+const { JWT } = require('google-auth-library');
 const { downloadFile, uploadFile } = require('../lib/google-drive');
 
 describe('google-drive', () => {
@@ -19,7 +21,7 @@ describe('google-drive', () => {
     mockDriveFiles = { get: mockDriveGet, create: mockDriveCreate };
 
     google.drive = jest.fn().mockReturnValue({ files: mockDriveFiles });
-    google.auth = { GoogleAuth: jest.fn().mockReturnValue({}) };
+    JWT.mockImplementation(() => ({}));
   });
 
   describe('downloadFile', () => {
