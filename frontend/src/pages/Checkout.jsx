@@ -10,11 +10,6 @@ const fmt = (v) => `R$ ${v.toFixed(2).replace('.', ',')}`;
 
 const STEPS = ['Fotos', 'WhatsApp', 'Confirmar', 'Pagar'];
 
-const ORNAMENT_STAR = (
-  <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 20, height: 20, flexShrink: 0 }}>
-    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
-  </svg>
-);
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
@@ -75,16 +70,22 @@ export default function CheckoutPage() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <section className="py-12" style={{ background: 'var(--photo-paper)', minHeight: '100vh' }}>
+    <section className="py-6" style={{ background: 'var(--photo-paper)', minHeight: '100vh' }}>
       <div className="container">
-        <div className="text-center mb-10">
-          <div className="eyebrow">Checkout</div>
-          <h1 className="font-display text-4xl mt-2" style={{ color: 'var(--photo-primary)' }}>
-            Finalizar Pedido
+        <div className="flex items-center gap-3 mb-8">
+          <button
+            onClick={() => navigate('/')}
+            className="p-2 rounded-lg transition-colors"
+            style={{ color: 'var(--photo-primary)', background: 'var(--photo-primary-light)' }}
+            aria-label="Voltar para galeria"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="font-display font-bold text-xl" style={{ color: 'var(--photo-ink)' }}>
+            Pagamento
           </h1>
-          <div className="divider-ornament" style={{ maxWidth: 280, margin: '1rem auto' }}>
-            {ORNAMENT_STAR}
-          </div>
         </div>
 
         <div className="max-w-lg mx-auto">
