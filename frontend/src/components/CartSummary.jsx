@@ -9,38 +9,39 @@ export default function CartSummary() {
 
   if (fotos.length === 0) return null;
 
-  const { subtotal, taxa, total } = totais;
+  const plural = fotos.length > 1;
 
   return (
-    <div className="card sticky bottom-4" style={{ borderColor: 'var(--photo-primary-light)' }}>
-      <div className="eyebrow mb-3">
-        {fotos.length} foto{fotos.length > 1 ? 's' : ''} selecionada{fotos.length > 1 ? 's' : ''}
-      </div>
+    <div
+      className="fixed bottom-0 left-0 right-0 z-40 shadow-2xl"
+      style={{
+        background: '#fff',
+        borderTop: '2px solid var(--photo-accent)',
+      }}
+    >
+      <div className="container max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+        <div className="min-w-0">
+          <p
+            className="text-sm font-medium leading-tight"
+            style={{ color: 'var(--photo-grafite)' }}
+          >
+            {fotos.length} foto{plural ? 's' : ''} selecionada{plural ? 's' : ''}
+          </p>
+          <p
+            className="font-mono font-bold text-lg leading-tight"
+            style={{ color: 'var(--photo-primary)' }}
+          >
+            {fmt(totais.total)}
+          </p>
+        </div>
 
-      <div className="space-y-1 text-sm" style={{ color: 'var(--photo-ink)' }}>
-        <div className="flex justify-between">
-          <span>Subtotal</span>
-          <span className="font-mono">{fmt(subtotal)}</span>
-        </div>
-        <div className="flex justify-between" style={{ color: 'var(--photo-grafite)' }}>
-          <span>Taxa Pix (2,99% + R$0,30)</span>
-          <span className="font-mono">{fmt(taxa)}</span>
-        </div>
-        <div
-          className="flex justify-between font-bold text-base border-t pt-2 mt-2"
-          style={{ borderColor: 'rgba(109,32,119,0.10)' }}
+        <button
+          onClick={() => navigate('/checkout')}
+          className="btn btn-primary btn-lg flex-shrink-0"
         >
-          <span>Total</span>
-          <span className="font-display text-lg" style={{ color: 'var(--photo-primary)' }}>{fmt(total)}</span>
-        </div>
+          Finalizar →
+        </button>
       </div>
-
-      <button
-        onClick={() => navigate('/checkout')}
-        className="btn btn-primary w-full mt-4"
-      >
-        Proceder para Pagamento →
-      </button>
     </div>
   );
 }
