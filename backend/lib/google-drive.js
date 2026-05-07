@@ -1,16 +1,73 @@
-// google-drive.js — Drive API v3 wrapper using service-account credentials.
-// Uses top-level google-auth-library (JWT) for OpenSSL 3 compatibility (Node.js 18+ / Vercel).
-// googleapis-common bundles an older google-auth-library that fails RSA signing on OpenSSL 3.
-const { google } = require('googleapis');
-const { JWT } = require('google-auth-library');
-const { Readable } = require('stream');
+// google-drive.js — Drive API v3 via direct REST calls + native crypto.
+//
+// WHY NOT googleapis/google-auth-library:
+//   Both use gtoken → jwa → crypto.createSign().sign(pemString), which triggers
+//   `error:1E08010C:DECODER routines::unsupported` on OpenSSL 3 (Node.js 18+/Vercel).
+//
+// FIX:
+//   Use crypto.sign() with a KeyObject (Node.js 15+ API). It pre-loads the key
+//   before signing, bypassing the PKCS8 decoder path that OpenSSL 3 rejects.
+//   Use native fetch (Node.js 18+) for all HTTP calls — no external HTTP deps.
 
-function createAuth() {
-  return new JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
-    scopes: ['https://www.googleapis.com/auth/drive'],
+const crypto = require('crypto');
+
+let _cachedToken = null;
+let _tokenExpiry = 0;
+
+/**
+ * Exchange a service-account JWT for a Google OAuth2 access token.
+ * Token is cached for the duration of its validity (1 hour).
+ * @returns {Promise<string>} Access token
+ */
+async function getAccessToken() {
+  const now = Math.floor(Date.now() / 1000);
+  if (_cachedToken && now < _tokenExpiry - 60) return _cachedToken;
+
+  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+  const rawKey = (process.env.GOOGLE_PRIVATE_KEY || '')
+    .replace(/\\n/g, '\n')
+    .replace(/\r/g, '');
+
+  // Build JWT: header + payload
+  const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');
+  const payload = Buffer.from(JSON.stringify({
+    iss: email,
+    scope: 'https://www.googleapis.com/auth/drive',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  })).toString('base64url');
+
+  const signingInput = `${header}.${payload}`;
+
+  // crypto.sign() with KeyObject avoids createSign().sign(pemString) OpenSSL 3 issue
+  const privateKey = crypto.createPrivateKey(rawKey);
+  const signature = crypto.sign('SHA256', Buffer.from(signingInput), {
+    key: privateKey,
+    padding: crypto.constants.RSA_PKCS1_PADDING,
+  }).toString('base64url');
+
+  const jwt = `${signingInput}.${signature}`;
+
+  // Exchange JWT for access token via OAuth2 token endpoint
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: jwt,
+    }),
   });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Token exchange failed (${res.status}): ${text}`);
+  }
+
+  const data = await res.json();
+  _cachedToken = data.access_token;
+  _tokenExpiry = now + (data.expires_in || 3600);
+  return _cachedToken;
 }
 
 /**
@@ -19,20 +76,21 @@ function createAuth() {
  * @returns {Promise<{buffer: Buffer, mimeType: string}>}
  */
 async function downloadFile(fileId) {
-  const auth = createAuth();
-  const drive = google.drive({ version: 'v3', auth });
-  const response = await drive.files.get(
-    { fileId, alt: 'media' },
-    { responseType: 'arraybuffer' }
+  const token = await getAccessToken();
+  const res = await fetch(
+    `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
+    { headers: { Authorization: `Bearer ${token}` } }
   );
-  return {
-    buffer: Buffer.from(response.data),
-    mimeType: response.headers['content-type'] || 'image/jpeg',
-  };
+  if (!res.ok) {
+    throw new Error(`Drive download failed (${res.status}): ${await res.text()}`);
+  }
+  const mimeType = res.headers.get('content-type') || 'image/jpeg';
+  const buffer = Buffer.from(await res.arrayBuffer());
+  return { buffer, mimeType };
 }
 
 /**
- * Upload a Buffer as a new file inside a Drive folder.
+ * Upload a Buffer as a new file inside a Drive folder (multipart upload).
  * @param {Buffer} buffer
  * @param {string} mimeType
  * @param {string} filename
@@ -40,16 +98,37 @@ async function downloadFile(fileId) {
  * @returns {Promise<string>} Shareable link
  */
 async function uploadFile(buffer, mimeType, filename, folderId) {
-  const auth = createAuth();
-  const drive = google.drive({ version: 'v3', auth });
-  const stream = Readable.from(buffer);
-  const response = await drive.files.create({
-    requestBody: { name: filename, parents: [folderId] },
-    media: { mimeType, body: stream },
-    fields: 'id',
-  });
-  const fileId = response.data.id;
-  return `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+  const token = await getAccessToken();
+  const boundary = `boundary_${Date.now()}`;
+  const metadata = JSON.stringify({ name: filename, parents: [folderId] });
+
+  const body = Buffer.concat([
+    Buffer.from(
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
+      `${metadata}\r\n--${boundary}\r\nContent-Type: ${mimeType}\r\n\r\n`
+    ),
+    buffer,
+    Buffer.from(`\r\n--${boundary}--`),
+  ]);
+
+  const res = await fetch(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': `multipart/related; boundary=${boundary}`,
+      },
+      body,
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Drive upload failed (${res.status}): ${await res.text()}`);
+  }
+
+  const data = await res.json();
+  return `https://drive.google.com/file/d/${data.id}/view?usp=sharing`;
 }
 
 module.exports = { downloadFile, uploadFile };
