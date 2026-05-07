@@ -1,8 +1,13 @@
 // Watermark.js — Photo processing: copy original, apply watermark via backend, register.
 // "Watermark" = pixel-level PNG overlay applied by calling POST /api/watermark on the backend.
+//
+// Architecture note:
+//   The backend returns raw JPEG bytes (not a Drive link) to avoid the
+//   "Service Accounts do not have storage quota" limitation. Apps Script
+//   saves the blob directly to Drive as the authenticated user (who has quota).
 
-/* global copyFileToFolder, getShareableLink, getOriginaisFolder, registrarFoto,
-          UrlFetchApp, PropertiesService, MailApp, Logger */
+/* global copyFileToFolder, getShareableLink, getOriginaisFolder, getAmostrasFolder,
+          registrarFoto, UrlFetchApp, PropertiesService, MailApp, Logger */
 
 var PRECO_PADRAO = 25;
 var _idCounter = 0;
@@ -13,18 +18,20 @@ var _helpers = (function () {
     var drive = require('./Drive');
     var sheet = require('./Sheet');
     return {
-      copyFileToFolder: drive.copyFileToFolder,
-      getShareableLink: drive.getShareableLink,
+      copyFileToFolder:  drive.copyFileToFolder,
+      getShareableLink:  drive.getShareableLink,
       getOriginaisFolder: drive.getOriginaisFolder,
-      registrarFoto: sheet.registrarFoto,
+      getAmostrasFolder:  drive.getAmostrasFolder,
+      registrarFoto:     sheet.registrarFoto,
     };
   }
   // In Apps Script context, these are global functions injected by the runtime.
   return {
-    copyFileToFolder: function () { return copyFileToFolder.apply(this, arguments); },
-    getShareableLink: function () { return getShareableLink.apply(this, arguments); },
+    copyFileToFolder:  function () { return copyFileToFolder.apply(this, arguments); },
+    getShareableLink:  function () { return getShareableLink.apply(this, arguments); },
     getOriginaisFolder: function () { return getOriginaisFolder.apply(this, arguments); },
-    registrarFoto: function () { return registrarFoto.apply(this, arguments); },
+    getAmostrasFolder:  function () { return getAmostrasFolder.apply(this, arguments); },
+    registrarFoto:     function () { return registrarFoto.apply(this, arguments); },
   };
 }());
 
@@ -38,8 +45,9 @@ function gerarNomeAmostra(nome) {
 }
 
 /**
- * Process a photo: copy original → ORIGINAIS, apply watermark via backend → AMOSTRAS,
- * move source file out of SOURCE folder (prevents duplicate processing), register in Sheet.
+ * Process a photo: copy original → ORIGINAIS, apply watermark via backend,
+ * save returned JPEG blob → AMOSTRAS (as the authenticated user, who has Drive quota),
+ * move source file out of SOURCE folder, register in Sheet.
  * On any failure: sends admin email, leaves source file untouched for retry.
  * @param {GoogleAppsScript.Drive.File} arquivo
  */
@@ -53,17 +61,14 @@ function processarFoto(arquivo) {
 
     // 1. Copy original to ORIGINAIS folder (unchanged, high quality backup)
     var copiaOriginal = _helpers.copyFileToFolder(arquivo, _helpers.getOriginaisFolder(), id + '_' + nomeOriginal);
-    var linkOriginal = _helpers.getShareableLink(copiaOriginal);
+    var linkOriginal  = _helpers.getShareableLink(copiaOriginal);
 
-    // 2. Call backend to apply watermark and upload to AMOSTRAS folder
-    var props = PropertiesService.getScriptProperties();
+    // 2. Call backend to apply watermark — returns raw JPEG bytes
+    var props      = PropertiesService.getScriptProperties();
     var backendUrl = props.getProperty('BACKEND_URL');
-    var amostrasId  = props.getProperty('AMOSTRAS_FOLDER_ID');
 
     var payload = JSON.stringify({
-      fileId:       arquivo.getId(),
-      filename:     gerarNomeAmostra(id + '_' + nomeOriginal),
-      destFolderId: amostrasId,
+      fileId:        arquivo.getId(),
       watermarkType: 'color',
     });
 
@@ -78,13 +83,17 @@ function processarFoto(arquivo) {
       throw new Error('Watermark API falhou (' + response.getResponseCode() + '): ' + response.getContentText());
     }
 
-    var result      = JSON.parse(response.getContentText());
-    var linkAmostra = result.linkAmostra;
+    // 3. Save the returned JPEG blob to AMOSTRAS folder as the authenticated user
+    //    (service account has no Drive quota, but Apps Script runs as the user who does)
+    var blob = response.getBlob();
+    blob.setName(gerarNomeAmostra(id + '_' + nomeOriginal));
+    var amostraFile = _helpers.getAmostrasFolder().createFile(blob);
+    var linkAmostra = 'https://drive.google.com/file/d/' + amostraFile.getId() + '/view?usp=sharing';
 
-    // 3. Move source file out of SOURCE folder — prevents reprocessing on next trigger run
+    // 4. Move source file out of SOURCE folder — prevents reprocessing on next trigger run
     arquivo.moveTo(_helpers.getOriginaisFolder());
 
-    // 4. Register in Sheet
+    // 5. Register in Sheet
     _helpers.registrarFoto({
       id:           id,
       evento:       evento,

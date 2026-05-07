@@ -14,11 +14,8 @@ app.use(express.json());
 app.all('/api/watermark', watermarkHandler);
 app.use(errorHandler);
 
-const VALID_BODY = {
-  fileId: 'file-abc-123',
-  filename: '[AMOSTRA]foto.jpg',
-  destFolderId: 'folder-xyz-456',
-};
+const VALID_BODY = { fileId: 'file-abc-123' };
+const FAKE_JPEG  = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]); // JPEG magic bytes
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -26,34 +23,24 @@ beforeEach(() => {
     buffer: Buffer.from('fake-image'),
     mimeType: 'image/jpeg',
   });
-  compositeWatermark.mockResolvedValue(Buffer.from('watermarked-image'));
-  googleDrive.uploadFile.mockResolvedValue(
-    'https://drive.google.com/file/d/new-id/view?usp=sharing'
-  );
+  compositeWatermark.mockResolvedValue(FAKE_JPEG);
 });
 
 describe('POST /api/watermark', () => {
-  it('returns 200 with linkAmostra on valid request', async () => {
+  it('returns 200 with image/jpeg content-type on valid request', async () => {
     const res = await request(app).post('/api/watermark').send(VALID_BODY);
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({
-      linkAmostra: 'https://drive.google.com/file/d/new-id/view?usp=sharing',
-    });
+    expect(res.headers['content-type']).toMatch(/image\/jpeg/);
+  });
+
+  it('returns the watermarked image as binary body', async () => {
+    const res = await request(app).post('/api/watermark').send(VALID_BODY);
+    expect(Buffer.from(res.body)).toEqual(FAKE_JPEG);
   });
 
   it('calls downloadFile with the provided fileId', async () => {
     await request(app).post('/api/watermark').send(VALID_BODY);
     expect(googleDrive.downloadFile).toHaveBeenCalledWith('file-abc-123');
-  });
-
-  it('calls uploadFile with correct filename and destFolderId', async () => {
-    await request(app).post('/api/watermark').send(VALID_BODY);
-    expect(googleDrive.uploadFile).toHaveBeenCalledWith(
-      expect.any(Buffer),
-      'image/jpeg',
-      '[AMOSTRA]foto.jpg',
-      'folder-xyz-456'
-    );
   });
 
   it('uses color watermark by default', async () => {
@@ -67,16 +54,7 @@ describe('POST /api/watermark', () => {
   });
 
   it('returns 400 when fileId is missing', async () => {
-    const res = await request(app)
-      .post('/api/watermark')
-      .send({ filename: 'x.jpg', destFolderId: 'folder' });
-    expect(res.status).toBe(400);
-  });
-
-  it('returns 400 when destFolderId is missing', async () => {
-    const res = await request(app)
-      .post('/api/watermark')
-      .send({ fileId: 'abc', filename: 'x.jpg' });
+    const res = await request(app).post('/api/watermark').send({});
     expect(res.status).toBe(400);
   });
 
