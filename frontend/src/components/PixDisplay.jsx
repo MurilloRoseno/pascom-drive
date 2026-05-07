@@ -1,4 +1,3 @@
-// PixDisplay.jsx — shows PIX QR code image and copia-e-cola code.
 import { useState } from 'react';
 
 export function PixDisplay({ qrCodeBase64, qrCode }) {
@@ -17,27 +16,35 @@ export function PixDisplay({ qrCodeBase64, qrCode }) {
         <img
           src={`data:image/png;base64,${qrCodeBase64}`}
           alt="QR Code PIX"
-          className="w-48 h-48 border border-gray-200 rounded-lg"
+          className="w-48 h-48 rounded-lg"
+          style={{ border: '1px solid rgba(109,32,119,0.15)' }}
         />
       )}
 
-      <p className="text-sm text-gray-500 text-center">
+      <p className="text-sm text-center" style={{ color: 'var(--photo-grafite)' }}>
         Escaneie o QR Code <span className="font-semibold">ou</span> use o código abaixo
       </p>
 
-      <div className="w-full bg-gray-50 border border-gray-200 rounded-lg p-3">
-        <p
-          className="text-xs text-gray-600 break-all font-mono select-all"
+      <div
+        className="w-full rounded-lg p-3"
+        style={{ background: 'var(--photo-paper)', border: '1px solid rgba(109,32,119,0.12)' }}
+      >
+        <pre
+          className="text-xs break-all whitespace-pre-wrap font-mono select-all"
+          style={{ color: 'var(--photo-grafite)', margin: 0 }}
           aria-label="Código PIX"
         >
           {qrCode}
-        </p>
+        </pre>
       </div>
 
       <button
         onClick={copiar}
-        className="w-full py-2 px-4 bg-photo-primary text-white rounded-lg font-medium
-                   hover:bg-photo-primary-dark transition-colors"
+        className="btn w-full"
+        style={copiado
+          ? { background: 'var(--photo-success)', color: '#fff' }
+          : { background: 'var(--photo-primary)', color: '#fff' }
+        }
       >
         {copiado ? '✅ Copiado!' : 'Copiar Código PIX'}
       </button>

@@ -1,6 +1,6 @@
 /* ============================================================
    Pascom Drive — Foto Venda Design System
-   Paleta Derivada (roxo magenta + ouro saturado)
+   Paleta Diocese de Imperatriz (roxo litúrgico + dourado)
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -10,22 +10,26 @@
 @tailwind utilities;
 
 :root {
-  /* ───────── Brand colors — Paleta Derivada ─────────
-     Roxo Magenta (photo venda especial) + Ouro Saturado
-     Diferencia visualmente do site da paróquia */
-  --photo-primary:        #8B3E7A;      /* roxo magenta */
-  --photo-primary-dark:   #5C2650;
-  --photo-primary-light:  rgba(139, 62, 122, 0.08);
+  /* ───────── Brand colors — Diocese de Imperatriz ─────────
+     Roxo litúrgico (Advento / Quaresma) + dourado/amarelo */
+  --photo-primary:        #6D2077;      /* roxo litúrgico */
+  --photo-primary-dark:   #461356;
+  --photo-primary-light:  rgba(109, 32, 119, 0.08);
 
-  --photo-accent:         #E8B923;      /* ouro saturado */
-  --photo-accent-light:   #FFD966;
-  --photo-accent-dark:    #B8860B;
+  --photo-accent:         #F7C848;      /* amarelo — CTA principal */
+  --photo-accent-light:   rgba(247, 200, 72, 0.10);
+  --photo-accent-dark:    #C8A020;      /* dourado — labels, ornamentos */
 
-  --photo-success:        #2B7A8E;      /* teal para status */
-  --photo-success-light:  rgba(43, 122, 142, 0.08);
+  --photo-success:        #3C7A5A;      /* verde Diocese */
+  --photo-success-light:  rgba(60, 122, 90, 0.08);
 
-  --photo-paper:          #F9F5F0;      /* warm cream */
-  --photo-ink:            #1A1410;      /* near-black */
+  --photo-paper:          #FAF6EF;      /* papel quente */
+  --photo-ink:            #18150F;      /* tinta — near-black */
+
+  /* Neutros adicionais */
+  --photo-bone:           #F4EDE0;      /* texto sobre fundo escuro */
+  --photo-grafite:        #5C5347;      /* texto secundário */
+  --photo-sepia:          #9C8E7E;      /* labels, metadados */
 
   /* ───────── Typography ───────── */
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
@@ -77,7 +81,8 @@ body {
 }
 
 .h2 {
-  @apply font-display font-bold text-h2 leading-snug text-photo-primary;
+  @apply font-display font-bold text-h2 leading-snug text-photo-primary border-b pb-2;
+  border-color: rgba(109, 32, 119, 0.10);
 }
 
 .h3 {
@@ -135,6 +140,18 @@ body {
   @apply border border-photo-primary text-photo-primary hover:bg-photo-primary-light;
 }
 
+.btn-ghost {
+  @apply bg-transparent text-photo-grafite hover:bg-photo-ink/5;
+}
+
+.btn-sm {
+  @apply px-3 py-1 text-xs;
+}
+
+.btn-lg {
+  @apply px-6 py-3 text-base;
+}
+
 /* Form inputs */
 input, textarea, select {
   @apply rounded-lg border border-photo-primary-light bg-white px-4 py-2 font-body text-photo-ink transition-all duration-base;
@@ -180,4 +197,91 @@ a {
 .ornament-divider::before,
 .ornament-divider::after {
   @apply flex-1 h-px bg-photo-primary-light content-[''];
+}
+
+/* ============================================================
+   Diocese Design System — Componentes
+   ============================================================ */
+
+/* ── Blocos destaque ── */
+.bloco {
+  background: #fff;
+  border: 1px solid rgba(24, 21, 15, 0.10);
+  @apply rounded-lg p-6 my-4;
+}
+
+.bloco--roxo {
+  background: var(--photo-primary-light);
+  border-color: var(--photo-primary);
+}
+
+.bloco--verde {
+  background: var(--photo-success-light);
+  border-color: var(--photo-success);
+}
+
+.bloco--dourado {
+  background: var(--photo-accent-light);
+  border-color: var(--photo-accent-dark);
+}
+
+.bloco__titulo {
+  @apply font-mono text-[0.6rem] uppercase tracking-widest mb-2;
+}
+
+.bloco--roxo    .bloco__titulo { color: var(--photo-primary); }
+.bloco--verde   .bloco__titulo { color: var(--photo-success); }
+.bloco--dourado .bloco__titulo { color: var(--photo-accent-dark); }
+
+/* ── Badges ── */
+.badge {
+  @apply inline-flex items-center gap-1 font-mono text-[0.58rem] uppercase tracking-widest px-2 py-1 rounded-sm;
+}
+
+.badge--ok {
+  background: rgba(60, 122, 90, 0.12);
+  color: var(--photo-success);
+}
+
+.badge--falta {
+  background: var(--photo-primary-light);
+  color: var(--photo-primary);
+}
+
+.badge--atencao {
+  background: rgba(200, 160, 32, 0.14);
+  color: #7a6010;
+}
+
+.badge--roxo {
+  background: var(--photo-primary);
+  color: var(--photo-bone);
+}
+
+.badge--amarelo {
+  background: var(--photo-accent);
+  color: var(--photo-primary-dark);
+}
+
+/* ── Divisor ornamental ── */
+.divider-ornament {
+  @apply relative flex items-center justify-center my-8;
+  color: var(--photo-accent-dark);
+}
+
+.divider-ornament::before,
+.divider-ornament::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(200, 160, 32, 0.35);
+}
+
+.divider-ornament::before { margin-right: 0.8rem; }
+.divider-ornament::after  { margin-left:  0.8rem; }
+
+.divider-ornament svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }

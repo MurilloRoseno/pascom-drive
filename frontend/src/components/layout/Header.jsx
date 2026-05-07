@@ -12,14 +12,18 @@ export default function Header() {
   const active = 'gallery';
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="sticky top-0 z-50 bg-photo-primary-dark shadow-md">
       <div className="container flex items-center justify-between py-3">
-        <a href="/" className="flex-shrink-0">
+        <a href="/" className="flex items-center gap-3" style={{ textDecoration: 'none' }}>
           <img
             src="/assets/logo-header.png"
             alt="Paróquia São Rafael"
-            className="h-14 w-auto"
+            className="h-12 w-auto"
           />
+          <div className="hidden sm:block">
+            <div className="font-display text-base leading-tight" style={{ color: 'var(--photo-bone)' }}>Paróquia São Rafael</div>
+            <div className="font-mono text-[0.55rem] tracking-widest uppercase" style={{ color: 'var(--photo-accent)' }}>Diocese · Imperatriz</div>
+          </div>
         </a>
 
         {/* Desktop nav */}
@@ -28,18 +32,21 @@ export default function Header() {
             <a
               key={link.id}
               href={link.href}
-              className={`px-3.5 py-2 rounded-md text-sm font-medium transition-colors duration-base ${
-                active === link.id
-                  ? 'text-photo-primary bg-photo-primary-light'
-                  : 'text-gray-600 hover:text-photo-primary hover:bg-photo-primary-light'
+              className={`px-3.5 py-2 rounded-md font-mono text-[0.65rem] uppercase tracking-widest transition-colors duration-base ${
+                active === link.id ? 'bg-photo-accent/10' : 'hover:bg-photo-accent/10'
               }`}
+              style={{
+                textDecoration: 'none',
+                color: active === link.id ? 'var(--photo-accent)' : 'rgba(244,237,224,0.7)',
+              }}
             >
               {link.label}
             </a>
           ))}
           <a
-            href="/galeria"
-            className="btn btn-primary ml-2 text-sm"
+            href="/"
+            className="btn btn-primary ml-3 btn-sm"
+            style={{ textDecoration: 'none' }}
           >
             Ver Fotos
           </a>
@@ -47,7 +54,8 @@ export default function Header() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2 rounded-md text-gray-600 hover:text-photo-primary"
+          className="md:hidden p-2 rounded-md"
+          style={{ color: 'rgba(244,237,224,0.7)' }}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Abrir menu"
         >
@@ -62,18 +70,19 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-photo-primary-light bg-white px-4 pb-4">
+        <div className="md:hidden border-t px-4 pb-4" style={{ borderColor: 'rgba(247,200,72,0.2)', background: 'var(--photo-primary)' }}>
           {NAV_LINKS.map((link) => (
             <a
               key={link.id}
               href={link.href}
-              className="block py-2 text-sm font-medium text-gray-600 hover:text-photo-primary"
+              className="block py-2 font-mono text-[0.65rem] uppercase tracking-widest"
+              style={{ textDecoration: 'none', color: 'rgba(244,237,224,0.7)' }}
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </a>
           ))}
-          <a href="/galeria" className="btn btn-primary w-full mt-3 text-sm justify-center">
+          <a href="/" className="btn btn-primary w-full mt-3 justify-center" style={{ textDecoration: 'none' }}>
             Ver Fotos
           </a>
         </div>

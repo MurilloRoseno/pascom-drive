@@ -7,25 +7,25 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Paleta Derivada para Foto Venda
-        // Roxo Magenta (Liturgical, mais quente)
-        'photo-primary': '#8B3E7A',
-        'photo-primary-dark': '#5C2650',
-        'photo-primary-light': 'rgba(139, 62, 122, 0.08)',
+        // Diocese de Imperatriz — paleta oficial
+        'photo-primary':       '#6D2077',
+        'photo-primary-dark':  '#461356',
+        'photo-primary-light': 'rgba(109, 32, 119, 0.08)',
 
-        // Ouro Saturado (Liturgical Gold++)
-        'photo-accent': '#E8B923',
-        'photo-accent-light': '#FFD966',
-        'photo-accent-dark': '#B8860B',
+        'photo-accent':        '#F7C848',
+        'photo-accent-light':  'rgba(247, 200, 72, 0.10)',
+        'photo-accent-dark':   '#C8A020',
 
-        // Status & Semantic
-        'photo-success': '#2B7A8E',      // Teal para confirmação
-        'photo-success-light': 'rgba(43, 122, 142, 0.08)',
-        'photo-paper': '#F9F5F0',        // Warm cream
-        'photo-ink': '#1A1410',          // Near-black
+        'photo-success':       '#3C7A5A',
+        'photo-success-light': 'rgba(60, 122, 90, 0.08)',
 
-        // Derivado do padrão paróquia mas ajustado
-        'photo-green': '#2B7A8E',
+        'photo-paper':         '#FAF6EF',
+        'photo-ink':           '#18150F',
+
+        // Neutros adicionais
+        'photo-bone':          '#F4EDE0',
+        'photo-grafite':       '#5C5347',
+        'photo-sepia':         '#9C8E7E',
       },
       fontFamily: {
         'display': '"Playfair Display", Georgia, serif',

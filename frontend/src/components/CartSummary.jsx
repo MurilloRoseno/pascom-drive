@@ -12,27 +12,32 @@ export default function CartSummary() {
   const { subtotal, taxa, total } = totais;
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 sticky bottom-4">
-      <p className="eyebrow text-photo-primary mb-3">
+    <div className="card sticky bottom-4" style={{ borderColor: 'var(--photo-primary-light)' }}>
+      <div className="eyebrow mb-3">
         {fotos.length} foto{fotos.length > 1 ? 's' : ''} selecionada{fotos.length > 1 ? 's' : ''}
-      </p>
-      <div className="space-y-1 text-sm text-photo-ink">
+      </div>
+
+      <div className="space-y-1 text-sm" style={{ color: 'var(--photo-ink)' }}>
         <div className="flex justify-between">
           <span>Subtotal</span>
-          <span>{fmt(subtotal)}</span>
+          <span className="font-mono">{fmt(subtotal)}</span>
         </div>
-        <div className="flex justify-between text-gray-500">
+        <div className="flex justify-between" style={{ color: 'var(--photo-grafite)' }}>
           <span>Taxa Pix (2,99% + R$0,30)</span>
-          <span>{fmt(taxa)}</span>
+          <span className="font-mono">{fmt(taxa)}</span>
         </div>
-        <div className="flex justify-between font-bold text-base border-t pt-2 mt-2">
+        <div
+          className="flex justify-between font-bold text-base border-t pt-2 mt-2"
+          style={{ borderColor: 'rgba(109,32,119,0.10)' }}
+        >
           <span>Total</span>
-          <span className="text-photo-primary">{fmt(total)}</span>
+          <span className="font-display text-lg" style={{ color: 'var(--photo-primary)' }}>{fmt(total)}</span>
         </div>
       </div>
+
       <button
         onClick={() => navigate('/checkout')}
-        className="btn btn-primary w-full mt-3"
+        className="btn btn-primary w-full mt-4"
       >
         Proceder para Pagamento →
       </button>
