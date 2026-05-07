@@ -22,9 +22,11 @@ module.exports = async function handler(req, res, next) {
     const linkAmostra = await uploadFile(watermarked, mimeType, params.filename, params.destFolderId);
     res.json({ linkAmostra });
   } catch (err) {
+    console.error('[watermark] Error:', err.message, err.stack);
     if (err.name === 'ZodError') {
       return res.status(400).json({ error: 'Dados inválidos', details: err.errors });
     }
-    next(err);
+    if (typeof next === 'function') return next(err);
+    return res.status(500).json({ error: err.message || 'Erro interno ao processar watermark' });
   }
 };
