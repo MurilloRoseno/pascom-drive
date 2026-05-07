@@ -2,32 +2,45 @@ import PropTypes from 'prop-types';
 
 export default function FilterEvent({ eventos, eventoSelecionado, onSelect }) {
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
+    <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
       <button
         onClick={() => onSelect(null)}
-        className={`badge cursor-pointer border transition-colors duration-base ${
-          !eventoSelecionado ? 'badge--roxo' : ''
-        }`}
-        style={!eventoSelecionado ? {} : {
-          borderColor: 'rgba(109,32,119,0.3)',
-          color: 'var(--photo-primary)',
-          background: 'transparent',
-        }}
+        className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-medium transition-colors"
+        style={
+          !eventoSelecionado
+            ? {
+                background: 'var(--photo-primary)',
+                color: '#fff',
+                border: '1.5px solid var(--photo-primary)',
+              }
+            : {
+                background: 'transparent',
+                color: 'var(--photo-primary)',
+                border: '1.5px solid rgba(109,32,119,0.35)',
+              }
+        }
       >
         Todos
       </button>
+
       {eventos.map(evento => (
         <button
           key={evento}
           onClick={() => onSelect(evento)}
-          className={`badge cursor-pointer border transition-colors duration-base ${
-            eventoSelecionado === evento ? 'badge--roxo' : ''
-          }`}
-          style={eventoSelecionado === evento ? {} : {
-            borderColor: 'rgba(109,32,119,0.3)',
-            color: 'var(--photo-primary)',
-            background: 'transparent',
-          }}
+          className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap"
+          style={
+            eventoSelecionado === evento
+              ? {
+                  background: 'var(--photo-primary)',
+                  color: '#fff',
+                  border: '1.5px solid var(--photo-primary)',
+                }
+              : {
+                  background: 'transparent',
+                  color: 'var(--photo-primary)',
+                  border: '1.5px solid rgba(109,32,119,0.35)',
+                }
+          }
         >
           {evento}
         </button>
