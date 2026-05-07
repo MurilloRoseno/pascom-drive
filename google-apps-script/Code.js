@@ -10,7 +10,7 @@ function criarTriggers() {
     ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('processarFotosNovas').timeBased().everyMinutes(5).create();
-  ScriptApp.newTrigger('entregarFotos').timeBased().everyMinutes(2).create();
+  ScriptApp.newTrigger('entregarFotos').timeBased().everyMinutes(1).create();
   Logger.log('Triggers criados com sucesso.');
 }
 
@@ -26,7 +26,7 @@ function processarFotosNovas() {
 }
 
 /**
- * Called every 2 minutes.
+ * Called every 1 minute.
  * Finds rows with "Pagamento Confirmado" and generates wa.me delivery links.
  */
 function entregarFotos() {
