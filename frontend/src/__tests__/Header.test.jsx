@@ -26,3 +26,9 @@ test('mostra ícone de carrinho', () => {
   wrap(<Header />);
   expect(screen.getByLabelText(/carrinho/i)).toBeInTheDocument();
 });
+
+test('botão do carrinho está desabilitado quando vazio', () => {
+  wrap(<Header />);
+  const btn = screen.getByLabelText(/carrinho/i);
+  expect(btn).toBeDisabled();
+});

@@ -40,11 +40,13 @@ export default function Header() {
         {/* Cart button */}
         <button
           aria-label={`Carrinho, ${count} item${count !== 1 ? 's' : ''}`}
-          onClick={() => count > 0 && navigate('/checkout')}
+          onClick={() => navigate('/checkout')}
+          disabled={count === 0}
           className="relative p-2 rounded-lg transition-colors"
           style={{
             color: count > 0 ? 'var(--photo-accent)' : 'rgba(244,237,224,0.5)',
             cursor: count > 0 ? 'pointer' : 'default',
+            opacity: count === 0 ? 0.4 : 1,
           }}
         >
           <svg
