@@ -1,5 +1,11 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 
+function driveUrlToThumbnail(sharingUrl) {
+  const match = sharingUrl && sharingUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!match) return sharingUrl;
+  return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800`;
+}
+
 let _sheet = null;
 
 async function getSheet() {
@@ -22,7 +28,7 @@ async function listarFotos() {
     .map(r => ({
       id: r.ID,
       event: r.Evento,
-      url: r.Link_Amostra,
+      url: driveUrlToThumbnail(r.Link_Amostra),
       price: parseFloat(r.Preco) || 25.00,
     }));
 }
@@ -53,4 +59,4 @@ async function atualizarStatus(fotoId, novoStatus) {
   await row.save();
 }
 
-module.exports = { listarFotos, registrarPedido, atualizarStatus };
+module.exports = { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail };
