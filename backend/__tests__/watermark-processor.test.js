@@ -60,14 +60,11 @@ describe('compositeWatermark', () => {
   it('output varies between calls (random rotation)', async () => {
     // Two calls with the same input should produce different buffers due to random angle
     const result1 = await compositeWatermark(sampleJpeg, 'color');
-    const result2 = await compositeWatermark(sampleJpeg, 'color');
-    // They should differ (random rotation means different pixels)
-    // Very rarely both might pick the same angle — run a few times to be safe
-    let differ = !result1.equals(result2);
-    if (!differ) {
-      const result3 = await compositeWatermark(sampleJpeg, 'color');
-      differ = !result1.equals(result3);
+    let result2 = await compositeWatermark(sampleJpeg, 'color');
+    // try up to 3 extra times if we randomly got the same angle
+    for (let i = 0; i < 3 && result1.equals(result2); i++) {
+      result2 = await compositeWatermark(sampleJpeg, 'color');
     }
-    expect(differ).toBe(true);
+    expect(result1.equals(result2)).toBe(false);
   });
 });
