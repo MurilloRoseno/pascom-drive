@@ -15,7 +15,7 @@ jest.mock('google-spreadsheet', () => {
   return { GoogleSpreadsheet: jest.fn(() => mockDoc) };
 });
 
-const { listarFotos, registrarPedido, atualizarStatus } = require('../lib/google-sheets');
+const { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail } = require('../lib/google-sheets');
 
 describe('listarFotos', () => {
   it('retorna array de fotos com campos esperados', async () => {
@@ -38,6 +38,22 @@ describe('registrarPedido', () => {
     await expect(
       registrarPedido({ fotoIds: ['FOTO_001'], whatsapp: '11999999999', totalPago: 25.75, idMercadoPago: 'MP_123' })
     ).resolves.not.toThrow();
+  });
+});
+
+describe('driveUrlToThumbnail', () => {
+  it('converte URL de compartilhamento para URL de thumbnail', () => {
+    const input = 'https://drive.google.com/file/d/abc123XYZ/view?usp=sharing';
+    expect(driveUrlToThumbnail(input)).toBe('https://drive.google.com/thumbnail?id=abc123XYZ&sz=w800');
+  });
+
+  it('retorna original se URL não tiver padrão /d/{id}', () => {
+    expect(driveUrlToThumbnail('https://exemplo.com/foto.jpg')).toBe('https://exemplo.com/foto.jpg');
+  });
+
+  it('retorna null/undefined inalterado', () => {
+    expect(driveUrlToThumbnail(null)).toBeNull();
+    expect(driveUrlToThumbnail(undefined)).toBeUndefined();
   });
 });
 

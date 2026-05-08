@@ -1,8 +1,8 @@
 // api.js — centralized fetch service for Pascom Drive backend.
-// Base URL: VITE_API_BASE_URL env var (set to http://localhost:3001 for dev).
-// In tests, set process.env.VITE_API_BASE_URL before importing this module.
+// Base URL: VITE_API_BASE_URL env var (Vite exposes via import.meta.env).
+// Empty string means same-origin (works on Vercel where frontend + API share domain).
 
-const BASE = process.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 async function _request(url, options) {
   const res = options ? await fetch(url, options) : await fetch(url);
