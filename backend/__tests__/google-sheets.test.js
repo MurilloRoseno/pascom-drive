@@ -1,19 +1,36 @@
 jest.mock('google-spreadsheet', () => {
-  const mockRows = [
-    { ID: 'FOTO_001', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/a', Status: 'Processada', Preco: '25', save: jest.fn().mockResolvedValue(undefined) },
-    { ID: 'FOTO_002', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/b', Status: 'Processada', Preco: '25', save: jest.fn().mockResolvedValue(undefined) },
-  ];
-  const mockSheet = {
-    getRows: jest.fn().mockResolvedValue(mockRows),
-    addRow: jest.fn().mockResolvedValue(undefined),
-  };
-  const mockDoc = {
-    useServiceAccountAuth: jest.fn().mockResolvedValue(undefined),
-    loadInfo: jest.fn().mockResolvedValue(undefined),
-    sheetsByTitle: { Fotos: mockSheet },
-  };
-  return { GoogleSpreadsheet: jest.fn(() => mockDoc) };
+  return { GoogleSpreadsheet: jest.fn() };
 });
+
+jest.mock('google-auth-library', () => {
+  return { JWT: jest.fn() };
+});
+
+function makeRow(data) {
+  return {
+    get: (k) => data[k],
+    set: jest.fn((k, v) => { data[k] = v; }),
+    save: jest.fn().mockResolvedValue(undefined),
+  };
+}
+
+const mockRows = [
+  makeRow({ ID: 'FOTO_001', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/a', Status: 'Processada', Preco: '25' }),
+  makeRow({ ID: 'FOTO_002', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/b', Status: 'Processada', Preco: '25' }),
+];
+
+const mockSheet = {
+  getRows: jest.fn().mockResolvedValue(mockRows),
+  addRow: jest.fn().mockResolvedValue(undefined),
+};
+
+const mockDoc = {
+  loadInfo: jest.fn().mockResolvedValue(undefined),
+  sheetsByTitle: { Fotos: mockSheet },
+};
+
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+GoogleSpreadsheet.mockImplementation(() => mockDoc);
 
 const { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail } = require('../lib/google-sheets');
 
