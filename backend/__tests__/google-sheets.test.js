@@ -48,6 +48,12 @@ describe('listarFotos', () => {
     const fotos = await listarFotos();
     expect(fotos.length).toBe(2);
   });
+
+  it('listarFotos nunca expõe Link_Original', async () => {
+    const fotos = await listarFotos();
+    expect(fotos[0]).not.toHaveProperty('originalUrl');
+    expect(JSON.stringify(fotos)).not.toMatch(/Link_Original/i);
+  });
 });
 
 describe('registrarPedido', () => {
