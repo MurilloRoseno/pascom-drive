@@ -51,9 +51,10 @@ describe('compositeWatermark', () => {
 
   it('output JPEG has EXIF metadata embedded', async () => {
     const result = await compositeWatermark(sampleJpeg, 'color');
-    const { exif } = await sharp(result).metadata();
-    expect(exif).toBeDefined();
-    expect(exif).not.toBeNull();
+    const meta = await sharp(result).metadata();
+    expect(meta.exif).toBeDefined();
+    // The EXIF buffer should contain our string somewhere
+    expect(meta.exif.toString()).toContain('AMOSTRA - PROIBIDA REPRODUCAO');
   });
 
   it('output varies between calls (random rotation)', async () => {

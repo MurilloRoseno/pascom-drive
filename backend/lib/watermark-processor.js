@@ -92,7 +92,7 @@ async function compositeWatermark(imageBuffer, type = 'color') {
   const spacedTile = await buildSpacedTile(tile);
 
   // 5. Apply random rotation (15°–45°) — breaks AI pattern recognition
-  const angle = 15 + Math.floor(Math.random() * 30);
+  const angle = 15 + Math.floor(Math.random() * 31);
   let rotatedTile = await sharp(spacedTile)
     .rotate(angle, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
