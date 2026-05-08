@@ -1,0 +1,558 @@
+{
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\server.js": {
+    "mtime": 1778122704.8353405,
+    "hash": "51d4107c6584c89778b00f87036a4aad"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\criar-pagamento.js": {
+    "mtime": 1778088887.2364218,
+    "hash": "8ba2bb7bd54e63e8a0c9cfcc2781e5c6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\fotos.js": {
+    "mtime": 1778088882.7974193,
+    "hash": "e7bb76865b052b09f6d69f19519f5211"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\health.js": {
+    "mtime": 1778080207.4688964,
+    "hash": "5d36eb0fe44f442bbd298fb11ed2a3a0"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\index.js": {
+    "mtime": 1778119419.559474,
+    "hash": "8d6197e05271efe7855e83a69a6306cd"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\status-pagamento.js": {
+    "mtime": 1778088889.9094276,
+    "hash": "b62e61563f016c485ef3201c1e2464e8"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\watermark.js": {
+    "mtime": 1778162194.04072,
+    "hash": "df8d2d915981db54dbf0189e9eca4715"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\api\\webhook\\mercado-pago.js": {
+    "mtime": 1778089081.345086,
+    "hash": "9ce01b3e2d3e7e5d4f414e18a279f241"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\block-navigation.js": {
+    "mtime": 1778089210.3985622,
+    "hash": "13c8dd65c9b9571b0b4960aeaf3fab0a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\prettify.js": {
+    "mtime": 1778089210.402576,
+    "hash": "6051903a2f7363ee232a01bd32f60b6a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\sorter.js": {
+    "mtime": 1778089210.4005692,
+    "hash": "e2f5129270684bf835820ca4433b4abb"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\lib\\google-drive.js": {
+    "mtime": 1778160271.9823918,
+    "hash": "6698d1dcbff43f92e0fee3886d7e8d46"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\lib\\google-sheets.js": {
+    "mtime": 1778203427.291268,
+    "hash": "6f7ff2e1839f7b28b5302b88a5015581"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\lib\\mercado-pago.js": {
+    "mtime": 1778088837.0315022,
+    "hash": "b4ed0836d59c1232d41f47159ed5adad"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\lib\\validation.js": {
+    "mtime": 1778088707.4219923,
+    "hash": "b7d122dd2d4a88ca670cb14d516a1cc3"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\lib\\watermark-processor.js": {
+    "mtime": 1778176489.583812,
+    "hash": "1850e6c98900c9c86a099895bfeb79b2"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\middleware\\error-handler.js": {
+    "mtime": 1778088738.9604988,
+    "hash": "bf683b59f754390fc166df6915f67df1"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\middleware\\rate-limit.js": {
+    "mtime": 1778088737.8062756,
+    "hash": "e99d21dce7712026e5a49ff3f7540f1b"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\criar-pagamento.test.js": {
+    "mtime": 1778089076.3391924,
+    "hash": "0e82ad614ca95e11ef50804cf54691cb"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\fotos.test.js": {
+    "mtime": 1778089074.9276457,
+    "hash": "a81f03f165308a22827bafbfed48b90b"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\google-drive.test.js": {
+    "mtime": 1778160308.387843,
+    "hash": "15f9a874ce0fc8a6fbb3e9e911646e67"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\google-sheets.test.js": {
+    "mtime": 1778203435.139827,
+    "hash": "e756366cbc7201d110ecb9712ed86065"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\mercado-pago.test.js": {
+    "mtime": 1778088819.7459657,
+    "hash": "05dd75bf82c5db2f67887a55f0a99027"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\status-pagamento.test.js": {
+    "mtime": 1778089077.4333496,
+    "hash": "162c992b8ee2d5b9890b3a3fd0677308"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\watermark-api.test.js": {
+    "mtime": 1778161128.976244,
+    "hash": "bfbb8af59a08054c5cd2260d158c0773"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\watermark-processor.test.js": {
+    "mtime": 1778122213.0086231,
+    "hash": "3d859708d837e474e037b87adfb92e00"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\__tests__\\webhook.test.js": {
+    "mtime": 1778089148.117077,
+    "hash": "8b6accf3f7efdaddfae5d80750f7a9ed"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\jest.config.js": {
+    "mtime": 1778080104.8067632,
+    "hash": "8654132cd8ac5fb6839f0ded5abc27f6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\postcss.config.js": {
+    "mtime": 1778080110.4253013,
+    "hash": "c735540bb63936a123bc867d950c9f69"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\tailwind.config.js": {
+    "mtime": 1778187332.6233287,
+    "hash": "a64b0d8e8c8c06b0ed1ab61953617a97"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\vite.config.js": {
+    "mtime": 1778080073.65404,
+    "hash": "0e57bdcb307fbd3c184aa66c515cdc1f"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\App.jsx": {
+    "mtime": 1778189315.2979202,
+    "hash": "d4ab1aadd01aab2f68830d545413e9fd"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\main.jsx": {
+    "mtime": 1778080125.0708277,
+    "hash": "253d4db42a0b217629b29497cec5becb"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\setupTests.js": {
+    "mtime": 1778080112.6755967,
+    "hash": "00e47f7b9836e8f731101981fa2bb2de"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\CartSummary.jsx": {
+    "mtime": 1778189195.7074919,
+    "hash": "c938994e400aac0d654fade365204d05"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\FilterEvent.jsx": {
+    "mtime": 1778189405.26941,
+    "hash": "80594c96bf75fef248e8038a43d9eca9"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\Gallery.jsx": {
+    "mtime": 1778189394.588378,
+    "hash": "1dea689b1c7aaacb42bdb09270d14192"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\PhotoCard.jsx": {
+    "mtime": 1778189478.1822884,
+    "hash": "3d524f5d295c27bd327e6d030b963ba6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\PixDisplay.jsx": {
+    "mtime": 1778187332.6155689,
+    "hash": "5a6ff6f97d8419b14882c02b44fcfe38"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\common\\icons.jsx": {
+    "mtime": 1777995827.5649943,
+    "hash": "5acb7c380a4e06135f6e318288b87a09"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\layout\\Footer.jsx": {
+    "mtime": 1778189657.8828368,
+    "hash": "cf4277fb203f01278094f5d98c309b86"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\components\\layout\\Header.jsx": {
+    "mtime": 1778188318.197908,
+    "hash": "ca2a430e0e10aa9c54c95db4be608580"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\context\\CarrinhoContext.jsx": {
+    "mtime": 1778107963.7952354,
+    "hash": "5e03af4b21331a5a8aecef50c121a9b4"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\hooks\\useCarrinho.js": {
+    "mtime": 1778082029.5466566,
+    "hash": "2c0158139b1caed70d25a7818164eacd"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\hooks\\useFotos.js": {
+    "mtime": 1778107963.7972424,
+    "hash": "cb9c1f99ace619dad69d63a80930a5c9"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\hooks\\useMediaQuery.js": {
+    "mtime": 1778082042.9488766,
+    "hash": "5b862a3a2fc9e9bdf0ed17cfc99bc2e7"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\hooks\\usePollingStatus.js": {
+    "mtime": 1778107963.7972424,
+    "hash": "6bf61667e38bc2c53716cc88dce106f2"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\lib\\api.js": {
+    "mtime": 1778191493.8857331,
+    "hash": "0b94281b77016aead0fbd73d1539f827"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\lib\\calculations.js": {
+    "mtime": 1778082001.4600296,
+    "hash": "c8996ecc42b42cdaf3fd00340751fe6f"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\lib\\validation.js": {
+    "mtime": 1778082005.310254,
+    "hash": "3b99780eea589c63cd124029ceb700d0"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\pages\\Checkout.jsx": {
+    "mtime": 1778189589.17922,
+    "hash": "4a36bd9831d97d774a61c049ccef334c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\pages\\Gallery.jsx": {
+    "mtime": 1778189316.7712033,
+    "hash": "a6aa6815b27ebddd46c30b7e95e3b681"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__mocks__\\fileMock.js": {
+    "mtime": 1778080115.2063136,
+    "hash": "e5c83a03d3d84352923fb24c601b4410"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\api.test.js": {
+    "mtime": 1778107963.791218,
+    "hash": "7498fb77c470593d1ffbd7fcca20f4cc"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\calculations.test.js": {
+    "mtime": 1778082148.2991438,
+    "hash": "c96fb91ec87ea3a880ec5cfd14fc651d"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\CarrinhoContext.test.jsx": {
+    "mtime": 1778086220.8883646,
+    "hash": "38fa582c7cc52ba43312b89305a5a7be"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\CartSummary.test.jsx": {
+    "mtime": 1778189170.9825916,
+    "hash": "42a6703a51075a4179dcbbb1c44f934f"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\Checkout.test.jsx": {
+    "mtime": 1778107963.791218,
+    "hash": "86f8e95bb476536acdd456ae0ca63fbf"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\Header.test.jsx": {
+    "mtime": 1778188318.7169113,
+    "hash": "2cc482ecf9f476c69903a8b0f0df87ef"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\useFotos.test.js": {
+    "mtime": 1778107963.791218,
+    "hash": "df4d5e25dea24e3905cfe15a4cd798ab"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\usePollingStatus.test.js": {
+    "mtime": 1778107963.791218,
+    "hash": "2eba225ccc2bcbf1927f7088c9adde1c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\validation.test.js": {
+    "mtime": 1778086209.2346234,
+    "hash": "de75672e01338f3bf70bf48f1a7a2748"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\Code.js": {
+    "mtime": 1778109614.616997,
+    "hash": "6ee95598985ba30c2a3f44bfce5d25f3"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\Drive.js": {
+    "mtime": 1778090236.535851,
+    "hash": "7cfb26d981b0c120b932a3567f0e9bfa"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\jest-setup.js": {
+    "mtime": 1778090177.8949327,
+    "hash": "28076b36eebd94e7f7dfaa82c94a3fde"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\jest.config.js": {
+    "mtime": 1778107848.5985,
+    "hash": "43a6ae4544b8b5792cb0d7bd036a8492"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\Sheet.js": {
+    "mtime": 1778090276.8255532,
+    "hash": "b96d010bb8e32ec1f116c8bb2e3964be"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\Watermark.js": {
+    "mtime": 1778161156.0934577,
+    "hash": "1744daa24779b908d89ce988fc598507"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\WhatsApp.js": {
+    "mtime": 1778090396.394989,
+    "hash": "9c1e9957cb0ab049a404f85d376694f4"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\block-navigation.js": {
+    "mtime": 1778107909.045236,
+    "hash": "13c8dd65c9b9571b0b4960aeaf3fab0a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\prettify.js": {
+    "mtime": 1778107909.0492492,
+    "hash": "6051903a2f7363ee232a01bd32f60b6a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\sorter.js": {
+    "mtime": 1778107909.047243,
+    "hash": "e2f5129270684bf835820ca4433b4abb"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\__tests__\\Code.test.js": {
+    "mtime": 1778090681.1256108,
+    "hash": "df42ed4d57c1093e0893a2433ab7fb61"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\__tests__\\Drive.test.js": {
+    "mtime": 1778090217.8749762,
+    "hash": "c654eae012532283675ccec51921eedc"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\__tests__\\Sheet.test.js": {
+    "mtime": 1778090265.157784,
+    "hash": "28f3b97fa558abae31b1fbbc1f8b68b5"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\__tests__\\Watermark.test.js": {
+    "mtime": 1778161179.6805706,
+    "hash": "4df8ff3ad0f749679d0e79c9afc3363c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\__tests__\\WhatsApp.test.js": {
+    "mtime": 1778090536.335711,
+    "hash": "ab2c5beeebe8d26f7c7009f806c347e6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\ARCHITECTURE_SINGLE_PERSON.md": {
+    "mtime": 1777997531.3167243,
+    "hash": "895e830efeccd09932e41bc533b187f6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\arquitetura.md": {
+    "mtime": 1777996094.894774,
+    "hash": "1a2c1376daf1f0b1288d22782e571417"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\CLAUDE.md": {
+    "mtime": 1778036290.8825758,
+    "hash": "6212c787557501bf403ef09dacda616e"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\CODE_STANDARDS.md": {
+    "mtime": 1777997687.3226302,
+    "hash": "1206b36089bbee84b43085b5ebdca59a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\DEFINITION_OF_DONE.md": {
+    "mtime": 1777997720.9522398,
+    "hash": "5daa0a58343c9068596dff855e19a32c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\DESIGN_SYSTEM_INTEGRATION.md": {
+    "mtime": 1778077392.8006892,
+    "hash": "4af3b55ecf4a8236b1f45c2903bc3b1f"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\INCIDENT_RESPONSE.md": {
+    "mtime": 1777997762.5366554,
+    "hash": "a9741dcff5a8a957021748522011b967"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\INDEX.md": {
+    "mtime": 1777997824.5411532,
+    "hash": "649cc2809e1fa343c245d7a00090c937"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\INSTALL_ME.md": {
+    "mtime": 1777997500.7778146,
+    "hash": "c2f360b9736605ad5a6f3c9e61bbb6e8"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\LEARNING_PATH.md": {
+    "mtime": 1777997621.2438264,
+    "hash": "5a46996d5a64bf4d486e9ea62c880410"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\MVP_FINAL.md": {
+    "mtime": 1777997484.638146,
+    "hash": "5bd842fb45fded76d26d16be143b5f82"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\planejamentoAdicional.md": {
+    "mtime": 1777996445.1088743,
+    "hash": "4449e329b6c24ef4a69c0fb3b9f86ea4"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\projeto.md": {
+    "mtime": 1777995368.1835613,
+    "hash": "baba2db2096a94ccdf3b4c679715412b"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\ROADMAP_SOLO.md": {
+    "mtime": 1777997584.2571838,
+    "hash": "d3f6ddb109b6539dad2a2dfdc23d483c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\seguran\u00e7a.md": {
+    "mtime": 1777995372.5080674,
+    "hash": "4cf3266d28ac4babb56fcee1fbe26134"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\SETUP_INSTRUCTIONS.md": {
+    "mtime": 1777997652.63929,
+    "hash": "eae0695a47a0f93260747a06279d11c7"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\tdd.md": {
+    "mtime": 1777995255.3272436,
+    "hash": "deb456fa0cefce718d9ae9ee9550adfd"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\VERCEL_SETUP.md": {
+    "mtime": 1778100381.969783,
+    "hash": "63d05ded01867913ff9a464e5f1a4114"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\index.html": {
+    "mtime": 1778089210.4065895,
+    "hash": "210982882c78cddd1b99208b7a97c36a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\api\\criar-pagamento.js.html": {
+    "mtime": 1778089210.410604,
+    "hash": "c144be58d42e062e8c85e20e1893c231"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\api\\fotos.js.html": {
+    "mtime": 1778089210.41261,
+    "hash": "6355f14f37569b8f7904b39d3dc3378c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\api\\index.html": {
+    "mtime": 1778089210.4065895,
+    "hash": "a63280b78f34cc1eff95dad84eb873c5"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\api\\status-pagamento.js.html": {
+    "mtime": 1778089210.414616,
+    "hash": "9ec40e898e7cffedabbeed8e47ed0b7b"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\api\\webhook\\index.html": {
+    "mtime": 1778089210.414616,
+    "hash": "cbbfb1b8ba282478d06d1a9b1d92ec57"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\api\\webhook\\mercado-pago.js.html": {
+    "mtime": 1778089210.4166229,
+    "hash": "7c27e0536baa473e739421aa12973edf"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\lib\\google-sheets.js.html": {
+    "mtime": 1778089210.4186304,
+    "hash": "66d691f34c3b837cb04e823269c8cf9b"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\lib\\index.html": {
+    "mtime": 1778089210.4166229,
+    "hash": "f84e5c25a0917d1a07e9e8f7678b395d"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\lib\\mercado-pago.js.html": {
+    "mtime": 1778089210.420637,
+    "hash": "402b08fa069c528276b9ab5f1ff70699"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\lib\\validation.js.html": {
+    "mtime": 1778089210.4226434,
+    "hash": "857fa5def3eb44bbd6e8ed58e3e0e3db"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\middleware\\error-handler.js.html": {
+    "mtime": 1778089210.4243934,
+    "hash": "906c249a22c5449b50619dc2f1d6d964"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\middleware\\index.html": {
+    "mtime": 1778089210.4226434,
+    "hash": "75c12c6684658b4fbffb0289079b4ffe"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\superpowers\\plans\\2026-05-06-phase4-frontend-backend-integration.md": {
+    "mtime": 1778102363.5655282,
+    "hash": "42a24e87648d675809d38ba514015ad7"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\superpowers\\plans\\2026-05-06-watermark-real-implementation.md": {
+    "mtime": 1778121426.4749107,
+    "hash": "539e191c245ca81874b2dfd248040f84"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\superpowers\\plans\\2026-05-07-frontend-redesign-contextual.md": {
+    "mtime": 1778188061.3500907,
+    "hash": "3419e2cc68b98ddcb13852fdf64551b5"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\DESIGN_SYSTEM.md": {
+    "mtime": 1778077368.2142768,
+    "hash": "da6b20dcbeb7192bd268567cb0cdedce"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\index.html": {
+    "mtime": 1778080082.6234956,
+    "hash": "ffad3a4e000ea71f0f6bdaf7906c7d50"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\SETUP.md": {
+    "mtime": 1778180704.5023525,
+    "hash": "c690580f3605d9a3017ef1e7a25a8c35"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\Code.js.html": {
+    "mtime": 1778107909.0550084,
+    "hash": "6c5a021acb1875d5e0dfa7d13f14ee38"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\Drive.js.html": {
+    "mtime": 1778107909.0550084,
+    "hash": "08fe66623dc770f81f9191746d7766e2"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\index.html": {
+    "mtime": 1778107909.050996,
+    "hash": "64f036c4d24f80ebd957e317a20b70c4"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\Sheet.js.html": {
+    "mtime": 1778107909.057014,
+    "hash": "3ff8a63111b59183bbcdcd8b669ad251"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\Watermark.js.html": {
+    "mtime": 1778107909.0590198,
+    "hash": "ed5b405723dba939b99e5da8df37b9b9"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\WhatsApp.js.html": {
+    "mtime": 1778107909.0590198,
+    "hash": "e284fd8b0de2e73021c4d3c07301f33f"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\assets\\watermark-bw.png": {
+    "mtime": 1778012948.3430614,
+    "hash": "1aec0eeb007321112d1a5e24770e966d"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\assets\\watermark-color.png": {
+    "mtime": 1778012946.8767984,
+    "hash": "ca7b917e6f111060604e29e0c35146df"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\favicon.png": {
+    "mtime": 1778089210.3985622,
+    "hash": "8c814a46f24208d0bc459bb2cf8b7b88"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\backend\\coverage\\lcov-report\\sort-arrow-sprite.png": {
+    "mtime": 1778089210.4005692,
+    "hash": "fd08a5625d21e34b1d6d9c026f2728a9"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\church-background.png": {
+    "mtime": 1777995827.308017,
+    "hash": "ec2917067de8ad766d2675bdc182ce75"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\favicon.svg": {
+    "mtime": 1777995827.3146596,
+    "hash": "28e5d30ff20eb3b1e5dcfe9e86c79288"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\icons.svg": {
+    "mtime": 1777995827.3200562,
+    "hash": "abb1eb00cf2dccfac3aab634846b8ca1"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\igreja.jpg": {
+    "mtime": 1777995827.328265,
+    "hash": "a67bef88e79c3690e54c814ecbb1938b"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\logo-footer.png": {
+    "mtime": 1777995827.328265,
+    "hash": "2adcf5938ed3ec508360f10d3b18b4e6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\logo-full.png": {
+    "mtime": 1777995827.343115,
+    "hash": "2adcf5938ed3ec508360f10d3b18b4e6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\logo-header.png": {
+    "mtime": 1777995827.343115,
+    "hash": "2adcf5938ed3ec508360f10d3b18b4e6"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\logo-white.png": {
+    "mtime": 1777995827.3556385,
+    "hash": "b568caa32cf7d9249db40f0f517bd4a5"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\ornament-corner.svg": {
+    "mtime": 1777995827.363665,
+    "hash": "cb22b0dceac48f1d88a1cbebc3e8a955"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\ornament-divider.svg": {
+    "mtime": 1777995827.3696835,
+    "hash": "928dc35e5cd99296e6e74be17799a04a"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\public\\assets\\padre.png": {
+    "mtime": 1777995827.3833108,
+    "hash": "84404069108cc64b1adef436a688a18c"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\favicon.png": {
+    "mtime": 1778107909.045236,
+    "hash": "8c814a46f24208d0bc459bb2cf8b7b88"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\google-apps-script\\coverage\\lcov-report\\sort-arrow-sprite.png": {
+    "mtime": 1778107909.047243,
+    "hash": "fd08a5625d21e34b1d6d9c026f2728a9"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\marca-dagua\\MARCA D'AGUA COLORIDA.png": {
+    "mtime": 1778012946.8767984,
+    "hash": "ca7b917e6f111060604e29e0c35146df"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\marca-dagua\\MARCA D'AGUA PRETO E BRANCO.png": {
+    "mtime": 1778012948.3430614,
+    "hash": "1aec0eeb007321112d1a5e24770e966d"
+  }
+}

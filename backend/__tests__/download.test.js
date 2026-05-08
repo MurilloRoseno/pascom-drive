@@ -58,4 +58,13 @@ describe('GET /api/download', () => {
     const res = await request(app).get(`/api/download?token=${token}`);
     expect(res.status).toBe(410);
   });
+
+  it('returns 500 if DOWNLOAD_JWT_SECRET is not configured', async () => {
+    const original = process.env.DOWNLOAD_JWT_SECRET;
+    delete process.env.DOWNLOAD_JWT_SECRET;
+    const res = await request(app).get('/api/download?token=validtokenplaceholder');
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('Configuração de servidor inválida');
+    process.env.DOWNLOAD_JWT_SECRET = original;
+  });
 });

@@ -21,7 +21,10 @@ function verifyToken(token, secret) {
   if (parts.length !== 3) throw new Error('Token inválido');
   const [header, body, sig] = parts;
   const expected = crypto.createHmac('sha256', secret).update(`${header}.${body}`).digest('base64url');
-  if (!crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) throw new Error('Assinatura inválida');
+  if (sig.length !== expected.length ||
+      !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+    throw new Error('Assinatura inválida');
+  }
   return JSON.parse(base64urlDecode(body));
 }
 

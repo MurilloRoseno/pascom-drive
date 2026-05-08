@@ -20,6 +20,9 @@ module.exports = async function handler(req, res, next) {
   try {
     const params = schema.parse(req.query);
     const secret = process.env.DOWNLOAD_JWT_SECRET;
+    if (!secret) {
+      return sendJson(res, 500, { error: 'Configuração de servidor inválida' });
+    }
 
     let payload;
     try {
