@@ -61,4 +61,10 @@ async function atualizarStatus(fotoId, novoStatus) {
   await row.save();
 }
 
-module.exports = { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail };
+async function buscarPedido(transactionId) {
+  const sheet = await getSheet();
+  const rows = await sheet.getRows();
+  return rows.find(r => r.get('ID_Mercado_Pago') === transactionId) || null;
+}
+
+module.exports = { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail, buscarPedido };

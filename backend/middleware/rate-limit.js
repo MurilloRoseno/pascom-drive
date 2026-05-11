@@ -16,4 +16,28 @@ const pagamento = rateLimit({
   message: { error: 'Limite de tentativas de pagamento atingido. Aguarde 1 minuto.' },
 });
 
-module.exports = { geral, pagamento };
+const fotos = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas requisições à galeria. Tente novamente em 1 minuto.' },
+});
+
+const statusConsulta = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas consultas de status. Aguarde 1 minuto.' },
+});
+
+const watermark = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Limite de processamento de imagens atingido. Aguarde 1 minuto.' },
+});
+
+module.exports = { geral, pagamento, fotos, statusConsulta, watermark };

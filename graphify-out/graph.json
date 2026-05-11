@@ -1,0 +1,3983 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "server.js",
+      "file_type": "code",
+      "source_file": "backend/server.js",
+      "source_location": "L1",
+      "id": "backend_server_js",
+      "community": 24,
+      "norm_label": "server.js"
+    },
+    {
+      "label": "criar-pagamento.js",
+      "file_type": "code",
+      "source_file": "backend/api/criar-pagamento.js",
+      "source_location": "L1",
+      "id": "backend_api_criar_pagamento_js",
+      "community": 25,
+      "norm_label": "criar-pagamento.js"
+    },
+    {
+      "label": "fotos.js",
+      "file_type": "code",
+      "source_file": "backend/api/fotos.js",
+      "source_location": "L1",
+      "id": "backend_api_fotos_js",
+      "community": 26,
+      "norm_label": "fotos.js"
+    },
+    {
+      "label": "health.js",
+      "file_type": "code",
+      "source_file": "backend/api/health.js",
+      "source_location": "L1",
+      "id": "backend_api_health_js",
+      "community": 27,
+      "norm_label": "health.js"
+    },
+    {
+      "label": "index.js",
+      "file_type": "code",
+      "source_file": "backend/api/index.js",
+      "source_location": "L1",
+      "id": "backend_api_index_js",
+      "community": 28,
+      "norm_label": "index.js"
+    },
+    {
+      "label": "status-pagamento.js",
+      "file_type": "code",
+      "source_file": "backend/api/status-pagamento.js",
+      "source_location": "L1",
+      "id": "backend_api_status_pagamento_js",
+      "community": 29,
+      "norm_label": "status-pagamento.js"
+    },
+    {
+      "label": "watermark.js",
+      "file_type": "code",
+      "source_file": "backend/api/watermark.js",
+      "source_location": "L1",
+      "id": "backend_api_watermark_js",
+      "community": 16,
+      "norm_label": "watermark.js"
+    },
+    {
+      "label": "sendJson()",
+      "file_type": "code",
+      "source_file": "backend/api/watermark.js",
+      "source_location": "L18",
+      "id": "api_watermark_sendjson",
+      "community": 16,
+      "norm_label": "sendjson()"
+    },
+    {
+      "label": "mercado-pago.js",
+      "file_type": "code",
+      "source_file": "backend/api/webhook/mercado-pago.js",
+      "source_location": "L1",
+      "id": "backend_api_webhook_mercado_pago_js",
+      "community": 30,
+      "norm_label": "mercado-pago.js"
+    },
+    {
+      "label": "block-navigation.js",
+      "file_type": "code",
+      "source_file": "backend/coverage/lcov-report/block-navigation.js",
+      "source_location": "L1",
+      "id": "backend_coverage_lcov_report_block_navigation_js",
+      "community": 7,
+      "norm_label": "block-navigation.js"
+    },
+    {
+      "label": "toggleClass()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L24",
+      "id": "lcov_report_block_navigation_toggleclass",
+      "community": 7,
+      "norm_label": "toggleclass()"
+    },
+    {
+      "label": "makeCurrent()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L31",
+      "id": "lcov_report_block_navigation_makecurrent",
+      "community": 7,
+      "norm_label": "makecurrent()"
+    },
+    {
+      "label": "goToPrevious()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L41",
+      "id": "lcov_report_block_navigation_gotoprevious",
+      "community": 7,
+      "norm_label": "gotoprevious()"
+    },
+    {
+      "label": "goToNext()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L52",
+      "id": "lcov_report_block_navigation_gotonext",
+      "community": 7,
+      "norm_label": "gotonext()"
+    },
+    {
+      "label": "prettify.js",
+      "file_type": "code",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L1",
+      "id": "backend_coverage_lcov_report_prettify_js",
+      "community": 3,
+      "norm_label": "prettify.js"
+    },
+    {
+      "label": "k()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_k",
+      "community": 3,
+      "norm_label": "k()"
+    },
+    {
+      "label": "a()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_a",
+      "community": 3,
+      "norm_label": "a()"
+    },
+    {
+      "label": "B()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_b",
+      "community": 3,
+      "norm_label": "b()"
+    },
+    {
+      "label": "o()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_o",
+      "community": 3,
+      "norm_label": "o()"
+    },
+    {
+      "label": "g()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_g",
+      "community": 3,
+      "norm_label": "g()"
+    },
+    {
+      "label": "i()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_i",
+      "community": 3,
+      "norm_label": "i()"
+    },
+    {
+      "label": "Q()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_q",
+      "community": 3,
+      "norm_label": "q()"
+    },
+    {
+      "label": "D()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_d",
+      "community": 3,
+      "norm_label": "d()"
+    },
+    {
+      "label": "c()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_c",
+      "community": 3,
+      "norm_label": "c()"
+    },
+    {
+      "label": "y()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "id": "lcov_report_prettify_y",
+      "community": 3,
+      "norm_label": "y()"
+    },
+    {
+      "label": "sorter.js",
+      "file_type": "code",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L1",
+      "id": "backend_coverage_lcov_report_sorter_js",
+      "community": 1,
+      "norm_label": "sorter.js"
+    },
+    {
+      "label": "getTable()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L11",
+      "id": "lcov_report_sorter_gettable",
+      "community": 1,
+      "norm_label": "gettable()"
+    },
+    {
+      "label": "getTableHeader()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L15",
+      "id": "lcov_report_sorter_gettableheader",
+      "community": 1,
+      "norm_label": "gettableheader()"
+    },
+    {
+      "label": "getTableBody()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L19",
+      "id": "lcov_report_sorter_gettablebody",
+      "community": 1,
+      "norm_label": "gettablebody()"
+    },
+    {
+      "label": "getNthColumn()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L23",
+      "id": "lcov_report_sorter_getnthcolumn",
+      "community": 1,
+      "norm_label": "getnthcolumn()"
+    },
+    {
+      "label": "onFilterInput()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L27",
+      "id": "lcov_report_sorter_onfilterinput",
+      "community": 1,
+      "norm_label": "onfilterinput()"
+    },
+    {
+      "label": "addSearchBox()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L59",
+      "id": "lcov_report_sorter_addsearchbox",
+      "community": 1,
+      "norm_label": "addsearchbox()"
+    },
+    {
+      "label": "loadColumns()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L67",
+      "id": "lcov_report_sorter_loadcolumns",
+      "community": 1,
+      "norm_label": "loadcolumns()"
+    },
+    {
+      "label": "loadRowData()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L92",
+      "id": "lcov_report_sorter_loadrowdata",
+      "community": 1,
+      "norm_label": "loadrowdata()"
+    },
+    {
+      "label": "loadData()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L111",
+      "id": "lcov_report_sorter_loaddata",
+      "community": 1,
+      "norm_label": "loaddata()"
+    },
+    {
+      "label": "sortByIndex()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L120",
+      "id": "lcov_report_sorter_sortbyindex",
+      "community": 1,
+      "norm_label": "sortbyindex()"
+    },
+    {
+      "label": "removeSortIndicators()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L151",
+      "id": "lcov_report_sorter_removesortindicators",
+      "community": 1,
+      "norm_label": "removesortindicators()"
+    },
+    {
+      "label": "addSortIndicators()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L159",
+      "id": "lcov_report_sorter_addsortindicators",
+      "community": 1,
+      "norm_label": "addsortindicators()"
+    },
+    {
+      "label": "enableUI()",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L165",
+      "id": "lcov_report_sorter_enableui",
+      "community": 1,
+      "norm_label": "enableui()"
+    },
+    {
+      "label": "google-drive.js",
+      "file_type": "code",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L1",
+      "id": "backend_lib_google_drive_js",
+      "community": 8,
+      "norm_label": "google-drive.js"
+    },
+    {
+      "label": "parsePrivateKey()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L29",
+      "id": "lib_google_drive_parseprivatekey",
+      "community": 8,
+      "norm_label": "parseprivatekey()"
+    },
+    {
+      "label": "getAccessToken()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L62",
+      "id": "lib_google_drive_getaccesstoken",
+      "community": 8,
+      "norm_label": "getaccesstoken()"
+    },
+    {
+      "label": "downloadFile()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L116",
+      "id": "lib_google_drive_downloadfile",
+      "community": 8,
+      "norm_label": "downloadfile()"
+    },
+    {
+      "label": "uploadFile()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L138",
+      "id": "lib_google_drive_uploadfile",
+      "community": 8,
+      "norm_label": "uploadfile()"
+    },
+    {
+      "label": "google-sheets.js",
+      "file_type": "code",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L1",
+      "id": "backend_lib_google_sheets_js",
+      "community": 9,
+      "norm_label": "google-sheets.js"
+    },
+    {
+      "label": "driveUrlToThumbnail()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L3",
+      "id": "lib_google_sheets_driveurltothumbnail",
+      "community": 9,
+      "norm_label": "driveurltothumbnail()"
+    },
+    {
+      "label": "getSheet()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L11",
+      "id": "lib_google_sheets_getsheet",
+      "community": 9,
+      "norm_label": "getsheet()"
+    },
+    {
+      "label": "listarFotos()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L23",
+      "id": "lib_google_sheets_listarfotos",
+      "community": 9,
+      "norm_label": "listarfotos()"
+    },
+    {
+      "label": "registrarPedido()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L36",
+      "id": "lib_google_sheets_registrarpedido",
+      "community": 9,
+      "norm_label": "registrarpedido()"
+    },
+    {
+      "label": "atualizarStatus()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L50",
+      "id": "lib_google_sheets_atualizarstatus",
+      "community": 9,
+      "norm_label": "atualizarstatus()"
+    },
+    {
+      "label": "mercado-pago.js",
+      "file_type": "code",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L1",
+      "id": "backend_lib_mercado_pago_js",
+      "community": 12,
+      "norm_label": "mercado-pago.js"
+    },
+    {
+      "label": "criarPagamentoPix()",
+      "file_type": "code",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L9",
+      "id": "lib_mercado_pago_criarpagamentopix",
+      "community": 12,
+      "norm_label": "criarpagamentopix()"
+    },
+    {
+      "label": "consultarStatus()",
+      "file_type": "code",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L27",
+      "id": "lib_mercado_pago_consultarstatus",
+      "community": 12,
+      "norm_label": "consultarstatus()"
+    },
+    {
+      "label": "validarHmac()",
+      "file_type": "code",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L32",
+      "id": "lib_mercado_pago_validarhmac",
+      "community": 12,
+      "norm_label": "validarhmac()"
+    },
+    {
+      "label": "validation.js",
+      "file_type": "code",
+      "source_file": "backend/lib/validation.js",
+      "source_location": "L1",
+      "id": "backend_lib_validation_js",
+      "community": 31,
+      "norm_label": "validation.js"
+    },
+    {
+      "label": "watermark-processor.js",
+      "file_type": "code",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L1",
+      "id": "backend_lib_watermark_processor_js",
+      "community": 13,
+      "norm_label": "watermark-processor.js"
+    },
+    {
+      "label": "buildWatermarkTile()",
+      "file_type": "code",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L19",
+      "id": "lib_watermark_processor_buildwatermarktile",
+      "community": 13,
+      "norm_label": "buildwatermarktile()"
+    },
+    {
+      "label": "buildSpacedTile()",
+      "file_type": "code",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L36",
+      "id": "lib_watermark_processor_buildspacedtile",
+      "community": 13,
+      "norm_label": "buildspacedtile()"
+    },
+    {
+      "label": "compositeWatermark()",
+      "file_type": "code",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L62",
+      "id": "lib_watermark_processor_compositewatermark",
+      "community": 13,
+      "norm_label": "compositewatermark()"
+    },
+    {
+      "label": "error-handler.js",
+      "file_type": "code",
+      "source_file": "backend/middleware/error-handler.js",
+      "source_location": "L1",
+      "id": "backend_middleware_error_handler_js",
+      "community": 17,
+      "norm_label": "error-handler.js"
+    },
+    {
+      "label": "errorHandler()",
+      "file_type": "code",
+      "source_file": "backend/middleware/error-handler.js",
+      "source_location": "L1",
+      "id": "middleware_error_handler_errorhandler",
+      "community": 17,
+      "norm_label": "errorhandler()"
+    },
+    {
+      "label": "rate-limit.js",
+      "file_type": "code",
+      "source_file": "backend/middleware/rate-limit.js",
+      "source_location": "L1",
+      "id": "backend_middleware_rate_limit_js",
+      "community": 32,
+      "norm_label": "rate-limit.js"
+    },
+    {
+      "label": "criar-pagamento.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/criar-pagamento.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_criar_pagamento_test_js",
+      "community": 33,
+      "norm_label": "criar-pagamento.test.js"
+    },
+    {
+      "label": "fotos.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/fotos.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_fotos_test_js",
+      "community": 34,
+      "norm_label": "fotos.test.js"
+    },
+    {
+      "label": "google-drive.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_google_drive_test_js",
+      "community": 11,
+      "norm_label": "google-drive.test.js"
+    },
+    {
+      "label": "tokenResponse()",
+      "file_type": "code",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L14",
+      "id": "tests_google_drive_test_tokenresponse",
+      "community": 11,
+      "norm_label": "tokenresponse()"
+    },
+    {
+      "label": "downloadResponse()",
+      "file_type": "code",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L24",
+      "id": "tests_google_drive_test_downloadresponse",
+      "community": 11,
+      "norm_label": "downloadresponse()"
+    },
+    {
+      "label": "uploadResponse()",
+      "file_type": "code",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L35",
+      "id": "tests_google_drive_test_uploadresponse",
+      "community": 11,
+      "norm_label": "uploadresponse()"
+    },
+    {
+      "label": "errorResponse()",
+      "file_type": "code",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L46",
+      "id": "tests_google_drive_test_errorresponse",
+      "community": 11,
+      "norm_label": "errorresponse()"
+    },
+    {
+      "label": "google-sheets.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/google-sheets.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_google_sheets_test_js",
+      "community": 35,
+      "norm_label": "google-sheets.test.js"
+    },
+    {
+      "label": "mercado-pago.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/mercado-pago.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_mercado_pago_test_js",
+      "community": 36,
+      "norm_label": "mercado-pago.test.js"
+    },
+    {
+      "label": "status-pagamento.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/status-pagamento.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_status_pagamento_test_js",
+      "community": 37,
+      "norm_label": "status-pagamento.test.js"
+    },
+    {
+      "label": "watermark-api.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/watermark-api.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_watermark_api_test_js",
+      "community": 38,
+      "norm_label": "watermark-api.test.js"
+    },
+    {
+      "label": "watermark-processor.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/watermark-processor.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_watermark_processor_test_js",
+      "community": 39,
+      "norm_label": "watermark-processor.test.js"
+    },
+    {
+      "label": "webhook.test.js",
+      "file_type": "code",
+      "source_file": "backend/__tests__/webhook.test.js",
+      "source_location": "L1",
+      "id": "backend_tests_webhook_test_js",
+      "community": 18,
+      "norm_label": "webhook.test.js"
+    },
+    {
+      "label": "makeSignature()",
+      "file_type": "code",
+      "source_file": "backend/__tests__/webhook.test.js",
+      "source_location": "L27",
+      "id": "tests_webhook_test_makesignature",
+      "community": 18,
+      "norm_label": "makesignature()"
+    },
+    {
+      "label": "jest.config.js",
+      "file_type": "code",
+      "source_file": "frontend/jest.config.js",
+      "source_location": "L1",
+      "id": "frontend_jest_config_js",
+      "community": 40,
+      "norm_label": "jest.config.js"
+    },
+    {
+      "label": "postcss.config.js",
+      "file_type": "code",
+      "source_file": "frontend/postcss.config.js",
+      "source_location": "L1",
+      "id": "frontend_postcss_config_js",
+      "community": 41,
+      "norm_label": "postcss.config.js"
+    },
+    {
+      "label": "tailwind.config.js",
+      "file_type": "code",
+      "source_file": "frontend/tailwind.config.js",
+      "source_location": "L1",
+      "id": "frontend_tailwind_config_js",
+      "community": 42,
+      "norm_label": "tailwind.config.js"
+    },
+    {
+      "label": "vite.config.js",
+      "file_type": "code",
+      "source_file": "frontend/vite.config.js",
+      "source_location": "L1",
+      "id": "frontend_vite_config_js",
+      "community": 43,
+      "norm_label": "vite.config.js"
+    },
+    {
+      "label": "App.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_app_jsx",
+      "community": 5,
+      "norm_label": "app.jsx"
+    },
+    {
+      "label": "App()",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L9",
+      "id": "src_app_app",
+      "community": 5,
+      "norm_label": "app()"
+    },
+    {
+      "label": "main.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/main.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_main_jsx",
+      "community": 44,
+      "norm_label": "main.jsx"
+    },
+    {
+      "label": "setupTests.js",
+      "file_type": "code",
+      "source_file": "frontend/src/setupTests.js",
+      "source_location": "L1",
+      "id": "frontend_src_setuptests_js",
+      "community": 45,
+      "norm_label": "setuptests.js"
+    },
+    {
+      "label": "CartSummary.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_cartsummary_jsx",
+      "community": 0,
+      "norm_label": "cartsummary.jsx"
+    },
+    {
+      "label": "fmt()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L4",
+      "id": "components_cartsummary_fmt",
+      "community": 0,
+      "norm_label": "fmt()"
+    },
+    {
+      "label": "CartSummary()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L6",
+      "id": "components_cartsummary_cartsummary",
+      "community": 0,
+      "norm_label": "cartsummary()"
+    },
+    {
+      "label": "FilterEvent.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/FilterEvent.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_filterevent_jsx",
+      "community": 19,
+      "norm_label": "filterevent.jsx"
+    },
+    {
+      "label": "FilterEvent()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/FilterEvent.jsx",
+      "source_location": "L3",
+      "id": "components_filterevent_filterevent",
+      "community": 19,
+      "norm_label": "filterevent()"
+    },
+    {
+      "label": "Gallery.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_gallery_jsx",
+      "community": 10,
+      "norm_label": "gallery.jsx"
+    },
+    {
+      "label": "SkeletonCard()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L6",
+      "id": "components_gallery_skeletoncard",
+      "community": 10,
+      "norm_label": "skeletoncard()"
+    },
+    {
+      "label": "Gallery()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L14",
+      "id": "components_gallery_gallery",
+      "community": 10,
+      "norm_label": "gallery()"
+    },
+    {
+      "label": "PhotoCard.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/PhotoCard.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_photocard_jsx",
+      "community": 0,
+      "norm_label": "photocard.jsx"
+    },
+    {
+      "label": "PhotoCard()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/PhotoCard.jsx",
+      "source_location": "L4",
+      "id": "components_photocard_photocard",
+      "community": 0,
+      "norm_label": "photocard()"
+    },
+    {
+      "label": "PixDisplay.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/PixDisplay.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_pixdisplay_jsx",
+      "community": 20,
+      "norm_label": "pixdisplay.jsx"
+    },
+    {
+      "label": "PixDisplay()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/PixDisplay.jsx",
+      "source_location": "L3",
+      "id": "components_pixdisplay_pixdisplay",
+      "community": 20,
+      "norm_label": "pixdisplay()"
+    },
+    {
+      "label": "icons.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_common_icons_jsx",
+      "community": 14,
+      "norm_label": "icons.jsx"
+    },
+    {
+      "label": "Eyebrow()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L214",
+      "id": "common_icons_eyebrow",
+      "community": 14,
+      "norm_label": "eyebrow()"
+    },
+    {
+      "label": "SectionTitle()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L217",
+      "id": "common_icons_sectiontitle",
+      "community": 14,
+      "norm_label": "sectiontitle()"
+    },
+    {
+      "label": "Divider()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L227",
+      "id": "common_icons_divider",
+      "community": 14,
+      "norm_label": "divider()"
+    },
+    {
+      "label": "Footer.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/Footer.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_layout_footer_jsx",
+      "community": 21,
+      "norm_label": "footer.jsx"
+    },
+    {
+      "label": "Footer()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/Footer.jsx",
+      "source_location": "L1",
+      "id": "layout_footer_footer",
+      "community": 21,
+      "norm_label": "footer()"
+    },
+    {
+      "label": "Header.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/Header.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_components_layout_header_jsx",
+      "community": 0,
+      "norm_label": "header.jsx"
+    },
+    {
+      "label": "Header()",
+      "file_type": "code",
+      "source_file": "frontend/src/components/layout/Header.jsx",
+      "source_location": "L4",
+      "id": "layout_header_header",
+      "community": 0,
+      "norm_label": "header()"
+    },
+    {
+      "label": "CarrinhoContext.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_context_carrinhocontext_jsx",
+      "community": 5,
+      "norm_label": "carrinhocontext.jsx"
+    },
+    {
+      "label": "carrinhoReducer()",
+      "file_type": "code",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L6",
+      "id": "context_carrinhocontext_carrinhoreducer",
+      "community": 5,
+      "norm_label": "carrinhoreducer()"
+    },
+    {
+      "label": "CarrinhoProvider()",
+      "file_type": "code",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L20",
+      "id": "context_carrinhocontext_carrinhoprovider",
+      "community": 5,
+      "norm_label": "carrinhoprovider()"
+    },
+    {
+      "label": "useCarrinhoContext()",
+      "file_type": "code",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L31",
+      "id": "context_carrinhocontext_usecarrinhocontext",
+      "community": 0,
+      "norm_label": "usecarrinhocontext()"
+    },
+    {
+      "label": "useCarrinho.js",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L1",
+      "id": "frontend_src_hooks_usecarrinho_js",
+      "community": 0,
+      "norm_label": "usecarrinho.js"
+    },
+    {
+      "label": "useCarrinho()",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L7",
+      "id": "hooks_usecarrinho_usecarrinho",
+      "community": 0,
+      "norm_label": "usecarrinho()"
+    },
+    {
+      "label": "useFotos.js",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/useFotos.js",
+      "source_location": "L1",
+      "id": "frontend_src_hooks_usefotos_js",
+      "community": 10,
+      "norm_label": "usefotos.js"
+    },
+    {
+      "label": "useFotos()",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/useFotos.js",
+      "source_location": "L9",
+      "id": "hooks_usefotos_usefotos",
+      "community": 10,
+      "norm_label": "usefotos()"
+    },
+    {
+      "label": "useMediaQuery.js",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/useMediaQuery.js",
+      "source_location": "L1",
+      "id": "frontend_src_hooks_usemediaquery_js",
+      "community": 22,
+      "norm_label": "usemediaquery.js"
+    },
+    {
+      "label": "useMediaQuery()",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/useMediaQuery.js",
+      "source_location": "L7",
+      "id": "hooks_usemediaquery_usemediaquery",
+      "community": 22,
+      "norm_label": "usemediaquery()"
+    },
+    {
+      "label": "usePollingStatus.js",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/usePollingStatus.js",
+      "source_location": "L1",
+      "id": "frontend_src_hooks_usepollingstatus_js",
+      "community": 4,
+      "norm_label": "usepollingstatus.js"
+    },
+    {
+      "label": "usePollingStatus()",
+      "file_type": "code",
+      "source_file": "frontend/src/hooks/usePollingStatus.js",
+      "source_location": "L9",
+      "id": "hooks_usepollingstatus_usepollingstatus",
+      "community": 4,
+      "norm_label": "usepollingstatus()"
+    },
+    {
+      "label": "api.js",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L1",
+      "id": "frontend_src_lib_api_js",
+      "community": 4,
+      "norm_label": "api.js"
+    },
+    {
+      "label": "_request()",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L7",
+      "id": "lib_api_request",
+      "community": 4,
+      "norm_label": "_request()"
+    },
+    {
+      "label": "listarFotos()",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L20",
+      "id": "lib_api_listarfotos",
+      "community": 4,
+      "norm_label": "listarfotos()"
+    },
+    {
+      "label": "criarPagamento()",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L35",
+      "id": "lib_api_criarpagamento",
+      "community": 4,
+      "norm_label": "criarpagamento()"
+    },
+    {
+      "label": "statusPagamento()",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L48",
+      "id": "lib_api_statuspagamento",
+      "community": 4,
+      "norm_label": "statuspagamento()"
+    },
+    {
+      "label": "calculations.js",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/calculations.js",
+      "source_location": "L1",
+      "id": "frontend_src_lib_calculations_js",
+      "community": 0,
+      "norm_label": "calculations.js"
+    },
+    {
+      "label": "calcularTaxa()",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/calculations.js",
+      "source_location": "L5",
+      "id": "lib_calculations_calculartaxa",
+      "community": 0,
+      "norm_label": "calculartaxa()"
+    },
+    {
+      "label": "calcularTotais()",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/calculations.js",
+      "source_location": "L13",
+      "id": "lib_calculations_calculartotais",
+      "community": 0,
+      "norm_label": "calculartotais()"
+    },
+    {
+      "label": "validation.js",
+      "file_type": "code",
+      "source_file": "frontend/src/lib/validation.js",
+      "source_location": "L1",
+      "id": "frontend_src_lib_validation_js",
+      "community": 46,
+      "norm_label": "validation.js"
+    },
+    {
+      "label": "Checkout.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_checkout_jsx",
+      "community": 4,
+      "norm_label": "checkout.jsx"
+    },
+    {
+      "label": "fmt()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L9",
+      "id": "pages_checkout_fmt",
+      "community": 4,
+      "norm_label": "fmt()"
+    },
+    {
+      "label": "CheckoutPage()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L14",
+      "id": "pages_checkout_checkoutpage",
+      "community": 4,
+      "norm_label": "checkoutpage()"
+    },
+    {
+      "label": "Gallery.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Gallery.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_pages_gallery_jsx",
+      "community": 23,
+      "norm_label": "gallery.jsx"
+    },
+    {
+      "label": "GalleryPage()",
+      "file_type": "code",
+      "source_file": "frontend/src/pages/Gallery.jsx",
+      "source_location": "L3",
+      "id": "pages_gallery_gallerypage",
+      "community": 23,
+      "norm_label": "gallerypage()"
+    },
+    {
+      "label": "fileMock.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__mocks__/fileMock.js",
+      "source_location": "L1",
+      "id": "frontend_src_mocks_filemock_js",
+      "community": 47,
+      "norm_label": "filemock.js"
+    },
+    {
+      "label": "api.test.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/api.test.js",
+      "source_location": "L1",
+      "id": "frontend_src_tests_api_test_js",
+      "community": 15,
+      "norm_label": "api.test.js"
+    },
+    {
+      "label": "mockOk()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/api.test.js",
+      "source_location": "L14",
+      "id": "tests_api_test_mockok",
+      "community": 15,
+      "norm_label": "mockok()"
+    },
+    {
+      "label": "mockErr()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/api.test.js",
+      "source_location": "L21",
+      "id": "tests_api_test_mockerr",
+      "community": 15,
+      "norm_label": "mockerr()"
+    },
+    {
+      "label": "calculations.test.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/calculations.test.js",
+      "source_location": "L1",
+      "id": "frontend_src_tests_calculations_test_js",
+      "community": 0,
+      "norm_label": "calculations.test.js"
+    },
+    {
+      "label": "CarrinhoContext.test.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_tests_carrinhocontext_test_jsx",
+      "community": 0,
+      "norm_label": "carrinhocontext.test.jsx"
+    },
+    {
+      "label": "TestComponent()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L7",
+      "id": "tests_carrinhocontext_test_testcomponent",
+      "community": 0,
+      "norm_label": "testcomponent()"
+    },
+    {
+      "label": "renderWithProvider()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L21",
+      "id": "tests_carrinhocontext_test_renderwithprovider",
+      "community": 0,
+      "norm_label": "renderwithprovider()"
+    },
+    {
+      "label": "CartSummary.test.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_tests_cartsummary_test_jsx",
+      "community": 0,
+      "norm_label": "cartsummary.test.jsx"
+    },
+    {
+      "label": "mockCarrinho()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L11",
+      "id": "tests_cartsummary_test_mockcarrinho",
+      "community": 0,
+      "norm_label": "mockcarrinho()"
+    },
+    {
+      "label": "wrap()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L24",
+      "id": "tests_cartsummary_test_wrap",
+      "community": 0,
+      "norm_label": "wrap()"
+    },
+    {
+      "label": "Checkout.test.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_tests_checkout_test_jsx",
+      "community": 5,
+      "norm_label": "checkout.test.jsx"
+    },
+    {
+      "label": "renderCheckout()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L21",
+      "id": "tests_checkout_test_rendercheckout",
+      "community": 5,
+      "norm_label": "rendercheckout()"
+    },
+    {
+      "label": "advanceToStep2()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L77",
+      "id": "tests_checkout_test_advancetostep2",
+      "community": 5,
+      "norm_label": "advancetostep2()"
+    },
+    {
+      "label": "Header.test.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/Header.test.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_tests_header_test_jsx",
+      "community": 5,
+      "norm_label": "header.test.jsx"
+    },
+    {
+      "label": "wrap()",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/Header.test.jsx",
+      "source_location": "L6",
+      "id": "tests_header_test_wrap",
+      "community": 5,
+      "norm_label": "wrap()"
+    },
+    {
+      "label": "useFotos.test.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/useFotos.test.js",
+      "source_location": "L1",
+      "id": "frontend_src_tests_usefotos_test_js",
+      "community": 10,
+      "norm_label": "usefotos.test.js"
+    },
+    {
+      "label": "usePollingStatus.test.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/usePollingStatus.test.js",
+      "source_location": "L1",
+      "id": "frontend_src_tests_usepollingstatus_test_js",
+      "community": 4,
+      "norm_label": "usepollingstatus.test.js"
+    },
+    {
+      "label": "validation.test.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/validation.test.js",
+      "source_location": "L1",
+      "id": "frontend_src_tests_validation_test_js",
+      "community": 48,
+      "norm_label": "validation.test.js"
+    },
+    {
+      "label": "Code.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L1",
+      "id": "google_apps_script_code_js",
+      "community": 2,
+      "norm_label": "code.js"
+    },
+    {
+      "label": "criarTriggers()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L8",
+      "id": "google_apps_script_code_criartriggers",
+      "community": 2,
+      "norm_label": "criartriggers()"
+    },
+    {
+      "label": "processarFotosNovas()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L21",
+      "id": "google_apps_script_code_processarfotosnovas",
+      "community": 2,
+      "norm_label": "processarfotosnovas()"
+    },
+    {
+      "label": "entregarFotos()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L32",
+      "id": "google_apps_script_code_entregarfotos",
+      "community": 2,
+      "norm_label": "entregarfotos()"
+    },
+    {
+      "label": "Drive.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L1",
+      "id": "google_apps_script_drive_js",
+      "community": 2,
+      "norm_label": "drive.js"
+    },
+    {
+      "label": "getSourceFolder()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L3",
+      "id": "google_apps_script_drive_getsourcefolder",
+      "community": 2,
+      "norm_label": "getsourcefolder()"
+    },
+    {
+      "label": "getOriginaisFolder()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L9",
+      "id": "google_apps_script_drive_getoriginaisfolder",
+      "community": 2,
+      "norm_label": "getoriginaisfolder()"
+    },
+    {
+      "label": "getAmostrasFolder()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L15",
+      "id": "google_apps_script_drive_getamostrasfolder",
+      "community": 2,
+      "norm_label": "getamostrasfolder()"
+    },
+    {
+      "label": "listNewFiles()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L21",
+      "id": "google_apps_script_drive_listnewfiles",
+      "community": 2,
+      "norm_label": "listnewfiles()"
+    },
+    {
+      "label": "copyFileToFolder()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L34",
+      "id": "google_apps_script_drive_copyfiletofolder",
+      "community": 2,
+      "norm_label": "copyfiletofolder()"
+    },
+    {
+      "label": "getShareableLink()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L38",
+      "id": "google_apps_script_drive_getshareablelink",
+      "community": 2,
+      "norm_label": "getshareablelink()"
+    },
+    {
+      "label": "jest-setup.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/jest-setup.js",
+      "source_location": "L1",
+      "id": "google_apps_script_jest_setup_js",
+      "community": 49,
+      "norm_label": "jest-setup.js"
+    },
+    {
+      "label": "jest.config.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/jest.config.js",
+      "source_location": "L1",
+      "id": "google_apps_script_jest_config_js",
+      "community": 50,
+      "norm_label": "jest.config.js"
+    },
+    {
+      "label": "Sheet.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L1",
+      "id": "google_apps_script_sheet_js",
+      "community": 6,
+      "norm_label": "sheet.js"
+    },
+    {
+      "label": "getSheet()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L13",
+      "id": "google_apps_script_sheet_getsheet",
+      "community": 6,
+      "norm_label": "getsheet()"
+    },
+    {
+      "label": "registrarFoto()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L18",
+      "id": "google_apps_script_sheet_registrarfoto",
+      "community": 6,
+      "norm_label": "registrarfoto()"
+    },
+    {
+      "label": "listarPagamentosConfirmados()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L27",
+      "id": "google_apps_script_sheet_listarpagamentosconfirmados",
+      "community": 6,
+      "norm_label": "listarpagamentosconfirmados()"
+    },
+    {
+      "label": "atualizarCelula()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L47",
+      "id": "google_apps_script_sheet_atualizarcelula",
+      "community": 6,
+      "norm_label": "atualizarcelula()"
+    },
+    {
+      "label": "incrementarTentativas()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L51",
+      "id": "google_apps_script_sheet_incrementartentativas",
+      "community": 6,
+      "norm_label": "incrementartentativas()"
+    },
+    {
+      "label": "Watermark.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L1",
+      "id": "google_apps_script_watermark_js",
+      "community": 2,
+      "norm_label": "watermark.js"
+    },
+    {
+      "label": "gerarIdFoto()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L38",
+      "id": "google_apps_script_watermark_geraridfoto",
+      "community": 2,
+      "norm_label": "geraridfoto()"
+    },
+    {
+      "label": "gerarNomeAmostra()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L43",
+      "id": "google_apps_script_watermark_gerarnomeamostra",
+      "community": 2,
+      "norm_label": "gerarnomeamostra()"
+    },
+    {
+      "label": "processarFoto()",
+      "file_type": "code",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L54",
+      "id": "google_apps_script_watermark_processarfoto",
+      "community": 2,
+      "norm_label": "processarfoto()"
+    },
+    {
+      "label": "WhatsApp.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L1",
+      "id": "google_apps_script_whatsapp_js",
+      "community": 6,
+      "norm_label": "whatsapp.js"
+    },
+    {
+      "label": "gerarLinkWaMe()",
+      "file_type": "code",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L8",
+      "id": "google_apps_script_whatsapp_gerarlinkwame",
+      "community": 6,
+      "norm_label": "gerarlinkwame()"
+    },
+    {
+      "label": "tentarEntrega()",
+      "file_type": "code",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L15",
+      "id": "google_apps_script_whatsapp_tentarentrega",
+      "community": 6,
+      "norm_label": "tentarentrega()"
+    },
+    {
+      "label": "processarEntregas()",
+      "file_type": "code",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L35",
+      "id": "google_apps_script_whatsapp_processarentregas",
+      "community": 6,
+      "norm_label": "processarentregas()"
+    },
+    {
+      "label": "block-navigation.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L1",
+      "id": "google_apps_script_coverage_lcov_report_block_navigation_js",
+      "community": 7,
+      "norm_label": "block-navigation.js"
+    },
+    {
+      "label": "prettify.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L1",
+      "id": "google_apps_script_coverage_lcov_report_prettify_js",
+      "community": 3,
+      "norm_label": "prettify.js"
+    },
+    {
+      "label": "sorter.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L1",
+      "id": "google_apps_script_coverage_lcov_report_sorter_js",
+      "community": 1,
+      "norm_label": "sorter.js"
+    },
+    {
+      "label": "Code.test.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/__tests__/Code.test.js",
+      "source_location": "L1",
+      "id": "google_apps_script_tests_code_test_js",
+      "community": 51,
+      "norm_label": "code.test.js"
+    },
+    {
+      "label": "Drive.test.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/__tests__/Drive.test.js",
+      "source_location": "L1",
+      "id": "google_apps_script_tests_drive_test_js",
+      "community": 52,
+      "norm_label": "drive.test.js"
+    },
+    {
+      "label": "Sheet.test.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/__tests__/Sheet.test.js",
+      "source_location": "L1",
+      "id": "google_apps_script_tests_sheet_test_js",
+      "community": 53,
+      "norm_label": "sheet.test.js"
+    },
+    {
+      "label": "Watermark.test.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/__tests__/Watermark.test.js",
+      "source_location": "L1",
+      "id": "google_apps_script_tests_watermark_test_js",
+      "community": 54,
+      "norm_label": "watermark.test.js"
+    },
+    {
+      "label": "WhatsApp.test.js",
+      "file_type": "code",
+      "source_file": "google-apps-script/__tests__/WhatsApp.test.js",
+      "source_location": "L1",
+      "id": "google_apps_script_tests_whatsapp_test_js",
+      "community": 55,
+      "norm_label": "whatsapp.test.js"
+    },
+    {
+      "label": "createAuth()",
+      "file_type": "code",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L8",
+      "community": 8,
+      "norm_label": "createauth()",
+      "id": "lib_google_drive_createauth"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/api/watermark.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "backend_api_watermark_js",
+      "target": "api_watermark_sendjson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/block-navigation.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_toggleclass"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/block-navigation.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_makecurrent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/block-navigation.js",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_gotoprevious"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/block-navigation.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_gotonext"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L32",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_block_navigation_makecurrent",
+      "target": "lcov_report_block_navigation_toggleclass"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_toggleclass"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L49",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_block_navigation_gotoprevious",
+      "target": "lcov_report_block_navigation_makecurrent"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_block_navigation_gotonext",
+      "target": "lcov_report_block_navigation_makecurrent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_makecurrent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L41",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_gotoprevious"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_block_navigation_js",
+      "target": "lcov_report_block_navigation_gotonext"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_k"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_a"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_b"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_o"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_g"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_i"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_q"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_d"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_c"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_y"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_g",
+      "target": "lcov_report_prettify_k"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_k"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_d",
+      "target": "lcov_report_prettify_a"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_a"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_g",
+      "target": "lcov_report_prettify_b"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_b",
+      "target": "lcov_report_prettify_y"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_b"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_o"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_g",
+      "target": "lcov_report_prettify_q"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_i",
+      "target": "lcov_report_prettify_g"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_g"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_i"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_d",
+      "target": "lcov_report_prettify_q"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_y",
+      "target": "lcov_report_prettify_q"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_q"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_prettify_y",
+      "target": "lcov_report_prettify_d"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_d"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_c"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_prettify_js",
+      "target": "lcov_report_prettify_y"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_gettable"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_gettableheader"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_gettablebody"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_getnthcolumn"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_onfilterinput"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L59",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_addsearchbox"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L67",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_loadcolumns"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L92",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_loadrowdata"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L111",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_loaddata"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L120",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_sortbyindex"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L151",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_removesortindicators"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L159",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_addsortindicators"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/coverage/lcov-report/sorter.js",
+      "source_location": "L165",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_enableui"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L16",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_gettableheader",
+      "target": "lcov_report_sorter_gettable"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_gettablebody",
+      "target": "lcov_report_sorter_gettable"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_gettable"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_getnthcolumn",
+      "target": "lcov_report_sorter_gettableheader"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L68",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_loadcolumns",
+      "target": "lcov_report_sorter_gettableheader"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_gettableheader"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L112",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_loaddata",
+      "target": "lcov_report_sorter_gettablebody"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_gettablebody"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L152",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_removesortindicators",
+      "target": "lcov_report_sorter_getnthcolumn"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L160",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_addsortindicators",
+      "target": "lcov_report_sorter_getnthcolumn"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L188",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_enableui",
+      "target": "lcov_report_sorter_getnthcolumn"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L23",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_getnthcolumn"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_onfilterinput"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L59",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_addsearchbox"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L67",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_loadcolumns"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L116",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_loaddata",
+      "target": "lcov_report_sorter_loadrowdata"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L92",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_loadrowdata"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L111",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_loaddata"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L177",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_enableui",
+      "target": "lcov_report_sorter_sortbyindex"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L120",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_sortbyindex"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L178",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_enableui",
+      "target": "lcov_report_sorter_removesortindicators"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L151",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_removesortindicators"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L181",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lcov_report_sorter_enableui",
+      "target": "lcov_report_sorter_addsortindicators"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L159",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_addsortindicators"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
+      "source_location": "L165",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_coverage_lcov_report_sorter_js",
+      "target": "lcov_report_sorter_enableui"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "backend_lib_google_drive_js",
+      "target": "lib_google_drive_parseprivatekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "backend_lib_google_drive_js",
+      "target": "lib_google_drive_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_drive_js",
+      "target": "lib_google_drive_downloadfile"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L42",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_drive_js",
+      "target": "lib_google_drive_uploadfile"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_drive_js",
+      "target": "lib_google_drive_createauth"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "lib_google_drive_getaccesstoken",
+      "target": "lib_google_drive_parseprivatekey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "lib_google_drive_downloadfile",
+      "target": "lib_google_drive_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L139",
+      "weight": 1.0,
+      "source": "lib_google_drive_uploadfile",
+      "target": "lib_google_drive_getaccesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_google_drive_downloadfile",
+      "target": "lib_google_drive_createauth"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-drive.js",
+      "source_location": "L43",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_google_drive_uploadfile",
+      "target": "lib_google_drive_createauth"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "backend_lib_google_sheets_js",
+      "target": "lib_google_sheets_driveurltothumbnail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_sheets_js",
+      "target": "lib_google_sheets_getsheet"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L17",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_sheets_js",
+      "target": "lib_google_sheets_listarfotos"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_sheets_js",
+      "target": "lib_google_sheets_registrarpedido"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L44",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_google_sheets_js",
+      "target": "lib_google_sheets_atualizarstatus"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_google_sheets_listarfotos",
+      "target": "lib_google_sheets_getsheet"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_google_sheets_registrarpedido",
+      "target": "lib_google_sheets_getsheet"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/google-sheets.js",
+      "source_location": "L45",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_google_sheets_atualizarstatus",
+      "target": "lib_google_sheets_getsheet"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_mercado_pago_js",
+      "target": "lib_mercado_pago_criarpagamentopix"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_mercado_pago_js",
+      "target": "lib_mercado_pago_consultarstatus"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/mercado-pago.js",
+      "source_location": "L32",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_mercado_pago_js",
+      "target": "lib_mercado_pago_validarhmac"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "backend_lib_watermark_processor_js",
+      "target": "lib_watermark_processor_buildwatermarktile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "backend_lib_watermark_processor_js",
+      "target": "lib_watermark_processor_buildspacedtile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_lib_watermark_processor_js",
+      "target": "lib_watermark_processor_compositewatermark"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "lib_watermark_processor_compositewatermark",
+      "target": "lib_watermark_processor_buildwatermarktile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/lib/watermark-processor.js",
+      "source_location": "L69",
+      "weight": 1.0,
+      "source": "lib_watermark_processor_compositewatermark",
+      "target": "lib_watermark_processor_buildspacedtile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/middleware/error-handler.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_middleware_error_handler_js",
+      "target": "middleware_error_handler_errorhandler"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "backend_tests_google_drive_test_js",
+      "target": "tests_google_drive_test_tokenresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "backend_tests_google_drive_test_js",
+      "target": "tests_google_drive_test_downloadresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "backend_tests_google_drive_test_js",
+      "target": "tests_google_drive_test_uploadresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/__tests__/google-drive.test.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "backend_tests_google_drive_test_js",
+      "target": "tests_google_drive_test_errorresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "backend/__tests__/webhook.test.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "backend_tests_webhook_test_js",
+      "target": "tests_webhook_test_makesignature"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "src_app_app"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_cartsummary_jsx",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_cartsummary_jsx",
+      "target": "components_cartsummary_fmt"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_cartsummary_jsx",
+      "target": "components_cartsummary_cartsummary"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "components_cartsummary_cartsummary",
+      "target": "components_cartsummary_fmt"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/components/CartSummary.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "components_cartsummary_cartsummary",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/FilterEvent.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_filterevent_jsx",
+      "target": "components_filterevent_filterevent"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_gallery_jsx",
+      "target": "hooks_usefotos_usefotos"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_components_gallery_jsx",
+      "target": "components_gallery_skeletoncard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_gallery_jsx",
+      "target": "components_gallery_gallery"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/components/Gallery.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "components_gallery_gallery",
+      "target": "hooks_usefotos_usefotos"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/PhotoCard.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_photocard_jsx",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/PhotoCard.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_photocard_jsx",
+      "target": "components_photocard_photocard"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/components/PhotoCard.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "components_photocard_photocard",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/PixDisplay.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_pixdisplay_jsx",
+      "target": "components_pixdisplay_pixdisplay"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L214",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_common_icons_jsx",
+      "target": "common_icons_eyebrow"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L217",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_common_icons_jsx",
+      "target": "common_icons_sectiontitle"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/common/icons.jsx",
+      "source_location": "L227",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_common_icons_jsx",
+      "target": "common_icons_divider"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/Footer.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_layout_footer_jsx",
+      "target": "layout_footer_footer"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/Header.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "frontend_src_components_layout_header_jsx",
+      "target": "hooks_usecarrinho_usecarrinho",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/components/layout/Header.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_components_layout_header_jsx",
+      "target": "layout_header_header"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/components/layout/Header.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "layout_header_header",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_context_carrinhocontext_jsx",
+      "target": "context_carrinhocontext_carrinhoreducer"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_context_carrinhocontext_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/context/CarrinhoContext.jsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_context_carrinhocontext_jsx",
+      "target": "context_carrinhocontext_usecarrinhocontext"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_carrinhocontext_test_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_checkout_test_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/Header.test.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "frontend_src_tests_header_test_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usecarrinho_js",
+      "target": "context_carrinhocontext_usecarrinhocontext"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "hooks_usecarrinho_usecarrinho",
+      "target": "context_carrinhocontext_usecarrinhocontext"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usecarrinho_js",
+      "target": "lib_calculations_calculartotais"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usecarrinho_js",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_pages_checkout_jsx",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_carrinhocontext_test_jsx",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_src_tests_cartsummary_test_jsx",
+      "target": "hooks_usecarrinho_usecarrinho",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/hooks/useCarrinho.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "hooks_usecarrinho_usecarrinho",
+      "target": "lib_calculations_calculartotais"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "pages_checkout_checkoutpage",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tests_carrinhocontext_test_testcomponent",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/useFotos.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usefotos_js",
+      "target": "lib_api_listarfotos"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/useFotos.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usefotos_js",
+      "target": "hooks_usefotos_usefotos"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/useFotos.test.js",
+      "source_location": "L2",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_usefotos_test_js",
+      "target": "hooks_usefotos_usefotos"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/useMediaQuery.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usemediaquery_js",
+      "target": "hooks_usemediaquery_usemediaquery"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/usePollingStatus.js",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usepollingstatus_js",
+      "target": "lib_api_statuspagamento"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/hooks/usePollingStatus.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_hooks_usepollingstatus_js",
+      "target": "hooks_usepollingstatus_usepollingstatus"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_pages_checkout_jsx",
+      "target": "hooks_usepollingstatus_usepollingstatus"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/usePollingStatus.test.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_usepollingstatus_test_js",
+      "target": "hooks_usepollingstatus_usepollingstatus"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "pages_checkout_checkoutpage",
+      "target": "hooks_usepollingstatus_usepollingstatus"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_lib_api_js",
+      "target": "lib_api_request"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_lib_api_js",
+      "target": "lib_api_listarfotos"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L35",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_lib_api_js",
+      "target": "lib_api_criarpagamento"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L48",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_lib_api_js",
+      "target": "lib_api_statuspagamento"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_api_listarfotos",
+      "target": "lib_api_request"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_api_criarpagamento",
+      "target": "lib_api_request"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/api.js",
+      "source_location": "L49",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_api_statuspagamento",
+      "target": "lib_api_request"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_pages_checkout_jsx",
+      "target": "lib_api_criarpagamento"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/calculations.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_lib_calculations_js",
+      "target": "lib_calculations_calculartaxa"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/calculations.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_lib_calculations_js",
+      "target": "lib_calculations_calculartotais"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/lib/calculations.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "lib_calculations_calculartotais",
+      "target": "lib_calculations_calculartaxa"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/calculations.test.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_calculations_test_js",
+      "target": "lib_calculations_calculartaxa"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/calculations.test.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_calculations_test_js",
+      "target": "lib_calculations_calculartotais"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_pages_checkout_jsx",
+      "target": "pages_checkout_fmt"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_pages_checkout_jsx",
+      "target": "pages_checkout_checkoutpage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Checkout.jsx",
+      "source_location": "L141",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "pages_checkout_checkoutpage",
+      "target": "pages_checkout_fmt"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/pages/Gallery.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_pages_gallery_jsx",
+      "target": "pages_gallery_gallerypage"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/api.test.js",
+      "source_location": "L14",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_api_test_js",
+      "target": "tests_api_test_mockok"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/api.test.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_api_test_js",
+      "target": "tests_api_test_mockerr"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_carrinhocontext_test_jsx",
+      "target": "tests_carrinhocontext_test_testcomponent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_carrinhocontext_test_jsx",
+      "target": "tests_carrinhocontext_test_renderwithprovider"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "frontend_src_tests_cartsummary_test_jsx",
+      "target": "tests_cartsummary_test_mockcarrinho",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "frontend_src_tests_cartsummary_test_jsx",
+      "target": "tests_cartsummary_test_wrap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "tests_cartsummary_test_wrap",
+      "target": "tests_cartsummary_test_mockcarrinho",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_checkout_test_jsx",
+      "target": "tests_checkout_test_rendercheckout"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L77",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_checkout_test_jsx",
+      "target": "tests_checkout_test_advancetostep2"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/Checkout.test.jsx",
+      "source_location": "L78",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_checkout_test_advancetostep2",
+      "target": "tests_checkout_test_rendercheckout"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/Header.test.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_tests_header_test_jsx",
+      "target": "tests_header_test_wrap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_code_js",
+      "target": "google_apps_script_code_criartriggers"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_code_js",
+      "target": "google_apps_script_code_processarfotosnovas"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L32",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_code_js",
+      "target": "google_apps_script_code_entregarfotos"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "google_apps_script_code_processarfotosnovas",
+      "target": "google_apps_script_drive_listnewfiles"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "google_apps_script_code_processarfotosnovas",
+      "target": "google_apps_script_watermark_processarfoto"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "google-apps-script/Code.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "google_apps_script_code_entregarfotos",
+      "target": "google_apps_script_whatsapp_processarentregas"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L3",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_js",
+      "target": "google_apps_script_drive_getsourcefolder"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_js",
+      "target": "google_apps_script_drive_getoriginaisfolder"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_js",
+      "target": "google_apps_script_drive_getamostrasfolder"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_js",
+      "target": "google_apps_script_drive_listnewfiles"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L34",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_js",
+      "target": "google_apps_script_drive_copyfiletofolder"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_js",
+      "target": "google_apps_script_drive_getshareablelink"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Drive.js",
+      "source_location": "L22",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_drive_listnewfiles",
+      "target": "google_apps_script_drive_getsourcefolder"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_js",
+      "target": "google_apps_script_sheet_getsheet"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_js",
+      "target": "google_apps_script_sheet_registrarfoto"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L27",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_js",
+      "target": "google_apps_script_sheet_listarpagamentosconfirmados"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L47",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_js",
+      "target": "google_apps_script_sheet_atualizarcelula"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L51",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_js",
+      "target": "google_apps_script_sheet_incrementartentativas"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_registrarfoto",
+      "target": "google_apps_script_sheet_getsheet"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L28",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_listarpagamentosconfirmados",
+      "target": "google_apps_script_sheet_getsheet"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L48",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_atualizarcelula",
+      "target": "google_apps_script_sheet_getsheet"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Sheet.js",
+      "source_location": "L52",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_sheet_incrementartentativas",
+      "target": "google_apps_script_sheet_getsheet"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "google_apps_script_whatsapp_processarentregas",
+      "target": "google_apps_script_sheet_listarpagamentosconfirmados"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "google_apps_script_whatsapp_tentarentrega",
+      "target": "google_apps_script_sheet_atualizarcelula"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "google_apps_script_whatsapp_tentarentrega",
+      "target": "google_apps_script_sheet_incrementartentativas"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_watermark_js",
+      "target": "google_apps_script_watermark_geraridfoto"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L36",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_watermark_js",
+      "target": "google_apps_script_watermark_gerarnomeamostra"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L46",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_watermark_js",
+      "target": "google_apps_script_watermark_processarfoto"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L48",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_watermark_processarfoto",
+      "target": "google_apps_script_watermark_geraridfoto"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/Watermark.js",
+      "source_location": "L65",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_watermark_processarfoto",
+      "target": "google_apps_script_watermark_gerarnomeamostra"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_whatsapp_js",
+      "target": "google_apps_script_whatsapp_gerarlinkwame"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_whatsapp_js",
+      "target": "google_apps_script_whatsapp_tentarentrega"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L35",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_whatsapp_js",
+      "target": "google_apps_script_whatsapp_processarentregas"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_whatsapp_tentarentrega",
+      "target": "google_apps_script_whatsapp_gerarlinkwame"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "google-apps-script/WhatsApp.js",
+      "source_location": "L38",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "google_apps_script_whatsapp_processarentregas",
+      "target": "google_apps_script_whatsapp_tentarentrega"
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "d6b696452b2d551bfd7af076e94ffeabf37236b6"
+}
