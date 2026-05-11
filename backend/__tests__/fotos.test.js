@@ -13,6 +13,14 @@ const app = express();
 app.use(express.json());
 app.all('/api/fotos', fotosHandler);
 
+let warnSpy;
+beforeEach(() => {
+  warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+});
+afterEach(() => {
+  warnSpy.mockRestore();
+});
+
 describe('GET /api/fotos', () => {
   it('retorna 200 com array de fotos', async () => {
     const res = await request(app).get('/api/fotos').set('Referer', 'http://localhost:5173/');
@@ -38,6 +46,14 @@ describe('GET /api/fotos', () => {
   it('retorna 403 sem Referer/Origin reconhecido', async () => {
     const res = await request(app).get('/api/fotos');
     expect(res.status).toBe(403);
+  });
+
+  it('loga evento unauthorized_origin ao retornar 403', async () => {
+    const res = await request(app).get('/api/fotos');
+    expect(res.status).toBe(403);
+    expect(warnSpy).toHaveBeenCalled();
+    const logArg = JSON.parse(warnSpy.mock.calls[0][0]);
+    expect(logArg.event).toBe('unauthorized_origin');
   });
 
   it('retorna 200 com Referer válido', async () => {

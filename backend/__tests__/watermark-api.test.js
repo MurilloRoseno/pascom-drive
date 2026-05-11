@@ -19,13 +19,18 @@ app.use(errorHandler);
 const VALID_BODY = { fileId: 'file-abc-123' };
 const FAKE_JPEG  = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]); // JPEG magic bytes
 
+let warnSpy;
 beforeEach(() => {
+  warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   jest.clearAllMocks();
   googleDrive.downloadFile.mockResolvedValue({
     buffer: Buffer.from('fake-image'),
     mimeType: 'image/jpeg',
   });
   compositeWatermark.mockResolvedValue(FAKE_JPEG);
+});
+afterEach(() => {
+  warnSpy.mockRestore();
 });
 
 describe('POST /api/watermark', () => {
@@ -76,5 +81,13 @@ describe('POST /api/watermark', () => {
       .set('x-watermark-secret', 'wrong-secret')
       .send(VALID_BODY);
     expect(res.status).toBe(401);
+  });
+
+  it('loga evento watermark_unauthorized ao retornar 401', async () => {
+    const res = await request(app).post('/api/watermark').send(VALID_BODY);
+    expect(res.status).toBe(401);
+    expect(warnSpy).toHaveBeenCalled();
+    const logArg = JSON.parse(warnSpy.mock.calls[0][0]);
+    expect(logArg.event).toBe('watermark_unauthorized');
   });
 });

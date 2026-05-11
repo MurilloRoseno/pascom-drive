@@ -12,6 +12,13 @@ module.exports = async function handler(req, res, next) {
     const { transactionId, whatsapp } = result.data;
     const pedido = await buscarPedido(transactionId);
     if (!pedido || pedido.get('WhatsApp') !== whatsapp) {
+      console.warn(JSON.stringify({
+        event: 'status_lookup_failed',
+        ip: req.ip || req.headers['x-forwarded-for'],
+        transactionId: transactionId,
+        timestamp: new Date().toISOString(),
+        reason: !pedido ? 'not_found' : 'whatsapp_mismatch',
+      }));
       return res.status(404).json({ error: 'Pedido não encontrado' });
     }
     const status = await consultarStatus(transactionId);

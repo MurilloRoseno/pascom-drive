@@ -28,14 +28,32 @@ module.exports = async function handler(req, res, next) {
     try {
       payload = verifyToken(params.token, secret);
     } catch (_err) {
+      console.warn(JSON.stringify({
+        event: 'download_invalid_token',
+        ip: req.ip || req.headers['x-forwarded-for'],
+        timestamp: new Date().toISOString(),
+        reason: _err.message,
+      }));
       return sendJson(res, 401, { error: 'Token inválido ou assinatura incorreta' });
     }
 
     if (Date.now() > payload.exp) {
+      console.warn(JSON.stringify({
+        event: 'download_invalid_token',
+        ip: req.ip || req.headers['x-forwarded-for'],
+        timestamp: new Date().toISOString(),
+        reason: 'Token expirado',
+      }));
       return sendJson(res, 401, { error: 'Token expirado' });
     }
 
     if (payload.used === true) {
+      console.warn(JSON.stringify({
+        event: 'download_token_reuse',
+        fotoId: payload.fotoId,
+        ip: req.ip || req.headers['x-forwarded-for'],
+        timestamp: new Date().toISOString(),
+      }));
       return sendJson(res, 410, { error: 'Token já utilizado' });
     }
 

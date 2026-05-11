@@ -25,6 +25,12 @@ module.exports = async function handler(req, res, next) {
 
   const secret = process.env.WATERMARK_API_SECRET;
   if (!secret || req.headers['x-watermark-secret'] !== secret) {
+    console.warn(JSON.stringify({
+      event: 'watermark_unauthorized',
+      ip: req.ip || req.headers['x-forwarded-for'],
+      hasHeader: !!req.headers['x-watermark-secret'],
+      timestamp: new Date().toISOString(),
+    }));
     return sendJson(res, 401, { error: 'Não autorizado' });
   }
   try {
