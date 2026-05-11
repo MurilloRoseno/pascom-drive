@@ -82,12 +82,20 @@ describe('processarFoto', () => {
     mockCopyFileToFolder.mockReturnValue(mockCopiaOriginal);
     mockGetShareableLink.mockReturnValue('https://drive.google.com/file/d/copia-original-id/view');
 
+    // First call: preprocess → 200
+    // Second call: watermark → 200 with blob
     const mockBlob = { setName: jest.fn() };
-    global.UrlFetchApp.fetch.mockReturnValue({
-      getResponseCode: jest.fn().mockReturnValue(200),
-      getContentText:  jest.fn().mockReturnValue(''),
-      getBlob:         jest.fn().mockReturnValue(mockBlob),
-    });
+    global.UrlFetchApp.fetch
+      .mockReturnValueOnce({
+        getResponseCode: jest.fn().mockReturnValue(200),
+        getContentText:  jest.fn().mockReturnValue('{"skipped":false,"originalSize":5000000,"processedSize":500000}'),
+        getBlob:         jest.fn().mockReturnValue(null),
+      })
+      .mockReturnValueOnce({
+        getResponseCode: jest.fn().mockReturnValue(200),
+        getContentText:  jest.fn().mockReturnValue(''),
+        getBlob:         jest.fn().mockReturnValue(mockBlob),
+      });
   });
 
   it('copies original to ORIGINAIS folder', () => {
@@ -108,7 +116,7 @@ describe('processarFoto', () => {
         payload: expect.stringContaining('"fileId":"file-drive-id"'),
       })
     );
-    const fetchCall = UrlFetchApp.fetch.mock.calls[0];
+    const fetchCall = UrlFetchApp.fetch.mock.calls[1];
     const fetchOptions = fetchCall[1];
     expect(fetchOptions.headers['x-watermark-secret']).toBeDefined();
   });
@@ -133,11 +141,14 @@ describe('processarFoto', () => {
   });
 
   it('sends admin email on API error instead of throwing', () => {
-    global.UrlFetchApp.fetch.mockReturnValue({
+    const errorResponse = {
       getResponseCode: jest.fn().mockReturnValue(500),
       getContentText:  jest.fn().mockReturnValue('Internal Server Error'),
       getBlob:         jest.fn().mockReturnValue(null),
-    });
+    };
+    global.UrlFetchApp.fetch
+      .mockReset()
+      .mockReturnValue(errorResponse);
     processarFoto(mockArquivo);
     expect(global.MailApp.sendEmail).toHaveBeenCalledWith(
       'admin@example.com',
@@ -147,12 +158,39 @@ describe('processarFoto', () => {
   });
 
   it('does NOT move arquivo when API fails (source file stays for retry)', () => {
-    global.UrlFetchApp.fetch.mockReturnValue({
+    const errorResponse = {
       getResponseCode: jest.fn().mockReturnValue(500),
       getContentText:  jest.fn().mockReturnValue('error'),
       getBlob:         jest.fn().mockReturnValue(null),
-    });
+    };
+    global.UrlFetchApp.fetch
+      .mockReset()
+      .mockReturnValue(errorResponse);
     processarFoto(mockArquivo);
     expect(mockArquivo.moveTo).not.toHaveBeenCalled();
+  });
+
+  it('calls /api/preprocess before /api/watermark', () => {
+    processarFoto(mockArquivo);
+    expect(global.UrlFetchApp.fetch.mock.calls[0][0]).toContain('/api/preprocess');
+    expect(global.UrlFetchApp.fetch.mock.calls[1][0]).toContain('/api/watermark');
+  });
+
+  it('continues normally when preprocess returns 422 (unsupported format)', () => {
+    global.UrlFetchApp.fetch
+      .mockReturnValueOnce({
+        getResponseCode: jest.fn().mockReturnValue(422),
+        getContentText:  jest.fn().mockReturnValue('{"error":"Formato não suportado"}'),
+        getBlob:         jest.fn().mockReturnValue(null),
+      })
+      .mockReturnValueOnce({
+        getResponseCode: jest.fn().mockReturnValue(200),
+        getContentText:  jest.fn().mockReturnValue(''),
+        getBlob:         jest.fn().mockReturnValue({ setName: jest.fn() }),
+      });
+    processarFoto(mockArquivo);
+    // Should still copy original and create amostra — no error
+    expect(mockCopyFileToFolder).toHaveBeenCalled();
+    expect(mockAmostrasFolder.createFile).toHaveBeenCalled();
   });
 });

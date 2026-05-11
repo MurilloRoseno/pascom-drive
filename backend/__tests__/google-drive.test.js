@@ -126,4 +126,46 @@ describe('google-drive', () => {
       await expect(fn).rejects.toThrow('Drive upload failed (500)');
     });
   });
+
+  describe('updateFile', () => {
+    it('PATCHes Drive with correct fileId, buffer and mimeType', async () => {
+      const patchResponse = {
+        ok: true,
+        status: 200,
+        text: jest.fn().mockResolvedValue(''),
+        json: jest.fn().mockResolvedValue({}),
+      };
+      const fetchMock = jest.fn()
+        .mockResolvedValueOnce(tokenResponse())
+        .mockResolvedValueOnce(patchResponse);
+      global.fetch = fetchMock;
+
+      let fn;
+      jest.isolateModules(() => {
+        const { updateFile } = require('../lib/google-drive');
+        fn = updateFile('file-xyz', Buffer.from('data'), 'image/jpeg');
+      });
+      await fn;
+
+      const [url, opts] = fetchMock.mock.calls[1];
+      expect(url).toContain('files/file-xyz');
+      expect(url).toContain('uploadType=multipart');
+      expect(opts.method).toBe('PATCH');
+      expect(opts.headers.Authorization).toContain('Bearer test-token');
+      expect(opts.headers['Content-Type']).toContain('multipart/related');
+    });
+
+    it('throws when Drive returns non-ok on update', async () => {
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce(tokenResponse())
+        .mockResolvedValueOnce(errorResponse(500, 'Server Error'));
+
+      let fn;
+      jest.isolateModules(() => {
+        const { updateFile } = require('../lib/google-drive');
+        fn = updateFile('file-xyz', Buffer.from('data'), 'image/jpeg');
+      });
+      await expect(fn).rejects.toThrow('Drive update failed (500)');
+    });
+  });
 });

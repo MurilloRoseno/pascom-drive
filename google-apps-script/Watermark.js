@@ -45,6 +45,34 @@ function gerarNomeAmostra(nome) {
 }
 
 /**
+ * Call /api/preprocess to convert format + compress.
+ * Returns parsed JSON body on success, null if unsupported format (422 → skip silently).
+ * Throws on any other non-2xx status.
+ * @param {GoogleAppsScript.Drive.File} arquivo
+ * @param {string} backendUrl
+ * @param {Object} headers
+ * @returns {Object|null}
+ */
+function _preprocessarArquivo(arquivo, backendUrl, headers) {
+  var payload = JSON.stringify({ fileId: arquivo.getId() });
+  var response = UrlFetchApp.fetch(backendUrl + '/api/preprocess', {
+    method:             'POST',
+    headers:            headers,
+    payload:            payload,
+    muteHttpExceptions: true,
+  });
+  var code = response.getResponseCode();
+  if (code === 422) {
+    Logger.log('Formato não suportado para pre-processamento: ' + arquivo.getName() + ' — continuando sem converter.');
+    return null;
+  }
+  if (code !== 200) {
+    throw new Error('Preprocess API falhou (' + code + '): ' + response.getContentText());
+  }
+  return JSON.parse(response.getContentText());
+}
+
+/**
  * Process a photo: copy original → ORIGINAIS, apply watermark via backend,
  * save returned JPEG blob → AMOSTRAS (as the authenticated user, who has Drive quota),
  * move source file out of SOURCE folder, register in Sheet.
@@ -59,23 +87,26 @@ function processarFoto(arquivo) {
       ? arquivo.getParents().next().getName()
       : 'Sem_Evento';
 
+    // Props/URL/headers needed by both preprocess and watermark
+    var props      = PropertiesService.getScriptProperties();
+    var backendUrl = props.getProperty('BACKEND_URL');
+    var headers    = {
+      'Content-Type': 'application/json',
+      'x-watermark-secret': props.getProperty('WATERMARK_API_SECRET') || '',
+    };
+
+    // 0. Pre-process: convert format + compress before archiving
+    _preprocessarArquivo(arquivo, backendUrl, headers);
+
     // 1. Copy original to ORIGINAIS folder (unchanged, high quality backup)
     var copiaOriginal = _helpers.copyFileToFolder(arquivo, _helpers.getOriginaisFolder(), id + '_' + nomeOriginal);
     var linkOriginal  = _helpers.getShareableLink(copiaOriginal);
 
     // 2. Call backend to apply watermark — returns raw JPEG bytes
-    var props      = PropertiesService.getScriptProperties();
-    var backendUrl = props.getProperty('BACKEND_URL');
-
     var payload = JSON.stringify({
       fileId:        arquivo.getId(),
       watermarkType: 'color',
     });
-
-    var headers = {
-      'Content-Type': 'application/json',
-      'x-watermark-secret': props.getProperty('WATERMARK_API_SECRET') || '',
-    };
 
     var response = UrlFetchApp.fetch(backendUrl + '/api/watermark', {
       method:             'POST',
