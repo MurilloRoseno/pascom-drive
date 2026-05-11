@@ -2,7 +2,7 @@ import Section from '../layout/Section';
 import Panel from '../ui/Panel';
 import Button from '../ui/Button';
 import { useSimulation } from '../../hooks/useSimulation';
-import { formatNumber, formatLorentz } from '../../lib/format';
+import { formatNumber, formatLorentz, formatPercent } from '../../lib/format';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 
