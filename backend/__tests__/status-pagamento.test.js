@@ -19,6 +19,16 @@ app.all('/api/status-pagamento', statusHandler);
 app.use(errorHandler);
 
 describe('GET /api/status-pagamento', () => {
+  let warnSpy;
+
+  beforeEach(() => {
+    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+  });
+
   it('retorna 200 com status', async () => {
     const res = await request(app).get('/api/status-pagamento?transactionId=MP_123&whatsapp=11999999999');
     expect(res.status).toBe(200);
@@ -46,11 +56,19 @@ describe('GET /api/status-pagamento', () => {
     const res = await request(app)
       .get('/api/status-pagamento?transactionId=NOTEXIST&whatsapp=11999999999');
     expect(res.status).toBe(404);
+    expect(warnSpy).toHaveBeenCalled();
+    const log = JSON.parse(warnSpy.mock.calls[0][0]);
+    expect(log.event).toBe('status_lookup_failed');
+    expect(log.reason).toBe('not_found');
   });
 
   it('retorna 404 com whatsapp errado', async () => {
     const res = await request(app)
       .get('/api/status-pagamento?transactionId=MP_123&whatsapp=11888888888');
     expect(res.status).toBe(404);
+    expect(warnSpy).toHaveBeenCalled();
+    const log = JSON.parse(warnSpy.mock.calls[0][0]);
+    expect(log.event).toBe('status_lookup_failed');
+    expect(log.reason).toBe('whatsapp_mismatch');
   });
 });
