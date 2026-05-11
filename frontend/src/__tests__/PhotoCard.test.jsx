@@ -1,7 +1,6 @@
 import { render, fireEvent } from '@testing-library/react';
 import PhotoCard from '../components/PhotoCard.jsx';
 
-// Mock useCarrinho
 jest.mock('../hooks/useCarrinho.js', () => ({
   useCarrinho: () => ({
     isSelected: () => false,
@@ -12,20 +11,17 @@ jest.mock('../hooks/useCarrinho.js', () => ({
 
 const mockFoto = { id: 'F1', event: 'Missa', url: 'https://x.com/img.jpg', price: 25 };
 
-it('renders photo as background-image, not <img>', () => {
+it('renders photo as <img> tag with correct src', () => {
   const { container } = render(<PhotoCard foto={mockFoto} />);
-  // Should NOT have an img element
-  expect(container.querySelector('img')).toBeNull();
-  // Should have a div with backgroundImage style (JSDOM serializes as background-image)
-  const bgDiv = container.querySelector('.photo-blur-target');
-  expect(bgDiv).not.toBeNull();
-  expect(bgDiv.style.backgroundImage).toContain(mockFoto.url);
+  const img = container.querySelector('img');
+  expect(img).not.toBeNull();
+  expect(img.src).toContain(mockFoto.url);
 });
 
-it('prevents context menu on photo div', () => {
+it('prevents context menu on photo element', () => {
   const { container } = render(<PhotoCard foto={mockFoto} />);
-  const bgDiv = container.querySelector('.photo-blur-target');
+  const img = container.querySelector('img');
   const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
-  bgDiv.dispatchEvent(event);
+  img.dispatchEvent(event);
   expect(event.defaultPrevented).toBe(true);
 });
