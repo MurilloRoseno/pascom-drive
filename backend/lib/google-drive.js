@@ -169,4 +169,42 @@ async function uploadFile(buffer, mimeType, filename, folderId) {
   return `https://drive.google.com/file/d/${data.id}/view?usp=sharing`;
 }
 
-module.exports = { downloadFile, uploadFile };
+/**
+ * Replace the content of an existing Drive file (keeps fileId + sharing settings).
+ * Uses Drive v3 multipart PATCH upload.
+ * @param {string} fileId
+ * @param {Buffer} buffer
+ * @param {string} mimeType
+ */
+async function updateFile(fileId, buffer, mimeType) {
+  const token = await getAccessToken();
+  const boundary = `boundary_${Date.now()}`;
+  const metadata = JSON.stringify({ mimeType });
+
+  const body = Buffer.concat([
+    Buffer.from(
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
+      `${metadata}\r\n--${boundary}\r\nContent-Type: ${mimeType}\r\n\r\n`
+    ),
+    buffer,
+    Buffer.from(`\r\n--${boundary}--`),
+  ]);
+
+  const res = await fetch(
+    `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`,
+    {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': `multipart/related; boundary=${boundary}`,
+      },
+      body,
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Drive update failed (${res.status}): ${await res.text()}`);
+  }
+}
+
+module.exports = { downloadFile, uploadFile, updateFile };
