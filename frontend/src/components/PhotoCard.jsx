@@ -21,16 +21,12 @@ export default function PhotoCard({ foto }) {
         role="img"
         aria-label={foto.event}
         onContextMenu={(e) => e.preventDefault()}
-        onDragStart={(e) => e.preventDefault()}
         className="photo-blur-target w-full aspect-[2/3] bg-cover bg-center bg-no-repeat block select-none"
         style={{
-          backgroundImage: `url(${foto.url})`,
+          backgroundImage: `url("${foto.url}")`,
           WebkitUserDrag: 'none',
         }}
       />
-
-      {/* Shield overlay — captures mouse events before reaching the background image */}
-      <div className="absolute inset-0 z-10" style={{ pointerEvents: 'none' }} />
 
       {selected && (
         <div
