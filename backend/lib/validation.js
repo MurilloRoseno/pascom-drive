@@ -9,6 +9,7 @@ const criarPagamentoSchema = z.object({
 
 const statusPagamentoSchema = z.object({
   transactionId: z.string().min(1, 'transactionId obrigatório'),
+  whatsapp: z.string().regex(/^\d{10,11}$/, 'WhatsApp inválido'),
 });
 
 module.exports = { criarPagamentoSchema, statusPagamentoSchema };

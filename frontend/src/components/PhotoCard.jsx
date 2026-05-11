@@ -17,11 +17,15 @@ export default function PhotoCard({ foto }) {
       className="relative cursor-pointer rounded-lg overflow-hidden transition-all duration-200 select-none"
       style={selected ? { boxShadow: '0 0 0 3px var(--photo-accent), 0 4px 12px rgba(0,0,0,0.2)' } : {}}
     >
-      <img
-        src={foto.url}
-        alt={foto.event}
-        className="w-full aspect-[2/3] object-cover block"
-        loading="lazy"
+      <div
+        role="img"
+        aria-label={foto.event}
+        onContextMenu={(e) => e.preventDefault()}
+        className="photo-blur-target w-full aspect-[2/3] bg-cover bg-center bg-no-repeat block select-none"
+        style={{
+          backgroundImage: `url("${foto.url}")`,
+          WebkitUserDrag: 'none',
+        }}
       />
 
       {selected && (

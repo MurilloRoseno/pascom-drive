@@ -72,9 +72,14 @@ function processarFoto(arquivo) {
       watermarkType: 'color',
     });
 
+    var headers = {
+      'Content-Type': 'application/json',
+      'x-watermark-secret': props.getProperty('WATERMARK_API_SECRET') || '',
+    };
+
     var response = UrlFetchApp.fetch(backendUrl + '/api/watermark', {
       method:             'POST',
-      headers:            { 'Content-Type': 'application/json' },
+      headers:            headers,
       payload:            payload,
       muteHttpExceptions: true,
     });

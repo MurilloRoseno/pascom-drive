@@ -37,3 +37,5 @@ Thumbs.db
 .clasp.json
 credentials.json
 token.json
+
+.vercel

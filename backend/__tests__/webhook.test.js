@@ -60,20 +60,63 @@ describe('POST /api/webhook/mercado-pago', () => {
     const { atualizarStatus } = require('../lib/google-sheets');
     atualizarStatus.mockClear();
 
-    const sig = makeSignature(body);
+    const idempotentBody = JSON.stringify({ action: 'payment.updated', data: { id: 'MP_IDEM_999' } });
+    const sig = makeSignature(idempotentBody);
     await request(app)
       .post('/api/webhook/mercado-pago')
       .set('Content-Type', 'application/json')
       .set('x-signature', sig)
       .set('x-request-id', 'REQ_IDEM_UNICO')
-      .send(body);
+      .send(idempotentBody);
     const res2 = await request(app)
       .post('/api/webhook/mercado-pago')
       .set('Content-Type', 'application/json')
       .set('x-signature', sig)
       .set('x-request-id', 'REQ_IDEM_UNICO')
-      .send(body);
+      .send(idempotentBody);
     expect(res2.status).toBe(200);
     expect(atualizarStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it('retorna 500 se MP_WEBHOOK_SECRET não está configurado', async () => {
+    const original = process.env.MP_WEBHOOK_SECRET;
+    delete process.env.MP_WEBHOOK_SECRET;
+
+    const res = await request(app)
+      .post('/api/webhook/mercado-pago')
+      .set('Content-Type', 'application/json')
+      .send(body);
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('Configuração de servidor inválida');
+
+    process.env.MP_WEBHOOK_SECRET = original;
+  });
+
+  it('deduplica por paymentId (mesmo data.id, diferente x-request-id)', async () => {
+    const { atualizarStatus } = require('../lib/google-sheets');
+    atualizarStatus.mockClear();
+
+    const payBody = JSON.stringify({ action: 'payment.updated', data: { id: 'MP_DEDUP_123' } });
+    const sig = makeSignature(payBody);
+
+    // First call
+    await request(app)
+      .post('/api/webhook/mercado-pago')
+      .set('Content-Type', 'application/json')
+      .set('x-signature', sig)
+      .set('x-request-id', 'REQ_AAA')
+      .send(payBody);
+
+    // Second call — different x-request-id but same payment ID
+    const res2 = await request(app)
+      .post('/api/webhook/mercado-pago')
+      .set('Content-Type', 'application/json')
+      .set('x-signature', sig)
+      .set('x-request-id', 'REQ_BBB')
+      .send(payBody);
+
+    expect(res2.status).toBe(200);
+    expect(atualizarStatus).toHaveBeenCalledTimes(1); // only called once
   });
 });
