@@ -8,6 +8,8 @@ const ALLOWED_ORIGINS = [
 
 function isAllowedOrigin(req) {
   const ref = req.headers.referer || req.headers.origin || '';
+  // Allow same-origin / no-referer requests (mobile browsers often omit Referer)
+  if (!ref) return true;
   return ALLOWED_ORIGINS.some(o => ref.startsWith(o));
 }
 
