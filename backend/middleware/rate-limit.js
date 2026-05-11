@@ -16,4 +16,12 @@ const pagamento = rateLimit({
   message: { error: 'Limite de tentativas de pagamento atingido. Aguarde 1 minuto.' },
 });
 
-module.exports = { geral, pagamento };
+const fotos = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas requisições à galeria. Tente novamente em 1 minuto.' },
+});
+
+module.exports = { geral, pagamento, fotos };

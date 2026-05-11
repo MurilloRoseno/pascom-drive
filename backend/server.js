@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { geral, pagamento } = require('./middleware/rate-limit');
+const { geral, pagamento, fotos } = require('./middleware/rate-limit');
 const errorHandler = require('./middleware/error-handler');
 
 const healthHandler = require('./api/health.js');
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 app.use(geral);
 
 app.get('/api/health', healthHandler);
-app.get('/api/fotos', fotosHandler);
+app.get('/api/fotos', fotos, fotosHandler);
 app.post('/api/criar-pagamento', pagamento, criarPagamentoHandler);
 app.get('/api/status-pagamento', statusPagamentoHandler);
 app.post('/api/webhook/mercado-pago', pagamento, webhookHandler);
