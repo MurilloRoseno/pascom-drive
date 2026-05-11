@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { geral, pagamento, fotos, statusConsulta } = require('./middleware/rate-limit');
+const { geral, pagamento, fotos, statusConsulta, watermark: watermarkLimit } = require('./middleware/rate-limit');
 const errorHandler = require('./middleware/error-handler');
 
 const healthHandler = require('./api/health.js');
@@ -34,7 +34,7 @@ app.get('/api/fotos', fotos, fotosHandler);
 app.post('/api/criar-pagamento', pagamento, criarPagamentoHandler);
 app.get('/api/status-pagamento', statusConsulta, statusPagamentoHandler);
 app.post('/api/webhook/mercado-pago', pagamento, webhookHandler);
-app.post('/api/watermark', watermarkHandler);
+app.post('/api/watermark', watermarkLimit, watermarkHandler);
 app.get('/api/download', downloadHandler);
 
 app.use(errorHandler);

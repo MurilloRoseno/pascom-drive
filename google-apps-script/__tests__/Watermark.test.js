@@ -27,8 +27,9 @@ global.PropertiesService = {
   getScriptProperties: jest.fn().mockReturnValue({
     getProperty: jest.fn((key) => {
       const props = {
-        BACKEND_URL:  'https://pascom-drive.vercel.app',
-        ADMIN_EMAIL:  'admin@example.com',
+        BACKEND_URL:           'https://pascom-drive.vercel.app',
+        ADMIN_EMAIL:           'admin@example.com',
+        WATERMARK_API_SECRET:  'test-watermark-secret',
       };
       return props[key] || null;
     }),
@@ -107,6 +108,9 @@ describe('processarFoto', () => {
         payload: expect.stringContaining('"fileId":"file-drive-id"'),
       })
     );
+    const fetchCall = UrlFetchApp.fetch.mock.calls[0];
+    const fetchOptions = fetchCall[1];
+    expect(fetchOptions.headers['x-watermark-secret']).toBeDefined();
   });
 
   it('saves returned blob to AMOSTRAS folder via createFile', () => {

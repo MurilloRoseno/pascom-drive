@@ -32,4 +32,12 @@ const statusConsulta = rateLimit({
   message: { error: 'Muitas consultas de status. Aguarde 1 minuto.' },
 });
 
-module.exports = { geral, pagamento, fotos, statusConsulta };
+const watermark = rateLimit({
+  windowMs: 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Limite de processamento de imagens atingido. Aguarde 1 minuto.' },
+});
+
+module.exports = { geral, pagamento, fotos, statusConsulta, watermark };
