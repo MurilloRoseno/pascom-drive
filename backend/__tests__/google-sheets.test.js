@@ -15,7 +15,7 @@ function makeRow(data) {
 }
 
 const mockRows = [
-  makeRow({ ID: 'FOTO_001', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/a', Status: 'Processada', Preco: '25' }),
+  makeRow({ ID: 'FOTO_001', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/a', Status: 'Processada', Preco: '25', ID_Mercado_Pago: 'MP_001' }),
   makeRow({ ID: 'FOTO_002', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/b', Status: 'Processada', Preco: '25' }),
 ];
 
@@ -32,7 +32,7 @@ const mockDoc = {
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 GoogleSpreadsheet.mockImplementation(() => mockDoc);
 
-const { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail } = require('../lib/google-sheets');
+const { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail, buscarPedido } = require('../lib/google-sheets');
 
 describe('listarFotos', () => {
   it('retorna array de fotos com campos esperados', async () => {
@@ -77,6 +77,19 @@ describe('driveUrlToThumbnail', () => {
   it('retorna null/undefined inalterado', () => {
     expect(driveUrlToThumbnail(null)).toBeNull();
     expect(driveUrlToThumbnail(undefined)).toBeUndefined();
+  });
+});
+
+describe('buscarPedido', () => {
+  it('retorna row quando ID_Mercado_Pago encontrado', async () => {
+    const row = await buscarPedido('MP_001');
+    expect(row).not.toBeNull();
+    expect(row.get('ID_Mercado_Pago')).toBe('MP_001');
+  });
+
+  it('retorna null quando não encontrado', async () => {
+    const row = await buscarPedido('INEXISTENTE');
+    expect(row).toBeNull();
   });
 });
 

@@ -24,4 +24,12 @@ const fotos = rateLimit({
   message: { error: 'Muitas requisições à galeria. Tente novamente em 1 minuto.' },
 });
 
-module.exports = { geral, pagamento, fotos };
+const statusConsulta = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas consultas de status. Aguarde 1 minuto.' },
+});
+
+module.exports = { geral, pagamento, fotos, statusConsulta };
