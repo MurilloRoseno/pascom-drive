@@ -1,0 +1,77 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg-deep: #05060A;
+  --bg-panel: #0B0F1A;
+  --text-primary: #E8ECF5;
+  --text-muted: #8A92A8;
+  --text-mono: #C7D2E5;
+  --accent-cyan: #7DD3FC;
+  --accent-amber: #F5B971;
+  --accent-violet: #A78BFA;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: Inter, sans-serif;
+}
+
+* {
+  @apply antialiased;
+}
+
+/* KaTeX customization */
+.katex {
+  font-size: 1.1em;
+  color: var(--text-mono);
+}
+
+.katex-display {
+  margin: 1.5rem 0;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(180, 200, 255, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(180, 200, 255, 0.5);
+}
+
+/* Input styling */
+input[type='number'],
+input[type='range'],
+input[type='text'],
+select,
+textarea {
+  font-family: JetBrains Mono, monospace;
+}
+
+input[type='range'] {
+  accent-color: var(--accent-cyan);
+}
+
+/* Selection */
+::selection {
+  background-color: var(--accent-cyan);
+  color: var(--bg-deep);
+}
