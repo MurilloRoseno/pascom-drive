@@ -14,13 +14,13 @@ export default function Simulation() {
 
   return (
     <Section id="simulation">
-      <div className="max-w-5xl mx-auto mb-8">
+      <div className="max-w-7xl mx-auto mb-16">
         <SectionLabel text={t('simulation.sectionLabel')} />
         <h2 className="text-4xl md:text-5xl font-serif font-light text-text">
           {t('simulation.title')}
         </h2>
       </div>
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-10 md:gap-12">
         {/* Controls */}
         <Panel className="flex flex-col">
           <h3 className="text-xl font-serif font-bold text-gold mb-6">{t('simulation.controlsLabel')}</h3>

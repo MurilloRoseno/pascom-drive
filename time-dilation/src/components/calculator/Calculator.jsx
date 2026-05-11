@@ -38,15 +38,15 @@ export default function Calculator() {
 
   return (
     <Section id="calculator">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto mb-16">
         <SectionLabel text={t('calculator.sectionLabel')} />
-        <h2 className="text-4xl md:text-5xl font-serif font-light text-text mb-2">
+        <h2 className="text-4xl md:text-5xl font-serif font-light text-text mb-6">
           {t('calculator.title')}
         </h2>
-        <p className="text-text-dim mb-12">{t('calculator.subtitle')}</p>
+        <p className="text-base md:text-lg text-text-dim max-w-2xl">{t('calculator.subtitle')}</p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
+      <div className="grid lg:grid-cols-2 gap-10 md:gap-12">
         {/* Input Panel */}
         <Panel className="flex flex-col">
           <h3 className="text-2xl font-serif font-bold text-gold mb-6">

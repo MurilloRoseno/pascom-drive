@@ -24,33 +24,34 @@ function AppContent() {
         <Simulation />
         <Didactic />
         <Faq />
-        <footer className="bg-void/50 border-t border-white/10 py-12 px-4 text-center">
-          <p className="font-display text-gold text-lg mb-3 tracking-wide">{t('footer.footer_title') || 'Eranildo Relativity Lab'}</p>
-          <p className="text-xs font-mono text-text-dim mb-8">{t('footer.tagline')}</p>
+        <footer className="bg-gradient-to-b from-void/0 to-void/80 border-t border-gold/20 py-16 md:py-24 px-4 text-center">
+          <p className="font-display text-gold text-2xl md:text-3xl mb-4 tracking-wider font-semibold">{t('footer.footer_title') || 'Eranildo Relativity Lab'}</p>
+          <p className="text-xs md:text-sm font-mono text-text-dim mb-12 uppercase tracking-widest">{t('footer.tagline')}</p>
 
-          <div className="mt-8 pt-8 border-t border-white/10 max-w-2xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <div className="mt-12 pt-12 border-t border-gold/20 max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 md:gap-16 mb-12">
               {/* Eranildo Card */}
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col items-center">
                 <img
                   src="/favicon.png"
                   alt="Eranildo Sobral"
-                  className="w-10 h-10 rounded-full border border-gold/30"
+                  className="w-16 h-16 rounded-full border-2 border-gold/40 mb-4"
                 />
-                <div className="text-left">
-                  <p className="text-xs font-mono text-gold uppercase tracking-wide">{t('footer.idealizer')}</p>
-                  <p className="text-sm text-text">Eranildo Sobral</p>
-                </div>
+                <p className="text-xs font-mono text-gold uppercase tracking-wider mb-2">{t('footer.idealizer')}</p>
+                <p className="text-base md:text-lg text-text font-serif">Eranildo Sobral</p>
               </div>
 
               {/* Murillo Card */}
-              <div className="text-left">
-                <p className="text-xs font-mono text-gold uppercase tracking-wide">{t('footer.developer')}</p>
+              <div className="flex flex-col items-center">
+                <div className="w-16 h-16 rounded-full border-2 border-gold/40 mb-4 flex items-center justify-center">
+                  <span className="text-2xl text-gold">→</span>
+                </div>
+                <p className="text-xs font-mono text-gold uppercase tracking-wider mb-2">{t('footer.developer')}</p>
                 <a
                   href={t('footer.linkedInUrl')}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-text hover:text-gold-light transition-colors underline decoration-1 underline-offset-2"
+                  className="text-base md:text-lg text-gold font-serif hover:text-gold-light transition-colors hover:underline decoration-2 underline-offset-3"
                 >
                   Murillo Lima
                 </a>
@@ -58,7 +59,7 @@ function AppContent() {
             </div>
           </div>
 
-          <p className="text-xs text-text-faint mt-8">{t('footer.credits')}</p>
+          <p className="text-xs text-text-faint mt-12">{t('footer.credits')}</p>
         </footer>
       </main>
     </>

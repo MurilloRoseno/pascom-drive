@@ -14,9 +14,9 @@ export default function Faq() {
 
   return (
     <Section id="faq">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <SectionLabel text={t('faq.sectionLabel')} />
-        <h2 className="text-4xl md:text-5xl font-serif font-light text-text mb-12">
+        <h2 className="text-4xl md:text-5xl font-serif font-light text-text mb-16">
           {t('faq.title')}
         </h2>
         <Accordion items={items} />
