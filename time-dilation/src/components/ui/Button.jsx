@@ -19,9 +19,9 @@ export default function Button({
           'px-8 py-4 text-base tracking-wide': size === 'lg',
         },
         {
-          'bg-gold text-deep hover:bg-gold-light shadow-lg shadow-gold/30 hover:shadow-xl hover:shadow-gold/40 focus:ring-gold/50 focus:ring-offset-deep': variant === 'primary',
-          'bg-transparent border-2 border-gold text-gold hover:bg-gold/10 hover:border-gold-light focus:ring-gold/50 focus:ring-offset-deep': variant === 'secondary',
-          'bg-transparent border border-gold/30 text-text hover:border-gold/70 hover:bg-gold/5 focus:ring-gold/30 focus:ring-offset-deep': variant === 'outline',
+          'bg-gold text-white hover:bg-gold-light shadow-lg shadow-gold/30 hover:shadow-xl hover:shadow-gold/40 focus:ring-gold/50 focus:ring-offset-deep': variant === 'primary',
+          'bg-transparent border-2 border-gold text-text hover:bg-gold/15 hover:border-gold-light focus:ring-gold/50 focus:ring-offset-deep': variant === 'secondary',
+          'bg-transparent border border-gold/50 text-text hover:border-gold/80 hover:bg-gold/8 focus:ring-gold/30 focus:ring-offset-deep': variant === 'outline',
         },
         className
       )}

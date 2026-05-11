@@ -6,13 +6,13 @@ export default function Hero() {
   const t = useTranslation();
 
   return (
-    <section id="hero" className="min-h-screen flex flex-col items-center justify-center px-4 md:px-8 relative overflow-hidden pt-32 md:pt-20">
+    <section id="hero" className="relative min-h-screen flex flex-col items-center justify-center px-4 md:px-8 overflow-hidden pt-32 md:pt-20 pb-32">
       {/* Radial glow background */}
       <div className="absolute inset-0 bg-gradient-to-b from-nebula-1/40 via-transparent to-transparent blur-3xl -z-10" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl -z-10" />
 
-      <div className="text-center max-w-4xl">
+      <div className="text-center max-w-4xl z-10">
         {/* Eyebrow */}
         <div
           className="text-xs font-mono text-gold uppercase tracking-widest mb-6 md:mb-10 opacity-0"
@@ -79,15 +79,15 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Scroll Indicator - Fixed at bottom */}
       <div
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-0"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 opacity-0"
         style={{
           animation: 'fadeUp 0.8s ease-out 1.3s forwards',
         }}
       >
-        <div className="w-0.5 h-10 bg-gradient-to-b from-gold to-transparent" style={{ animation: 'scrollPulse 2s ease-in-out infinite' }} />
-        <span className="text-xs font-mono text-gold uppercase tracking-widest font-semibold">{t('hero.scroll')}</span>
+        <div className="w-0.5 h-12 bg-gradient-to-b from-gold to-transparent" style={{ animation: 'scrollPulse 2s ease-in-out infinite' }} />
+        <span className="text-xs font-mono text-gold uppercase tracking-widest font-semibold whitespace-nowrap">{t('hero.scroll')}</span>
       </div>
     </section>
   );

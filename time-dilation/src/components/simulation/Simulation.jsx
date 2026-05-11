@@ -27,7 +27,7 @@ export default function Simulation() {
 
           <div className="space-y-4 flex-1">
             <div>
-              <label className="block text-xs font-mono text-text-dim uppercase mb-2">
+              <label className="block text-xs font-mono text-text uppercase mb-3 font-semibold">
                 {t('simulation.velocityLabel')}
               </label>
               <div className="flex gap-2 items-center">
@@ -48,7 +48,7 @@ export default function Simulation() {
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-text-dim uppercase mb-2">
+              <label className="block text-xs font-mono text-text uppercase mb-3 font-semibold">
                 {t('simulation.durationLabel')}
               </label>
               <div className="flex gap-2 items-center">

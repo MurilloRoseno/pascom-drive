@@ -77,7 +77,7 @@ export default function Calculator() {
           <div className="space-y-4">
             {/* Input 1 */}
             <div>
-              <label className="block text-sm font-mono text-text-dim mb-2">
+              <label className="block text-sm font-mono text-text mb-3 font-semibold">
                 {calc.mode === 'lorentz' ? 'Velocidade' : currentMode?.fields[0]}
               </label>
               <div className="flex gap-2">
@@ -105,7 +105,7 @@ export default function Calculator() {
             {/* Input 2 */}
             {showSecondInput && (
               <div>
-                <label className="block text-sm font-mono text-text-dim mb-2">
+                <label className="block text-sm font-mono text-text mb-3 font-semibold">
                   {currentMode?.fields[1]}
                 </label>
                 <div className="flex gap-2">
@@ -139,7 +139,7 @@ export default function Calculator() {
             {/* Time Unit (for non-velocity modes) */}
             {calc.mode !== 'velocity' && calc.mode !== 'lorentz' && (
               <div>
-                <label className="block text-sm font-mono text-text-dim mb-2">
+                <label className="block text-sm font-mono text-text mb-3 font-semibold">
                   Unidade de tempo
                 </label>
                 <select
