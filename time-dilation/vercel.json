@@ -2,11 +2,5 @@
   "name": "eranildo-relativity-lab",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "framework": "vite",
-  "env": [
-    {
-      "key": "NODE_ENV",
-      "value": "production"
-    }
-  ]
+  "framework": "vite"
 }
