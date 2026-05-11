@@ -9,6 +9,7 @@ const criarPagamentoHandler = require('./api/criar-pagamento');
 const statusPagamentoHandler = require('./api/status-pagamento');
 const webhookHandler = require('./api/webhook/mercado-pago');
 const watermarkHandler = require('./api/watermark');
+const preprocessHandler = require('./api/preprocess');
 const downloadHandler = require('./api/download');
 
 const app = express();
@@ -35,6 +36,7 @@ app.post('/api/criar-pagamento', pagamento, criarPagamentoHandler);
 app.get('/api/status-pagamento', statusConsulta, statusPagamentoHandler);
 app.post('/api/webhook/mercado-pago', pagamento, webhookHandler);
 app.post('/api/watermark', watermarkLimit, watermarkHandler);
+app.post('/api/preprocess', watermarkLimit, preprocessHandler);
 app.get('/api/download', downloadHandler);
 
 app.use(errorHandler);
