@@ -2,17 +2,24 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Cinzel:wght@400;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
 
 :root {
-  --bg-deep: #05060A;
-  --bg-panel: #0B0F1A;
-  --text-primary: #E8ECF5;
-  --text-muted: #8A92A8;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201, 168, 76, 0.15);
+  --glow: rgba(201, 168, 76, 0.35);
+  --deep: #03050f;
+  --void: #060914;
+  --nebula-1: #0d1b3e;
+  --nebula-2: #0a1628;
+  --accent: #6eb5ff;
+  --text: #e8e4d8;
+  --text-dim: rgba(232, 228, 216, 0.55);
+  --text-faint: rgba(232, 228, 216, 0.25);
   --text-mono: #C7D2E5;
-  --accent-cyan: #7DD3FC;
-  --accent-amber: #F5B971;
-  --accent-violet: #A78BFA;
+  --border: rgba(201, 168, 76, 0.2);
+  --border-subtle: rgba(232, 228, 216, 0.08);
 }
 
 html {
@@ -20,23 +27,75 @@ html {
 }
 
 body {
-  background-color: var(--bg-deep);
-  color: var(--text-primary);
-  font-family: Inter, sans-serif;
+  background-color: var(--deep);
+  color: var(--text);
+  font-family: "Cormorant Garamond", serif;
 }
 
 * {
   @apply antialiased;
 }
 
+/* Animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scrollPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes gridDrift {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Reveal class for intersection observer */
+.reveal {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
 /* KaTeX customization */
 .katex {
   font-size: 1.1em;
-  color: var(--text-mono);
+  color: var(--accent);
 }
 
 .katex-display {
   margin: 1.5rem 0;
+}
+
+.katex-display::before,
+.katex-display::after {
+  content: '—';
+  margin: 0 1rem;
+  color: var(--gold);
+  opacity: 0.5;
 }
 
 /* Scrollbar styling */
@@ -49,12 +108,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(180, 200, 255, 0.3);
+  background: var(--border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(180, 200, 255, 0.5);
+  background: var(--gold);
 }
 
 /* Input styling */
@@ -67,11 +126,11 @@ textarea {
 }
 
 input[type='range'] {
-  accent-color: var(--accent-cyan);
+  accent-color: var(--gold);
 }
 
 /* Selection */
 ::selection {
-  background-color: var(--accent-cyan);
-  color: var(--bg-deep);
+  background-color: var(--gold);
+  color: var(--deep);
 }
