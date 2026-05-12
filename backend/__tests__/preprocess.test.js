@@ -84,4 +84,11 @@ describe('POST /api/preprocess', () => {
     const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
     expect(res.status).toBe(422);
   });
+
+  it('converts image/heic-sequence (iPhone Live Photo)', async () => {
+    drive.downloadFile.mockResolvedValue({ buffer: Buffer.alloc(1024 * 1024 * 3), mimeType: 'image/heic-sequence' });
+    const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
+    expect(res.status).toBe(200);
+    expect(drive.updateFile).toHaveBeenCalledWith('f1', expect.any(Buffer), 'image/jpeg');
+  });
 });
