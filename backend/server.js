@@ -13,6 +13,7 @@ const preprocessHandler = require('./api/preprocess');
 const downloadHandler = require('./api/download');
 
 const app = express();
+app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
