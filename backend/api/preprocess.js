@@ -4,6 +4,7 @@ const { downloadFile, updateFile } = require('../lib/google-drive');
 const SUPPORTED = new Set([
   'image/jpeg', 'image/png', 'image/webp', 'image/tiff',
   'image/gif', 'image/avif', 'image/heic', 'image/heif',
+  'image/heic-sequence', // iPhone Live Photos
 ]);
 const SMALL_JPEG_THRESHOLD = 2 * 1024 * 1024; // 2 MB
 
