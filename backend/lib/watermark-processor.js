@@ -113,7 +113,7 @@ async function compositeWatermark(imageBuffer, type = 'color') {
   // 8. Composite both layers, embed EXIF, output JPEG.
   return sharp(resizedBuffer)
     .composite([
-      { input: finalTile, tile: true, blend: 'screen' },
+      { input: finalTile, tile: true, blend: 'over' },
       { input: bigCenterBuffer, gravity: 'center', blend: 'over' },
     ])
     .withMetadata({
