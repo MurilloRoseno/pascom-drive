@@ -291,3 +291,33 @@ a {
   filter: blur(20px);
   transition: filter 0.3s ease;
 }
+
+/* ── Proteção anti-interação com imagens ─────────────────── */
+.photo-card img,
+.photo-blur-target {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none; /* iOS: desabilita "Salvar Imagem" no toque longo */
+  pointer-events: none;        /* bloqueia clique/drag direto na <img> */
+}
+
+.photo-card {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Proteção anti-impressão (Ctrl+P → PDF) ──────────────── */
+@media print {
+  .photo-blur-target,
+  .photo-card img {
+    visibility: hidden !important;
+    filter: blur(40px) !important;
+  }
+  .gallery-grid::after {
+    content: 'Fotos protegidas — Paróquia São Rafael';
+    display: block;
+    font-size: 2rem;
+    text-align: center;
+    color: #6D2077;
+  }
+}

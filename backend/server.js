@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const helmet = require('helmet');
 const { geral, pagamento, fotos, statusConsulta, watermark: watermarkLimit } = require('./middleware/rate-limit');
 const errorHandler = require('./middleware/error-handler');
 
@@ -16,6 +17,15 @@ const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// Security headers — prevent iframe embedding, MIME-sniffing, clickjacking
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'same-origin' } }));
+app.use((_req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
 
 app.use(express.json({
   verify: (req, _res, buf) => { req.rawBody = buf.toString(); },
