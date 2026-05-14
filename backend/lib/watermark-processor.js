@@ -5,7 +5,7 @@ const path = require('path');
 
 // --- Tunable constants ---
 const TILE_WIDTH   = 350;    // logo width in pixels; smaller = more tiles per photo
-const TILE_OPACITY = 0.35;   // 0 = invisible, 1 = fully opaque (subtle but hard to mask)
+const TILE_OPACITY = 0.45;   // 0 = invisible, 1 = fully opaque (subtle but hard to mask)
 const TILE_SPACING = 60;     // transparent gap (px) around each tile
 const ROTATION_MIN    = 15;     // minimum watermark rotation angle (degrees)
 const ROTATION_MAX    = 45;     // maximum watermark rotation angle (degrees)
@@ -30,7 +30,7 @@ async function buildWatermarkTileAtWidth(watermarkPath, tileWidth, opacity) {
 
   for (let i = 0; i < data.length; i += 4) {
     const lum = (data[i] + data[i + 1] + data[i + 2]) / 3 / 255;
-    data[i + 3] = Math.round(lum * 255 * opacity);
+    data[i + 3] = Math.round((1 - lum) * 255 * opacity);
   }
 
   return { buffer: Buffer.from(data), width: info.width, height: info.height };
@@ -113,7 +113,7 @@ async function compositeWatermark(imageBuffer, type = 'color') {
   // 8. Composite both layers, embed EXIF, output JPEG.
   return sharp(resizedBuffer)
     .composite([
-      { input: finalTile, tile: true, blend: 'over' },
+      { input: finalTile, tile: true, blend: 'screen' },
       { input: bigCenterBuffer, gravity: 'center', blend: 'over' },
     ])
     .withMetadata({
