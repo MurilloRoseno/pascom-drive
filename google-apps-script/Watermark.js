@@ -105,7 +105,7 @@ function processarFoto(arquivo) {
     // 2. Call backend to apply watermark — returns raw JPEG bytes
     var payload = JSON.stringify({
       fileId:        arquivo.getId(),
-      watermarkType: 'color',
+      watermarkType: 'auto',  // backend auto-detects color vs B&W based on image saturation
     });
 
     var response = UrlFetchApp.fetch(backendUrl + '/api/watermark', {

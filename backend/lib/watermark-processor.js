@@ -5,12 +5,12 @@ const path = require('path');
 
 // --- Tunable constants ---
 const TILE_WIDTH   = 350;    // logo width in pixels; smaller = more tiles per photo
-const TILE_OPACITY = 0.35;   // 0 = invisible, 1 = fully opaque (subtle but hard to mask)
+const TILE_OPACITY = 0.75;   // flat opacity applied over PNG's natural alpha channel
 const TILE_SPACING = 60;     // transparent gap (px) around each tile
 const ROTATION_MIN    = 15;     // minimum watermark rotation angle (degrees)
 const ROTATION_MAX    = 45;     // maximum watermark rotation angle (degrees)
 const CENTER_SCALE    = 0.40;   // big center watermark: fraction of image width
-const CENTER_OPACITY  = 0.15;   // big center watermark opacity
+const CENTER_OPACITY  = 0.40;   // big center watermark opacity
 const JPEG_QUALITY    = 85;     // output JPEG quality (1–100)
 
 const ASSETS = {
@@ -19,8 +19,8 @@ const ASSETS = {
 };
 
 // Build a watermark tile at a specific pixel width.
-// Alpha = luminance × opacity, so black pixels vanish and bright logo pixels
-// appear at opacity level.
+// Alpha = PNG's natural alpha × opacity — preserves the designed shape of the logo
+// without degrading mid-tone pixels via luminance math.
 async function buildWatermarkTileAtWidth(watermarkPath, tileWidth, opacity) {
   const { data, info } = await sharp(watermarkPath)
     .resize(tileWidth, null, { fit: 'inside' })
@@ -29,11 +29,33 @@ async function buildWatermarkTileAtWidth(watermarkPath, tileWidth, opacity) {
     .toBuffer({ resolveWithObject: true });
 
   for (let i = 0; i < data.length; i += 4) {
-    const lum = (data[i] + data[i + 1] + data[i + 2]) / 3 / 255;
-    data[i + 3] = Math.round(lum * 255 * opacity);
+    data[i + 3] = Math.round(data[i + 3] * opacity);
   }
 
   return { buffer: Buffer.from(data), width: info.width, height: info.height };
+}
+
+/**
+ * Detect whether a photo is colorful or black & white by measuring average
+ * HSV saturation over a downsampled version of the image.
+ * @param {Buffer} resizedBuffer  PNG buffer (already resized)
+ * @returns {Promise<'color'|'bw'>}
+ */
+async function detectWatermarkType(resizedBuffer) {
+  const { data } = await sharp(resizedBuffer)
+    .resize(100, 100, { fit: 'inside' })
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  let totalSat = 0, count = 0;
+  for (let i = 0; i < data.length; i += 3) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const max = Math.max(r, g, b);
+    totalSat += max === 0 ? 0 : (max - Math.min(r, g, b)) / max;
+    count++;
+  }
+  return (totalSat / count) > 0.15 ? 'color' : 'bw';
 }
 
 // Convenience wrapper: build tile at the default TILE_WIDTH.
@@ -83,30 +105,36 @@ function buildXOverlay(imgW, imgH) {
  * @param {'color'|'bw'} type  Which watermark variant to use
  * @returns {Promise<Buffer>}   JPEG output at quality 85
  */
-async function compositeWatermark(imageBuffer, type = 'color') {
-  const watermarkPath = ASSETS[type] || ASSETS.color;
-
+async function compositeWatermark(imageBuffer, type = 'auto') {
   // 1. Resize input image to ≤1200px on the longest side
-  const image = sharp(imageBuffer).resize(1200, 1200, { fit: 'inside', withoutEnlargement: true });
+  const resizedBuffer = await sharp(imageBuffer)
+    .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+    .png()
+    .toBuffer();
 
-  // 2. Get metadata from the (possibly) resized image
-  const resizedBuffer = await image.png().toBuffer();
+  // 2. Auto-detect color vs B&W if not explicitly forced
+  const resolvedType = (type === 'auto' || !ASSETS[type])
+    ? await detectWatermarkType(resizedBuffer)
+    : type;
+  const watermarkPath = ASSETS[resolvedType];
+
+  // 3. Get metadata from the resized image
   const { width: imgW, height: imgH } = await sharp(resizedBuffer).metadata();
 
-  // 3. Build small tiled watermark (TILE_OPACITY = 0.35)
+  // 4. Build small tiled watermark
   const tile = await buildWatermarkTile(watermarkPath, TILE_OPACITY);
 
-  // 4. Build spaced tile
+  // 5. Build spaced tile
   const spacedTile = await buildSpacedTile(tile);
 
-  // 5. Apply random rotation (ROTATION_MIN°–ROTATION_MAX°) — breaks AI pattern recognition
+  // 6. Apply random rotation (ROTATION_MIN°–ROTATION_MAX°) — breaks AI pattern recognition
   const angle = ROTATION_MIN + Math.floor(Math.random() * (ROTATION_MAX - ROTATION_MIN + 1));
   let rotatedTile = await sharp(spacedTile)
     .rotate(angle, { background: { r: 0, g: 0, b: 0, alpha: 0 } })
     .png()
     .toBuffer();
 
-  // 6. Resize tile if needed (must be ≤ image dimensions for sharp)
+  // 7. Resize tile if needed (must be ≤ image dimensions for sharp)
   const { width: rotW, height: rotH } = await sharp(rotatedTile).metadata();
   let finalTile = rotatedTile;
   if (rotW > imgW || rotH > imgH) {
@@ -117,14 +145,14 @@ async function compositeWatermark(imageBuffer, type = 'color') {
       .toBuffer();
   }
 
-  // 7. Build big center watermark (CENTER_SCALE of image width, CENTER_OPACITY)
+  // 8. Build big center watermark (CENTER_SCALE of image width, CENTER_OPACITY)
   const bigWidth = Math.max(1, Math.round(imgW * CENTER_SCALE));
   const bigTile = await buildWatermarkTileAtWidth(watermarkPath, bigWidth, CENTER_OPACITY);
   const bigCenterBuffer = await sharp(bigTile.buffer, {
     raw: { width: bigTile.width, height: bigTile.height, channels: 4 }
   }).png().toBuffer();
 
-  // 8. Composite all layers: tiled watermark + center logo + X diagonal lines.
+  // 9. Composite all layers: tiled watermark + center logo + X diagonal lines.
   const xOverlay = buildXOverlay(imgW, imgH);
   return sharp(resizedBuffer)
     .composite([
