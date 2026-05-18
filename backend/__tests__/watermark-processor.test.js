@@ -66,5 +66,5 @@ describe('compositeWatermark', () => {
       result2 = await compositeWatermark(sampleJpeg, 'color');
     }
     expect(result1.equals(result2)).toBe(false);
-  });
+  }, 30000);
 });

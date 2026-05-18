@@ -1,16 +1,16 @@
-// watermark-processor.js — Composite a tiled, semi-transparent watermark over a photo.
+// watermark-processor.js — Composite a tiled watermark over a photo.
 // Architecture: build a spaced tile, then use sharp's { tile: true } to repeat it.
+// Opacity philosophy (watermark-pro style): the PNG's natural alpha channel is used
+// as-is — no pixel-level opacity reduction. Transparency is baked into the PNG asset.
 const sharp = require('sharp');
 const path = require('path');
 
 // --- Tunable constants ---
 const TILE_WIDTH   = 350;    // logo width in pixels; smaller = more tiles per photo
-const TILE_OPACITY = 0.75;   // flat opacity applied over PNG's natural alpha channel
 const TILE_SPACING = 60;     // transparent gap (px) around each tile
 const ROTATION_MIN    = 15;     // minimum watermark rotation angle (degrees)
 const ROTATION_MAX    = 45;     // maximum watermark rotation angle (degrees)
 const CENTER_SCALE    = 0.40;   // big center watermark: fraction of image width
-const CENTER_OPACITY  = 0.40;   // big center watermark opacity
 const JPEG_QUALITY    = 85;     // output JPEG quality (1–100)
 
 const ASSETS = {
@@ -19,20 +19,13 @@ const ASSETS = {
 };
 
 // Build a watermark tile at a specific pixel width.
-// Alpha = PNG's natural alpha × opacity — preserves the designed shape of the logo
-// without degrading mid-tone pixels via luminance math.
-async function buildWatermarkTileAtWidth(watermarkPath, tileWidth, opacity) {
-  const { data, info } = await sharp(watermarkPath)
+// Alpha channel is kept exactly as designed in the PNG — no opacity reduction.
+async function buildWatermarkTileAtWidth(watermarkPath, tileWidth) {
+  return sharp(watermarkPath)
     .resize(tileWidth, null, { fit: 'inside' })
     .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-
-  for (let i = 0; i < data.length; i += 4) {
-    data[i + 3] = Math.round(data[i + 3] * opacity);
-  }
-
-  return { buffer: Buffer.from(data), width: info.width, height: info.height };
+    .png()
+    .toBuffer();
 }
 
 /**
@@ -59,15 +52,16 @@ async function detectWatermarkType(resizedBuffer) {
 }
 
 // Convenience wrapper: build tile at the default TILE_WIDTH.
-async function buildWatermarkTile(watermarkPath, opacity = TILE_OPACITY) {
-  return buildWatermarkTileAtWidth(watermarkPath, TILE_WIDTH, opacity);
+async function buildWatermarkTile(watermarkPath) {
+  return buildWatermarkTileAtWidth(watermarkPath, TILE_WIDTH);
 }
 
 // Wrap tile in a transparent canvas with TILE_SPACING padding so that when
 // sharp tiles it the logos are separated by visible gaps.
-async function buildSpacedTile(tile) {
-  const canvasW = tile.width  + TILE_SPACING;
-  const canvasH = tile.height + TILE_SPACING;
+async function buildSpacedTile(tileBuffer) {
+  const { width, height } = await sharp(tileBuffer).metadata();
+  const canvasW = width  + TILE_SPACING;
+  const canvasH = height + TILE_SPACING;
   const offsetTop  = Math.round(TILE_SPACING / 2);
   const offsetLeft = Math.round(TILE_SPACING / 2);
 
@@ -76,8 +70,7 @@ async function buildSpacedTile(tile) {
               background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
     .composite([{
-      input: tile.buffer,
-      raw:   { width: tile.width, height: tile.height, channels: 4 },
+      input: tileBuffer,
       top:  offsetTop,
       left: offsetLeft,
     }])
@@ -102,7 +95,7 @@ function buildXOverlay(imgW, imgH) {
 /**
  * Composite a tiled watermark over the given image buffer.
  * @param {Buffer} imageBuffer  JPEG or PNG input photo
- * @param {'color'|'bw'} type  Which watermark variant to use
+ * @param {'color'|'bw'|'auto'} type  Which watermark variant to use
  * @returns {Promise<Buffer>}   JPEG output at quality 85
  */
 async function compositeWatermark(imageBuffer, type = 'auto') {
@@ -121,8 +114,8 @@ async function compositeWatermark(imageBuffer, type = 'auto') {
   // 3. Get metadata from the resized image
   const { width: imgW, height: imgH } = await sharp(resizedBuffer).metadata();
 
-  // 4. Build small tiled watermark
-  const tile = await buildWatermarkTile(watermarkPath, TILE_OPACITY);
+  // 4. Build small tiled watermark (natural alpha, no opacity reduction)
+  const tile = await buildWatermarkTile(watermarkPath);
 
   // 5. Build spaced tile
   const spacedTile = await buildSpacedTile(tile);
@@ -145,12 +138,9 @@ async function compositeWatermark(imageBuffer, type = 'auto') {
       .toBuffer();
   }
 
-  // 8. Build big center watermark (CENTER_SCALE of image width, CENTER_OPACITY)
+  // 8. Build big center watermark (CENTER_SCALE of image width, natural alpha)
   const bigWidth = Math.max(1, Math.round(imgW * CENTER_SCALE));
-  const bigTile = await buildWatermarkTileAtWidth(watermarkPath, bigWidth, CENTER_OPACITY);
-  const bigCenterBuffer = await sharp(bigTile.buffer, {
-    raw: { width: bigTile.width, height: bigTile.height, channels: 4 }
-  }).png().toBuffer();
+  const bigCenterBuffer = await buildWatermarkTileAtWidth(watermarkPath, bigWidth);
 
   // 9. Composite all layers: tiled watermark + center logo + X diagonal lines.
   const xOverlay = buildXOverlay(imgW, imgH);
