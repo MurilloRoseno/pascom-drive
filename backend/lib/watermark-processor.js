@@ -64,6 +64,20 @@ async function buildSpacedTile(tile) {
 }
 
 /**
+ * Build an SVG overlay with two diagonal white lines (X) crossing the entire image.
+ * @param {number} imgW  Image width in pixels
+ * @param {number} imgH  Image height in pixels
+ * @returns {Buffer}     SVG buffer ready for sharp composite
+ */
+function buildXOverlay(imgW, imgH) {
+  const svg = `<svg width="${imgW}" height="${imgH}" xmlns="http://www.w3.org/2000/svg">
+    <line x1="0" y1="0" x2="${imgW}" y2="${imgH}" stroke="white" stroke-width="4" stroke-opacity="0.85"/>
+    <line x1="${imgW}" y1="0" x2="0" y2="${imgH}" stroke="white" stroke-width="4" stroke-opacity="0.85"/>
+  </svg>`;
+  return Buffer.from(svg);
+}
+
+/**
  * Composite a tiled watermark over the given image buffer.
  * @param {Buffer} imageBuffer  JPEG or PNG input photo
  * @param {'color'|'bw'} type  Which watermark variant to use
@@ -110,11 +124,13 @@ async function compositeWatermark(imageBuffer, type = 'color') {
     raw: { width: bigTile.width, height: bigTile.height, channels: 4 }
   }).png().toBuffer();
 
-  // 8. Composite both layers, embed EXIF, output JPEG.
+  // 8. Composite all layers: tiled watermark + center logo + X diagonal lines.
+  const xOverlay = buildXOverlay(imgW, imgH);
   return sharp(resizedBuffer)
     .composite([
       { input: finalTile, tile: true, blend: 'over' },
       { input: bigCenterBuffer, gravity: 'center', blend: 'over' },
+      { input: xOverlay, top: 0, left: 0, blend: 'over' },
     ])
     .withMetadata({
       exif: { IFD0: { ImageDescription: 'AMOSTRA - PROIBIDA REPRODUCAO' } },

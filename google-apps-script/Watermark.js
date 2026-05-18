@@ -95,12 +95,12 @@ function processarFoto(arquivo) {
       'x-watermark-secret': props.getProperty('WATERMARK_API_SECRET') || '',
     };
 
-    // 0. Pre-process: convert format + compress before archiving
-    _preprocessarArquivo(arquivo, backendUrl, headers);
-
-    // 1. Copy original to ORIGINAIS folder (unchanged, high quality backup)
+    // 0. Copy TRUE original to ORIGINAIS before any modification (backup first)
     var copiaOriginal = _helpers.copyFileToFolder(arquivo, _helpers.getOriginaisFolder(), id + '_' + nomeOriginal);
     var linkOriginal  = _helpers.getShareableLink(copiaOriginal);
+
+    // 1. Pre-process: convert format (HEIC→JPEG, etc.) + compress in-place on Drive
+    _preprocessarArquivo(arquivo, backendUrl, headers);
 
     // 2. Call backend to apply watermark — returns raw JPEG bytes
     var payload = JSON.stringify({
@@ -121,13 +121,16 @@ function processarFoto(arquivo) {
 
     // 3. Save the returned JPEG blob to AMOSTRAS folder as the authenticated user
     //    (service account has no Drive quota, but Apps Script runs as the user who does)
+    //    Always use .jpg extension — backend always returns JPEG regardless of input format.
+    var nomeAmostra = gerarNomeAmostra(id + '_' + nomeOriginal.replace(/\.[^.]+$/, '.jpg'));
     var blob = response.getBlob();
-    blob.setName(gerarNomeAmostra(id + '_' + nomeOriginal));
+    blob.setName(nomeAmostra);
     var amostraFile = _helpers.getAmostrasFolder().createFile(blob);
     var linkAmostra = 'https://drive.google.com/file/d/' + amostraFile.getId() + '/view?usp=sharing';
 
-    // 4. Move source file out of SOURCE folder — prevents reprocessing on next trigger run
-    arquivo.moveTo(_helpers.getOriginaisFolder());
+    // 4. Remove source file from SOURCE folder (avoid reprocessing on next trigger run).
+    //    Trash it — original is already safely backed up in ORIGINAIS (step 0).
+    arquivo.setTrashed(true);
 
     // 5. Register in Sheet
     _helpers.registrarFoto({
