@@ -9,7 +9,7 @@ const { compositeWatermark } = require('../lib/watermark-processor');
 
 const schema = z.object({
   fileId:        z.string().min(1),
-  watermarkType: z.enum(['color', 'bw']).default('color'),
+  watermarkType: z.enum(['color', 'bw', 'auto']).default('auto'),
 });
 
 // Use only native Node.js ServerResponse methods (setHeader/writeHead/end).
