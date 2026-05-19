@@ -77,8 +77,13 @@ function processarEventos() {
     }
 
     if (erros.length === 0) {
-      atualizarStatusEvento(eventoId, 'Processado', { dataConclusao: new Date().toISOString() });
-      Logger.log('Evento processado: ' + eventoId);
+      // Remove a subpasta vazia de Fotos_Origem imediatamente após processar todas as fotos
+      DriveApp.getFolderById(evento.folderId).setTrashed(true);
+      atualizarStatusEvento(eventoId, 'Processado', {
+        dataConclusao: new Date().toISOString(),
+        pastaRemovida: true,
+      });
+      Logger.log('Evento processado e pasta removida: ' + eventoId);
     } else {
       atualizarStatusEvento(eventoId, 'Erro', { erro: JSON.stringify(erros) });
       moverParaQuarentena(evento.folderId, erros.join('; '));
