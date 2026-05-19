@@ -4,11 +4,19 @@ const sharp = require('sharp');
 const { compositeWatermark } = require('../lib/watermark-processor');
 
 let sampleJpeg;
+let largeJpeg;
 
 beforeAll(async () => {
-  // 200×200 so the watermark logic has room to work (bigWidth = 80px ≥ 1)
+  // 300×400 — tall image so tile and center-logo logic has room to work
   sampleJpeg = await sharp({
-    create: { width: 200, height: 200, channels: 3, background: { r: 128, g: 128, b: 128 } },
+    create: { width: 300, height: 400, channels: 3, background: { r: 128, g: 128, b: 128 } },
+  })
+    .jpeg()
+    .toBuffer();
+
+  // 2000×1600 for the downscale test
+  largeJpeg = await sharp({
+    create: { width: 2000, height: 1600, channels: 3, background: { r: 200, g: 200, b: 200 } },
   })
     .jpeg()
     .toBuffer();
@@ -36,13 +44,6 @@ describe('compositeWatermark', () => {
   });
 
   it('output dimensions are ≤1200px on both sides', async () => {
-    // Create a large image that should be downscaled
-    const largeJpeg = await sharp({
-      create: { width: 2000, height: 1600, channels: 3, background: { r: 200, g: 200, b: 200 } },
-    })
-      .jpeg()
-      .toBuffer();
-
     const result = await compositeWatermark(largeJpeg, 'color');
     const { width, height } = await sharp(result).metadata();
     expect(width).toBeLessThanOrEqual(1200);
@@ -53,18 +54,13 @@ describe('compositeWatermark', () => {
     const result = await compositeWatermark(sampleJpeg, 'color');
     const meta = await sharp(result).metadata();
     expect(meta.exif).toBeDefined();
-    // The EXIF buffer should contain our string somewhere
     expect(meta.exif.toString()).toContain('AMOSTRA - PROIBIDA REPRODUCAO');
   });
 
-  it('output varies between calls (random rotation)', async () => {
-    // Two calls with the same input should produce different buffers due to random angle
+  it('output is deterministic (no random rotation)', async () => {
+    // With angle=0 (fixed), two calls with the same input should produce identical output
     const result1 = await compositeWatermark(sampleJpeg, 'color');
-    let result2 = await compositeWatermark(sampleJpeg, 'color');
-    // try up to 3 extra times if we randomly got the same angle
-    for (let i = 0; i < 3 && result1.equals(result2); i++) {
-      result2 = await compositeWatermark(sampleJpeg, 'color');
-    }
-    expect(result1.equals(result2)).toBe(false);
+    const result2 = await compositeWatermark(sampleJpeg, 'color');
+    expect(result1.equals(result2)).toBe(true);
   }, 30000);
 });
