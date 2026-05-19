@@ -1,4 +1,3 @@
-jest.mock('heic-convert');
 jest.mock('../lib/google-drive');
 jest.mock('sharp');
 
@@ -9,7 +8,6 @@ const express   = require('express');
 const handler   = require('../api/preprocess');
 const drive     = require('../lib/google-drive');
 const sharp     = require('sharp');
-const heicConvert = require('heic-convert');
 const errorHandler = require('../middleware/error-handler');
 
 const app = express();
@@ -37,7 +35,6 @@ beforeEach(() => {
   drive.downloadFile.mockResolvedValue({ buffer: Buffer.alloc(1024 * 1024 * 5), mimeType: 'image/png' });
   drive.updateFile.mockResolvedValue(undefined);
   mockSharpChain(Buffer.alloc(1024 * 500)); // 500 KB output
-  heicConvert.mockResolvedValue(Buffer.alloc(1024 * 1024 * 4));
 });
 
 describe('POST /api/preprocess', () => {
@@ -88,7 +85,7 @@ describe('POST /api/preprocess', () => {
     expect(res.status).toBe(422);
   });
 
-  it('converte image/heic para JPEG antes do sharp', async () => {
+  it('converte image/heic via sharp nativo (sem heic-convert)', async () => {
     drive.downloadFile.mockResolvedValue({
       buffer: Buffer.alloc(1024 * 1024 * 4),
       mimeType: 'image/heic',
@@ -98,15 +95,11 @@ describe('POST /api/preprocess', () => {
       .set('x-watermark-secret', 'test-secret')
       .send({ fileId: 'f-heic' });
     expect(res.status).toBe(200);
-    expect(heicConvert).toHaveBeenCalledWith({
-      buffer: expect.any(Buffer),
-      format: 'JPEG',
-      quality: 1,
-    });
+    expect(res.body.skipped).toBe(false);
     expect(drive.updateFile).toHaveBeenCalledWith('f-heic', expect.any(Buffer), 'image/jpeg');
   });
 
-  it('converte image/heif para JPEG', async () => {
+  it('converte image/heif via sharp nativo', async () => {
     drive.downloadFile.mockResolvedValue({
       buffer: Buffer.alloc(1024 * 1024 * 4),
       mimeType: 'image/heif',
@@ -116,11 +109,10 @@ describe('POST /api/preprocess', () => {
       .set('x-watermark-secret', 'test-secret')
       .send({ fileId: 'f-heif' });
     expect(res.status).toBe(200);
-    expect(heicConvert).toHaveBeenCalled();
     expect(drive.updateFile).toHaveBeenCalledWith('f-heif', expect.any(Buffer), 'image/jpeg');
   });
 
-  it('converte image/heic-sequence (Live Photo) para JPEG', async () => {
+  it('converte image/heic-sequence (iPhone Live Photo) via sharp nativo', async () => {
     drive.downloadFile.mockResolvedValue({
       buffer: Buffer.alloc(1024 * 1024 * 6),
       mimeType: 'image/heic-sequence',
@@ -130,22 +122,6 @@ describe('POST /api/preprocess', () => {
       .set('x-watermark-secret', 'test-secret')
       .send({ fileId: 'f-live' });
     expect(res.status).toBe(200);
-    expect(heicConvert).toHaveBeenCalled();
     expect(drive.updateFile).toHaveBeenCalledWith('f-live', expect.any(Buffer), 'image/jpeg');
-  });
-
-  it('NÃO chama heic-convert para PNG comum', async () => {
-    await request(app)
-      .post('/api/preprocess')
-      .set('x-watermark-secret', 'test-secret')
-      .send({ fileId: 'f-png' });
-    expect(heicConvert).not.toHaveBeenCalled();
-  });
-
-  it('converts image/heic-sequence (iPhone Live Photo)', async () => {
-    drive.downloadFile.mockResolvedValue({ buffer: Buffer.alloc(1024 * 1024 * 3), mimeType: 'image/heic-sequence' });
-    const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
-    expect(res.status).toBe(200);
-    expect(drive.updateFile).toHaveBeenCalledWith('f1', expect.any(Buffer), 'image/jpeg');
   });
 });

@@ -1,5 +1,4 @@
 const sharp = require('sharp');
-const heicConvert = require('heic-convert');
 const { downloadFile, updateFile } = require('../lib/google-drive');
 
 const SUPPORTED = new Set([
@@ -8,7 +7,6 @@ const SUPPORTED = new Set([
   'image/heic-sequence', // iPhone Live Photos
 ]);
 const SMALL_JPEG_THRESHOLD = 2 * 1024 * 1024; // 2 MB
-const HEIC_TYPES = new Set(['image/heic', 'image/heif', 'image/heic-sequence']);
 
 function sendJson(res, status, body) {
   res.status(status).json(body);
@@ -39,18 +37,9 @@ module.exports = async function handler(req, res, next) {
       return sendJson(res, 200, { skipped: true, originalSize, processedSize: originalSize, originalMimeType: mimeType });
     }
 
-    // Pré-conversão: HEIC/HEIF → JPEG antes de passar para o sharp
-    let workBuffer = buffer;
-    if (HEIC_TYPES.has(mimeType)) {
-      workBuffer = await heicConvert({
-        buffer,
-        format: 'JPEG',
-        quality: 1, // qualidade máxima (0..1 no heic-convert)
-      });
-    }
-
-    const processed = await sharp(workBuffer)
-      .rotate()                                         // auto-orient from EXIF
+    // Sharp nativo decodifica HEIC/HEIF/HEVC via libvips+libheif (Linux Vercel)
+    const processed = await sharp(buffer)
+      .rotate()
       .resize(5000, 5000, { fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: 90 })
       .withMetadata()
