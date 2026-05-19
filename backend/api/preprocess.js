@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const { downloadFile, updateFile } = require('../lib/google-drive');
+const { downloadFile, downloadFileAsJpeg, updateFile } = require('../lib/google-drive');
 
 const SUPPORTED = new Set([
   'image/jpeg', 'image/png', 'image/webp', 'image/tiff',
@@ -7,6 +7,7 @@ const SUPPORTED = new Set([
   'image/heic-sequence', // iPhone Live Photos
 ]);
 const SMALL_JPEG_THRESHOLD = 2 * 1024 * 1024; // 2 MB
+const HEIC_TYPES = new Set(['image/heic', 'image/heif', 'image/heic-sequence']);
 
 function sendJson(res, status, body) {
   res.status(status).json(body);
@@ -25,6 +26,7 @@ module.exports = async function handler(req, res, next) {
   if (!fileId) return sendJson(res, 400, { error: 'fileId obrigatório' });
 
   try {
+    // 1. Download raw file to detect mimeType
     const { buffer, mimeType } = await downloadFile(fileId);
     const originalSize = buffer.length;
 
@@ -37,8 +39,15 @@ module.exports = async function handler(req, res, next) {
       return sendJson(res, 200, { skipped: true, originalSize, processedSize: originalSize, originalMimeType: mimeType });
     }
 
-    // Sharp nativo decodifica HEIC/HEIF/HEVC via libvips+libheif (Linux Vercel)
-    const processed = await sharp(buffer)
+    // For HEIC/HEIF: Vercel Lambda's libheif 2.x cannot decode HEVC (plugin .so files missing).
+    // Use Google Drive's thumbnail service to get a JPEG — Google decodes HEIC natively.
+    let workBuffer = buffer;
+    if (HEIC_TYPES.has(mimeType)) {
+      const jpeg = await downloadFileAsJpeg(fileId);
+      workBuffer = jpeg.buffer;
+    }
+
+    const processed = await sharp(workBuffer)
       .rotate()
       .resize(5000, 5000, { fit: 'inside', withoutEnlargement: true })
       .jpeg({ quality: 90 })

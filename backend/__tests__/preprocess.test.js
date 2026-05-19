@@ -33,6 +33,7 @@ function mockSharpChain(outputBuffer) {
 beforeEach(() => {
   jest.clearAllMocks();
   drive.downloadFile.mockResolvedValue({ buffer: Buffer.alloc(1024 * 1024 * 5), mimeType: 'image/png' });
+  drive.downloadFileAsJpeg.mockResolvedValue({ buffer: Buffer.alloc(1024 * 1024 * 3), mimeType: 'image/jpeg' });
   drive.updateFile.mockResolvedValue(undefined);
   mockSharpChain(Buffer.alloc(1024 * 500)); // 500 KB output
 });
@@ -85,7 +86,7 @@ describe('POST /api/preprocess', () => {
     expect(res.status).toBe(422);
   });
 
-  it('converte image/heic via sharp nativo (sem heic-convert)', async () => {
+  it('converte image/heic via Google Drive thumbnailLink (não usa sharp direto)', async () => {
     drive.downloadFile.mockResolvedValue({
       buffer: Buffer.alloc(1024 * 1024 * 4),
       mimeType: 'image/heic',
@@ -95,11 +96,11 @@ describe('POST /api/preprocess', () => {
       .set('x-watermark-secret', 'test-secret')
       .send({ fileId: 'f-heic' });
     expect(res.status).toBe(200);
-    expect(res.body.skipped).toBe(false);
+    expect(drive.downloadFileAsJpeg).toHaveBeenCalledWith('f-heic');
     expect(drive.updateFile).toHaveBeenCalledWith('f-heic', expect.any(Buffer), 'image/jpeg');
   });
 
-  it('converte image/heif via sharp nativo', async () => {
+  it('converte image/heif via Google Drive thumbnailLink', async () => {
     drive.downloadFile.mockResolvedValue({
       buffer: Buffer.alloc(1024 * 1024 * 4),
       mimeType: 'image/heif',
@@ -109,10 +110,11 @@ describe('POST /api/preprocess', () => {
       .set('x-watermark-secret', 'test-secret')
       .send({ fileId: 'f-heif' });
     expect(res.status).toBe(200);
+    expect(drive.downloadFileAsJpeg).toHaveBeenCalledWith('f-heif');
     expect(drive.updateFile).toHaveBeenCalledWith('f-heif', expect.any(Buffer), 'image/jpeg');
   });
 
-  it('converte image/heic-sequence (iPhone Live Photo) via sharp nativo', async () => {
+  it('converte image/heic-sequence (Live Photo) via Google Drive thumbnailLink', async () => {
     drive.downloadFile.mockResolvedValue({
       buffer: Buffer.alloc(1024 * 1024 * 6),
       mimeType: 'image/heic-sequence',
@@ -122,6 +124,15 @@ describe('POST /api/preprocess', () => {
       .set('x-watermark-secret', 'test-secret')
       .send({ fileId: 'f-live' });
     expect(res.status).toBe(200);
+    expect(drive.downloadFileAsJpeg).toHaveBeenCalledWith('f-live');
     expect(drive.updateFile).toHaveBeenCalledWith('f-live', expect.any(Buffer), 'image/jpeg');
+  });
+
+  it('NÃO chama downloadFileAsJpeg para PNG comum', async () => {
+    await request(app)
+      .post('/api/preprocess')
+      .set('x-watermark-secret', 'test-secret')
+      .send({ fileId: 'f-png' });
+    expect(drive.downloadFileAsJpeg).not.toHaveBeenCalled();
   });
 });
