@@ -80,14 +80,10 @@ async function compositeWatermark(imageBuffer, type = 'auto') {
     .png()
     .toBuffer();
 
-  // 5. X diagonal overlay
-  const xOverlay = buildXOverlay(imgW, imgH);
-
-  // 6. Composite: full-image center logo + X lines (no tile repetition)
+  // 5. Composite: full-image center logo only (no X lines, no tile repetition)
   return sharp(resizedBuffer)
     .composite([
       { input: centerBuffer, gravity: 'center', blend: 'over' },
-      { input: xOverlay, top: 0, left: 0, blend: 'over' },
     ])
     .withMetadata({
       exif: { IFD0: { ImageDescription: 'AMOSTRA - PROIBIDA REPRODUCAO' } },
