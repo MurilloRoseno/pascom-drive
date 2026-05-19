@@ -1,10 +1,9 @@
-// watermark-processor.js — Composite a tiled watermark + center logo over a photo.
+// watermark-processor.js — Composite a single full-image watermark logo over a photo.
 //
 // Design principles (watermark-pro style):
-//  - PNG natural alpha is used as-is (no opacity multiplication, no threshold)
-//  - Tile size adapts to image width (~3 columns)
-//  - No rotation, no gap between tiles
-//  - Center logo scaled to cover the entire image
+//  - ONE logo centered, scaled to cover the entire image (fit:cover)
+//  - PNG natural alpha used as-is (no opacity modification)
+//  - Plus two diagonal white X lines
 //  - JPEG quality=100 + mozjpeg for max quality with smaller file size
 const sharp = require('sharp');
 const path = require('path');
@@ -16,18 +15,6 @@ const ASSETS = {
   color: path.join(__dirname, '../assets/watermark-color.png'),
   bw:    path.join(__dirname, '../assets/watermark-bw.png'),
 };
-
-/**
- * Build a watermark tile resized to tileWidth.
- * Uses PNG's natural alpha channel — no opacity modification.
- */
-async function buildWatermarkTileAtWidth(watermarkPath, tileWidth) {
-  return sharp(watermarkPath)
-    .resize(tileWidth, null, { fit: 'inside' })
-    .ensureAlpha()
-    .png()
-    .toBuffer();
-}
 
 /**
  * Detect whether a photo is colorful or B&W by measuring average HSV saturation.
@@ -84,27 +71,22 @@ async function compositeWatermark(imageBuffer, type = 'auto') {
   // 3. Image dimensions
   const { width: imgW, height: imgH } = await sharp(resizedBuffer).metadata();
 
-  // 4. Build tile — width adapts to image (~3 columns)
-  const tileWidth = Math.round(imgW / 3);
-  const tileBuffer = await buildWatermarkTileAtWidth(watermarkPath, tileWidth);
-
-  // 5. Build center logo — resize to exactly imgW×imgH (fit:'cover' fills both dimensions)
-  //    sharp composite requires input ≤ base image dimensions, so we use exact match.
-  const bigCenterBuffer = await sharp(watermarkPath)
+  // 4. Center logo — resize to exactly imgW×imgH covering the full image
+  //    fit:'cover' scales+crops to fill both dimensions exactly.
+  //    Natural PNG alpha is preserved as-is (no opacity modification).
+  const centerBuffer = await sharp(watermarkPath)
     .resize(imgW, imgH, { fit: 'cover' })
     .ensureAlpha()
     .png()
     .toBuffer();
 
-  // 6. X diagonal overlay
+  // 5. X diagonal overlay
   const xOverlay = buildXOverlay(imgW, imgH);
 
-  // 7. Composite: tiled watermark + center logo + X lines
-  //    sharp { tile: true } repeats tileBuffer to cover the full image with no rotation needed.
+  // 6. Composite: full-image center logo + X lines (no tile repetition)
   return sharp(resizedBuffer)
     .composite([
-      { input: tileBuffer, tile: true, blend: 'over' },
-      { input: bigCenterBuffer, gravity: 'center', blend: 'over' },
+      { input: centerBuffer, gravity: 'center', blend: 'over' },
       { input: xOverlay, top: 0, left: 0, blend: 'over' },
     ])
     .withMetadata({
