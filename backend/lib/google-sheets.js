@@ -7,19 +7,23 @@ function driveUrlToThumbnail(sharingUrl) {
   return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800`;
 }
 
-let _sheet = null;
+let _doc = null;
 
-async function getSheet() {
-  if (_sheet) return _sheet;
+async function getDoc() {
+  if (_doc) return _doc;
   const auth = new JWT({
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
     key: Buffer.from(process.env.GOOGLE_PRIVATE_KEY_B64 || '', 'base64').toString('utf8'),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
-  const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, auth);
-  await doc.loadInfo();
-  _sheet = doc.sheetsByTitle['Fotos'];
-  return _sheet;
+  _doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, auth);
+  await _doc.loadInfo();
+  return _doc;
+}
+
+async function getSheet() {
+  const doc = await getDoc();
+  return doc.sheetsByTitle['Fotos'];
 }
 
 async function listarFotos() {
@@ -28,11 +32,28 @@ async function listarFotos() {
   return rows
     .filter(r => r.get('Status') === 'Processada')
     .map(r => ({
-      id:    r.get('ID'),
-      event: r.get('Evento'),
-      url:   driveUrlToThumbnail(r.get('Link_Amostra')),
-      price: parseFloat(r.get('Preco')) || 25.00,
+      id:      r.get('ID'),
+      event:   r.get('Evento'),
+      eventoId: r.get('EventoID') || r.get('Evento') || '',
+      url:     driveUrlToThumbnail(r.get('Link_Amostra')),
+      price:   parseFloat(r.get('Preco')) || 25.00,
     }));
+}
+
+async function listarEventos() {
+  const doc = await getDoc();
+  const sheet = doc.sheetsByTitle['Eventos'];
+  if (!sheet) return [];
+  const rows = await sheet.getRows();
+  return rows.map(r => ({
+    eventoId:         r.get('EventoID'),
+    nomePasta:        r.get('NomePasta'),
+    status:           r.get('Status'),
+    totalFotos:       parseInt(r.get('TotalFotos') || '0'),
+    fotosProcessadas: parseInt(r.get('FotosProcessadas') || '0'),
+    fotosEntregues:   parseInt(r.get('FotosEntregues') || '0'),
+    dataCriacao:      r.get('DataCriacao'),
+  }));
 }
 
 async function registrarPedido({ fotoIds, whatsapp, totalPago, idMercadoPago }) {
@@ -67,4 +88,4 @@ async function buscarPedido(transactionId) {
   return rows.find(r => r.get('ID_Mercado_Pago') === transactionId) || null;
 }
 
-module.exports = { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail, buscarPedido };
+module.exports = { listarFotos, listarEventos, registrarPedido, atualizarStatus, driveUrlToThumbnail, buscarPedido };

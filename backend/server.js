@@ -12,6 +12,7 @@ const webhookHandler = require('./api/webhook/mercado-pago');
 const watermarkHandler = require('./api/watermark');
 const preprocessHandler = require('./api/preprocess');
 const downloadHandler = require('./api/download');
+const eventosHandler = require('./api/eventos');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -49,6 +50,7 @@ app.post('/api/webhook/mercado-pago', pagamento, webhookHandler);
 app.post('/api/watermark', watermarkLimit, watermarkHandler);
 app.post('/api/preprocess', watermarkLimit, preprocessHandler);
 app.get('/api/download', downloadHandler);
+app.get('/api/eventos', fotos, eventosHandler);
 
 app.use(errorHandler);
 

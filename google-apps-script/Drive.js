@@ -31,6 +31,50 @@ function listNewFiles() {
   return result;
 }
 
+/**
+ * Lista todos os arquivos de imagem dentro de uma subpasta de evento.
+ */
+function listarArquivosDoEvento(folderId) {
+  var pasta    = DriveApp.getFolderById(folderId);
+  var arquivos = [];
+  var iter     = pasta.getFiles();
+  while (iter.hasNext()) {
+    var f = iter.next();
+    if (f.getMimeType().indexOf('image/') === 0) {
+      arquivos.push(f);
+    }
+  }
+  return arquivos;
+}
+
+/**
+ * Renomeia pasta de evento para _ERRO_* (quarentena) em vez de deletar.
+ * Usado quando há erros durante processamento.
+ */
+function moverParaQuarentena(folderId, motivo) {
+  var pasta    = DriveApp.getFolderById(folderId);
+  var novoNome = '_ERRO_' + pasta.getName() + '_' +
+    Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'yyyyMMddHHmm');
+  pasta.setName(novoNome);
+  Logger.log('Evento em quarentena: ' + novoNome + ' | Motivo: ' + motivo);
+}
+
+/**
+ * Remove pasta de evento do SOURCE após verificação dupla.
+ * SÓ executa se eventoProntoParaRemover() retornar true.
+ */
+function removerPastaEvento(eventoId, folderId) {
+  if (!eventoProntoParaRemover(eventoId)) {
+    Logger.log('BLOQUEADO: tentativa de remover ' + eventoId + ' mas não está pronto');
+    return false;
+  }
+  var pasta = DriveApp.getFolderById(folderId);
+  pasta.setTrashed(true);
+  atualizarStatusEvento(eventoId, 'Concluido', { pastaRemovida: true });
+  Logger.log('Pasta removida com segurança: ' + eventoId);
+  return true;
+}
+
 function copyFileToFolder(file, destinationFolder, newName) {
   return file.makeCopy(newName, destinationFolder);
 }
@@ -40,5 +84,10 @@ function getShareableLink(file) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { getSourceFolder, getOriginaisFolder, getAmostrasFolder, listNewFiles, copyFileToFolder, getShareableLink };
+  module.exports = {
+    getSourceFolder, getOriginaisFolder, getAmostrasFolder,
+    listNewFiles, listarArquivosDoEvento,
+    moverParaQuarentena, removerPastaEvento,
+    copyFileToFolder, getShareableLink,
+  };
 }

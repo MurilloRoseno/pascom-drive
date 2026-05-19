@@ -78,14 +78,18 @@ function _preprocessarArquivo(arquivo, backendUrl, headers) {
  * move source file out of SOURCE folder, register in Sheet.
  * On any failure: sends admin email, leaves source file untouched for retry.
  * @param {GoogleAppsScript.Drive.File} arquivo
+ * @param {string} [eventoId] - ID do evento (multi-event). Se omitido, lê do parent folder.
+ * @param {number} [counter]  - Número sequencial para nomear o arquivo de saída.
  */
-function processarFoto(arquivo) {
+function processarFoto(arquivo, eventoId, counter) {
   try {
     var id = gerarIdFoto();
     var nomeOriginal = arquivo.getName();
-    var evento = arquivo.getParents().hasNext()
+    // Quando chamado pelo orquestrador multi-evento, eventoId já vem como parâmetro.
+    // Fallback para comportamento legado (pasta pai) se não for passado.
+    var evento = eventoId || (arquivo.getParents().hasNext()
       ? arquivo.getParents().next().getName()
-      : 'Sem_Evento';
+      : 'Sem_Evento');
 
     // Props/URL/headers needed by both preprocess and watermark
     var props      = PropertiesService.getScriptProperties();
@@ -122,7 +126,10 @@ function processarFoto(arquivo) {
     // 3. Save the returned JPEG blob to AMOSTRAS folder as the authenticated user
     //    (service account has no Drive quota, but Apps Script runs as the user who does)
     //    Always use .jpg extension — backend always returns JPEG regardless of input format.
-    var nomeAmostra = gerarNomeAmostra(id + '_' + nomeOriginal.replace(/\.[^.]+$/, '.jpg'));
+    //    Multi-event: se tiver eventoId e counter, usa nomenclatura padronizada.
+    var nomeAmostra = (eventoId && counter)
+      ? gerarNomeAmostra(eventoId + '_' + String(counter).padStart(4, '0') + '.jpg')
+      : gerarNomeAmostra(id + '_' + nomeOriginal.replace(/\.[^.]+$/, '.jpg'));
     var blob = response.getBlob();
     blob.setName(nomeAmostra);
     var amostraFile = _helpers.getAmostrasFolder().createFile(blob);
@@ -136,6 +143,7 @@ function processarFoto(arquivo) {
     _helpers.registrarFoto({
       id:           id,
       evento:       evento,
+      eventoId:     eventoId || evento, // eventoId estruturado para cross-reference
       linkOriginal: linkOriginal,
       linkAmostra:  linkAmostra,
       preco:        PRECO_PADRAO,
