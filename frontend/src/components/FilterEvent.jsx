@@ -1,50 +1,39 @@
 import PropTypes from 'prop-types';
 
 export default function FilterEvent({ eventos, eventoSelecionado, onSelect }) {
-  return (
-    <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
-      <button
-        onClick={() => onSelect(null)}
-        className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-medium transition-colors"
-        style={
-          !eventoSelecionado
-            ? {
-                background: 'var(--photo-primary)',
-                color: '#fff',
-                border: '1.5px solid var(--photo-primary)',
-              }
-            : {
-                background: 'transparent',
-                color: 'var(--photo-primary)',
-                border: '1.5px solid rgba(109,32,119,0.35)',
-              }
-        }
-      >
-        Todos
-      </button>
+  const todos = ['Todos', ...eventos];
 
-      {eventos.map(evento => (
-        <button
-          key={evento}
-          onClick={() => onSelect(evento)}
-          className="flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-medium transition-colors whitespace-nowrap"
-          style={
-            eventoSelecionado === evento
-              ? {
-                  background: 'var(--photo-primary)',
-                  color: '#fff',
-                  border: '1.5px solid var(--photo-primary)',
-                }
-              : {
-                  background: 'transparent',
-                  color: 'var(--photo-primary)',
-                  border: '1.5px solid rgba(109,32,119,0.35)',
-                }
-          }
-        >
-          {evento}
-        </button>
-      ))}
+  return (
+    <div
+      className="flex gap-3 overflow-x-auto mb-5"
+      style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch', padding: '0.25rem 0 0.5rem' }}
+      role="group"
+      aria-label="Filtrar por evento"
+    >
+      {todos.map((ev) => {
+        const ativo = (eventoSelecionado === null && ev === 'Todos') || eventoSelecionado === ev;
+        return (
+          <button
+            key={ev}
+            onClick={() => onSelect(ev === 'Todos' ? null : ev)}
+            aria-pressed={ativo}
+            className="flex-shrink-0 rounded-full font-semibold transition-all whitespace-nowrap"
+            style={{
+              minHeight: 'var(--touch-sm)',
+              padding: '0 1.25rem',
+              fontSize: 'var(--text-sm)',
+              background: ativo ? 'var(--photo-primary)' : 'white',
+              color: ativo ? 'white' : 'var(--photo-primary)',
+              border: `2px solid ${ativo ? 'var(--photo-primary)' : 'rgba(109,32,119,0.35)'}`,
+              fontFamily: 'var(--font-body)',
+              boxShadow: ativo ? '0 2px 8px rgba(109,32,119,0.3)' : 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {ev}
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -8,71 +8,90 @@ export default function PhotoCard({ foto }) {
   const toggle = () => selected ? removeFoto(foto.id) : addFoto(foto);
 
   return (
-    <div
+    <article
       onClick={toggle}
       role="checkbox"
       aria-checked={selected}
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && toggle()}
-      className="relative cursor-pointer rounded-lg overflow-hidden transition-all duration-200 select-none"
-      style={selected ? { boxShadow: '0 0 0 3px var(--photo-accent), 0 4px 12px rgba(0,0,0,0.2)' } : {}}
+      onContextMenu={(e) => e.preventDefault()}
+      className="relative cursor-pointer select-none rounded-xl overflow-hidden"
+      style={{
+        border: selected ? '3px solid var(--photo-primary)' : '3px solid transparent',
+        boxShadow: selected
+          ? '0 0 0 3px rgba(109,32,119,0.25), 0 4px 16px rgba(0,0,0,0.15)'
+          : '0 2px 8px rgba(0,0,0,0.08)',
+        transform: selected ? 'scale(1.02)' : 'scale(1)',
+        transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
+        background: '#f0ebe3',
+      }}
     >
+      {/* Imagem */}
       <div className="photo-blur-target relative w-full aspect-[2/3] overflow-hidden">
         <img
           src={foto.url}
-          alt={foto.event}
-          onContextMenu={(e) => e.preventDefault()}
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-cover"
+          style={{ pointerEvents: 'none', userSelect: 'none' }}
+          loading="lazy"
           draggable={false}
-          className="w-full h-full object-cover select-none pointer-events-none"
+          onDragStart={(e) => e.preventDefault()}
         />
-        {/* transparent shield — blocks right-click/drag on the img element */}
+        {/* Shield anti-drag */}
         <div className="absolute inset-0" style={{ zIndex: 1 }} />
       </div>
 
+      {/* Overlay de seleção */}
       {selected && (
         <div
           className="absolute inset-0 flex items-center justify-center"
-          style={{ background: 'rgba(109,32,119,0.35)' }}
+          style={{ background: 'rgba(109,32,119,0.4)', zIndex: 2 }}
         >
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center"
-            style={{ background: 'var(--photo-accent)' }}
+            className="rounded-full flex items-center justify-center"
+            style={{ width: 60, height: 60, background: 'var(--photo-primary)', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-6 h-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={3}
-              style={{ color: 'var(--photo-primary-dark)' }}
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none"
+                 stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
             </svg>
           </div>
         </div>
       )}
 
+      {/* Preço + label — sempre visível na base */}
       <div
-        className="absolute bottom-0 left-0 right-0 px-2 py-1.5"
-        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.65), transparent)' }}
+        className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-3"
+        style={{
+          background: selected
+            ? 'var(--photo-primary)'
+            : 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0) 100%)',
+          minHeight: '48px',
+          zIndex: 3,
+        }}
       >
         <span
-          className="font-mono font-bold text-xs"
-          style={{ color: '#fff' }}
+          className="text-white font-bold"
+          style={{ fontSize: 'var(--text-sm)', textShadow: selected ? 'none' : '0 1px 3px rgba(0,0,0,0.5)' }}
         >
-          R$ {foto.price.toFixed(2).replace('.', ',')}
+          R$ {Number(foto.price).toFixed(2).replace('.', ',')}
         </span>
+        {selected && (
+          <span className="text-white font-semibold" style={{ fontSize: 'var(--text-xs)' }}>
+            ✓ Selecionada
+          </span>
+        )}
       </div>
-    </div>
+    </article>
   );
 }
 
 PhotoCard.propTypes = {
   foto: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id:    PropTypes.string.isRequired,
     event: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
+    url:   PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
   }).isRequired,
 };

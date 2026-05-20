@@ -36,6 +36,24 @@
   --font-body:    'Nunito', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
 
+  /* ───────── Escala tipográfica acessível ───────── */
+  --text-xs:   0.875rem;   /* 14px — mínimo absoluto */
+  --text-sm:   1rem;       /* 16px — corpo mínimo */
+  --text-base: 1.125rem;   /* 18px — corpo padrão */
+  --text-lg:   1.25rem;    /* 20px — destaque */
+  --text-xl:   1.5rem;     /* 24px — subtítulo */
+  --text-2xl:  1.875rem;   /* 30px — título seção */
+  --text-3xl:  2.25rem;    /* 36px — título página */
+
+  /* ───────── Alvos de toque (WCAG 2.5.5) ───────── */
+  --touch-sm:  44px;
+  --touch-md:  52px;
+  --touch-lg:  60px;
+
+  /* ───────── Line-height acessível ───────── */
+  --leading-body:    1.7;
+  --leading-heading: 1.2;
+
   /* ───────── Spacing / Shape ───────── */
   --radius-sm:   4px;
   --radius-md:   6px;
@@ -64,6 +82,9 @@
 
 body {
   @apply bg-white font-body text-photo-ink antialiased;
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  -webkit-text-size-adjust: 100%;
   margin: 0;
   padding: 0;
 }
@@ -125,31 +146,61 @@ body {
    ============================================================ */
 
 .btn {
-  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-sm transition-colors duration-base cursor-pointer;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg font-semibold cursor-pointer transition-all;
+  min-height: var(--touch-md);
+  font-size: var(--text-base);
+  padding: 0 1.5rem;
+  border: none;
 }
+.btn:active { transform: scale(0.98); }
+.btn-full   { width: 100%; }
 
 .btn-primary {
-  @apply bg-photo-accent text-photo-ink hover:bg-photo-accent-dark;
+  background: var(--photo-accent);
+  color: var(--photo-ink);
+  font-weight: 700;
 }
+.btn-primary:hover  { background: var(--photo-accent-dark); }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.btn-secondary {
-  @apply bg-photo-primary text-white hover:bg-photo-primary-dark;
+.btn-secondary, .btn-roxo {
+  background: var(--photo-primary);
+  color: white;
 }
+.btn-secondary:hover, .btn-roxo:hover { background: var(--photo-primary-dark); }
 
 .btn-outline {
-  @apply border border-photo-primary text-photo-primary hover:bg-photo-primary-light;
+  background: transparent;
+  border: 2px solid var(--photo-primary);
+  color: var(--photo-primary);
 }
+.btn-outline:hover { background: var(--photo-primary-light); }
 
 .btn-ghost {
-  @apply bg-transparent text-photo-grafite hover:bg-photo-ink/5;
+  @apply bg-transparent text-photo-grafite;
 }
+.btn-ghost:hover { background: rgba(24,21,15,0.05); }
 
-.btn-sm {
-  @apply px-3 py-1 text-xs;
+.btn-sm  { min-height: var(--touch-sm);  font-size: var(--text-sm);  padding: 0 1rem; }
+.btn-lg  { min-height: var(--touch-lg);  font-size: var(--text-lg);  padding: 0 2rem; }
+
+/* Input acessível */
+.input-field {
+  width: 100%;
+  min-height: var(--touch-lg);
+  font-size: var(--text-lg);
+  padding: 0 1rem;
+  border: 2px solid #d1cac0;
+  border-radius: 0.5rem;
+  font-family: 'Nunito', sans-serif;
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--photo-ink);
 }
-
-.btn-lg {
-  @apply px-6 py-3 text-base;
+.input-field:focus {
+  outline: none;
+  border-color: var(--photo-primary);
+  box-shadow: 0 0 0 3px rgba(109,32,119,0.15);
 }
 
 /* Form inputs */

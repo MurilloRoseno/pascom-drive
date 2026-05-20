@@ -4,75 +4,84 @@ import { useNavigate } from 'react-router-dom';
 export default function Header() {
   const { fotos } = useCarrinho();
   const navigate = useNavigate();
-  const count = fotos.length;
+  const qtd = fotos.length;
 
   return (
     <header
       className="sticky top-0 z-50 shadow-md"
-      style={{ background: 'var(--photo-primary-dark)' }}
+      style={{ background: 'var(--photo-primary)' }}
     >
-      <div className="container flex items-center justify-between py-3">
+      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3 gap-3">
 
-        {/* Brand */}
-        <a href="/" className="flex items-center gap-3" style={{ textDecoration: 'none' }}>
+        {/* Logo + Nome */}
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-3 text-left"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', minHeight: 'var(--touch-md)', padding: 0 }}
+          aria-label="Ir para a galeria"
+        >
           <img
-            src="/assets/logo-header.png"
+            src="/assets/logo-white.png"
             alt="Paróquia São Rafael"
-            className="h-10 w-auto"
+            className="h-10 w-10 object-contain flex-shrink-0"
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
           <div className="hidden sm:block">
-            <div
-              className="font-display text-sm font-semibold leading-tight"
-              style={{ color: 'var(--photo-bone)' }}
-            >
+            <p className="text-white font-bold leading-tight"
+               style={{ fontSize: 'var(--text-base)', fontFamily: 'var(--font-body)' }}>
               Paróquia São Rafael
-            </div>
-            <div
-              className="font-mono text-[0.5rem] tracking-widest uppercase"
-              style={{ color: 'var(--photo-accent)' }}
-            >
+            </p>
+            <p style={{ color: 'var(--photo-bone)', fontSize: 'var(--text-xs)' }}>
               Açailândia · MA
-            </div>
+            </p>
           </div>
-        </a>
+        </button>
 
-        {/* Cart button */}
+        {/* Título central (mobile only) */}
+        <p className="sm:hidden text-white font-semibold text-center flex-1"
+           style={{ fontSize: 'var(--text-sm)' }}>
+          Fotos do Evento
+        </p>
+
+        {/* Botão Carrinho */}
         <button
-          aria-label={`Carrinho, ${count} item${count !== 1 ? 's' : ''}`}
-          onClick={() => navigate('/checkout')}
-          disabled={count === 0}
-          className="relative p-2 rounded-lg transition-colors"
+          onClick={() => qtd > 0 && navigate('/checkout')}
+          disabled={qtd === 0}
+          aria-label={`Carrinho com ${qtd} foto${qtd !== 1 ? 's' : ''}`}
+          className="flex items-center gap-2 rounded-lg px-3 font-semibold transition-all"
           style={{
-            color: count > 0 ? 'var(--photo-accent)' : 'rgba(244,237,224,0.5)',
-            cursor: count > 0 ? 'pointer' : 'default',
-            opacity: count === 0 ? 0.4 : 1,
+            background: qtd > 0 ? 'var(--photo-accent)' : 'rgba(255,255,255,0.15)',
+            color: qtd > 0 ? 'var(--photo-ink)' : 'rgba(255,255,255,0.45)',
+            minHeight: 'var(--touch-md)',
+            fontSize: 'var(--text-sm)',
+            cursor: qtd > 0 ? 'pointer' : 'default',
+            border: 'none',
+            flexShrink: 0,
           }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6h11M10 19a1 1 0 100 2 1 1 0 000-2zm7 0a1 1 0 100 2 1 1 0 000-2z"
-            />
+          {/* Ícone carrinho */}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="9" cy="21" r="1"/>
+            <circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
           </svg>
-
-          {count > 0 && (
+          <span className="hidden sm:inline">Carrinho</span>
+          {qtd > 0 && (
             <span
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-mono font-bold text-[0.6rem]"
+              className="rounded-full font-bold text-white"
               style={{
-                background: 'var(--photo-accent)',
-                color: 'var(--photo-primary-dark)',
+                background: 'var(--photo-primary)',
+                fontSize: 'var(--text-xs)',
+                minWidth: '24px',
+                height: '24px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 6px',
               }}
             >
-              {count > 9 ? '9+' : count}
+              {qtd > 9 ? '9+' : qtd}
             </span>
           )}
         </button>
