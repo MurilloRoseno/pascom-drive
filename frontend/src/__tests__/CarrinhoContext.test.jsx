@@ -9,7 +9,7 @@ function TestComponent() {
   return (
     <div>
       <span data-testid="count">{fotos.length}</span>
-      <span data-testid="total">{totais.total.toFixed(2)}</span>
+      <span data-testid="total">{totais.preliminaryTotal.toFixed(2)}</span>
       <span data-testid="selected">{isSelected('1') ? 'sim' : 'nao'}</span>
       <button onClick={() => addFoto(FOTO_MOCK)}>add</button>
       <button onClick={() => removeFoto('1')}>remove</button>
@@ -59,7 +59,7 @@ describe('CarrinhoContext', () => {
   it('calcula total corretamente', () => {
     renderWithProvider();
     fireEvent.click(screen.getByText('add'));
-    // total = 25 + (25*0.0299 + 0.30) = 25 + 1.0475 = 26.0475
-    expect(parseFloat(screen.getByTestId('total').textContent)).toBeCloseTo(26.05, 1);
+    // Preview local: foto + taxas fixas; custo do pagamento vem apenas do backend.
+    expect(parseFloat(screen.getByTestId('total').textContent)).toBeCloseTo(28, 1);
   });
 });

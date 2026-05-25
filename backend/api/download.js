@@ -1,75 +1,30 @@
-// download.js — GET /api/download?token=<jwt>
-// Returns the original photo file streamed from Google Drive.
-// The JWT must be signed with DOWNLOAD_JWT_SECRET, not expired, and not marked used.
+const crypto = require('crypto');
 const { z } = require('zod');
 const { verifyToken } = require('../lib/jwt-utils');
+const { consumirDownload } = require('../lib/google-sheets');
 const { downloadFile } = require('../lib/google-drive');
 
-const schema = z.object({
-  token: z.string().min(10),
-});
-
-function sendJson(res, status, body) {
-  res.writeHead(status, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(body));
-}
+const schema = z.object({ token: z.string().min(10) });
 
 module.exports = async function handler(req, res, next) {
-  if (req.method !== 'GET') return sendJson(res, 405, { error: 'Method not allowed' });
-
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const params = schema.safeParse(req.query);
+  if (!params.success) return res.status(400).json({ error: 'Parametros invalidos.' });
+  const secret = process.env.DOWNLOAD_JWT_SECRET;
+  if (!secret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
   try {
-    const params = schema.parse(req.query);
-    const secret = process.env.DOWNLOAD_JWT_SECRET;
-    if (!secret) {
-      return sendJson(res, 500, { error: 'Configuração de servidor inválida' });
-    }
-
-    let payload;
-    try {
-      payload = verifyToken(params.token, secret);
-    } catch (_err) {
-      console.warn(JSON.stringify({
-        event: 'download_invalid_token',
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-        reason: _err.message,
-      }));
-      return sendJson(res, 401, { error: 'Token inválido ou assinatura incorreta' });
-    }
-
-    if (Date.now() > payload.exp) {
-      console.warn(JSON.stringify({
-        event: 'download_invalid_token',
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-        reason: 'Token expirado',
-      }));
-      return sendJson(res, 401, { error: 'Token expirado' });
-    }
-
-    if (payload.used === true) {
-      console.warn(JSON.stringify({
-        event: 'download_token_reuse',
-        fotoId: payload.fotoId,
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-      }));
-      return sendJson(res, 410, { error: 'Token já utilizado' });
-    }
-
-    const { buffer } = await downloadFile(payload.fotoId);
-
-    res.writeHead(200, {
-      'Content-Type': 'image/jpeg',
-      'Content-Disposition': `attachment; filename="foto-${payload.fotoId}.jpg"`,
-    });
-    res.end(buffer);
-  } catch (err) {
-    console.error('[download] Error:', err.message, err.stack);
-    if (err.name === 'ZodError') {
-      return sendJson(res, 400, { error: 'Parâmetros inválidos', details: err.errors });
-    }
-    if (typeof next === 'function') return next(err);
-    return sendJson(res, 500, { error: err.message || 'Erro interno ao processar download' });
+    const payload = verifyToken(params.data.token, secret);
+    if (!payload.downloadId || payload.exp <= Date.now()) return res.status(401).json({ error: 'Link expirado.' });
+    const tokenHash = crypto.createHash('sha256').update(params.data.token).digest('hex');
+    const authorized = await consumirDownload(payload.downloadId, tokenHash);
+    if (!authorized) return res.status(410).json({ error: 'Link expirado ou limite de uso atingido.' });
+    const { buffer, mimeType } = await downloadFile(authorized.originalFileId);
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('Content-Type', mimeType || 'image/jpeg');
+    res.setHeader('Content-Disposition', `attachment; filename="foto-${authorized.fotoId}.jpg"`);
+    return res.end(buffer);
+  } catch (error) {
+    if (/assinatura|Token/i.test(error.message)) return res.status(401).json({ error: 'Link invalido.' });
+    next(error);
   }
 };

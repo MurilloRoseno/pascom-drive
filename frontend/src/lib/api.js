@@ -1,50 +1,57 @@
-// api.js — centralized fetch service for Pascom Drive backend.
-// Base URL: VITE_API_BASE_URL env var (Vite exposes via import.meta.env).
-// Empty string means same-origin (works on Vercel where frontend + API share domain).
-
 const BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
-async function _request(url, options) {
-  const res = options ? await fetch(url, options) : await fetch(url);
+async function request(url, options) {
+  const res = await fetch(`${BASE}${url}`, options);
   const data = await res.json();
-  if (!res.ok) {
-    throw new Error(data?.error || `Erro HTTP ${res.status}`);
-  }
+  if (!res.ok) throw new Error(data.error || `Erro HTTP ${res.status}`);
   return data;
 }
 
-/**
- * GET /api/fotos
- * @returns {Promise<Array<{id: string, event: string, url: string, price: number}>>}
- */
-export async function listarFotos() {
-  try {
-    return await _request(`${BASE}/api/fotos`);
-  } catch (err) {
-    const msg = err.message;
-    // Re-throw specific backend messages; use generic for generic HTTP errors
-    throw new Error(msg && !msg.startsWith('Erro HTTP') ? msg : 'Erro ao listar fotos');
-  }
+// Retained for the legacy gallery hook while the institutional routes are adopted.
+export function listarFotos() {
+  return request('/api/fotos');
 }
 
-/**
- * POST /api/criar-pagamento
- * @param {{ whatsapp: string, fotoIds: string[], total: number }} payload
- * @returns {Promise<{id: string, qrCode: string, qrCodeBase64: string}>}
- */
-export async function criarPagamento(payload) {
-  return _request(`${BASE}/api/criar-pagamento`, {
+export function listarEventos({ q = '', categoria = '' } = {}) {
+  const params = new URLSearchParams();
+  if (q) params.set('q', q);
+  if (categoria) params.set('categoria', categoria);
+  return request(`/api/eventos?${params.toString()}`);
+}
+
+export function obterEvento(eventoId) {
+  return request(`/api/eventos/${encodeURIComponent(eventoId)}`);
+}
+
+export function listarFotosEvento(eventoId, token = '') {
+  const headers = token ? { 'x-gallery-token': token } : undefined;
+  return request(`/api/eventos/${encodeURIComponent(eventoId)}/fotos`, { headers });
+}
+
+export function validarAcessoGaleria(eventoId, code) {
+  return request(`/api/eventos/${encodeURIComponent(eventoId)}/acesso`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+  });
+}
+
+export function cotarCheckout(payload) {
+  return request('/api/checkout/quote', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
 }
 
-/**
- * GET /api/status-pagamento?transactionId=ID
- * @param {string} transactionId
- * @returns {Promise<{id: string, status: string}>}
- */
-export async function statusPagamento(transactionId) {
-  return _request(`${BASE}/api/status-pagamento?transactionId=${transactionId}`);
+export function criarPagamento(payload) {
+  return request('/api/checkout/preference', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+export function statusPagamento(pedidoId) {
+  return request(`/api/status-pagamento?pedidoId=${encodeURIComponent(pedidoId)}`);
 }

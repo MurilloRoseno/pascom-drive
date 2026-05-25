@@ -1,27 +1,21 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { CarrinhoProvider } from '../context/CarrinhoContext';
 import CheckoutPage from '../pages/Checkout';
 
-// Mock API
 jest.mock('../lib/api', () => ({
+  cotarCheckout: jest.fn(),
   criarPagamento: jest.fn(),
 }));
 
-// Mock polling hook
-jest.mock('../hooks/usePollingStatus', () => ({
-  usePollingStatus: jest.fn(() => ({ status: null, isPolling: false, error: null })),
-}));
+const { cotarCheckout, criarPagamento } = require('../lib/api');
+const FOTO = { id: 'F1', eventoId: 'EV1', event: 'Missa', url: '/foto.jpg', price: 10 };
+const PRICING = { subtotal: 10, serviceFee: 2, convenienceFee: 1, paymentCost: 0.5, total: 13.5 };
 
-const { criarPagamento } = require('../lib/api');
-const { usePollingStatus } = require('../hooks/usePollingStatus');
-
-const FOTO = { id: 'F1', event: 'Missa', url: 'http://x/1.jpg', price: 25 };
-
-function renderCheckout(cartFotos = []) {
+function renderCheckout(fotos = [FOTO]) {
   return render(
     <MemoryRouter>
-      <CarrinhoProvider initialFotos={cartFotos}>
+      <CarrinhoProvider initialFotos={fotos}>
         <CheckoutPage />
       </CarrinhoProvider>
     </MemoryRouter>
@@ -29,113 +23,44 @@ function renderCheckout(cartFotos = []) {
 }
 
 beforeEach(() => {
+  sessionStorage.clear();
+  cotarCheckout.mockReset().mockResolvedValue({ pricing: PRICING });
   criarPagamento.mockReset();
-  usePollingStatus.mockReturnValue({ status: null, isPolling: false, error: null });
 });
 
-// ─── Step 0 ───────────────────────────────────────────────────────────────────
-
-describe('Checkout step 0', () => {
-  it('shows selected photos', () => {
-    renderCheckout([FOTO]);
-    expect(screen.getByText(/Missa/i)).toBeInTheDocument();
-  });
-
-  it('shows empty state when no photos', () => {
-    renderCheckout([]);
-    expect(screen.getByText(/nenhuma foto/i)).toBeInTheDocument();
-  });
-
-  it('Continuar button is disabled when cart is empty', () => {
-    renderCheckout([]);
-    const btn = screen.getByText(/continuar/i);
-    expect(btn).toBeDisabled();
-  });
+it('mostra estado vazio quando nao ha fotos', () => {
+  renderCheckout([]);
+  expect(screen.getByText(/carrinho esta vazio/i)).toBeInTheDocument();
 });
 
-// ─── Step 1 — WhatsApp ────────────────────────────────────────────────────────
-
-describe('Checkout step 1', () => {
-  it('advances to WhatsApp input on Continuar', () => {
-    renderCheckout([FOTO]);
-    fireEvent.click(screen.getByText(/continuar/i));
-    expect(screen.getByPlaceholderText(/DDD/i)).toBeInTheDocument();
-  });
-
-  it('shows validation error on invalid WhatsApp', () => {
-    renderCheckout([FOTO]);
-    fireEvent.click(screen.getByText(/continuar/i)); // → step 1
-    fireEvent.change(screen.getByPlaceholderText(/DDD/i), { target: { value: '123' } });
-    fireEvent.click(screen.getByText(/continuar/i));
-    expect(screen.getByText(/inválido/i)).toBeInTheDocument();
-  });
+it('mostra preco e taxas devolvidos pelo servidor', async () => {
+  renderCheckout();
+  await waitFor(() => expect(screen.getByText('R$ 13,50')).toBeInTheDocument());
+  expect(screen.getByText(/taxa de servico/i)).toBeInTheDocument();
+  expect(screen.getByText(/custo estimado do pagamento/i)).toBeInTheDocument();
 });
 
-// ─── Step 2 — Gerar QR Pix ───────────────────────────────────────────────────
-
-describe('Checkout step 2', () => {
-  function advanceToStep2() {
-    renderCheckout([FOTO]);
-    fireEvent.click(screen.getByText(/continuar/i));            // → step 1
-    fireEvent.change(screen.getByPlaceholderText(/DDD/i), { target: { value: '11999999999' } });
-    fireEvent.click(screen.getByText(/continuar/i));            // → step 2
-  }
-
-  it('shows order summary on step 2', () => {
-    advanceToStep2();
-    expect(screen.getByText(/confirmar pedido/i)).toBeInTheDocument();
-    expect(screen.getByText(/subtotal/i)).toBeInTheDocument();
-  });
-
-  it('calls criarPagamento with correct data on Gerar QR Pix', async () => {
-    criarPagamento.mockReturnValue(new Promise(() => {})); // never resolves
-    advanceToStep2();
-    fireEvent.click(screen.getByText(/gerar qr pix/i));
-    expect(criarPagamento).toHaveBeenCalledWith({
-      whatsapp: '11999999999',
-      fotoIds: ['F1'],
-      total: expect.any(Number),
-    });
-  });
-
-  it('shows loading text while creating payment', async () => {
-    criarPagamento.mockReturnValue(new Promise(() => {}));
-    advanceToStep2();
-    fireEvent.click(screen.getByText(/gerar qr pix/i));
-    expect(screen.getByText(/gerando/i)).toBeInTheDocument();
-  });
-
-  it('shows QR code after successful payment creation', async () => {
-    criarPagamento.mockResolvedValueOnce({
-      id: 'MP_001',
-      qrCode: 'pix-code-string',
-      qrCodeBase64: 'base64data',
-    });
-    advanceToStep2();
-    fireEvent.click(screen.getByText(/gerar qr pix/i));
-    await waitFor(() => expect(screen.getByText(/pix-code-string/i)).toBeInTheDocument());
-  });
-
-  it('shows error when payment creation fails', async () => {
-    criarPagamento.mockRejectedValueOnce(new Error('Sem conexão'));
-    advanceToStep2();
-    fireEvent.click(screen.getByText(/gerar qr pix/i));
-    await waitFor(() => expect(screen.getByText(/sem conexão/i)).toBeInTheDocument());
-  });
+it('envia fotos, contato e metodo sem enviar total calculado no navegador', async () => {
+  criarPagamento.mockReturnValue(new Promise(() => {}));
+  renderCheckout();
+  await waitFor(() => expect(screen.getByRole('button', { name: /pagar no mercado pago/i })).toBeEnabled());
+  fireEvent.change(screen.getByLabelText(/nome completo/i), { target: { value: 'Maria Silva' } });
+  fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'maria@example.com' } });
+  fireEvent.change(screen.getByLabelText(/whatsapp/i), { target: { value: '99982061089' } });
+  fireEvent.click(screen.getByRole('button', { name: /pagar no mercado pago/i }));
+  expect(criarPagamento).toHaveBeenCalledWith(expect.objectContaining({
+    name: 'Maria Silva',
+    email: 'maria@example.com',
+    whatsapp: '99982061089',
+    fotoIds: ['F1'],
+    paymentMethod: 'pix',
+  }));
+  expect(criarPagamento.mock.calls[0][0]).not.toHaveProperty('total');
 });
 
-// ─── Step 3 — Payment status ──────────────────────────────────────────────────
-
-describe('Checkout step 3 — approved', () => {
-  it('shows success when status is approved', async () => {
-    usePollingStatus.mockReturnValue({ status: 'approved', isPolling: false });
-    criarPagamento.mockResolvedValueOnce({ id: 'MP_001', qrCode: 'c', qrCodeBase64: 'b' });
-    renderCheckout([FOTO]);
-    fireEvent.click(screen.getByText(/continuar/i));
-    fireEvent.change(screen.getByPlaceholderText(/DDD/i), { target: { value: '11999999999' } });
-    fireEvent.click(screen.getByText(/continuar/i));
-    fireEvent.click(screen.getByText(/gerar qr pix/i));
-    await waitFor(() => screen.getByText(/Pagamento confirmado/i));
-    expect(screen.getByText(/Pagamento confirmado/i)).toBeInTheDocument();
-  });
+it('mantem pagamento bloqueado quando nao existe regra de taxa cadastrada', async () => {
+  cotarCheckout.mockRejectedValueOnce(new Error('Pagamento indisponivel.'));
+  renderCheckout();
+  await screen.findByText(/pagamento indisponivel/i);
+  expect(screen.getByRole('button', { name: /pagar no mercado pago/i })).toBeDisabled();
 });

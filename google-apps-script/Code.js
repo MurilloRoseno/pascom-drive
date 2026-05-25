@@ -10,8 +10,22 @@ function criarTriggers() {
     ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('processarEventos').timeBased().everyMinutes(5).create();
-  ScriptApp.newTrigger('entregarFotos').timeBased().everyMinutes(1).create();
-  Logger.log('Triggers criados com sucesso.');
+  Logger.log('Trigger de processamento criado. A entrega agora ocorre pelo backend apos o webhook.');
+}
+
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu('Pascom Drive')
+    .addItem('Preparar estrutura segura', 'inicializarEstrutura')
+    .addSeparator()
+    .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
+    .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')
+    .addItem('Alternar visibilidade selecionada', 'alternarVisibilidadeSelecionada')
+    .addSeparator()
+    .addItem('Gerar codigo de acesso', 'gerarCodigoEventoSelecionado')
+    .addItem('Revogar codigo de acesso', 'revogarCodigoEventoSelecionado')
+    .addItem('Arquivar evento selecionado', 'arquivarEventoSelecionado')
+    .addToUi();
 }
 
 /**
@@ -25,13 +39,13 @@ function processarFotosNovas() {
 
 /**
  * Trigger principal — roda a cada 5 minutos.
- * Descobre subpastas (eventos) em Fotos_Origem, processa um por vez (lock),
- * remove pasta quando 100% das fotos forem entregues.
+ * Descobre subpastas (eventos) em Fotos_Origem, processa um por vez (lock)
+ * e remove a entrada quando originais privados e previews forem preservados.
  */
 function processarEventos() {
   Logger.log('processarEventos: ' + new Date());
 
-  // 1. Verifica se há eventos prontos para remoção segura (de rodadas anteriores)
+  // 1. Remove entradas cujas fotos ja foram preservadas em armazenamento privado.
   verificarEventosProntosParaRemover();
 
   // 2. Descobre eventos novos (subpastas)
@@ -55,11 +69,16 @@ function processarEventos() {
   try {
     // Registra antes de mudar status (garante linha existente para atualizarStatusEvento)
     var arquivos = listarArquivosDoEvento(evento.folderId);
+    var metadados = interpretarNomePasta(evento.nomePasta);
     registrarEvento({
       eventoId:   eventoId,
       nomePasta:  evento.nomePasta,
       folderId:   evento.folderId,
       totalFotos: arquivos.length,
+      titulo: metadados.titulo,
+      categoria: metadados.categoria,
+      dataEvento: metadados.dataEvento,
+      erro: metadados.erro,
     });
 
     Logger.log('Iniciando: ' + eventoId + ' (' + arquivos.length + ' fotos)');
@@ -106,11 +125,16 @@ function processarEventos() {
 function verificarEventosProntosParaRemover() {
   var sheet = getEventosSheet();
   var data  = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var eventoIdCol = headers.indexOf('EventoID');
+  var folderIdCol = headers.indexOf('FolderID');
+  var statusCol = headers.indexOf('StatusProcessamento');
+  var pastaRemovidaCol = headers.indexOf('PastaRemovida');
   for (var i = 1; i < data.length; i++) {
-    var eventoId = data[i][0];
-    var folderId = data[i][2];
-    var status   = data[i][3];
-    var removida = data[i][11];
+    var eventoId = data[i][eventoIdCol];
+    var folderId = data[i][folderIdCol];
+    var status   = data[i][statusCol];
+    var removida = data[i][pastaRemovidaCol];
     if (removida === true) continue;
     if (status !== 'Processado') continue;
     if (eventoProntoParaRemover(eventoId)) {
@@ -124,10 +148,12 @@ function verificarEventosProntosParaRemover() {
  * Finds rows with "Pagamento Confirmado" and generates wa.me delivery links.
  */
 function entregarFotos() {
-  Logger.log('entregarFotos: ' + new Date());
-  processarEntregas();
+  Logger.log('entregarFotos desativado: entrega segura e executada pelo backend.');
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { criarTriggers, processarFotosNovas, processarEventos, entregarFotos, verificarEventosProntosParaRemover };
+  module.exports = {
+    criarTriggers, onOpen, processarFotosNovas, processarEventos,
+    entregarFotos, verificarEventosProntosParaRemover,
+  };
 }

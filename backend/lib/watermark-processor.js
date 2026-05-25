@@ -39,17 +39,6 @@ async function detectWatermarkType(resizedBuffer) {
 }
 
 /**
- * Build an SVG overlay with two diagonal white lines (X) crossing the entire image.
- */
-function buildXOverlay(imgW, imgH) {
-  const svg = `<svg width="${imgW}" height="${imgH}" xmlns="http://www.w3.org/2000/svg">
-    <line x1="0" y1="0" x2="${imgW}" y2="${imgH}" stroke="white" stroke-width="4" stroke-opacity="0.85"/>
-    <line x1="${imgW}" y1="0" x2="0" y2="${imgH}" stroke="white" stroke-width="4" stroke-opacity="0.85"/>
-  </svg>`;
-  return Buffer.from(svg);
-}
-
-/**
  * Composite a tiled watermark + center logo over the given image buffer.
  * @param {Buffer} imageBuffer         JPEG or PNG input photo
  * @param {'color'|'bw'|'auto'} type  Which watermark variant to use

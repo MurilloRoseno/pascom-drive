@@ -21,7 +21,7 @@ function _runProbe(onDetected) {
   const probe = {};
   let triggered = false;
   Object.defineProperty(probe, 'id', { get() { triggered = true; return ''; }, configurable: true });
-  console.log('%c', probe); // eslint-disable-line no-console
+  console.log('%c', probe);
   setTimeout(() => { if (triggered && !isUnlocked()) onDetected(); }, 100);
 }
 
@@ -67,9 +67,7 @@ export function teardownDevToolsDetector() {
 
 export function installUnlockCommand() {
   // Banner no console — sempre, estilo Facebook/GitHub
-  // eslint-disable-next-line no-console
   console.log('%c⚠ Pare!', 'color:#6D2077;font-size:48px;font-weight:bold;');
-  // eslint-disable-next-line no-console
   console.log(
     '%cReprodução das fotos é proibida (Lei 9.610/98).\nDev legítimo: pascomUnlock()',
     'color:#18150F;font-size:14px;',
@@ -77,12 +75,10 @@ export function installUnlockCommand() {
 
   window.pascomUnlock = () => {
     try { localStorage.setItem('pascom_dev_unlock', '1'); } catch { /* noop */ }
-    // eslint-disable-next-line no-console
     console.log('%c✓ DevTools liberado. Atualize a página (F5).', 'color:#3C7A5A;font-size:14px;');
   };
   window.pascomLock = () => {
     try { localStorage.removeItem('pascom_dev_unlock'); } catch { /* noop */ }
-    // eslint-disable-next-line no-console
     console.log('%c✓ Proteção reativada. Atualize a página.', 'color:#6D2077;font-size:14px;');
   };
 }

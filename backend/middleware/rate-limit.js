@@ -40,4 +40,20 @@ const watermark = rateLimit({
   message: { error: 'Limite de processamento de imagens atingido. Aguarde 1 minuto.' },
 });
 
-module.exports = { geral, pagamento, fotos, statusConsulta, watermark };
+const acessoGaleria = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas tentativas de acesso. Aguarde alguns minutos.' },
+});
+
+const download = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitos downloads. Aguarde um minuto.' },
+});
+
+module.exports = { geral, pagamento, fotos, statusConsulta, watermark, acessoGaleria, download };

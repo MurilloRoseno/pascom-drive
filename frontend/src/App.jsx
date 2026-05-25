@@ -3,23 +3,24 @@ import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
 import Header from './components/layout/Header.jsx';
 import Footer from './components/layout/Footer.jsx';
 import CartSummary from './components/CartSummary.jsx';
-import DevToolsBlock from './components/DevToolsBlock.jsx';
-import GalleryPage from './pages/Gallery.jsx';
+import SearchPage from './pages/Search.jsx';
+import EventPage from './pages/Event.jsx';
 import CheckoutPage from './pages/Checkout.jsx';
+import PaymentReturnPage from './pages/PaymentReturn.jsx';
 
 export default function App() {
   return (
     <BrowserRouter>
       <CarrinhoProvider>
-        <div className="min-h-screen flex flex-col bg-photo-paper">
-          <DevToolsBlock />
+        <div className="parish-app">
           <Header />
-          <div className="flex-1 pb-20">
-            <Routes>
-              <Route path="/" element={<GalleryPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={<SearchPage />} />
+            <Route path="/buscar" element={<SearchPage />} />
+            <Route path="/evento/:eventoId" element={<EventPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
+          </Routes>
           <Footer />
           <CartSummary />
         </div>

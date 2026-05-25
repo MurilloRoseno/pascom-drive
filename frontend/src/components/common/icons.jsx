@@ -1,6 +1,7 @@
 /* Lucide-equivalent inline SVG icons used by the kits.
    Each component takes className and renders the same path data
    we'd get from lucide-react@1.14, stroke=2, currentColor. */
+import PropTypes from 'prop-types';
 
 const I = {
   Menu: (p) => (
@@ -229,4 +230,14 @@ function Divider() {
     <div className="divider"><I.Diamond className="" /></div>
   );
 }
+Eyebrow.propTypes = {
+  children: PropTypes.node,
+  onDark: PropTypes.bool,
+};
+SectionTitle.propTypes = {
+  eyebrow: PropTypes.node,
+  title: PropTypes.node,
+  lede: PropTypes.node,
+  onDark: PropTypes.bool,
+};
 window.Eyebrow = Eyebrow; window.SectionTitle = SectionTitle; window.Divider = Divider;

@@ -1,74 +1,32 @@
 jest.mock('../lib/google-sheets', () => ({
-  buscarPedido: jest.fn().mockResolvedValue({
-    get: (k) => ({ WhatsApp: '11999999999' }[k]),
-  }),
-}));
-
-jest.mock('../lib/mercado-pago', () => ({
-  consultarStatus: jest.fn().mockResolvedValue({ id: 'MP_123', status: 'pending' }),
+  buscarPedidoById: jest.fn(),
 }));
 
 const request = require('supertest');
 const express = require('express');
-const errorHandler = require('../middleware/error-handler');
-const statusHandler = require('../api/status-pagamento');
+const handler = require('../api/status-pagamento');
+const sheets = require('../lib/google-sheets');
 
 const app = express();
-app.use(express.json());
-app.all('/api/status-pagamento', statusHandler);
-app.use(errorHandler);
+app.all('/api/status-pagamento', handler);
 
-describe('GET /api/status-pagamento', () => {
-  let warnSpy;
+beforeEach(() => {
+  jest.clearAllMocks();
+  sheets.buscarPedidoById.mockResolvedValue({ id: 'PED_EXEMPLO_01', status: 'Pagamento Confirmado', total: 13.5 });
+});
 
-  beforeEach(() => {
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-  });
+it('consulta pedido por identificador opaco', async () => {
+  const res = await request(app).get('/api/status-pagamento?pedidoId=PED_EXEMPLO_01');
+  expect(res.status).toBe(200);
+  expect(res.body.deliveryReady).toBe(true);
+  expect(sheets.buscarPedidoById).toHaveBeenCalledWith('PED_EXEMPLO_01');
+});
 
-  afterEach(() => {
-    warnSpy.mockRestore();
-  });
+it('exige pedidoId e nao dados pessoais no query string', async () => {
+  expect((await request(app).get('/api/status-pagamento')).status).toBe(400);
+});
 
-  it('retorna 200 com status', async () => {
-    const res = await request(app).get('/api/status-pagamento?transactionId=MP_123&whatsapp=11999999999');
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('status');
-  });
-
-  it('retorna 400 sem transactionId', async () => {
-    const res = await request(app).get('/api/status-pagamento');
-    expect(res.status).toBe(400);
-  });
-
-  it('retorna 400 sem whatsapp no query', async () => {
-    const res = await request(app).get('/api/status-pagamento?transactionId=MP_123');
-    expect(res.status).toBe(400);
-  });
-
-  it('rejeita POST com 405', async () => {
-    const res = await request(app).post('/api/status-pagamento');
-    expect(res.status).toBe(405);
-  });
-
-  it('retorna 404 quando transactionId não existe', async () => {
-    const { buscarPedido } = require('../lib/google-sheets');
-    buscarPedido.mockResolvedValueOnce(null);
-    const res = await request(app)
-      .get('/api/status-pagamento?transactionId=NOTEXIST&whatsapp=11999999999');
-    expect(res.status).toBe(404);
-    expect(warnSpy).toHaveBeenCalled();
-    const log = JSON.parse(warnSpy.mock.calls[0][0]);
-    expect(log.event).toBe('status_lookup_failed');
-    expect(log.reason).toBe('not_found');
-  });
-
-  it('retorna 404 com whatsapp errado', async () => {
-    const res = await request(app)
-      .get('/api/status-pagamento?transactionId=MP_123&whatsapp=11888888888');
-    expect(res.status).toBe(404);
-    expect(warnSpy).toHaveBeenCalled();
-    const log = JSON.parse(warnSpy.mock.calls[0][0]);
-    expect(log.event).toBe('status_lookup_failed');
-    expect(log.reason).toBe('whatsapp_mismatch');
-  });
+it('responde 404 para pedido inexistente', async () => {
+  sheets.buscarPedidoById.mockResolvedValueOnce(null);
+  expect((await request(app).get('/api/status-pagamento?pedidoId=PED_DESCONHECIDO')).status).toBe(404);
 });

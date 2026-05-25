@@ -6,6 +6,36 @@
 /* global PropertiesService, DriveApp, Logger, Utilities, getStatusEvento, getStatusEventoByFolderId */
 
 var LOCK_KEY    = 'PROCESSING_LOCK';
+var CATEGORIAS_EVENTO = [
+  'celebracoes', 'batismo', 'eucaristia', 'crisma',
+  'casamento', 'uncao-dos-enfermos', 'ordem',
+];
+
+/**
+ * Operational folder convention: categoria__YYYY-MM-DD__titulo-do-evento.
+ * Invalid folders are processed as drafts and never automatically published.
+ */
+function interpretarNomePasta(nomePasta) {
+  var partes = String(nomePasta || '').split('__');
+  var categoria = partes[0] || '';
+  var dataEvento = partes[1] || '';
+  var tituloSlug = partes.slice(2).join('__');
+  var categoriaValida = CATEGORIAS_EVENTO.indexOf(categoria) !== -1;
+  var dataValida = /^\d{4}-\d{2}-\d{2}$/.test(dataEvento) &&
+    !isNaN(new Date(dataEvento + 'T12:00:00').getTime());
+  var tituloValido = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(tituloSlug);
+  var valido = categoriaValida && dataValida && tituloValido;
+  var titulo = tituloSlug
+    ? tituloSlug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); })
+    : String(nomePasta || '');
+  return {
+    valido: valido,
+    categoria: categoriaValida ? categoria : '',
+    dataEvento: dataValida ? dataEvento : '',
+    titulo: titulo,
+    erro: valido ? '' : 'Use categoria__AAAA-MM-DD__titulo-do-evento',
+  };
+}
 var LOCK_TTL_MS = 10 * 60 * 1000; // 10 minutos (máximo por execução Apps Script)
 
 function acquireLock(eventoId) {
@@ -82,5 +112,8 @@ function listarEventosNovos() {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { acquireLock, releaseLock, getLockStatus, gerarEventoId, listarEventosNovos };
+  module.exports = {
+    acquireLock, releaseLock, getLockStatus, gerarEventoId,
+    listarEventosNovos, interpretarNomePasta, CATEGORIAS_EVENTO,
+  };
 }

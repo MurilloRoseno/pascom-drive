@@ -1,104 +1,58 @@
-jest.mock('google-spreadsheet', () => {
-  return { GoogleSpreadsheet: jest.fn() };
-});
+jest.mock('google-spreadsheet', () => ({ GoogleSpreadsheet: jest.fn() }));
+jest.mock('google-auth-library', () => ({ JWT: jest.fn() }));
 
-jest.mock('google-auth-library', () => {
-  return { JWT: jest.fn() };
-});
-
-function makeRow(data) {
-  return {
-    get: (k) => data[k],
-    set: jest.fn((k, v) => { data[k] = v; }),
-    save: jest.fn().mockResolvedValue(undefined),
-  };
+function row(data) {
+  return { get: (key) => data[key], set: jest.fn((key, value) => { data[key] = value; }), save: jest.fn().mockResolvedValue() };
 }
 
-const mockRows = [
-  makeRow({ ID: 'FOTO_001', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/a', Status: 'Processada', Preco: '25', ID_Mercado_Pago: 'MP_001' }),
-  makeRow({ ID: 'FOTO_002', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/b', Status: 'Processada', Preco: '25' }),
+const eventRows = [
+  row({ EventoID: 'EV1', Titulo: 'Missa', Categoria: 'celebracoes', Publicacao: 'publicado', Visibilidade: 'publica', VendaAutorizada: 'SIM' }),
+  row({ EventoID: 'EV2', Titulo: 'Rascunho', Publicacao: 'rascunho', Visibilidade: 'protegida', VendaAutorizada: 'NAO' }),
 ];
-
-const mockSheet = {
-  getRows: jest.fn().mockResolvedValue(mockRows),
-  addRow: jest.fn().mockResolvedValue(undefined),
+const photoRows = [
+  row({ FotoID: 'F1', EventoID: 'EV1', PreviewFileID: 'PREVIEW_1', OriginalFileID: 'PRIVATE_1', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'F2', EventoID: 'EV2', PreviewFileID: 'PREVIEW_2', OriginalFileID: 'PRIVATE_2', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+];
+const sheets = {
+  Eventos: { getRows: jest.fn().mockResolvedValue(eventRows) },
+  Fotos: { getRows: jest.fn().mockResolvedValue(photoRows) },
+  Pedidos: { addRow: jest.fn().mockResolvedValue() },
+  ItensPedido: { addRow: jest.fn().mockResolvedValue() },
 };
-
-const mockDoc = {
-  loadInfo: jest.fn().mockResolvedValue(undefined),
-  sheetsByTitle: { Fotos: mockSheet },
-};
-
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-GoogleSpreadsheet.mockImplementation(() => mockDoc);
+GoogleSpreadsheet.mockImplementation(() => ({ loadInfo: jest.fn().mockResolvedValue(), sheetsByTitle: sheets }));
 
-const { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail, buscarPedido } = require('../lib/google-sheets');
+const {
+  driveUrlToThumbnail, listarEventosPublicados, listarFotos, listarFotosEvento, registrarPedido,
+} = require('../lib/google-sheets');
 
-describe('listarFotos', () => {
-  it('retorna array de fotos com campos esperados', async () => {
-    const fotos = await listarFotos();
-    expect(Array.isArray(fotos)).toBe(true);
-    expect(fotos[0]).toHaveProperty('id');
-    expect(fotos[0]).toHaveProperty('event');
-    expect(fotos[0]).toHaveProperty('url');
-    expect(fotos[0]).toHaveProperty('price');
-  });
-
-  it('filtra apenas fotos com status Processada', async () => {
-    const fotos = await listarFotos();
-    expect(fotos.length).toBe(2);
-  });
-
-  it('listarFotos nunca expõe Link_Original', async () => {
-    const fotos = await listarFotos();
-    expect(fotos[0]).not.toHaveProperty('originalUrl');
-    expect(JSON.stringify(fotos)).not.toMatch(/Link_Original/i);
-  });
+it('lista apenas evento publicado e remove configuracao secreta', async () => {
+  expect(await listarEventosPublicados()).toEqual([expect.objectContaining({ eventoId: 'EV1', title: 'Missa' })]);
 });
 
-describe('registrarPedido', () => {
-  it('não lança erro com dados válidos', async () => {
-    await expect(
-      registrarPedido({ fotoIds: ['FOTO_001'], whatsapp: '11999999999', totalPago: 25.75, idMercadoPago: 'MP_123' })
-    ).resolves.not.toThrow();
-  });
+it('expoe apenas preview vendavel de evento publico, nunca original', async () => {
+  const photos = await listarFotos();
+  expect(photos).toHaveLength(1);
+  expect(photos[0].url).toContain('PREVIEW_1');
+  expect(photos[0]).not.toHaveProperty('originalFileId');
 });
 
-describe('driveUrlToThumbnail', () => {
-  it('converte URL de compartilhamento para URL de thumbnail', () => {
-    const input = 'https://drive.google.com/file/d/abc123XYZ/view?usp=sharing';
-    expect(driveUrlToThumbnail(input)).toBe('https://drive.google.com/thumbnail?id=abc123XYZ&sz=w800');
-  });
-
-  it('retorna original se URL não tiver padrão /d/{id}', () => {
-    expect(driveUrlToThumbnail('https://exemplo.com/foto.jpg')).toBe('https://exemplo.com/foto.jpg');
-  });
-
-  it('retorna null/undefined inalterado', () => {
-    expect(driveUrlToThumbnail(null)).toBeNull();
-    expect(driveUrlToThumbnail(undefined)).toBeUndefined();
-  });
+it('separa preview processado da autorizacao comercial da foto', async () => {
+  const photos = await listarFotosEvento('EV2');
+  expect(photos).toHaveLength(1);
+  expect(photos[0]).not.toHaveProperty('originalFileId');
 });
 
-describe('buscarPedido', () => {
-  it('retorna row quando ID_Mercado_Pago encontrado', async () => {
-    const row = await buscarPedido('MP_001');
-    expect(row).not.toBeNull();
-    expect(row.get('ID_Mercado_Pago')).toBe('MP_001');
-  });
-
-  it('retorna null quando não encontrado', async () => {
-    const row = await buscarPedido('INEXISTENTE');
-    expect(row).toBeNull();
-  });
+it('registra pedidos e itens em abas separadas', async () => {
+  await registrarPedido({
+    id: 'PED_1', preferenceId: 'PREF_1', name: 'Maria', email: 'maria@example.com',
+    whatsapp: '99982061089', paymentMethod: 'pix',
+    pricing: { subtotal: 10, serviceFee: 2, convenienceFee: 1, paymentCost: 0.2, total: 13.2 },
+  }, [{ foto: { id: 'F1', eventoId: 'EV1', price: 10 } }]);
+  expect(sheets.Pedidos.addRow).toHaveBeenCalled();
+  expect(sheets.ItensPedido.addRow).toHaveBeenCalledWith(expect.objectContaining({ FotoID: 'F1' }));
 });
 
-describe('atualizarStatus', () => {
-  it('lança erro se fotoId não encontrada', async () => {
-    await expect(atualizarStatus('INEXISTENTE', 'Pagamento Confirmado')).rejects.toThrow();
-  });
-
-  it('atualiza status da foto existente', async () => {
-    await expect(atualizarStatus('FOTO_001', 'Pagamento Confirmado')).resolves.not.toThrow();
-  });
+it('gera apenas thumbnail de preview com limite de tamanho', () => {
+  expect(driveUrlToThumbnail('https://drive.google.com/file/d/abc123/view')).toContain('sz=w1280');
 });

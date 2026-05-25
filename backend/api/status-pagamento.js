@@ -1,29 +1,20 @@
 const { statusPagamentoSchema } = require('../lib/validation');
-const { consultarStatus } = require('../lib/mercado-pago');
-const { buscarPedido } = require('../lib/google-sheets');
+const { buscarPedidoById } = require('../lib/google-sheets');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const result = statusPagamentoSchema.safeParse(req.query);
+  if (!result.success) return res.status(400).json({ error: result.error.errors[0].message });
   try {
-    const result = statusPagamentoSchema.safeParse(req.query);
-    if (!result.success) {
-      return res.status(400).json({ error: result.error.errors[0].message });
-    }
-    const { transactionId, whatsapp } = result.data;
-    const pedido = await buscarPedido(transactionId);
-    if (!pedido || pedido.get('WhatsApp') !== whatsapp) {
-      console.warn(JSON.stringify({
-        event: 'status_lookup_failed',
-        ip: req.ip || req.headers['x-forwarded-for'],
-        transactionId: transactionId,
-        timestamp: new Date().toISOString(),
-        reason: !pedido ? 'not_found' : 'whatsapp_mismatch',
-      }));
-      return res.status(404).json({ error: 'Pedido não encontrado' });
-    }
-    const status = await consultarStatus(transactionId);
-    res.json(status);
-  } catch (err) {
-    next(err);
+    const pedido = await buscarPedidoById(result.data.pedidoId);
+    if (!pedido) return res.status(404).json({ error: 'Pedido nao encontrado.' });
+    return res.json({
+      id: pedido.id,
+      status: pedido.status,
+      total: pedido.total,
+      deliveryReady: pedido.status === 'Pagamento Confirmado',
+    });
+  } catch (error) {
+    next(error);
   }
 };

@@ -1,54 +1,31 @@
 const crypto = require('crypto');
+const { paymentMethods, validarAssinaturaWebhook } = require('../lib/mercado-pago');
 
-jest.mock('mercadopago', () => ({
-  MercadoPagoConfig: jest.fn(),
-  Payment: jest.fn(() => ({
-    create: jest.fn().mockResolvedValue({
-      id: 'MP_PAY_123',
-      point_of_interaction: {
-        transaction_data: {
-          qr_code: 'QR_STRING',
-          qr_code_base64: 'BASE64_QR',
-        },
-      },
-    }),
-    get: jest.fn().mockResolvedValue({ id: 'MP_PAY_123', status: 'approved' }),
-  })),
-}));
-
-const { criarPagamentoPix, consultarStatus, validarHmac } = require('../lib/mercado-pago');
-
-describe('criarPagamentoPix', () => {
-  it('retorna id, qrCode e qrCodeBase64', async () => {
-    const result = await criarPagamentoPix({ whatsapp: '11999999999', total: 25.75, fotoIds: ['FOTO_001'] });
-    expect(result).toHaveProperty('id');
-    expect(result).toHaveProperty('qrCode');
-    expect(result).toHaveProperty('qrCodeBase64');
+describe('metodos permitidos no Checkout Pro', () => {
+  it('limita credito a uma parcela e separa pix de cartoes', () => {
+    expect(paymentMethods('pix').default_payment_method_id).toBe('pix');
+    expect(paymentMethods('credit_card').installments).toBe(1);
+    expect(paymentMethods('credit_card').excluded_payment_methods).toContainEqual({ id: 'pix' });
   });
 });
 
-describe('consultarStatus', () => {
-  it('retorna status do pagamento', async () => {
-    const result = await consultarStatus('MP_PAY_123');
-    expect(result).toHaveProperty('status');
-    expect(result.status).toBe('approved');
-  });
-});
-
-describe('validarHmac', () => {
+describe('assinatura oficial de webhook Mercado Pago', () => {
   const secret = 'test_secret';
-  const body = JSON.stringify({ action: 'payment.updated', data: { id: '123' } });
+  const dataId = 'PAY_123';
+  const requestId = 'REQ_123';
+  const ts = '1710000000';
 
-  it('retorna true para assinatura válida', () => {
-    const sig = crypto.createHmac('sha256', secret).update(body).digest('hex');
-    expect(validarHmac(body, sig, secret)).toBe(true);
+  it('aceita manifesto assinado com id, request-id e timestamp', () => {
+    const manifest = `id:${dataId.toLowerCase()};request-id:${requestId};ts:${ts};`;
+    const digest = crypto.createHmac('sha256', secret).update(manifest).digest('hex');
+    expect(validarAssinaturaWebhook({
+      dataId, requestId, secret, signature: `ts=${ts},v1=${digest}`,
+    })).toBe(true);
   });
 
-  it('retorna false para assinatura inválida', () => {
-    expect(validarHmac(body, 'assinatura_errada', secret)).toBe(false);
-  });
-
-  it('retorna false para body vazio', () => {
-    expect(validarHmac('', 'qualquer', secret)).toBe(false);
+  it('recusa assinatura alterada', () => {
+    expect(validarAssinaturaWebhook({
+      dataId, requestId, secret, signature: `ts=${ts},v1=invalid`,
+    })).toBe(false);
   });
 });

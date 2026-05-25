@@ -43,13 +43,13 @@ describe('GET /api/fotos', () => {
     expect(res.status).toBe(405);
   });
 
-  it('retorna 403 sem Referer/Origin reconhecido', async () => {
+  it('aceita requisicoes sem Referer, pois a API so retorna previews publicas', async () => {
     const res = await request(app).get('/api/fotos');
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(200);
   });
 
-  it('loga evento unauthorized_origin ao retornar 403', async () => {
-    const res = await request(app).get('/api/fotos');
+  it('loga evento unauthorized_origin para origem externa declarada', async () => {
+    const res = await request(app).get('/api/fotos').set('Origin', 'https://exemplo-invalido.test');
     expect(res.status).toBe(403);
     expect(warnSpy).toHaveBeenCalled();
     const logArg = JSON.parse(warnSpy.mock.calls[0][0]);

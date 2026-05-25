@@ -1,60 +1,45 @@
-const { validarHmac } = require('../../lib/mercado-pago');
-const { atualizarStatus } = require('../../lib/google-sheets');
-
-const processedRequests = new Set();
-const processedPaymentIds = new Set();
+const {
+  registrarWebhookSeNovo, finalizarWebhook, atualizarPedidoPagamento,
+  buscarPedidoByPreferenceOrPayment, registrarEntrega,
+} = require('../../lib/google-sheets');
+const { validarAssinaturaWebhook, consultarPagamento } = require('../../lib/mercado-pago');
+const { criarDownloadsDoPedido, enviarEmailEntrega, criarMensagemWhatsApp } = require('../../lib/delivery');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  // 5.1 — Explicit guard: if MP_WEBHOOK_SECRET is missing, fail immediately
-  if (!process.env.MP_WEBHOOK_SECRET) {
-    console.error('[webhook-mp] MP_WEBHOOK_SECRET não configurado');
-    return res.status(500).json({ error: 'Configuração de servidor inválida' });
-  }
-
+  const secret = process.env.MP_WEBHOOK_SECRET;
+  if (!secret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
   try {
+    const dataId = String((req.body.data && req.body.data.id) || req.query['data.id'] || '');
+    const requestId = String(req.headers['x-request-id'] || '');
     const signature = req.headers['x-signature'];
-    const rawBody = req.rawBody || JSON.stringify(req.body);
-
-    if (!signature || !validarHmac(rawBody, signature, process.env.MP_WEBHOOK_SECRET)) {
-      // 5.3 — Structured logging for HMAC failures
-      console.error(JSON.stringify({
-        event: 'webhook_invalid_signature',
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-        hasSignature: !!signature,
-      }));
-      return res.status(401).json({ error: 'Assinatura inválida' });
+    if (!validarAssinaturaWebhook({ dataId, requestId, signature, secret })) {
+      return res.status(401).json({ error: 'Assinatura invalida' });
     }
-
-    const requestId = req.headers['x-request-id'];
-    if (requestId && processedRequests.has(requestId)) {
+    const action = String(req.body.action || req.body.type || 'payment');
+    const eventKey = `${requestId}:${dataId}:${action}`;
+    if (!(await registrarWebhookSeNovo(eventKey, dataId, action))) {
       return res.status(200).json({ ok: true, duplicate: true });
     }
-    if (requestId) processedRequests.add(requestId);
-
-    const { action, data } = req.body;
-    if (action === 'payment.updated' && data && data.id) {
-      // 5.2 — Deduplicate on payment ID
-      const paymentId = String(data.id);
-      if (processedPaymentIds.has(paymentId)) {
-        return res.status(200).json({ ok: true, duplicate: true });
-      }
-      processedPaymentIds.add(paymentId);
-
-      // 5.4 — Structured logging for successful payments
-      console.log(JSON.stringify({
-        event: 'payment_confirmed',
-        paymentId,
-        timestamp: new Date().toISOString(),
-      }));
-
-      await atualizarStatus(paymentId, 'Pagamento Confirmado');
+    const payment = await consultarPagamento(dataId);
+    const reference = payment.external_reference || (payment.metadata && payment.metadata.pedido_id);
+    const stored = await buscarPedidoByPreferenceOrPayment(reference || String(payment.id));
+    if (!stored) {
+      await finalizarWebhook(eventKey, 'PedidoNaoEncontrado');
+      return res.status(202).json({ ok: true, unmatched: true });
     }
-
-    res.status(200).json({ ok: true });
-  } catch (err) {
-    next(err);
+    const pedido = await atualizarPedidoPagamento(stored.id, payment);
+    if (payment.status === 'approved') {
+      const downloads = await criarDownloadsDoPedido(pedido);
+      const emailSent = await enviarEmailEntrega(pedido, downloads);
+      const digits = String(pedido.whatsapp || '').replace(/\D/g, '');
+      const number = digits.startsWith('55') ? digits : `55${digits}`;
+      const whatsappLink = `https://wa.me/${number}?text=${encodeURIComponent(criarMensagemWhatsApp(downloads))}`;
+      await registrarEntrega(pedido.id, { emailSent, whatsappLink });
+    }
+    await finalizarWebhook(eventKey, 'Processado');
+    return res.json({ ok: true });
+  } catch (error) {
+    next(error);
   }
 };

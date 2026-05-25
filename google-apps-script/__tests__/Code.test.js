@@ -1,44 +1,18 @@
-// Mock globals called by Code.js
-global.listNewFiles = jest.fn().mockReturnValue([]);
-global.processarFoto = jest.fn();
 global.processarEntregas = jest.fn();
+const { criarTriggers, entregarFotos } = require('../Code');
 
-const { criarTriggers, processarFotosNovas, entregarFotos } = require('../Code');
+beforeEach(() => jest.clearAllMocks());
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  global.listNewFiles.mockReturnValue([]);
-  global.processarFoto.mockReset();
+it('instala somente o trigger de processamento oculto de eventos', () => {
+  const existing = {};
+  ScriptApp.getProjectTriggers.mockReturnValue([existing]);
+  criarTriggers();
+  expect(ScriptApp.deleteTrigger).toHaveBeenCalledWith(existing);
+  expect(ScriptApp.newTrigger).toHaveBeenCalledWith('processarEventos');
+  expect(ScriptApp.newTrigger).not.toHaveBeenCalledWith('entregarFotos');
 });
 
-describe('criarTriggers', () => {
-  it('deletes existing triggers then creates two new ones', () => {
-    const mockTrigger = {};
-    ScriptApp.getProjectTriggers.mockReturnValue([mockTrigger]);
-    criarTriggers();
-    expect(ScriptApp.deleteTrigger).toHaveBeenCalledWith(mockTrigger);
-    expect(ScriptApp.newTrigger).toHaveBeenCalledWith('processarFotosNovas');
-    expect(ScriptApp.newTrigger).toHaveBeenCalledWith('entregarFotos');
-  });
-});
-
-describe('processarFotosNovas', () => {
-  it('calls listNewFiles and processarFoto for each file', () => {
-    const { mockFile } = global.__mocks__;
-    global.listNewFiles.mockReturnValue([mockFile, mockFile]);
-    processarFotosNovas();
-    expect(global.processarFoto).toHaveBeenCalledTimes(2);
-  });
-
-  it('does nothing when no new files', () => {
-    processarFotosNovas();
-    expect(global.processarFoto).not.toHaveBeenCalled();
-  });
-});
-
-describe('entregarFotos', () => {
-  it('calls processarEntregas', () => {
-    entregarFotos();
-    expect(global.processarEntregas).toHaveBeenCalledTimes(1);
-  });
+it('mantem o entregador legado inativo para nao liberar link permanente', () => {
+  entregarFotos();
+  expect(global.processarEntregas).not.toHaveBeenCalled();
 });

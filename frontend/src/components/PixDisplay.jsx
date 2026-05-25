@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 export function PixDisplay({ qrCodeBase64, qrCode }) {
   const [copiado, setCopiado] = useState(false);
@@ -53,3 +54,8 @@ export function PixDisplay({ qrCodeBase64, qrCode }) {
 }
 
 export default PixDisplay;
+
+PixDisplay.propTypes = {
+  qrCodeBase64: PropTypes.string,
+  qrCode: PropTypes.string.isRequired,
+};

@@ -76,6 +76,7 @@ describe('processarFoto', () => {
         next:    jest.fn().mockReturnValue({ getName: () => 'Evento2026' }),
       }),
       moveTo: jest.fn(),
+      setTrashed: jest.fn(),
     };
 
     const mockCopiaOriginal = { getId: jest.fn().mockReturnValue('copia-original-id') };
@@ -131,13 +132,15 @@ describe('processarFoto', () => {
     expect(mockRegistrarFoto).toHaveBeenCalledWith(
       expect.objectContaining({
         linkAmostra: expect.stringContaining('amostra-file-id'),
+        originalFileId: 'copia-original-id',
+        previewFileId: 'amostra-file-id',
       })
     );
   });
 
-  it('moves the arquivo to ORIGINAIS folder after success (prevents duplicate processing)', () => {
+  it('removes the processed source file after preserving the private original', () => {
     processarFoto(mockArquivo);
-    expect(mockArquivo.moveTo).toHaveBeenCalled();
+    expect(mockArquivo.setTrashed).toHaveBeenCalledWith(true);
   });
 
   it('sends admin email on API error instead of throwing', () => {
@@ -157,7 +160,7 @@ describe('processarFoto', () => {
     );
   });
 
-  it('does NOT move arquivo when API fails (source file stays for retry)', () => {
+  it('does NOT remove arquivo when API fails (source file stays for retry)', () => {
     const errorResponse = {
       getResponseCode: jest.fn().mockReturnValue(500),
       getContentText:  jest.fn().mockReturnValue('error'),
@@ -167,7 +170,7 @@ describe('processarFoto', () => {
       .mockReset()
       .mockReturnValue(errorResponse);
     processarFoto(mockArquivo);
-    expect(mockArquivo.moveTo).not.toHaveBeenCalled();
+    expect(mockArquivo.setTrashed).not.toHaveBeenCalled();
   });
 
   it('calls /api/preprocess before /api/watermark', () => {

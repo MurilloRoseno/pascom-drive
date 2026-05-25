@@ -1,17 +1,13 @@
-/**
- * @param {number} subtotal
- * @returns {number} valor da taxa Mercado Pago em reais
- */
-export function calcularTaxa(subtotal) {
-  return subtotal * 0.0299 + 0.30;
-}
+export const PHOTO_PRICE = 10;
+export const SERVICE_FEE = 2;
+export const CONVENIENCE_FEE = 1;
 
-/**
- * @param {{ price: number }[]} fotos
- * @returns {{ subtotal: number, taxa: number, total: number }}
- */
 export function calcularTotais(fotos) {
-  const subtotal = fotos.reduce((acc, f) => acc + f.price, 0);
-  const taxa = calcularTaxa(subtotal);
-  return { subtotal, taxa, total: subtotal + taxa };
+  const subtotal = fotos.reduce((sum, photo) => sum + Number(photo.price || PHOTO_PRICE), 0);
+  return {
+    subtotal,
+    serviceFee: SERVICE_FEE,
+    convenienceFee: CONVENIENCE_FEE,
+    preliminaryTotal: subtotal + SERVICE_FEE + CONVENIENCE_FEE,
+  };
 }

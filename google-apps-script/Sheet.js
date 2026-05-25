@@ -1,183 +1,328 @@
-// Sheet.js — SpreadsheetApp operations for the "Fotos" sheet.
-// Column mapping (1-based for getRange):
-// 1=ID, 2=Evento, 3=Link_Original, 4=Link_Amostra, 5=Status,
-// 6=WhatsApp, 7=Total_Pago, 8=ID_Mercado_Pago, 9=Data_Processamento,
-// 10=Data_Pagamento, 11=Link_Entrega, 12=Tentativas_Entrega, 13=Preco, 14=EventoID
+// Sheet.js - Spreadsheet model and light-weight administrative controls.
+// The Eventos sheet is the source of truth for publication, access and sales.
+
+var EVENTOS_HEADERS = [
+  'EventoID', 'NomePasta', 'FolderID', 'Titulo', 'Categoria', 'DataEvento',
+  'StatusProcessamento', 'Visibilidade', 'VendaAutorizada', 'Publicacao',
+  'ProtecaoMenores', 'CodigoHash', 'CodigoVersao', 'CodigoGeradoEm',
+  'CodigoRevogadoEm', 'TotalFotos', 'FotosProcessadas', 'FotosEntregues',
+  'DataCriacao', 'DataInicio', 'DataConclusao', 'DataPublicacao', 'Erros',
+  'PastaRemovida',
+];
+
+var FOTOS_HEADERS = [
+  'FotoID', 'EventoID', 'OriginalFileID', 'PreviewFileID',
+  'StatusProcessamento', 'DisponivelVenda', 'PrecoUnitario',
+  'DataProcessamento',
+];
+
+var PEDIDOS_HEADERS = [
+  'PedidoID', 'PreferenceID', 'PaymentID', 'Status', 'Nome', 'Email',
+  'WhatsApp', 'MeioPagamento', 'Subtotal', 'TaxaServico', 'TaxaComodidade',
+  'CustoPagamentoEstimado', 'Total', 'TarifaReal', 'DataCriacao',
+  'DataPagamento', 'EmailEnviadoEm', 'WhatsAppLink',
+];
+
+var ITENS_HEADERS = ['PedidoID', 'FotoID', 'EventoID', 'PrecoUnitario'];
+var WEBHOOK_HEADERS = ['ChaveEvento', 'PaymentID', 'Tipo', 'RecebidoEm', 'ProcessadoEm', 'Status'];
+var DOWNLOAD_HEADERS = [
+  'DownloadID', 'PedidoID', 'FotoID', 'OriginalFileID', 'TokenHash',
+  'ExpiraEm', 'UsosMaximos', 'Usos', 'CriadoEm', 'UltimoUsoEm',
+];
+var REGRAS_HEADERS = ['MeioPagamento', 'PercentualEstimado', 'ValorFixo', 'Vigencia', 'Ativo'];
 
 var COL = {
   ID: 1, EVENTO: 2, LINK_ORIGINAL: 3, LINK_AMOSTRA: 4, STATUS: 5,
   WHATSAPP: 6, TOTAL_PAGO: 7, ID_MERCADO_PAGO: 8, DATA_PROCESSAMENTO: 9,
-  DATA_PAGAMENTO: 10, LINK_ENTREGA: 11, TENTATIVAS_ENTREGA: 12, PRECO: 13, EVENTO_ID: 14,
+  DATA_PAGAMENTO: 10, LINK_ENTREGA: 11, TENTATIVAS_ENTREGA: 12,
+  PRECO: 13, EVENTO_ID: 14,
 };
 
 function getConfig(key) {
   return PropertiesService.getScriptProperties().getProperty(key);
 }
 
-function getSheet() {
-  return SpreadsheetApp.openById(getConfig('SPREADSHEET_ID')).getSheetByName('Fotos');
+function getSpreadsheet() {
+  return SpreadsheetApp.openById(getConfig('SPREADSHEET_ID'));
 }
 
-// ---------------------------------------------------------------------------
-// Aba "Eventos" — gerenciamento de eventos multi-evento
-// ---------------------------------------------------------------------------
+function ensureSheet(nome, headers) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName(nome);
+  if (!sheet) {
+    sheet = ss.insertSheet(nome);
+    sheet.appendRow(headers);
+      if (sheet.setFrozenRows) sheet.setFrozenRows(1);
+    return sheet;
+  }
+  var range = sheet.getDataRange();
+  var values = range.getValues();
+  var existing = values.length ? values[0] : [];
+  if (!existing.length) {
+    sheet.appendRow(headers);
+      if (sheet.setFrozenRows) sheet.setFrozenRows(1);
+    return sheet;
+  }
+  headers.forEach(function(header) {
+    if (existing.indexOf(header) === -1) {
+      existing.push(header);
+      sheet.getRange(1, existing.length).setValue(header);
+    }
+  });
+    if (sheet.setFrozenRows) sheet.setFrozenRows(1);
+  return sheet;
+}
+
+function headersMap(sheet) {
+  var headers = sheet.getDataRange().getValues()[0] || [];
+  var map = {};
+  headers.forEach(function(header, index) { map[header] = index; });
+  return { headers: headers, map: map };
+}
+
+function appendMappedRow(sheet, values) {
+  var info = headersMap(sheet);
+  sheet.appendRow(info.headers.map(function(header) {
+    return values[header] !== undefined ? values[header] : '';
+  }));
+}
+
+function setField(sheet, rowNumber, field, value) {
+  var index = headersMap(sheet).map[field];
+  if (index !== undefined) sheet.getRange(rowNumber, index + 1).setValue(value);
+}
+
+function rowToObject(headers, row) {
+  var object = {};
+  headers.forEach(function(header, index) { object[header] = row[index]; });
+  return object;
+}
+
+function inicializarEstrutura() {
+  ensureSheet('Eventos', EVENTOS_HEADERS);
+  ensureSheet('Fotos', FOTOS_HEADERS);
+  ensureSheet('Pedidos', PEDIDOS_HEADERS);
+  ensureSheet('ItensPedido', ITENS_HEADERS);
+  ensureSheet('Webhooks', WEBHOOK_HEADERS);
+  ensureSheet('Downloads', DOWNLOAD_HEADERS);
+  ensureSheet('RegrasPagamento', REGRAS_HEADERS);
+  SpreadsheetApp.getUi().alert(
+    'Estrutura preparada. Revise eventos antigos antes de publica-los ou autorizar vendas.'
+  );
+}
+
+function getSheet() {
+  return ensureSheet('Fotos', FOTOS_HEADERS);
+}
 
 function getEventosSheet() {
-  var ss = SpreadsheetApp.openById(getConfig('SPREADSHEET_ID'));
-  var sheet = ss.getSheetByName('Eventos');
-  if (!sheet) {
-    sheet = ss.insertSheet('Eventos');
-    sheet.appendRow([
-      'EventoID', 'NomePasta', 'FolderID', 'Status',
-      'TotalFotos', 'FotosProcessadas', 'FotosEntregues',
-      'DataCriacao', 'DataInicio', 'DataConclusao', 'Erros', 'PastaRemovida',
-    ]);
-    sheet.setFrozenRows(1);
-  }
-  return sheet;
+  return ensureSheet('Eventos', EVENTOS_HEADERS);
 }
 
 function registrarEvento(eventData) {
   var sheet = getEventosSheet();
-  sheet.appendRow([
-    eventData.eventoId,
-    eventData.nomePasta,
-    eventData.folderId,
-    'Pendente',
-    eventData.totalFotos,
-    0,
-    0,
-    new Date().toISOString(),
-    '',
-    '',
-    '',
-    false,
-  ]);
+  appendMappedRow(sheet, {
+    EventoID: eventData.eventoId,
+    NomePasta: eventData.nomePasta,
+    FolderID: eventData.folderId,
+    Titulo: eventData.titulo || eventData.nomePasta,
+    Categoria: eventData.categoria || '',
+    DataEvento: eventData.dataEvento || '',
+    StatusProcessamento: 'Pendente',
+    Visibilidade: 'protegida',
+    VendaAutorizada: 'NAO',
+    Publicacao: 'rascunho',
+    ProtecaoMenores: 'NAO',
+    TotalFotos: eventData.totalFotos || 0,
+    FotosProcessadas: 0,
+    FotosEntregues: 0,
+    DataCriacao: new Date().toISOString(),
+    Erros: eventData.erro || '',
+    PastaRemovida: false,
+  });
+}
+
+function findEventoRow(eventoId) {
+  var sheet = getEventosSheet();
+  var values = sheet.getDataRange().getValues();
+  var headers = values[0] || [];
+  for (var i = 1; i < values.length; i++) {
+    var item = rowToObject(headers, values[i]);
+    if (item.EventoID === eventoId) return { sheet: sheet, rowNumber: i + 1, item: item };
+  }
+  return null;
 }
 
 function atualizarStatusEvento(eventoId, status, extra) {
-  var sheet = getEventosSheet();
-  var data = sheet.getDataRange().getValues();
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0] === eventoId) {
-      sheet.getRange(i + 1, 4).setValue(status);
-      if (extra) {
-        if (extra.fotosProcessadas !== undefined) sheet.getRange(i + 1, 6).setValue(extra.fotosProcessadas);
-        if (extra.fotosEntregues !== undefined)   sheet.getRange(i + 1, 7).setValue(extra.fotosEntregues);
-        if (extra.dataInicio)                     sheet.getRange(i + 1, 9).setValue(extra.dataInicio);
-        if (extra.dataConclusao)                  sheet.getRange(i + 1, 10).setValue(extra.dataConclusao);
-        if (extra.erro)                           sheet.getRange(i + 1, 11).setValue(extra.erro);
-        if (extra.pastaRemovida !== undefined)     sheet.getRange(i + 1, 12).setValue(extra.pastaRemovida);
-      }
-      return true;
-    }
+  var found = findEventoRow(eventoId);
+  if (!found) return false;
+  setField(found.sheet, found.rowNumber, 'StatusProcessamento', status);
+  // Preserve the legacy field if a deployed sheet already contains it.
+  setField(found.sheet, found.rowNumber, 'Status', status);
+  if (extra) {
+    if (extra.fotosProcessadas !== undefined) setField(found.sheet, found.rowNumber, 'FotosProcessadas', extra.fotosProcessadas);
+    if (extra.fotosEntregues !== undefined) setField(found.sheet, found.rowNumber, 'FotosEntregues', extra.fotosEntregues);
+    if (extra.dataInicio) setField(found.sheet, found.rowNumber, 'DataInicio', extra.dataInicio);
+    if (extra.dataConclusao) setField(found.sheet, found.rowNumber, 'DataConclusao', extra.dataConclusao);
+    if (extra.erro) setField(found.sheet, found.rowNumber, 'Erros', extra.erro);
+    if (extra.pastaRemovida !== undefined) setField(found.sheet, found.rowNumber, 'PastaRemovida', extra.pastaRemovida);
   }
-  return false;
+  return true;
 }
 
 function getStatusEvento(eventoId) {
-  var sheet = getEventosSheet();
-  var data = sheet.getDataRange().getValues();
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][0] === eventoId) {
-      return {
-        eventoId:         data[i][0],
-        nomePasta:        data[i][1],
-        folderId:         data[i][2],
-        status:           data[i][3],
-        totalFotos:       data[i][4],
-        fotosProcessadas: data[i][5],
-        fotosEntregues:   data[i][6],
-        dataInicio:       data[i][8],
-        pastaRemovida:    data[i][11],
-      };
-    }
-  }
-  return null;
+  var found = findEventoRow(eventoId);
+  if (!found) return null;
+  var item = found.item;
+  return {
+    eventoId: item.EventoID,
+    nomePasta: item.NomePasta,
+    folderId: item.FolderID,
+    status: item.StatusProcessamento || item.Status,
+    totalFotos: parseInt(item.TotalFotos, 10) || 0,
+    fotosProcessadas: parseInt(item.FotosProcessadas, 10) || 0,
+    fotosEntregues: parseInt(item.FotosEntregues, 10) || 0,
+    dataInicio: item.DataInicio,
+    pastaRemovida: item.PastaRemovida === true || item.PastaRemovida === 'TRUE',
+  };
 }
 
 function getStatusEventoByFolderId(folderId) {
   var sheet = getEventosSheet();
-  var data = sheet.getDataRange().getValues();
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][2] === folderId) {
-      return { eventoId: data[i][0], status: data[i][3] };
+  var rows = sheet.getDataRange().getValues();
+  var headers = rows[0] || [];
+  for (var i = 1; i < rows.length; i++) {
+    var item = rowToObject(headers, rows[i]);
+    if (item.FolderID === folderId) {
+      return { eventoId: item.EventoID, status: item.StatusProcessamento || item.Status };
     }
   }
   return null;
 }
 
-/**
- * Dupla verificação: contadores do evento + contagem real na aba Fotos.
- * Só retorna true quando 100% das fotos estão Entregues.
- */
-function eventoProntoParaRemover(eventoId) {
-  var ev = getStatusEvento(eventoId);
-  if (!ev) return false;
-  if (ev.pastaRemovida === true) return false;
-  if (ev.totalFotos <= 0) return false;
-  if (ev.fotosProcessadas < ev.totalFotos) return false;
-  if (ev.fotosEntregues < ev.totalFotos) return false;
-  // Double-check: conta linhas reais no Sheets
-  var sheet = getSheet();
-  var rows = sheet.getDataRange().getValues();
-  var entregues = rows.filter(function(r) {
-    return r[COL.EVENTO_ID - 1] === eventoId && r[COL.STATUS - 1] === 'Entregue';
-  });
-  return entregues.length >= ev.totalFotos;
-}
-
-// ---------------------------------------------------------------------------
-// Aba "Fotos" — funções existentes
-// ---------------------------------------------------------------------------
-
 function registrarFoto(dados) {
-  var sheet = getSheet();
-  var agora = Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'dd/MM/yyyy HH:mm:ss');
-  sheet.appendRow([
-    dados.id, dados.evento, dados.linkOriginal, dados.linkAmostra,
-    'Processada', '', dados.preco || 25, '', agora, '', '', 0,
-    dados.preco || 25, dados.eventoId || '',
-  ]);
+  appendMappedRow(getSheet(), {
+    FotoID: dados.id,
+    EventoID: dados.eventoId || '',
+    OriginalFileID: dados.originalFileId,
+    PreviewFileID: dados.previewFileId,
+    StatusProcessamento: 'Processada',
+    DisponivelVenda: 'NAO',
+    PrecoUnitario: dados.preco || 10,
+    DataProcessamento: new Date().toISOString(),
+    // Legacy fields are intentionally left without a public original URL.
+    ID: dados.id,
+    Evento: dados.evento || '',
+    Link_Amostra: dados.linkAmostra || '',
+    Status: 'Processada',
+    Preco: dados.preco || 10,
+  });
 }
 
-function listarPagamentosConfirmados() {
+function atualizarDisponibilidadeFotos(eventoId, value) {
   var sheet = getSheet();
   var data = sheet.getDataRange().getValues();
-  var result = [];
+  var headers = data[0] || [];
+  var eventoCol = headers.indexOf('EventoID');
+  var disponibilidadeCol = headers.indexOf('DisponivelVenda');
+  if (eventoCol < 0 || disponibilidadeCol < 0) return;
   for (var i = 1; i < data.length; i++) {
-    var row = data[i];
-    if (row[COL.STATUS - 1] === 'Pagamento Confirmado') {
-      result.push({
-        id: row[COL.ID - 1],
-        evento: row[COL.EVENTO - 1],
-        linkOriginal: row[COL.LINK_ORIGINAL - 1],
-        whatsapp: row[COL.WHATSAPP - 1],
-        tentativas: parseInt(row[COL.TENTATIVAS_ENTREGA - 1]) || 0,
-        rowIndex: i + 1,
-      });
+    if (data[i][eventoCol] === eventoId) {
+      sheet.getRange(i + 1, disponibilidadeCol + 1).setValue(value);
     }
   }
-  return result;
 }
 
-function atualizarCelula(rowIndex, colIndex, value) {
-  getSheet().getRange(rowIndex, colIndex).setValue(value);
+function eventoProntoParaRemover(eventoId) {
+  var ev = getStatusEvento(eventoId);
+  return !!ev && !ev.pastaRemovida && ev.totalFotos > 0 &&
+    ev.fotosProcessadas >= ev.totalFotos;
 }
 
-function incrementarTentativas(rowIndex) {
-  var sheet = getSheet();
-  var cell = sheet.getRange(rowIndex, COL.TENTATIVAS_ENTREGA);
-  cell.setValue((parseInt(cell.getValue()) || 0) + 1);
+function getEventoSelecionado() {
+  var sheet = getEventosSheet();
+  var active = sheet.getActiveRange();
+  var row = active && active.getRow();
+  if (!row || row <= 1) throw new Error('Selecione uma linha de evento.');
+  var data = sheet.getDataRange().getValues();
+  return { sheet: sheet, rowNumber: row, item: rowToObject(data[0], data[row - 1]) };
+}
+
+function publicarEventoSelecionado() {
+  var selected = getEventoSelecionado();
+  if (!selected.item.Categoria || !selected.item.DataEvento) {
+    throw new Error('Informe Categoria e DataEvento antes de publicar.');
+  }
+  setField(selected.sheet, selected.rowNumber, 'Publicacao', 'publicado');
+  setField(selected.sheet, selected.rowNumber, 'DataPublicacao', new Date().toISOString());
+}
+
+function autorizarVendaSelecionada() {
+  var selected = getEventoSelecionado();
+  if (selected.item.ProtecaoMenores === 'SIM' && selected.item.Visibilidade !== 'protegida') {
+    throw new Error('Evento com menores deve permanecer protegido.');
+  }
+  setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'SIM');
+  atualizarDisponibilidadeFotos(selected.item.EventoID, 'SIM');
+}
+
+function alternarVisibilidadeSelecionada() {
+  var selected = getEventoSelecionado();
+  var atual = selected.item.Visibilidade || 'protegida';
+  var nova = atual === 'publica' ? 'protegida' : 'publica';
+  if (nova === 'publica' && selected.item.ProtecaoMenores === 'SIM') {
+    throw new Error('Evento com menores nao pode ser publico.');
+  }
+  setField(selected.sheet, selected.rowNumber, 'Visibilidade', nova);
+}
+
+function codigoHash(codigo) {
+  var salt = getConfig('GALLERY_CODE_SALT') || '';
+  var bytes = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, codigo + salt);
+  return bytes.map(function(value) {
+    var normalized = value < 0 ? value + 256 : value;
+    return ('0' + normalized.toString(16)).slice(-2);
+  }).join('');
+}
+
+function gerarCodigoEventoSelecionado() {
+  var selected = getEventoSelecionado();
+  var codigo = Utilities.getUuid().replace(/-/g, '').slice(0, 8).toUpperCase();
+  var versao = (parseInt(selected.item.CodigoVersao, 10) || 0) + 1;
+  setField(selected.sheet, selected.rowNumber, 'Visibilidade', 'protegida');
+  setField(selected.sheet, selected.rowNumber, 'CodigoHash', codigoHash(codigo));
+  setField(selected.sheet, selected.rowNumber, 'CodigoVersao', versao);
+  setField(selected.sheet, selected.rowNumber, 'CodigoGeradoEm', new Date().toISOString());
+  setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', '');
+  SpreadsheetApp.getUi().alert('Codigo de acesso (anote agora): ' + codigo);
+}
+
+function revogarCodigoEventoSelecionado() {
+  var selected = getEventoSelecionado();
+  setField(selected.sheet, selected.rowNumber, 'CodigoHash', '');
+  setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', new Date().toISOString());
+}
+
+function arquivarEventoSelecionado() {
+  var selected = getEventoSelecionado();
+  setField(selected.sheet, selected.rowNumber, 'Publicacao', 'arquivado');
+  setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
+  atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
 }
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    getSheet, getEventosSheet,
-    registrarFoto, registrarEvento,
-    atualizarStatusEvento, getStatusEvento, getStatusEventoByFolderId,
-    eventoProntoParaRemover,
-    listarPagamentosConfirmados, atualizarCelula, incrementarTentativas,
-    COL,
+    getSheet: getSheet, getEventosSheet: getEventosSheet, registrarFoto: registrarFoto,
+    registrarEvento: registrarEvento, atualizarStatusEvento: atualizarStatusEvento,
+    getStatusEvento: getStatusEvento, getStatusEventoByFolderId: getStatusEventoByFolderId,
+    eventoProntoParaRemover: eventoProntoParaRemover, inicializarEstrutura: inicializarEstrutura,
+    atualizarDisponibilidadeFotos: atualizarDisponibilidadeFotos,
+    publicarEventoSelecionado: publicarEventoSelecionado,
+    autorizarVendaSelecionada: autorizarVendaSelecionada,
+    alternarVisibilidadeSelecionada: alternarVisibilidadeSelecionada,
+    gerarCodigoEventoSelecionado: gerarCodigoEventoSelecionado,
+    revogarCodigoEventoSelecionado: revogarCodigoEventoSelecionado,
+    arquivarEventoSelecionado: arquivarEventoSelecionado,
+    codigoHash: codigoHash, COL: COL,
   };
 }

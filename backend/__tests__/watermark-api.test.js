@@ -50,9 +50,9 @@ describe('POST /api/watermark', () => {
     expect(googleDrive.downloadFile).toHaveBeenCalledWith('file-abc-123');
   });
 
-  it('uses color watermark by default', async () => {
+  it('uses automatic watermark selection by default', async () => {
     await request(app).post('/api/watermark').set('x-watermark-secret', 'test-watermark-secret').send(VALID_BODY);
-    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'color');
+    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'auto');
   });
 
   it('accepts watermarkType bw', async () => {

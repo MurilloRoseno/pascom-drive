@@ -34,7 +34,7 @@ export default function DevToolsBlock() {
 
         <p className="text-sm leading-relaxed mb-4" style={{ color: '#FAF6EF' }}>
           Detectamos que o DevTools está aberto. As fotos são propriedade da{' '}
-          <strong>Paróquia São Rafael</strong> e contêm marca d'água. Reprodução
+          <strong>Paróquia São Rafael</strong> e contêm marca d&apos;água. Reprodução
           não autorizada é proibida{' '}
           <span style={{ color: 'rgba(250,246,239,0.7)' }}>(Lei 9.610/98)</span>.
         </p>

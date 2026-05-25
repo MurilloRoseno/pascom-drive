@@ -47,6 +47,12 @@ AMOSTRAS_FOLDER_ID          = <seu-amostras-folder-id>
 ADMIN_EMAIL                 = murillo.roseno.lima@gmail.com
 MP_ACCESS_TOKEN             = TEST-<seu-token-sandbox-mp>
 MP_WEBHOOK_SECRET           = <seu-webhook-secret-mp>
+DOWNLOAD_JWT_SECRET        = <segredo-aleatorio-longo>
+GALLERY_SESSION_SECRET     = <segredo-aleatorio-longo-diferente>
+GALLERY_CODE_SALT          = <salt-aleatorio-longo>
+RESEND_API_KEY             = <chave-resend>
+DELIVERY_FROM_EMAIL        = fotos@<seu-dominio-verificado>
+PUBLIC_APP_URL             = https://pascom-drive.vercel.app
 FRONTEND_URL                = http://localhost:3000
 NODE_ENV                    = development
 ```
@@ -63,6 +69,10 @@ NODE_ENV                    = development
 | `AMOSTRAS_FOLDER_ID` | Google Drive: idem |
 | `MP_ACCESS_TOKEN` | Mercado Pago: Conta → Credenciais → Access Token (sandbox) |
 | `MP_WEBHOOK_SECRET` | Mercado Pago: Webhooks → seu webhook |
+| `DOWNLOAD_JWT_SECRET` | Segredo privado para links temporários de entrega |
+| `GALLERY_SESSION_SECRET` | Segredo privado para sessões de galerias protegidas |
+| `GALLERY_CODE_SALT` | Salt privado compartilhado com Apps Script para hash dos códigos |
+| `RESEND_API_KEY` | Resend: chave para envio automático da entrega |
 
 ---
 
@@ -115,8 +125,10 @@ No Google Apps Script editor:
 | `ORIGINAIS_FOLDER_ID` | `<seu-originais-folder-id-prod>` |
 | `AMOSTRAS_FOLDER_ID` | `<seu-amostras-folder-id-prod>` |
 | `ADMIN_EMAIL` | `murillo.roseno.lima@gmail.com` |
+| `GALLERY_CODE_SALT` | `<mesmo-salt-privado-configurado-no-backend>` |
 
-3. Volte ao editor e execute `criarTriggers()` uma única vez
+3. Volte ao editor e execute `inicializarEstrutura()` uma vez para criar/migrar as abas seguras
+4. Execute `criarTriggers()` uma única vez
 
 ---
 

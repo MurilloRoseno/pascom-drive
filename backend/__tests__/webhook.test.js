@@ -1,122 +1,69 @@
-const crypto = require('crypto');
-
 jest.mock('../lib/google-sheets', () => ({
-  atualizarStatus: jest.fn().mockResolvedValue(undefined),
+  registrarWebhookSeNovo: jest.fn(),
+  finalizarWebhook: jest.fn(),
+  atualizarPedidoPagamento: jest.fn(),
+  buscarPedidoByPreferenceOrPayment: jest.fn(),
+  registrarEntrega: jest.fn(),
 }));
 jest.mock('../lib/mercado-pago', () => ({
-  validarHmac: jest.requireActual('../lib/mercado-pago').validarHmac,
+  validarAssinaturaWebhook: jest.fn(),
+  consultarPagamento: jest.fn(),
 }));
+jest.mock('../lib/delivery', () => ({
+  criarDownloadsDoPedido: jest.fn(),
+  enviarEmailEntrega: jest.fn(),
+  criarMensagemWhatsApp: jest.fn(() => 'Links seguros'),
+}));
+
+process.env.MP_WEBHOOK_SECRET = 'webhook-secret';
 
 const request = require('supertest');
 const express = require('express');
-const errorHandler = require('../middleware/error-handler');
-
-const WEBHOOK_SECRET = 'test_secret_123';
-process.env.MP_WEBHOOK_SECRET = WEBHOOK_SECRET;
-
-// require after env is set
-const webhookHandler = require('../api/webhook/mercado-pago');
+const handler = require('../api/webhook/mercado-pago');
+const sheets = require('../lib/google-sheets');
+const mp = require('../lib/mercado-pago');
+const delivery = require('../lib/delivery');
 
 const app = express();
-app.use(express.json({
-  verify: (req, _res, buf) => { req.rawBody = buf.toString(); },
-}));
-app.post('/api/webhook/mercado-pago', webhookHandler);
-app.use(errorHandler);
+app.use(express.json());
+app.post('/api/webhook/mercado-pago', handler);
 
-function makeSignature(body) {
-  return crypto.createHmac('sha256', WEBHOOK_SECRET).update(body).digest('hex');
+beforeEach(() => {
+  jest.clearAllMocks();
+  process.env.MP_WEBHOOK_SECRET = 'webhook-secret';
+  mp.validarAssinaturaWebhook.mockReturnValue(true);
+  mp.consultarPagamento.mockResolvedValue({ id: 'PAY_1', status: 'approved', external_reference: 'PED_1' });
+  sheets.registrarWebhookSeNovo.mockResolvedValue(true);
+  sheets.buscarPedidoByPreferenceOrPayment.mockResolvedValue({ id: 'PED_1' });
+  sheets.atualizarPedidoPagamento.mockResolvedValue({ id: 'PED_1', email: 'maria@example.com', whatsapp: '99982061089' });
+  delivery.criarDownloadsDoPedido.mockResolvedValue([{ url: 'https://safe.test/download' }]);
+  delivery.enviarEmailEntrega.mockResolvedValue(true);
+});
+
+function post() {
+  return request(app).post('/api/webhook/mercado-pago')
+    .set('x-signature', 'ts=1,v1=signature')
+    .set('x-request-id', 'REQ_1')
+    .send({ action: 'payment.updated', data: { id: 'PAY_1' } });
 }
 
-describe('POST /api/webhook/mercado-pago', () => {
-  const body = JSON.stringify({ action: 'payment.updated', data: { id: 'MP_123' } });
+it('valida assinatura, consulta pagamento e libera entrega aprovada', async () => {
+  const res = await post();
+  expect(res.status).toBe(200);
+  expect(mp.validarAssinaturaWebhook).toHaveBeenCalled();
+  expect(delivery.criarDownloadsDoPedido).toHaveBeenCalled();
+  expect(sheets.registrarEntrega).toHaveBeenCalledWith('PED_1', expect.objectContaining({ emailSent: true }));
+  expect(sheets.finalizarWebhook).toHaveBeenCalledWith('REQ_1:PAY_1:payment.updated', 'Processado');
+});
 
-  it('retorna 200 com assinatura válida', async () => {
-    const sig = makeSignature(body);
-    const res = await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('Content-Type', 'application/json')
-      .set('x-signature', sig)
-      .send(body);
-    expect(res.status).toBe(200);
-  });
+it('descarta evento ja processado sem duplicar entrega', async () => {
+  sheets.registrarWebhookSeNovo.mockResolvedValueOnce(false);
+  const res = await post();
+  expect(res.body.duplicate).toBe(true);
+  expect(delivery.criarDownloadsDoPedido).not.toHaveBeenCalled();
+});
 
-  it('retorna 401 com assinatura inválida', async () => {
-    const res = await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('x-signature', 'assinatura_invalida')
-      .send(body);
-    expect(res.status).toBe(401);
-  });
-
-  it('retorna 401 sem header x-signature', async () => {
-    const res = await request(app)
-      .post('/api/webhook/mercado-pago')
-      .send(body);
-    expect(res.status).toBe(401);
-  });
-
-  it('retorna 200 idempotente para mesmo x-request-id', async () => {
-    const { atualizarStatus } = require('../lib/google-sheets');
-    atualizarStatus.mockClear();
-
-    const idempotentBody = JSON.stringify({ action: 'payment.updated', data: { id: 'MP_IDEM_999' } });
-    const sig = makeSignature(idempotentBody);
-    await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('Content-Type', 'application/json')
-      .set('x-signature', sig)
-      .set('x-request-id', 'REQ_IDEM_UNICO')
-      .send(idempotentBody);
-    const res2 = await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('Content-Type', 'application/json')
-      .set('x-signature', sig)
-      .set('x-request-id', 'REQ_IDEM_UNICO')
-      .send(idempotentBody);
-    expect(res2.status).toBe(200);
-    expect(atualizarStatus).toHaveBeenCalledTimes(1);
-  });
-
-  it('retorna 500 se MP_WEBHOOK_SECRET não está configurado', async () => {
-    const original = process.env.MP_WEBHOOK_SECRET;
-    delete process.env.MP_WEBHOOK_SECRET;
-
-    const res = await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('Content-Type', 'application/json')
-      .send(body);
-
-    expect(res.status).toBe(500);
-    expect(res.body.error).toBe('Configuração de servidor inválida');
-
-    process.env.MP_WEBHOOK_SECRET = original;
-  });
-
-  it('deduplica por paymentId (mesmo data.id, diferente x-request-id)', async () => {
-    const { atualizarStatus } = require('../lib/google-sheets');
-    atualizarStatus.mockClear();
-
-    const payBody = JSON.stringify({ action: 'payment.updated', data: { id: 'MP_DEDUP_123' } });
-    const sig = makeSignature(payBody);
-
-    // First call
-    await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('Content-Type', 'application/json')
-      .set('x-signature', sig)
-      .set('x-request-id', 'REQ_AAA')
-      .send(payBody);
-
-    // Second call — different x-request-id but same payment ID
-    const res2 = await request(app)
-      .post('/api/webhook/mercado-pago')
-      .set('Content-Type', 'application/json')
-      .set('x-signature', sig)
-      .set('x-request-id', 'REQ_BBB')
-      .send(payBody);
-
-    expect(res2.status).toBe(200);
-    expect(atualizarStatus).toHaveBeenCalledTimes(1); // only called once
-  });
+it('recusa notificacao sem assinatura valida', async () => {
+  mp.validarAssinaturaWebhook.mockReturnValueOnce(false);
+  expect((await post()).status).toBe(401);
 });

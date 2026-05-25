@@ -9,7 +9,7 @@
 /* global copyFileToFolder, getShareableLink, getOriginaisFolder, getAmostrasFolder,
           registrarFoto, UrlFetchApp, PropertiesService, MailApp, Logger */
 
-var PRECO_PADRAO = 25;
+var PRECO_PADRAO = 10;
 var _idCounter = 0;
 
 // In Node/Jest context, pull helpers from their modules so jest.mock() intercepts them.
@@ -101,7 +101,7 @@ function processarFoto(arquivo, eventoId, counter) {
 
     // 0. Copy TRUE original to ORIGINAIS before any modification (backup first)
     var copiaOriginal = _helpers.copyFileToFolder(arquivo, _helpers.getOriginaisFolder(), id + '_' + nomeOriginal);
-    var linkOriginal  = _helpers.getShareableLink(copiaOriginal);
+    var originalFileId = copiaOriginal.getId();
 
     // 1. Pre-process: convert format (HEIC→JPEG, etc.) + compress in-place on Drive
     _preprocessarArquivo(arquivo, backendUrl, headers);
@@ -144,7 +144,8 @@ function processarFoto(arquivo, eventoId, counter) {
       id:           id,
       evento:       evento,
       eventoId:     eventoId || evento, // eventoId estruturado para cross-reference
-      linkOriginal: linkOriginal,
+      originalFileId: originalFileId,
+      previewFileId:  amostraFile.getId(),
       linkAmostra:  linkAmostra,
       preco:        PRECO_PADRAO,
     });

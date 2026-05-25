@@ -1,4 +1,4 @@
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import PhotoCard from '../components/PhotoCard.jsx';
 
 jest.mock('../hooks/useCarrinho.js', () => ({
@@ -24,4 +24,12 @@ it('prevents context menu on photo element', () => {
   const event = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
   img.dispatchEvent(event);
   expect(event.defaultPrevented).toBe(true);
+});
+
+it('mostra preview mas impede selecao sem autorizacao comercial', () => {
+  const { getByRole, getByText } = render(
+    <PhotoCard foto={{ ...mockFoto, availableForSale: false }} event={{ title: 'Missa', eventoId: 'EV1', salesAuthorized: false }} />
+  );
+  expect(getByRole('button')).toBeDisabled();
+  expect(getByText(/compra indisponivel/i)).toBeInTheDocument();
 });
