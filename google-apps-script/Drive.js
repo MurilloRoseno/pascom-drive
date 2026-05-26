@@ -89,6 +89,17 @@ function trashFileById(fileId) {
   if (fileId) DriveApp.getFileById(fileId).setTrashed(true);
 }
 
+function moveFileToFolderIfNeeded(fileId, destinationFolder) {
+  if (!fileId) return false;
+  var file = DriveApp.getFileById(fileId);
+  var parents = file.getParents();
+  while (parents.hasNext()) {
+    if (parents.next().getId() === destinationFolder.getId()) return false;
+  }
+  file.moveTo(destinationFolder);
+  return true;
+}
+
 function getShareableLink(file) {
   return 'https://drive.google.com/file/d/' + file.getId() + '/view?usp=sharing';
 }
@@ -98,6 +109,6 @@ if (typeof module !== 'undefined') {
     getSourceFolder, getOriginaisFolder, getAmostrasFolder, getThumbnailsFolder,
     listNewFiles, listarArquivosDoEvento,
     moverParaQuarentena, removerPastaEvento,
-    copyFileToFolder, trashFileById, getShareableLink,
+    copyFileToFolder, trashFileById, moveFileToFolderIfNeeded, getShareableLink,
   };
 }

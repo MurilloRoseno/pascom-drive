@@ -6,8 +6,8 @@
 //   "Service Accounts do not have storage quota" limitation. Apps Script
 //   saves the blob directly to Drive as the authenticated user (who has quota).
 
-/* global copyFileToFolder, trashFileById, getShareableLink, getOriginaisFolder, getAmostrasFolder, getThumbnailsFolder,
-          registrarFoto, atualizarDerivadosFoto, listarFotosParaReprocessar, invalidarCacheSite,
+/* global copyFileToFolder, trashFileById, moveFileToFolderIfNeeded, getShareableLink, getOriginaisFolder, getAmostrasFolder, getThumbnailsFolder,
+          registrarFoto, atualizarDerivadosFoto, listarFotosParaReprocessar, listarFotosComMiniatura, invalidarCacheSite,
           UrlFetchApp, PropertiesService, MailApp, Logger */
 
 var PRECO_PADRAO = 10;
@@ -25,9 +25,11 @@ var _helpers = (function () {
       getAmostrasFolder:  drive.getAmostrasFolder,
       getThumbnailsFolder: drive.getThumbnailsFolder,
       trashFileById:      drive.trashFileById,
+      moveFileToFolderIfNeeded: drive.moveFileToFolderIfNeeded,
       registrarFoto:     sheet.registrarFoto,
       atualizarDerivadosFoto: sheet.atualizarDerivadosFoto,
       listarFotosParaReprocessar: sheet.listarFotosParaReprocessar,
+      listarFotosComMiniatura: sheet.listarFotosComMiniatura,
       invalidarCacheSite: sheet.invalidarCacheSite,
     };
   }
@@ -39,9 +41,11 @@ var _helpers = (function () {
     getAmostrasFolder:  function () { return getAmostrasFolder.apply(this, arguments); },
     getThumbnailsFolder: function () { return getThumbnailsFolder.apply(this, arguments); },
     trashFileById:      function () { return trashFileById.apply(this, arguments); },
+    moveFileToFolderIfNeeded: function () { return moveFileToFolderIfNeeded.apply(this, arguments); },
     registrarFoto:     function () { return registrarFoto.apply(this, arguments); },
     atualizarDerivadosFoto: function () { return atualizarDerivadosFoto.apply(this, arguments); },
     listarFotosParaReprocessar: function () { return listarFotosParaReprocessar.apply(this, arguments); },
+    listarFotosComMiniatura: function () { return listarFotosComMiniatura.apply(this, arguments); },
     invalidarCacheSite: function () { return invalidarCacheSite.apply(this, arguments); },
   };
 }());
@@ -246,6 +250,21 @@ function reprocessarMiniaturasEmLote() {
   Logger.log(fotos.length + ' foto(s) reprocessada(s) com miniaturas otimizadas.');
 }
 
+function organizarMiniaturasEmPasta() {
+  var props = PropertiesService.getScriptProperties();
+  if (!props.getProperty('THUMBNAILS_FOLDER_ID')) {
+    throw new Error('Configure THUMBNAILS_FOLDER_ID antes de organizar miniaturas existentes.');
+  }
+  var limite = parseInt(props.getProperty('THUMBNAIL_ORGANIZE_BATCH_SIZE'), 10) || 100;
+  var destino = _helpers.getThumbnailsFolder();
+  var fotos = _helpers.listarFotosComMiniatura();
+  var movidas = 0;
+  for (var i = 0; i < fotos.length && movidas < limite; i++) {
+    if (_helpers.moveFileToFolderIfNeeded(fotos[i].ThumbnailFileID, destino)) movidas++;
+  }
+  Logger.log(movidas + ' miniatura(s) movida(s) para a pasta Miniaturas, sem criar copias.');
+}
+
 if (typeof module !== 'undefined') {
   module.exports = {
     gerarIdFoto: gerarIdFoto,
@@ -254,5 +273,6 @@ if (typeof module !== 'undefined') {
     notificarErroProcessamento: notificarErroProcessamento,
     processarFoto: processarFoto,
     reprocessarMiniaturasEmLote: reprocessarMiniaturasEmLote,
+    organizarMiniaturasEmPasta: organizarMiniaturasEmPasta,
   };
 }

@@ -4,6 +4,7 @@ const {
   gerarNomeAmostra,
   ehArquivoCapa,
   processarFoto,
+  organizarMiniaturasEmPasta,
 } = require('../Watermark');
 
 const mockCopyFileToFolder  = jest.fn();
@@ -12,9 +13,11 @@ const mockGetOriginaisFolder = jest.fn();
 const mockGetAmostrasFolder  = jest.fn();
 const mockGetThumbnailsFolder = jest.fn();
 const mockTrashFileById       = jest.fn();
+const mockMoveFileToFolderIfNeeded = jest.fn();
 const mockRegistrarFoto      = jest.fn();
 const mockAtualizarDerivadosFoto = jest.fn().mockReturnValue(true);
 const mockListarFotosParaReprocessar = jest.fn();
+const mockListarFotosComMiniatura = jest.fn();
 const mockInvalidarCacheSite = jest.fn();
 
 jest.mock('../Drive', () => ({
@@ -24,11 +27,13 @@ jest.mock('../Drive', () => ({
   getAmostrasFolder:  (...a) => mockGetAmostrasFolder(...a),
   getThumbnailsFolder: (...a) => mockGetThumbnailsFolder(...a),
   trashFileById:       (...a) => mockTrashFileById(...a),
+  moveFileToFolderIfNeeded: (...a) => mockMoveFileToFolderIfNeeded(...a),
 }));
 jest.mock('../Sheet', () => ({
   registrarFoto: (...a) => mockRegistrarFoto(...a),
   atualizarDerivadosFoto: (...a) => mockAtualizarDerivadosFoto(...a),
   listarFotosParaReprocessar: (...a) => mockListarFotosParaReprocessar(...a),
+  listarFotosComMiniatura: (...a) => mockListarFotosComMiniatura(...a),
   invalidarCacheSite: (...a) => mockInvalidarCacheSite(...a),
 }));
 
@@ -41,6 +46,7 @@ global.PropertiesService = {
         BACKEND_URL:           'https://pascom-drive.vercel.app',
         ADMIN_EMAIL:           'admin@example.com',
         WATERMARK_API_SECRET:  'test-watermark-secret',
+        THUMBNAILS_FOLDER_ID:   'thumbnail-folder-id',
       };
       return props[key] || null;
     }),
@@ -57,6 +63,20 @@ describe('gerarIdFoto', () => {
   });
   it('generates unique IDs on successive calls', () => {
     expect(gerarIdFoto()).not.toBe(gerarIdFoto());
+  });
+});
+
+describe('organizarMiniaturasEmPasta', () => {
+  it('moves registered thumbnails to their private folder without duplicating files', () => {
+    const thumbnailFolder = { getId: jest.fn().mockReturnValue('thumbnail-folder-id') };
+    mockGetThumbnailsFolder.mockReturnValue(thumbnailFolder);
+    mockListarFotosComMiniatura.mockReturnValue([{ ThumbnailFileID: 'thumb-old' }]);
+    mockMoveFileToFolderIfNeeded.mockReturnValue(true);
+
+    organizarMiniaturasEmPasta();
+
+    expect(mockMoveFileToFolderIfNeeded).toHaveBeenCalledWith('thumb-old', thumbnailFolder);
+    expect(global.Logger.log).toHaveBeenCalledWith(expect.stringContaining('sem criar copias'));
   });
 });
 

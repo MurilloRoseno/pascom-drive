@@ -60,6 +60,8 @@ Para fotos antigas sem `ThumbnailFileID`, execute `reprocessarMiniaturasEmLote()
 
 Configure `THUMBNAILS_FOLDER_ID` nas propriedades do Apps Script apontando para uma pasta privada `Miniaturas`. `AMOSTRAS_FOLDER_ID` passa a concentrar as previews para ampliacao e `THUMBNAILS_FOLDER_ID` guarda somente imagens leves da grade. O fallback para `AMOSTRAS` existe apenas para compatibilidade enquanto a nova pasta ainda nao tiver sido configurada.
 
+Se ja houver `ThumbnailFileID` criado dentro de `AMOSTRAS`, execute `organizarMiniaturasEmPasta()` depois de configurar a pasta. A rotina move cada arquivo registrado, sem copiar nem duplicar conteudo; o lote padrao move ate `100` arquivos por execucao e pode ser ajustado pela propriedade `THUMBNAIL_ORGANIZE_BATCH_SIZE`.
+
 ### Inicio Limpo Antes Da Estreia
 
 Se todas as linhas atuais forem apenas testes, use a funcao protegida `reiniciarDadosParaEstreia()` em vez de excluir celulas manualmente:

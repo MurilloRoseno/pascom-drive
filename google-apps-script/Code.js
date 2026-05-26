@@ -20,6 +20,7 @@ function onOpen() {
       .addItem('Preparar estrutura segura', 'inicializarEstrutura')
       .addItem('Normalizar nomes de eventos', 'normalizarMetadadosEventos')
       .addItem('Reprocessar miniaturas pendentes', 'reprocessarMiniaturasEmLote')
+      .addItem('Organizar miniaturas existentes', 'organizarMiniaturasEmPasta')
       .addSeparator()
       .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
       .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')

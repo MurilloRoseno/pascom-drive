@@ -5,6 +5,7 @@ const {
   getThumbnailsFolder,
   listNewFiles,
   copyFileToFolder,
+  moveFileToFolderIfNeeded,
   getShareableLink,
 } = require('../Drive');
 
@@ -66,6 +67,19 @@ describe('copyFileToFolder', () => {
     const { mockFile, mockFolder } = global.__mocks__;
     copyFileToFolder(mockFile, mockFolder, 'copy.jpg');
     expect(mockFile.makeCopy).toHaveBeenCalledWith('copy.jpg', mockFolder);
+  });
+});
+
+describe('moveFileToFolderIfNeeded', () => {
+  it('moves an existing thumbnail instead of creating a duplicated file', () => {
+    const destination = { getId: jest.fn().mockReturnValue('thumbnails-folder') };
+    const existingFile = {
+      getParents: jest.fn().mockReturnValue({ hasNext: jest.fn().mockReturnValue(false) }),
+      moveTo: jest.fn(),
+    };
+    DriveApp.getFileById.mockReturnValueOnce(existingFile);
+    expect(moveFileToFolderIfNeeded('thumb-id', destination)).toBe(true);
+    expect(existingFile.moveTo).toHaveBeenCalledWith(destination);
   });
 });
 

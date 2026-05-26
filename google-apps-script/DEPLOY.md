@@ -14,6 +14,7 @@ O erro `ReferenceError: jest is not defined` ocorre quando arquivos de teste sao
 8. Configure `CACHE_INVALIDATION_SECRET` nas propriedades do script com o mesmo segredo privado cadastrado na Vercel; ele atualiza imediatamente o cache apos publicacao, protecao ou reprocessamento.
 9. Para fotos processadas antes das miniaturas leves, execute `reprocessarMiniaturasEmLote()` repetidamente ate o registro informar `0` fotos pendentes. Opcionalmente defina `THUMBNAIL_BATCH_SIZE`; o padrao seguro inicial e `5`.
 10. Crie uma pasta privada `Miniaturas` no Drive e configure seu ID em `THUMBNAILS_FOLDER_ID`. Sem essa propriedade, o script continua funcional, mas grava miniaturas junto das previews em `AMOSTRAS`.
+11. Se miniaturas ja foram processadas antes de configurar a nova pasta, execute `organizarMiniaturasEmPasta()`; a funcao move os arquivos existentes em lotes de ate `100`, sem gerar copias. Repita se o registro informar novas movimentacoes.
 
 Se a base ainda contem somente dados de desenvolvimento e deve iniciar limpa, defina temporariamente a propriedade de script `CONFIRMAR_RESET_INICIAL=APAGAR_DADOS_DE_TESTE` e execute `reiniciarDadosParaEstreia()` antes de criar novos eventos. O reset nao remove arquivos antigos do Drive.
 

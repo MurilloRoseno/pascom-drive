@@ -391,6 +391,18 @@ function listarFotosParaReprocessar(limite) {
   return output;
 }
 
+function listarFotosComMiniatura() {
+  var sheet = getSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var output = [];
+  for (var i = 1; i < data.length; i++) {
+    var item = rowToObject(headers, data[i]);
+    if (item.FotoID && item.ThumbnailFileID) output.push(item);
+  }
+  return output;
+}
+
 /**
  * Cadastra tarifas publicadas pelo Mercado Pago para Checkout online D0.
  * A tabela publica nao discrimina o debito virtual no Checkout Pro; por
@@ -603,6 +615,7 @@ if (typeof module !== 'undefined') {
     atualizarDisponibilidadeFotos: atualizarDisponibilidadeFotos,
     atualizarDerivadosFoto: atualizarDerivadosFoto,
     listarFotosParaReprocessar: listarFotosParaReprocessar,
+    listarFotosComMiniatura: listarFotosComMiniatura,
     invalidarCacheSite: invalidarCacheSite,
     publicarEventoSelecionado: publicarEventoSelecionado,
     autorizarVendaSelecionada: autorizarVendaSelecionada,
