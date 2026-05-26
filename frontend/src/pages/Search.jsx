@@ -16,18 +16,20 @@ function filterRealEvents(events, data) {
 function SearchCard({ event }) {
   return (
     <article className="event-card">
-      <div className="event-cover">
-        <img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
-        <span className="event-tag">{categoryLabel(event.category)}</span>
-        <span className={event.visibility === 'publica' ? 'event-open' : 'event-lock'}>{event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida'}</span>
-      </div>
-      <div className="event-body">
-        <h3>{event.title}</h3>
-        <ul className="event-meta"><li>{event.dateLabel || event.date || 'Data a confirmar'}</li><li>{event.location || 'Paróquia São Rafael'}</li></ul>
-        {event.isDemo && <p className="card-demo">Demonstração visual · compra indisponível</p>}
-        {!event.isDemo && event.salesAuthorized && <p className="card-sale">Fotos disponíveis para compra</p>}
-        <Link className="event-link" to={`/evento/${encodeURIComponent(event.eventoId)}`}>Ver fotos →</Link>
-      </div>
+      <Link className="event-card-link" to={`/evento/${encodeURIComponent(event.eventoId)}`} aria-label={`Abrir galeria de ${event.title}`}>
+        <div className="event-cover">
+          <img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
+          <span className="event-tag">{categoryLabel(event.category)}</span>
+          <span className={event.visibility === 'publica' ? 'event-open' : 'event-lock'}>{event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida'}</span>
+        </div>
+        <div className="event-body">
+          <h3>{event.title}</h3>
+          <ul className="event-meta"><li>{event.dateLabel || event.date || 'Data a confirmar'}</li><li>{event.location || 'Paróquia São Rafael'}</li></ul>
+          {event.isDemo && <p className="card-demo">Demonstração visual · compra indisponível</p>}
+          {!event.isDemo && event.salesAuthorized && <p className="card-sale">Fotos disponíveis para compra</p>}
+          <span className="event-link">Ver fotos →</span>
+        </div>
+      </Link>
     </article>
   );
 }
