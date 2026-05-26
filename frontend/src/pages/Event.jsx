@@ -1,35 +1,97 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import PhotoCard from '../components/PhotoCard.jsx';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useCarrinho } from '../hooks/useCarrinho.js';
 import { listarFotosEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
+import { categoryLabel, findDemoEvent } from '../data/demoCatalog.js';
+
+function eventToken(eventoId) {
+  return sessionStorage.getItem(`gallery:${eventoId}`) || '';
+}
+
+function formatPhoto(photo) {
+  return {
+    ...photo,
+    previewUrl: photo.previewUrl || photo.url,
+    thumbnailUrl: photo.thumbnailUrl || photo.thumb || photo.previewUrl || photo.url,
+    caption: photo.caption || 'Registro da galeria paroquial.',
+  };
+}
 
 export default function EventPage() {
   const { eventoId } = useParams();
+  const [params, setParams] = useSearchParams();
   const [event, setEvent] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const closeRef = useRef(null);
+  const { addFoto, removeFoto, isSelected } = useCarrinho();
 
-  const token = useCallback(() => {
-    return sessionStorage.getItem(`gallery:${eventoId}`) || '';
-  }, [eventoId]);
-
-  const loadPhotos = useCallback((currentEvent) => {
-    if (currentEvent.visibility === 'protegida' && !token()) {
+  const loadPhotos = useCallback(async (currentEvent) => {
+    if (currentEvent.isDemo) {
+      setPhotos(currentEvent.photos.map(formatPhoto));
       setLoading(false);
       return;
     }
-    listarFotosEvento(eventoId, token())
-      .then(({ photos: found }) => { setPhotos(found); setLoading(false); })
-      .catch((cause) => { setError(cause.message); setLoading(false); });
-  }, [eventoId, token]);
+    if (currentEvent.visibility === 'protegida' && !eventToken(eventoId)) {
+      setLoading(false);
+      return;
+    }
+    const result = await listarFotosEvento(eventoId, eventToken(eventoId));
+    setPhotos(result.photos.map((photo) => formatPhoto({ ...photo, watermarkedPreview: true })));
+    setLoading(false);
+  }, [eventoId]);
 
   useEffect(() => {
+    const robots = document.querySelector('meta[name="robots"]');
+    const previous = robots?.getAttribute('content');
+    robots?.setAttribute('content', 'noindex, noimageindex, noarchive');
+    setLoading(true);
+    setError('');
     obterEvento(eventoId)
-      .then(({ event: found }) => { setEvent(found); loadPhotos(found); })
-      .catch((cause) => { setError(cause.message); setLoading(false); });
+      .then(({ event: found }) => {
+        setEvent(found);
+        return loadPhotos(found);
+      })
+      .catch(() => {
+        const fallback = findDemoEvent(eventoId);
+        if (!fallback) {
+          setError('Esta galeria não está disponível ou o endereço informado não é válido.');
+          setLoading(false);
+          return;
+        }
+        setEvent(fallback);
+        loadPhotos(fallback);
+      });
+    return () => robots?.setAttribute('content', previous || 'index, follow');
   }, [eventoId, loadPhotos]);
+
+  const photoId = params.get('foto');
+  const activeIndex = photos.findIndex((photo) => photo.id === photoId);
+  const activePhoto = activeIndex >= 0 ? photos[activeIndex] : null;
+
+  useEffect(() => {
+    if (!activePhoto) return undefined;
+    closeRef.current?.focus();
+    const onKeyDown = (keyEvent) => {
+      if (keyEvent.key === 'Escape') setParams({}, { replace: true });
+      if (keyEvent.key === 'ArrowLeft') changePhoto(-1);
+      if (keyEvent.key === 'ArrowRight') changePhoto(1);
+    };
+    document.body.classList.add('lightbox-open');
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.classList.remove('lightbox-open');
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  });
+
+  function changePhoto(direction) {
+    if (!photos.length) return;
+    const next = (activeIndex + direction + photos.length) % photos.length;
+    setParams({ foto: photos[next].id }, { replace: true });
+  }
 
   async function unlock(submitEvent) {
     submitEvent.preventDefault();
@@ -38,47 +100,122 @@ export default function EventPage() {
       const result = await validarAcessoGaleria(eventoId, code);
       sessionStorage.setItem(`gallery:${eventoId}`, result.token);
       setLoading(true);
-      loadPhotos(event);
+      await loadPhotos(event);
     } catch (cause) {
       setError(cause.message);
     }
   }
 
-  if (!event && loading) return <main className="event-page"><p className="empty-state">Carregando galeria...</p></main>;
-  if (!event) return <main className="event-page"><p className="empty-state">{error || 'Evento nao encontrado.'}</p></main>;
+  function togglePurchase(photo) {
+    if (!event.salesAuthorized || event.isDemo || photo.availableForSale === false) return;
+    if (isSelected(photo.id)) {
+      removeFoto(photo.id);
+    } else {
+      addFoto({ ...photo, event: event.title, eventoId: event.eventoId, url: photo.previewUrl });
+    }
+  }
 
-  const locked = event.visibility === 'protegida' && !token();
+  if (!event && loading) return <main><div className="main-content"><div className="empty-state"><p>Carregando galeria...</p></div></div></main>;
+  if (!event) {
+    return (
+      <main><div className="main-content"><div className="empty-state"><h2>Evento não encontrado</h2><p>{error}</p><Link className="btn-primary" to="/buscar">Encontrar eventos</Link></div></div></main>
+    );
+  }
+
+  const locked = !event.isDemo && event.visibility === 'protegida' && !eventToken(eventoId);
+  const canBuy = !event.isDemo && event.salesAuthorized;
+  const status = event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida';
+
   return (
-    <main className="event-page">
-      <section className="event-banner">
-        <Link to="/buscar">Eventos / {event.category}</Link>
-        <p className="hero-kicker">{event.visibility === 'protegida' ? 'Galeria protegida' : 'Galeria publica'}</p>
-        <h1>{event.title}</h1>
-        <p>{event.date} · Previews com marca d&apos;agua · Compra segura via Mercado Pago</p>
-        {event.salesAuthorized ? <strong className="sales-pill">Venda autorizada</strong> : <strong className="sales-pill muted">Venda indisponivel</strong>}
+    <main className="event-detail-page">
+      <section className="page-hero event-hero">
+        <div className="event-overview">
+          <div>
+            <div className="breadcrumb"><Link to="/">Início</Link><span>/</span><Link to="/buscar">Eventos</Link><span>/</span><Link to={`/buscar?categoria=${event.category}`}>{categoryLabel(event.category)}</Link></div>
+            <p className="eyebrow">{categoryLabel(event.category)}</p>
+            <h1 className="page-title">{event.title}</h1>
+            <p className="page-summary">{event.description}</p>
+            <ul className="event-details">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M3 10h18" /></svg><span>{event.dateLabel || event.date}</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg><span>{event.time || 'Horário a confirmar'}</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg><span>{event.location || 'Paróquia São Rafael'}</span></li>
+            </ul>
+          </div>
+          <div className="event-cover-large"><img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Capa de ${event.title}`} draggable="false" /></div>
+        </div>
       </section>
-      {locked ? (
-        <section className="access-card">
-          <h2>Acesso reservado</h2>
-          <p>Informe o codigo compartilhado pela secretaria para visualizar e comprar as fotos deste evento.</p>
-          <form onSubmit={unlock}>
-            <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="Codigo do evento" />
-            <button type="submit">Acessar galeria</button>
-          </form>
-          {error && <p className="form-error">{error}</p>}
-        </section>
-      ) : (
-        <section className="photo-section">
-          <div className="photo-notice">
-            <strong>Previa protegida</strong>
-            <p>A imagem comprada sera entregue sem marca d&apos;agua apos confirmacao do pagamento.</p>
+      <section className="main-content">
+        {photoId && !activePhoto && photos.length > 0 && <div className="notice">A foto solicitada não foi encontrada. Você ainda pode explorar a galeria deste evento.</div>}
+        <div className="security-panel">
+          <div className="security-copy">
+            <span className="security-pill">{status}</span>
+            <h2>{event.minorProtection ? 'Privacidade reforçada para famílias' : 'Visualização cuidada e segura'}</h2>
+            <p>{event.privacyNote || 'As prévias disponíveis respeitam as autorizações definidas pela secretaria paroquial.'}</p>
+            <p className="privacy-level">{event.visibility === 'protegida' ? 'Acesso mediante código válido e sessão temporária.' : 'Imagens institucionais abertas para visualização.'}</p>
           </div>
-          {loading && <p className="empty-state">Carregando fotos...</p>}
-          {!loading && photos.length === 0 && <p className="empty-state">Ainda nao ha fotos disponiveis para compra neste evento.</p>}
-          <div className="sales-photo-grid">
-            {photos.map((photo) => <PhotoCard key={photo.id} foto={photo} event={event} />)}
+          <div className="purchase-card">
+            <p className="purchase-kicker">Compra segura</p>
+            <h3>{canBuy ? 'Selecione suas fotos' : 'Compra em preparação'}</h3>
+            <p>{canBuy ? 'Cada foto custa R$ 10,00. Taxas aparecem no checkout.' : 'Esta apresentação não inicia pagamento nem adiciona itens ao carrinho.'}</p>
+            {canBuy ? <Link className="purchase-button" to="/checkout">Ir para o carrinho</Link> : <span className="purchase-disabled">Venda indisponível nesta galeria</span>}
           </div>
-        </section>
+        </div>
+        {event.isDemo && <div className="demo-notice">Demonstração visual: esta galeria ilustra a experiência futura e nenhuma foto pode ser comprada.</div>}
+        {locked ? (
+          <div className="access-card">
+            <h2>Acesso reservado</h2>
+            <p>Informe o código compartilhado pela secretaria para visualizar as prévias protegidas deste evento.</p>
+            <form onSubmit={unlock}>
+              <input value={code} onChange={(codeEvent) => setCode(codeEvent.target.value.toUpperCase())} placeholder="Código do evento" aria-label="Código do evento" />
+              <button className="btn-primary" type="submit">Acessar galeria</button>
+            </form>
+            {error && <p className="form-error">{error}</p>}
+          </div>
+        ) : (
+          <>
+            <div className="gallery-header">
+              <div><h2 className="gallery-title">Fotos do evento</h2><p className="gallery-note">{event.visibility === 'protegida' ? 'Prévia protegida com marca d água.' : 'Galeria institucional aberta.'}</p></div>
+              <span className="gallery-count">{photos.length} foto{photos.length === 1 ? '' : 's'}</span>
+            </div>
+            {loading && <div className="empty-state"><p>Carregando fotos...</p></div>}
+            {!loading && photos.length === 0 && <div className="empty-state"><p>Ainda não há fotos disponíveis neste evento.</p></div>}
+            <div className="photo-grid">
+              {photos.map((photo) => (
+                <button className="photo-button" type="button" key={photo.id} onClick={() => setParams({ foto: photo.id })} onContextMenu={(mouseEvent) => mouseEvent.preventDefault()}>
+                  <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
+                  <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
+      {activePhoto && (
+        <div className="lightbox" role="dialog" aria-modal="true" aria-label="Visualização da foto">
+          <div className="lightbox-dialog">
+            <div className="lightbox-image-wrap"><img className={`lightbox-image ${activePhoto.watermarkedPreview ? 'photo-blur-target' : ''}`} src={activePhoto.previewUrl} alt={activePhoto.alt || activePhoto.caption} draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} /></div>
+            <div className="lightbox-panel">
+              <button className="lightbox-close" ref={closeRef} type="button" onClick={() => setParams({}, { replace: true })} aria-label="Fechar foto">×</button>
+              <h2>{event.title}</h2>
+              <p className="lightbox-caption">{activePhoto.caption}</p>
+              <div className="lightbox-security">
+                <strong>{activePhoto.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</strong>
+                <span>{canBuy ? 'A foto adquirida será entregue sem marca d água.' : 'Compra indisponível nesta demonstração.'}</span>
+              </div>
+              <div className="lightbox-actions">
+                <div className="gallery-nav">
+                  <button className="ghost-button" type="button" onClick={() => changePhoto(-1)}>Anterior</button>
+                  <button className="ghost-button" type="button" onClick={() => changePhoto(1)}>Próxima</button>
+                </div>
+                {canBuy ? (
+                  <button className="purchase-button" type="button" onClick={() => togglePurchase(activePhoto)}>
+                    {isSelected(activePhoto.id) ? 'Remover do carrinho' : 'Selecionar por R$ 10,00'}
+                  </button>
+                ) : <span className="purchase-disabled">Compra em preparação</span>}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );

@@ -1,28 +1,24 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useCarrinho } from '../../hooks/useCarrinho.js';
+import { Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
-  const { fotos } = useCarrinho();
-  const navigate = useNavigate();
+  const location = useLocation();
+  const eventsActive = location.pathname === '/buscar' || location.pathname.startsWith('/evento/');
   return (
-    <header className="parish-header">
-      <div className="parish-nav">
-        <Link to="/" className="parish-brand" aria-label="Paroquia Sao Rafael - inicio">
-          <img src="/assets/logo-header.png" alt="" />
-          <div>
-            <span>Paroquia</span>
-            <strong>Sao Rafael</strong>
-            <small>Acailandia - Maranhao</small>
-          </div>
+    <header className="site-header">
+      <div className="nav-inner">
+        <Link to="/" className="brand" aria-label="Paróquia São Rafael - Início">
+          <img src="/assets/logo-paroquia-sao-rafael.png" alt="Paróquia São Rafael" />
         </Link>
-        <nav className="parish-links" aria-label="Navegacao principal">
-          <Link to="/buscar">Eventos</Link>
-          <a href="#contato">Contato</a>
+        <nav aria-label="Navegação principal">
+          <ul className="nav-list">
+            <li><Link to="/">Início</Link></li>
+            <li><a href="/#sobre">Sobre</a></li>
+            <li><a href="/#sacramentos">Sacramentos</a></li>
+            <li><Link className={eventsActive ? 'ativo' : undefined} to="/buscar">Eventos</Link></li>
+            <li><a href="/#contato">Contato</a></li>
+          </ul>
         </nav>
-        <button type="button" className="header-cart" onClick={() => navigate('/checkout')}>
-          Carrinho
-          <span>{fotos.length}</span>
-        </button>
+        <a className="header-action" href="/#contato">Doe Agora</a>
       </div>
     </header>
   );

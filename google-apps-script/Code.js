@@ -119,8 +119,8 @@ function processarEventos() {
 }
 
 /**
- * Verifica eventos com status Processado que já tiveram todas as fotos entregues
- * e remove a pasta de origem com segurança.
+ * Verifica eventos cujos originais privados e previews ja foram preservados
+ * e remove a pasta de entrada sem criar links permanentes de entrega.
  */
 function verificarEventosProntosParaRemover() {
   var sheet = getEventosSheet();
@@ -144,8 +144,8 @@ function verificarEventosProntosParaRemover() {
 }
 
 /**
- * Called every 1 minute.
- * Finds rows with "Pagamento Confirmado" and generates wa.me delivery links.
+ * Legado desativado: pedidos aprovados sao entregues somente pelo backend,
+ * com download temporario persistido e WhatsApp assistido pela secretaria.
  */
 function entregarFotos() {
   Logger.log('entregarFotos desativado: entrega segura e executada pelo backend.');

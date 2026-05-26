@@ -11,9 +11,9 @@ function renderHeader() {
   );
 }
 
-it('renderiza navegacao institucional e carrinho', () => {
+it('renderiza navegacao institucional e CTA do site de referencia', () => {
   renderHeader();
-  expect(screen.getByLabelText(/paroquia sao rafael/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/paróquia são rafael/i)).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /eventos/i })).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /carrinho/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /doe agora/i })).toBeInTheDocument();
 });
