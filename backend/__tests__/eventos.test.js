@@ -1,6 +1,7 @@
 jest.mock('../lib/google-sheets', () => ({
   listarEventosPublicados: jest.fn(),
   buscarEvento: jest.fn(),
+  listarFotosEvento: jest.fn(),
 }));
 
 const request = require('supertest');
@@ -21,6 +22,7 @@ beforeEach(() => {
   jest.clearAllMocks();
   sheets.listarEventosPublicados.mockResolvedValue([event]);
   sheets.buscarEvento.mockResolvedValue({ ...event, codeHash: 'secret', codeVersion: 1 });
+  sheets.listarFotosEvento.mockResolvedValue([{ previewUrl: '/api/eventos/EV1/previews/F1' }]);
 });
 
 it('lista somente eventos publicaveis com filtros encaminhados', async () => {
@@ -34,6 +36,7 @@ it('nao retorna hash ou versao do codigo no detalhe publico', async () => {
   const res = await request(app).get('/api/eventos/EV1');
   expect(res.body.event).not.toHaveProperty('codeHash');
   expect(res.body.event).not.toHaveProperty('codeVersion');
+  expect(res.body.event.cover).toBe('/api/eventos/EV1/previews/F1');
 });
 
 it('nao exibe evento em rascunho', async () => {

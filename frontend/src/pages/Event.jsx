@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { listarFotosEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
-import { categoryLabel, findDemoEvent } from '../data/demoCatalog.js';
+import { categoryLabel } from '../data/categories.js';
 
 function eventToken(eventoId) {
   return sessionStorage.getItem(`gallery:${eventoId}`) || '';
@@ -29,11 +29,6 @@ export default function EventPage() {
   const { addFoto, removeFoto, isSelected } = useCarrinho();
 
   const loadPhotos = useCallback(async (currentEvent) => {
-    if (currentEvent.isDemo) {
-      setPhotos(currentEvent.photos.map(formatPhoto));
-      setLoading(false);
-      return;
-    }
     if (currentEvent.visibility === 'protegida' && !eventToken(eventoId)) {
       setLoading(false);
       return;
@@ -55,14 +50,8 @@ export default function EventPage() {
         return loadPhotos(found);
       })
       .catch(() => {
-        const fallback = findDemoEvent(eventoId);
-        if (!fallback) {
-          setError('Esta galeria não está disponível ou o endereço informado não é válido.');
-          setLoading(false);
-          return;
-        }
-        setEvent(fallback);
-        loadPhotos(fallback);
+        setError('Esta galeria não está disponível ou o endereço informado não é válido.');
+        setLoading(false);
       });
     return () => robots?.setAttribute('content', previous || 'index, follow');
   }, [eventoId, loadPhotos]);
@@ -107,7 +96,7 @@ export default function EventPage() {
   }
 
   function togglePurchase(photo) {
-    if (!event.salesAuthorized || event.isDemo || photo.availableForSale !== true) return;
+    if (!event.salesAuthorized || photo.availableForSale !== true) return;
     if (isSelected(photo.id)) {
       removeFoto(photo.id);
     } else {
@@ -122,8 +111,8 @@ export default function EventPage() {
     );
   }
 
-  const locked = !event.isDemo && event.visibility === 'protegida' && !eventToken(eventoId);
-  const canBuy = !event.isDemo && event.salesAuthorized;
+  const locked = event.visibility === 'protegida' && !eventToken(eventoId);
+  const canBuy = event.salesAuthorized;
   const canBuyActivePhoto = canBuy && activePhoto?.availableForSale === true;
 
   return (
@@ -141,10 +130,11 @@ export default function EventPage() {
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg><span>{event.location || 'Paróquia São Rafael'}</span></li>
             </ul>
           </div>
-          <div className="event-cover-large"><img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Capa de ${event.title}`} draggable="false" /></div>
+          <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.png'} alt={`Capa de ${event.title}`} draggable="false" /></div>
         </div>
       </section>
       <section className="main-content">
+        {error && !locked && <div className="notice">{error}</div>}
         {photoId && !activePhoto && photos.length > 0 && <div className="notice">A foto solicitada não foi encontrada. Você ainda pode explorar a galeria deste evento.</div>}
         {locked ? (
           <div className="access-card">

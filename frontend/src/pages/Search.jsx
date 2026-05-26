@@ -2,15 +2,17 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
-import { categories, categoryLabel, filterDemoEvents } from '../data/demoCatalog.js';
+import { categories, categoryLabel } from '../data/categories.js';
 
 function monthLabel(key) {
-  return { 'maio-2026': 'Maio de 2026', 'junho-2026': 'Junho de 2026' }[key] || key;
+  const match = /^(\d{4})-(\d{2})$/.exec(key);
+  if (!match) return key;
+  return new Date(`${key}-01T12:00:00`).toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
 }
 
 function filterRealEvents(events, data) {
   if (!data) return events;
-  return events.filter((event) => event.monthKey === data || String(event.date || '').startsWith(data === 'maio-2026' ? '2026-05' : '2026-06'));
+  return events.filter((event) => String(event.date || '').startsWith(data));
 }
 
 function SearchCard({ event }) {
@@ -18,15 +20,14 @@ function SearchCard({ event }) {
     <article className="event-card">
       <Link className="event-card-link" to={`/evento/${encodeURIComponent(event.eventoId)}`} aria-label={`Abrir galeria de ${event.title}`}>
         <div className="event-cover">
-          <img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
+          <img src={event.cover || '/assets/hero-igreja-sao-rafael.png'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
           <span className="event-tag">{categoryLabel(event.category)}</span>
           <span className={event.visibility === 'publica' ? 'event-open' : 'event-lock'}>{event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida'}</span>
         </div>
         <div className="event-body">
           <h3>{event.title}</h3>
           <ul className="event-meta"><li>{event.dateLabel || event.date || 'Data a confirmar'}</li><li>{event.location || 'Paróquia São Rafael'}</li></ul>
-          {event.isDemo && <p className="card-demo">Demonstração visual · compra indisponível</p>}
-          {!event.isDemo && event.salesAuthorized && <p className="card-sale">Fotos disponíveis para compra</p>}
+          {event.salesAuthorized && <p className="card-sale">Fotos disponíveis para compra</p>}
           <span className="event-link">Ver fotos →</span>
         </div>
       </Link>
@@ -44,7 +45,6 @@ SearchCard.propTypes = {
     location: PropTypes.string,
     cover: PropTypes.string,
     visibility: PropTypes.string,
-    isDemo: PropTypes.bool,
     salesAuthorized: PropTypes.bool,
   }).isRequired,
 };
@@ -57,7 +57,7 @@ export default function SearchPage() {
     data: params.get('data') || '',
   });
   const [events, setEvents] = useState([]);
-  const [demo, setDemo] = useState(false);
+  const [loadError, setLoadError] = useState('');
   const [loading, setLoading] = useState(true);
 
   const query = params.get('q') || '';
@@ -67,20 +67,15 @@ export default function SearchPage() {
   useEffect(() => {
     setForm({ q: query, categoria: category, data: date });
     setLoading(true);
+    setLoadError('');
     listarEventos({ q: query, categoria: category })
       .then(({ eventos }) => {
-        if (eventos.length) {
-          setEvents(filterRealEvents(eventos, date));
-          setDemo(false);
-        } else {
-          setEvents(filterDemoEvents({ q: query, categoria: category, data: date }));
-          setDemo(true);
-        }
+        setEvents(filterRealEvents(eventos, date));
         setLoading(false);
       })
       .catch(() => {
-        setEvents(filterDemoEvents({ q: query, categoria: category, data: date }));
-        setDemo(true);
+        setEvents([]);
+        setLoadError('Não foi possível carregar os eventos publicados agora. Tente novamente em instantes.');
         setLoading(false);
       });
   }, [query, category, date]);
@@ -122,11 +117,7 @@ export default function SearchPage() {
             </select>
           </label>
           <label className="field">
-            <select name="data" value={form.data} onChange={(event) => setForm({ ...form, data: event.target.value })} aria-label="Filtrar por data">
-              <option value="">Qualquer data</option>
-              <option value="maio-2026">Maio de 2026</option>
-              <option value="junho-2026">Junho de 2026</option>
-            </select>
+            <input name="data" type="month" value={form.data} onChange={(event) => setForm({ ...form, data: event.target.value })} aria-label="Filtrar por mês" />
           </label>
           <button className="btn-primary" type="submit">Buscar</button>
         </form>
@@ -136,11 +127,11 @@ export default function SearchPage() {
         <div className="section-toolbar">
           <div>
             <h2>{category ? categoryLabel(category) : 'Eventos em destaque'}</h2>
-            {!loading && <p className="result-count">{events.length} evento{events.length === 1 ? '' : 's'} encontrado{events.length === 1 ? '' : 's'}{demo ? ' · catálogo demonstrativo' : ''}</p>}
+            {!loading && <p className="result-count">{events.length} evento{events.length === 1 ? '' : 's'} encontrado{events.length === 1 ? '' : 's'}</p>}
           </div>
           <Link className="clear-link" to="/buscar">Limpar filtros</Link>
         </div>
-        {demo && <div className="demo-notice">Esta é uma demonstração visual enquanto não há eventos reais publicados. As fotos exibidas não estão disponíveis para compra.</div>}
+        {loadError && <div className="notice">{loadError}</div>}
         {loading && <div className="empty-state"><p>Carregando eventos...</p></div>}
         {!loading && events.length === 0 && <div className="empty-state"><h2>Nenhum evento encontrado</h2><p>Tente remover filtros ou buscar por outro sacramento.</p></div>}
         <div className="events-grid">{events.map((event) => <SearchCard event={event} key={event.eventoId} />)}</div>

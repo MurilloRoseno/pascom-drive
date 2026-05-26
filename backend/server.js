@@ -16,6 +16,7 @@ const downloadHandler = require('./api/download');
 const eventosHandler = require('./api/eventos');
 const fotosEventoHandler = require('./api/fotos-evento');
 const galeriaAcessoHandler = require('./api/galeria-acesso');
+const previewEventoHandler = require('./api/preview-evento');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -58,6 +59,7 @@ app.get('/api/download', download, downloadHandler);
 app.get('/api/eventos', fotos, eventosHandler);
 app.get('/api/eventos/:eventoId', fotos, eventosHandler);
 app.get('/api/eventos/:eventoId/fotos', fotos, fotosEventoHandler);
+app.get('/api/eventos/:eventoId/previews/:fotoId', fotos, previewEventoHandler);
 app.post('/api/eventos/:eventoId/acesso', acessoGaleria, galeriaAcessoHandler);
 
 app.use(errorHandler);

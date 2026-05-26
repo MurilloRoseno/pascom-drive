@@ -17,7 +17,16 @@ module.exports = async function handler(req, res, next) {
     const safeEvent = { ...event };
     delete safeEvent.codeHash;
     delete safeEvent.codeVersion;
-    return res.json({ event: safeEvent, photos: await listarFotosEvento(event.eventoId) });
+    const photos = await listarFotosEvento(event.eventoId);
+    const tokenQuery = event.visibility === 'protegida' ? `?token=${encodeURIComponent(token)}` : '';
+    return res.json({
+      event: safeEvent,
+      photos: photos.map((photo) => ({
+        ...photo,
+        previewUrl: `${photo.previewUrl}${tokenQuery}`,
+        thumbnailUrl: `${photo.thumbnailUrl || photo.previewUrl}${tokenQuery}`,
+      })),
+    });
   } catch (error) {
     next(error);
   }

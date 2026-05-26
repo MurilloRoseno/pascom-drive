@@ -28,19 +28,26 @@ const {
 } = require('../lib/google-sheets');
 
 it('lista apenas evento publicado e remove configuracao secreta', async () => {
-  expect(await listarEventosPublicados()).toEqual([expect.objectContaining({ eventoId: 'EV1', title: 'Missa' })]);
+  expect(await listarEventosPublicados()).toEqual([expect.objectContaining({
+    eventoId: 'EV1',
+    title: 'Missa',
+    cover: '/api/eventos/EV1/previews/F1',
+  })]);
 });
 
 it('expoe apenas preview explicitamente liberado de evento publico, nunca original', async () => {
   const photos = await listarFotos();
   expect(photos).toHaveLength(1);
-  expect(photos[0].url).toContain('PREVIEW_1');
+  expect(photos[0].url).toBe('/api/eventos/EV1/previews/F1');
+  expect(photos[0]).not.toHaveProperty('previewFileId');
   expect(photos[0]).not.toHaveProperty('originalFileId');
 });
 
 it('separa preview processado da autorizacao comercial da foto', async () => {
   const photos = await listarFotosEvento('EV2');
   expect(photos).toHaveLength(1);
+  expect(photos[0].previewUrl).toBe('/api/eventos/EV2/previews/F2');
+  expect(photos[0]).not.toHaveProperty('previewFileId');
   expect(photos[0]).not.toHaveProperty('originalFileId');
 });
 

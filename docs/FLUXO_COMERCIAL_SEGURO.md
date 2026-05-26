@@ -96,6 +96,10 @@ Depois que a linha do evento estiver com `StatusProcessamento=Processado`:
 
 Para retirar um evento do ar, escolha `Publicacao=arquivado`. Para manter o evento visivel sem compra, escolha `VendaAutorizada=NAO` e execute a sincronizacao.
 
+O site nao possui catalogo demonstrativo: home, busca, atividades e galeria mostram somente eventos publicados na aba `Eventos` e fotos processadas na aba `Fotos`.
+
+As imagens exibidas nao usam link publico permanente do Drive. Para galerias `publica`, a API transmite a amostra real com marca d'agua por uma URL interna do evento. Para galerias `protegida`, a mesma URL so responde enquanto houver uma sessao temporaria valida obtida pelo codigo da galeria. Os originais permanecem privados e sao usados apenas na entrega apos pagamento aprovado.
+
 ## Opcoes Da Aba RegrasPagamento
 
 | Coluna | Valores Permitidos | Uso |

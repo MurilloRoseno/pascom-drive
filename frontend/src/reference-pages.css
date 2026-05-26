@@ -458,21 +458,6 @@ button { cursor: pointer; }
   background: rgba(255,255,255,0.08);
   cursor: not-allowed;
 }
-.demo-notice {
-  margin: 0 0 34px;
-  padding: 15px 18px;
-  border-radius: 10px;
-  border: 1px solid #ede1c5;
-  background: #fff9ed;
-  color: #61543a;
-  font-size: 0.86rem;
-}
-.demo-notice strong { color: var(--roxo); }
-.demo-notice.is-open {
-  border-color: #d4e7d7;
-  background: #f1f8f2;
-  color: #395644;
-}
 .photo-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

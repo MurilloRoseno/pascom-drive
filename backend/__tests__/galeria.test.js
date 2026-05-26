@@ -51,4 +51,5 @@ it('devolve previews sem informacao secreta apos acesso permitido', async () => 
   expect(res.status).toBe(200);
   expect(res.body.event).not.toHaveProperty('codeHash');
   expect(res.body.photos).toHaveLength(1);
+  expect(res.body.photos[0].previewUrl).toBe('/preview?token=SESSION_TOKEN');
 });

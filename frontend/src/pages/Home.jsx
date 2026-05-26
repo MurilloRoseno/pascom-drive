@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
-import { demoEvents } from '../data/demoCatalog.js';
 
 const sacraments = [
   ['batismo', 'Batismo', 'Novo nascimento na vida cristã', 'batismo.ico'],
@@ -11,13 +10,6 @@ const sacraments = [
   ['casamento', 'Casamento', 'Aliança de amor e fidelidade', 'casamento.ico'],
   ['uncao-dos-enfermos', 'Unção dos Enfermos', 'Consolo e força nas enfermidades', 'un__o_dos_enfermos.ico'],
   ['ordem', 'Ordem', 'Vocação para o serviço de Deus', 'ordem.ico'],
-];
-
-const activities = [
-  ['20', 'MAI', 'Batizado Coletivo - Junho 2026', 'Paróquia São Rafael · 14h00'],
-  ['25', 'MAI', 'Festa de Nossa Senhora Auxiliadora', 'Igreja Matriz · 19h00'],
-  ['08', 'JUN', 'Missa em Ação de Graças', 'Paróquia São Rafael · 18h00'],
-  ['15', 'JUN', 'Encontro de Casais com Cristo', 'Salão Paroquial · 08h00'],
 ];
 
 const testimonials = [
@@ -48,9 +40,8 @@ function EventCard({ event }) {
     <article className="evento-card">
       <Link to={`/evento/${encodeURIComponent(event.eventoId)}`} className="evento-card-link" aria-label={`Abrir galeria de ${event.title}`}>
         <div className="evento-foto">
-          <img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
+          <img src={event.cover || '/assets/hero-igreja-sao-rafael.png'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
           <div className="evento-data-badge"><span className="dia">{day}</span><span className="mes">{month}</span></div>
-          {event.isDemo && <span className="demo-badge">Demonstração</span>}
         </div>
         <div className="evento-info">
           <div className="evento-titulo">{event.title}</div>
@@ -67,6 +58,14 @@ function EventCard({ event }) {
   );
 }
 
+function eventDateParts(event) {
+  const date = event.date ? new Date(`${event.date}T12:00:00`) : null;
+  return {
+    day: date && !Number.isNaN(date.valueOf()) ? String(date.getDate()).padStart(2, '0') : '--',
+    month: date && !Number.isNaN(date.valueOf()) ? date.toLocaleString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase() : 'DATA',
+  };
+}
+
 Ornament.propTypes = { hero: PropTypes.bool };
 EventCard.propTypes = {
   event: PropTypes.shape({
@@ -78,19 +77,20 @@ EventCard.propTypes = {
     location: PropTypes.string,
     cover: PropTypes.string,
     visibility: PropTypes.string,
-    isDemo: PropTypes.bool,
   }).isRequired,
 };
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
-  const [events, setEvents] = useState(demoEvents.slice(1));
+  const [events, setEvents] = useState([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
 
   useEffect(() => {
     listarEventos()
-      .then(({ eventos }) => setEvents(eventos.length ? eventos.slice(0, 3) : demoEvents.slice(1)))
-      .catch(() => setEvents(demoEvents.slice(1)));
+      .then(({ eventos }) => setEvents(eventos))
+      .catch(() => setEvents([]))
+      .finally(() => setEventsLoading(false));
   }, []);
 
   function search(event) {
@@ -132,7 +132,9 @@ export default function HomePage() {
       <section className="eventos" id="eventos">
         <Ornament />
         <h2 className="sec-titulo">Eventos Recentes</h2>
-        <div className="eventos-grid">{events.map((event) => <EventCard key={event.eventoId} event={event} />)}</div>
+        {eventsLoading && <p className="home-events-state">Carregando eventos publicados...</p>}
+        {!eventsLoading && events.length === 0 && <p className="home-events-state">Nenhum evento publicado no momento.</p>}
+        <div className="eventos-grid">{events.slice(0, 3).map((event) => <EventCard key={event.eventoId} event={event} />)}</div>
       </section>
       <section className="missao" id="sobre">
         <div className="missao-inner">
@@ -155,12 +157,16 @@ export default function HomePage() {
         <Ornament />
         <h2 className="sec-titulo">Próximas Atividades</h2>
         <div className="atividades-lista">
-          {activities.map(([day, month, title, location]) => (
-            <div className="ativ-item" key={title}>
-              <div className="ativ-data"><span className="dia">{day}</span><span className="mes">{month}</span></div>
-              <div className="ativ-texto"><div className="ativ-nome">{title}</div><div className="ativ-local">{location}</div></div>
-            </div>
-          ))}
+          {!eventsLoading && events.length === 0 && <p className="home-events-state">Nenhuma atividade publicada no momento.</p>}
+          {events.slice(0, 4).map((event) => {
+            const { day, month } = eventDateParts(event);
+            return (
+              <Link className="ativ-item" to={`/evento/${encodeURIComponent(event.eventoId)}`} key={event.eventoId} aria-label={`Abrir evento ${event.title}`}>
+                <div className="ativ-data"><span className="dia">{day}</span><span className="mes">{month}</span></div>
+                <div className="ativ-texto"><div className="ativ-nome">{event.title}</div><div className="ativ-local">{event.location || 'Paróquia São Rafael'} · {event.time || 'Horário a confirmar'}</div></div>
+              </Link>
+            );
+          })}
         </div>
       </section>
       <section className="testemunhos">

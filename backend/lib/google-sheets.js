@@ -6,6 +6,10 @@ function drivePreviewUrl(fileId) {
   return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1280` : '';
 }
 
+function applicationPreviewUrl(eventoId, fotoId) {
+  return `/api/eventos/${encodeURIComponent(eventoId)}/previews/${encodeURIComponent(fotoId)}`;
+}
+
 function driveUrlToThumbnail(sharingUrl) {
   const match = sharingUrl && sharingUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
   return match ? drivePreviewUrl(match[1]) : sharingUrl;
@@ -69,6 +73,7 @@ function fotoFromRow(row) {
   return {
     id,
     eventoId: row.get('EventoID') || '',
+    previewFileId: previewId || '',
     previewUrl: previewId ? drivePreviewUrl(previewId) : driveUrlToThumbnail(row.get('Link_Amostra')),
     price: Number(row.get('PrecoUnitario') || row.get('Preco') || 10),
     // Fail closed: legacy or incomplete rows are not saleable without explicit approval.
@@ -84,14 +89,21 @@ async function listarEventos() {
 
 async function listarEventosPublicados({ categoria = '', q = '' } = {}) {
   const term = q.trim().toLowerCase();
-  return (await listarEventos())
+  const events = (await listarEventos())
     .filter((event) => event.publication === 'publicado')
     .filter((event) => !categoria || event.category === categoria)
-    .filter((event) => !term || `${event.title} ${event.category} ${event.date}`.toLowerCase().includes(term))
-    .map((event) => {
+    .filter((event) => !term || `${event.title} ${event.category} ${event.date}`.toLowerCase().includes(term));
+  const photoRows = (await rows('Fotos')).map(fotoFromRow);
+  return events.map((event) => {
       const publicEvent = { ...event };
       delete publicEvent.codeHash;
       delete publicEvent.codeVersion;
+      if (event.visibility === 'publica') {
+        const firstPhoto = photoRows.find((foto) =>
+          foto.eventoId === event.eventoId && foto.status === 'Processada' && foto.previewFileId
+        );
+        if (firstPhoto) publicEvent.cover = applicationPreviewUrl(event.eventoId, firstPhoto.id);
+      }
       return publicEvent;
     });
 }
@@ -105,10 +117,23 @@ async function listarFotosEvento(eventoId) {
     .map(fotoFromRow)
     .filter((foto) => foto.eventoId === eventoId && foto.status === 'Processada')
     .map((foto) => {
-      const preview = { ...foto };
+      const preview = {
+        ...foto,
+        previewUrl: applicationPreviewUrl(foto.eventoId, foto.id),
+        thumbnailUrl: applicationPreviewUrl(foto.eventoId, foto.id),
+      };
       delete preview.originalFileId;
+      delete preview.previewFileId;
       return preview;
     });
+}
+
+async function buscarPreviewFoto(eventoId, fotoId) {
+  const photo = (await rows('Fotos'))
+    .map(fotoFromRow)
+    .find((foto) => foto.eventoId === eventoId && foto.id === fotoId && foto.status === 'Processada');
+  if (!photo || !photo.previewFileId) return null;
+  return { previewFileId: photo.previewFileId };
 }
 
 async function listarFotos() {
@@ -118,8 +143,9 @@ async function listarFotos() {
   return photos
     .filter((foto) => visible.has(foto.eventoId) && foto.status === 'Processada' && foto.availableForSale)
     .map((foto) => {
-      const preview = { ...foto, url: foto.previewUrl };
+      const preview = { ...foto, url: applicationPreviewUrl(foto.eventoId, foto.id) };
       delete preview.previewUrl;
+      delete preview.previewFileId;
       delete preview.originalFileId;
       return preview;
     });
@@ -294,8 +320,8 @@ function novoPedidoId() {
 }
 
 module.exports = {
-  driveUrlToThumbnail, listarFotos, listarEventos, listarEventosPublicados,
-  buscarEvento, listarFotosEvento, buscarFotosParaCompra, listarRegrasPagamento,
+  driveUrlToThumbnail, applicationPreviewUrl, listarFotos, listarEventos, listarEventosPublicados,
+  buscarEvento, listarFotosEvento, buscarPreviewFoto, buscarFotosParaCompra, listarRegrasPagamento,
   registrarPedido, buscarPedidoById, buscarPedidoByPreferenceOrPayment,
   atualizarPedidoPagamento, registrarEntrega, registrarWebhookSeNovo, finalizarWebhook,
   listarItensPedido, buscarOriginaisPedido, criarAutorizacoesDownload,
