@@ -26,7 +26,7 @@ export default function Footer() {
         <div className="inst-footer-container inst-footer-grid">
           <section>
             <Link to="/" className="inst-footer-logo" aria-label="Paróquia São Rafael">
-              <img className="logo-img--footer" src="/assets/logo-paroquia-sao-rafael.png" alt="Logo da Paróquia São Rafael" />
+              <img className="logo-img--footer" src="/assets/logo-white.png" alt="Logo da Paróquia São Rafael" />
             </Link>
             <p className="inst-footer-mission">Anunciando o Evangelho, celebrando a fé e servindo a comunidade de Açailândia com caridade e acolhimento.</p>
           </section>
