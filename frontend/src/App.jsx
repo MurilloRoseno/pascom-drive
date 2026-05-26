@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-route
 import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
 import Header from './components/layout/Header.jsx';
 import Footer from './components/layout/Footer.jsx';
+import ScrollToTop from './components/layout/ScrollToTop.jsx';
 import CartSummary from './components/CartSummary.jsx';
 import HomePage from './pages/Home.jsx';
 import SearchPage from './pages/Search.jsx';
@@ -19,6 +20,7 @@ export default function App() {
     <BrowserRouter>
       <CarrinhoProvider>
         <div className="parish-app">
+          <ScrollToTop />
           <Header />
           <Routes>
             <Route path="/" element={<HomePage />} />
