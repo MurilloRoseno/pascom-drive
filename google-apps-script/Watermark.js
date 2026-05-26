@@ -76,11 +76,25 @@ function _preprocessarArquivo(arquivo, backendUrl, headers) {
  * Process a photo: copy original → ORIGINAIS, apply watermark via backend,
  * save returned JPEG blob → AMOSTRAS (as the authenticated user, who has Drive quota),
  * move source file out of SOURCE folder, register in Sheet.
- * On any failure: sends admin email, leaves source file untouched for retry.
+ * On any failure: attempts an admin email and leaves source file untouched for retry.
  * @param {GoogleAppsScript.Drive.File} arquivo
  * @param {string} [eventoId] - ID do evento (multi-event). Se omitido, lê do parent folder.
  * @param {number} [counter]  - Número sequencial para nomear o arquivo de saída.
  */
+function notificarErroProcessamento(arquivo, erro) {
+  var adminEmail = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
+  if (!adminEmail) return;
+  try {
+    MailApp.sendEmail(
+      adminEmail,
+      '[Pascom] Erro ao processar foto: ' + arquivo.getName(),
+      'Erro: ' + erro.message
+    );
+  } catch (mailError) {
+    Logger.log('Aviso por e-mail nao enviado: ' + mailError.message);
+  }
+}
+
 function processarFoto(arquivo, eventoId, counter) {
   try {
     var id = gerarIdFoto();
@@ -152,12 +166,7 @@ function processarFoto(arquivo, eventoId, counter) {
 
     Logger.log('Foto processada: ' + id);
   } catch (e) {
-    var adminEmail = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
-    MailApp.sendEmail(
-      adminEmail,
-      '[Pascom] Erro ao processar foto: ' + arquivo.getName(),
-      'Erro: ' + e.message
-    );
+    notificarErroProcessamento(arquivo, e);
     Logger.log('Erro processarFoto: ' + e.message);
     // Do not remove source. Re-throw so the event is not marked as fully processed.
     throw e;
@@ -165,5 +174,5 @@ function processarFoto(arquivo, eventoId, counter) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { gerarIdFoto, gerarNomeAmostra, processarFoto };
+  module.exports = { gerarIdFoto, gerarNomeAmostra, notificarErroProcessamento, processarFoto };
 }

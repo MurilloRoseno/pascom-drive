@@ -57,6 +57,16 @@ describe('tentarEntrega', () => {
     expect(MailApp.sendEmail).toHaveBeenCalledWith('admin@paroquia.com', expect.stringContaining('FOTO_001'), expect.any(String));
   });
 
+  it('does not throw if final-failure email is not authorized', () => {
+    global.atualizarCelula.mockImplementation(() => { throw new Error('fail'); });
+    global.MailApp.sendEmail.mockImplementationOnce(() => {
+      throw new Error('Specified permissions are not sufficient to call MailApp.sendEmail.');
+    });
+
+    expect(() => tentarEntrega({ ...rowValido, tentativas: 2 })).not.toThrow();
+    expect(global.Logger.log).toHaveBeenCalledWith(expect.stringContaining('Aviso por e-mail nao enviado'));
+  });
+
   it('does NOT email admin when tentativas < 2', () => {
     global.atualizarCelula.mockImplementation(() => { throw new Error('fail'); });
     tentarEntrega({ ...rowValido, tentativas: 0 });

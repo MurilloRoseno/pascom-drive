@@ -173,6 +173,22 @@ describe('processarFoto', () => {
     expect(mockArquivo.setTrashed).not.toHaveBeenCalled();
   });
 
+  it('preserves the processing error when sending the admin email is not authorized', () => {
+    global.UrlFetchApp.fetch
+      .mockReset()
+      .mockReturnValue({
+        getResponseCode: jest.fn().mockReturnValue(500),
+        getContentText: jest.fn().mockReturnValue('backend unavailable'),
+        getBlob: jest.fn().mockReturnValue(null),
+      });
+    global.MailApp.sendEmail.mockImplementationOnce(() => {
+      throw new Error('Specified permissions are not sufficient to call MailApp.sendEmail.');
+    });
+
+    expect(() => processarFoto(mockArquivo)).toThrow('Preprocess API falhou');
+    expect(global.Logger.log).toHaveBeenCalledWith(expect.stringContaining('Aviso por e-mail nao enviado'));
+  });
+
   it('calls /api/preprocess before /api/watermark', () => {
     processarFoto(mockArquivo);
     expect(global.UrlFetchApp.fetch.mock.calls[0][0]).toContain('/api/preprocess');

@@ -5,6 +5,16 @@
 var MAX_TENTATIVAS = 3;
 var MENSAGEM_TEMPLATE = 'Olá! Aqui estão suas fotos da Paróquia São Rafael:\n\n{LINK}\n\nObrigado pela participação! 📸';
 
+function notificarFalhaEntrega(row, erro) {
+  var adminEmail = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
+  if (!adminEmail) return;
+  try {
+    MailApp.sendEmail(adminEmail, '[Pascom] Falha definitiva: ' + row.id, 'Erro: ' + erro.message);
+  } catch (mailError) {
+    Logger.log('Aviso por e-mail nao enviado: ' + mailError.message);
+  }
+}
+
 function gerarLinkWaMe(numero, linkFoto) {
   var digits = numero.replace(/\D/g, '');
   if (digits.indexOf('55') !== 0) digits = '55' + digits;
@@ -26,8 +36,7 @@ function tentarEntrega(row) {
     incrementarTentativas(row.rowIndex);
     Logger.log('Falha entrega ' + row.id + ' (tentativa ' + (row.tentativas + 1) + '): ' + e.message);
     if (row.tentativas + 1 >= MAX_TENTATIVAS) {
-      var adminEmail = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
-      MailApp.sendEmail(adminEmail, '[Pascom] Falha definitiva: ' + row.id, 'Erro: ' + e.message);
+      notificarFalhaEntrega(row, e);
     }
   }
 }
@@ -39,5 +48,5 @@ function processarEntregas() {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { gerarLinkWaMe, tentarEntrega, processarEntregas };
+  module.exports = { gerarLinkWaMe, notificarFalhaEntrega, tentarEntrega, processarEntregas };
 }
