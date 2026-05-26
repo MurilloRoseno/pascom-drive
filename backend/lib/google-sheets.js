@@ -71,7 +71,8 @@ function fotoFromRow(row) {
     eventoId: row.get('EventoID') || '',
     previewUrl: previewId ? drivePreviewUrl(previewId) : driveUrlToThumbnail(row.get('Link_Amostra')),
     price: Number(row.get('PrecoUnitario') || row.get('Preco') || 10),
-    availableForSale: row.get('DisponivelVenda') ? yes(row.get('DisponivelVenda')) : true,
+    // Fail closed: legacy or incomplete rows are not saleable without explicit approval.
+    availableForSale: yes(row.get('DisponivelVenda')),
     status: row.get('StatusProcessamento') || row.get('Status'),
     originalFileId: row.get('OriginalFileID') || '',
   };

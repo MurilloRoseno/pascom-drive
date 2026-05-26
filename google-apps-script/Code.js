@@ -20,6 +20,8 @@ function onOpen() {
     .addSeparator()
     .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
     .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')
+    .addItem('Revogar venda selecionada', 'revogarVendaSelecionada')
+    .addItem('Sincronizar venda com fotos', 'sincronizarVendaSelecionada')
     .addItem('Alternar visibilidade selecionada', 'alternarVisibilidadeSelecionada')
     .addSeparator()
     .addItem('Gerar codigo de acesso', 'gerarCodigoEventoSelecionado')

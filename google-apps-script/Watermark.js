@@ -159,7 +159,8 @@ function processarFoto(arquivo, eventoId, counter) {
       'Erro: ' + e.message
     );
     Logger.log('Erro processarFoto: ' + e.message);
-    // Do NOT move arquivo — leave in SOURCE folder so the next trigger run retries
+    // Do not remove source. Re-throw so the event is not marked as fully processed.
+    throw e;
   }
 }
 

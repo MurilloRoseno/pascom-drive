@@ -107,7 +107,7 @@ export default function EventPage() {
   }
 
   function togglePurchase(photo) {
-    if (!event.salesAuthorized || event.isDemo || photo.availableForSale === false) return;
+    if (!event.salesAuthorized || event.isDemo || photo.availableForSale !== true) return;
     if (isSelected(photo.id)) {
       removeFoto(photo.id);
     } else {
@@ -124,6 +124,7 @@ export default function EventPage() {
 
   const locked = !event.isDemo && event.visibility === 'protegida' && !eventToken(eventoId);
   const canBuy = !event.isDemo && event.salesAuthorized;
+  const canBuyActivePhoto = canBuy && activePhoto?.availableForSale === true;
 
   return (
     <main className="event-detail-page">
@@ -182,10 +183,10 @@ export default function EventPage() {
               <button className="lightbox-close" ref={closeRef} type="button" onClick={() => setParams({}, { replace: true })} aria-label="Fechar foto">×</button>
               <h2>{event.title}</h2>
               <p className="lightbox-caption">{activePhoto.caption}</p>
-              {(activePhoto.watermarkedPreview || canBuy) && (
+              {(activePhoto.watermarkedPreview || canBuyActivePhoto) && (
                 <div className="lightbox-security">
                   <strong>{activePhoto.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</strong>
-                  {canBuy && <span>A foto adquirida será entregue sem marca d água.</span>}
+                  {canBuyActivePhoto && <span>A foto adquirida será entregue sem marca d água.</span>}
                 </div>
               )}
               <div className="lightbox-actions">
@@ -193,7 +194,7 @@ export default function EventPage() {
                   <button className="ghost-button" type="button" onClick={() => changePhoto(-1)}>Anterior</button>
                   <button className="ghost-button" type="button" onClick={() => changePhoto(1)}>Próxima</button>
                 </div>
-                {canBuy && (
+                {canBuyActivePhoto && (
                   <button className="purchase-button" type="button" onClick={() => togglePurchase(activePhoto)}>
                     {isSelected(activePhoto.id) ? 'Remover do carrinho' : 'Selecionar por R$ 10,00'}
                   </button>

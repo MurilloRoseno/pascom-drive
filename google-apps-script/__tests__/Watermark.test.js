@@ -143,7 +143,7 @@ describe('processarFoto', () => {
     expect(mockArquivo.setTrashed).toHaveBeenCalledWith(true);
   });
 
-  it('sends admin email on API error instead of throwing', () => {
+  it('sends admin email and reports API failure to the event orchestrator', () => {
     const errorResponse = {
       getResponseCode: jest.fn().mockReturnValue(500),
       getContentText:  jest.fn().mockReturnValue('Internal Server Error'),
@@ -152,7 +152,7 @@ describe('processarFoto', () => {
     global.UrlFetchApp.fetch
       .mockReset()
       .mockReturnValue(errorResponse);
-    processarFoto(mockArquivo);
+    expect(() => processarFoto(mockArquivo)).toThrow('Preprocess API falhou');
     expect(global.MailApp.sendEmail).toHaveBeenCalledWith(
       'admin@example.com',
       expect.stringContaining('foto.jpg'),
@@ -169,7 +169,7 @@ describe('processarFoto', () => {
     global.UrlFetchApp.fetch
       .mockReset()
       .mockReturnValue(errorResponse);
-    processarFoto(mockArquivo);
+    expect(() => processarFoto(mockArquivo)).toThrow('Preprocess API falhou');
     expect(mockArquivo.setTrashed).not.toHaveBeenCalled();
   });
 

@@ -13,6 +13,19 @@ Categorias aceitas: `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento
 
 O Apps Script processa fotos imediatamente para original privado e preview com marca d'agua. Todo evento novo nasce oculto com `Publicacao=rascunho`, `Visibilidade=protegida` e `VendaAutorizada=NAO`. Nomes invalidos ficam pendentes de configuracao e nunca sao publicados automaticamente.
 
+## Onde Fica A Foto Original
+
+A aba `Fotos` possui colunas antigas e novas porque a planilha foi migrada sem perder historico:
+
+| Coluna | Uso Atual |
+| --- | --- |
+| `OriginalFileID` | ID privado do original, usado apenas pelo backend depois da compra aprovada. Deve estar preenchido nas fotos novas. |
+| `PreviewFileID` | ID da amostra com marca d'agua exibida no site. |
+| `Link_Amostra` | Compatibilidade visual com linhas antigas; pode continuar preenchido. |
+| `Link_Original` | Campo legado. Em fotos novas deve ficar vazio de proposito. |
+
+Nao crie nem preencha `Link_Original` para as fotos novas. Um link permanente do original permitiria acesso fora do checkout e quebraria a protecao comercial. Quando houver uma compra aprovada, o backend usa `OriginalFileID` para gerar um download temporario registrado em `Downloads`.
+
 ## Abas Da Planilha
 
 Execute `inicializarEstrutura()` no Apps Script antes da estreia. A funcao cria ou amplia:
@@ -24,7 +37,22 @@ Execute `inicializarEstrutura()` no Apps Script antes da estreia. A funcao cria 
 - `Downloads`: autorizacoes temporarias, expiracao e limite de usos.
 - `RegrasPagamento`: taxas estimadas ativas por meio de pagamento.
 
+Ao executar `inicializarEstrutura()`, as colunas com opcoes controladas recebem listas suspensas. Se a planilha atual tiver somente `Fotos` e `Eventos`, execute esta funcao novamente depois de copiar a versao mais recente do Apps Script para criar as abas comerciais que faltam.
+
 Eventos existentes permanecem conservadoramente em rascunho/protegidos/sem venda ate revisao manual.
+
+## Opcoes Da Aba Eventos
+
+| Coluna | Valores Permitidos | Efeito |
+| --- | --- | --- |
+| `Categoria` | `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento`, `uncao-dos-enfermos`, `ordem` | Define filtro e agrupamento no site. |
+| `StatusProcessamento` | preenchido pelo script, normalmente `Pendente`, `Processando`, `Processado` ou `Erro` | Indica se previews e originais foram preparados. |
+| `Visibilidade` | `publica` ou `protegida` | `publica` abre previews sem codigo; `protegida` exige codigo valido. |
+| `VendaAutorizada` | `SIM` ou `NAO` | Autoriza checkout, mas deve ser alterada pelo menu para sincronizar a aba `Fotos`. |
+| `Publicacao` | `rascunho`, `publicado` ou `arquivado` | Somente `publicado` aparece no site. |
+| `ProtecaoMenores` | `SIM` ou `NAO` | Com `SIM`, o evento deve continuar `protegida`. |
+
+Nao edite `CodigoHash` manualmente. Em galerias protegidas, use o menu `Gerar codigo de acesso`; somente o hash fica salvo na planilha.
 
 ## Liberacao Administrativa
 
@@ -38,6 +66,28 @@ Na aba `Eventos`, selecione a linha e use o menu `Pascom Drive`:
 6. Use `Revogar codigo de acesso` ou `Arquivar evento selecionado` sempre que necessario.
 
 Galerias com menores devem permanecer protegidas e demandam revisao expressa antes de publicacao e venda.
+
+### Fazer Uma Pasta Processada Aparecer No Site
+
+Depois que a linha do evento estiver com `StatusProcessamento=Processado`:
+
+1. Confira `Titulo`, `Categoria` e `DataEvento`.
+2. Para uma galeria aberta, deixe `Visibilidade=publica`; para galeria privada, deixe `Visibilidade=protegida` e use `Gerar codigo de acesso`.
+3. Se as fotos poderao ser vendidas, selecione a linha e use `Autorizar venda selecionada`. Nao basta digitar `SIM` manualmente, pois o comando tambem altera `DisponivelVenda` nas fotos.
+4. Se `VendaAutorizada` ja foi digitada manualmente, use `Sincronizar venda com fotos` para corrigir as linhas da aba `Fotos`.
+5. Use `Publicar evento selecionado`. A coluna `Publicacao` passara a `publicado`, e o card surgira na home e na busca.
+
+Para retirar um evento do ar, use `Arquivar evento selecionado`. Para manter o evento visivel sem compra, use `Revogar venda selecionada`.
+
+## Opcoes Da Aba RegrasPagamento
+
+| Coluna | Valores Permitidos | Uso |
+| --- | --- | --- |
+| `MeioPagamento` | `pix`, `debit_card`, `credit_card` | Forma oferecida no checkout. |
+| `PercentualEstimado` | numero decimal | Percentual estimado de tarifa do Mercado Pago. |
+| `ValorFixo` | numero decimal | Parcela fixa estimada da tarifa. |
+| `Vigencia` | data/texto administrativo | Referencia da tabela cadastrada. |
+| `Ativo` | `SIM` ou `NAO` | Somente linhas ativas liberam cotacao daquele meio. |
 
 ## Precos E Checkout
 

@@ -31,6 +31,22 @@ var DOWNLOAD_HEADERS = [
 ];
 var REGRAS_HEADERS = ['MeioPagamento', 'PercentualEstimado', 'ValorFixo', 'Vigencia', 'Ativo'];
 
+var EVENTO_OPCOES = {
+  Categoria: [
+    'celebracoes', 'batismo', 'eucaristia', 'crisma',
+    'casamento', 'uncao-dos-enfermos', 'ordem',
+  ],
+  Visibilidade: ['publica', 'protegida'],
+  VendaAutorizada: ['SIM', 'NAO'],
+  Publicacao: ['rascunho', 'publicado', 'arquivado'],
+  ProtecaoMenores: ['SIM', 'NAO'],
+};
+
+var REGRA_PAGAMENTO_OPCOES = {
+  MeioPagamento: ['pix', 'debit_card', 'credit_card'],
+  Ativo: ['SIM', 'NAO'],
+};
+
 var COL = {
   ID: 1, EVENTO: 2, LINK_ORIGINAL: 3, LINK_AMOSTRA: 4, STATUS: 5,
   WHATSAPP: 6, TOTAL_PAGO: 7, ID_MERCADO_PAGO: 8, DATA_PROCESSAMENTO: 9,
@@ -106,8 +122,9 @@ function inicializarEstrutura() {
   ensureSheet('Webhooks', WEBHOOK_HEADERS);
   ensureSheet('Downloads', DOWNLOAD_HEADERS);
   ensureSheet('RegrasPagamento', REGRAS_HEADERS);
+  aplicarValidacoesAdministrativas();
   SpreadsheetApp.getUi().alert(
-    'Estrutura preparada. Revise eventos antigos antes de publica-los ou autorizar vendas.'
+    'Estrutura preparada com opcoes de preenchimento. Revise eventos antigos antes de publica-los ou autorizar vendas.'
   );
 }
 
@@ -117,6 +134,29 @@ function getSheet() {
 
 function getEventosSheet() {
   return ensureSheet('Eventos', EVENTOS_HEADERS);
+}
+
+function aplicarValidacaoLista(sheet, field, options) {
+  if (!SpreadsheetApp.newDataValidation || !sheet.getMaxRows) return;
+  var column = headersMap(sheet).map[field];
+  if (column === undefined) return;
+  var rows = Math.max(sheet.getMaxRows() - 1, 1);
+  var rule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(options, true)
+    .setAllowInvalid(false)
+    .build();
+  sheet.getRange(2, column + 1, rows, 1).setDataValidation(rule);
+}
+
+function aplicarValidacoesAdministrativas() {
+  var eventos = getEventosSheet();
+  Object.keys(EVENTO_OPCOES).forEach(function(field) {
+    aplicarValidacaoLista(eventos, field, EVENTO_OPCOES[field]);
+  });
+  var regras = ensureSheet('RegrasPagamento', REGRAS_HEADERS);
+  Object.keys(REGRA_PAGAMENTO_OPCOES).forEach(function(field) {
+    aplicarValidacaoLista(regras, field, REGRA_PAGAMENTO_OPCOES[field]);
+  });
 }
 
 function registrarEvento(eventData) {
@@ -266,6 +306,23 @@ function autorizarVendaSelecionada() {
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'SIM');
 }
 
+function revogarVendaSelecionada() {
+  var selected = getEventoSelecionado();
+  setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
+  atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
+}
+
+function sincronizarVendaSelecionada() {
+  var selected = getEventoSelecionado();
+  var value = String(selected.item.VendaAutorizada || 'NAO').toUpperCase() === 'SIM' ? 'SIM' : 'NAO';
+  if (value === 'SIM' && selected.item.ProtecaoMenores === 'SIM' && selected.item.Visibilidade !== 'protegida') {
+    throw new Error('Evento com menores deve permanecer protegido antes de liberar venda.');
+  }
+  setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', value);
+  atualizarDisponibilidadeFotos(selected.item.EventoID, value);
+  SpreadsheetApp.getUi().alert('Fotos sincronizadas com VendaAutorizada=' + value + '.');
+}
+
 function alternarVisibilidadeSelecionada() {
   var selected = getEventoSelecionado();
   var atual = selected.item.Visibilidade || 'protegida';
@@ -319,10 +376,13 @@ if (typeof module !== 'undefined') {
     atualizarDisponibilidadeFotos: atualizarDisponibilidadeFotos,
     publicarEventoSelecionado: publicarEventoSelecionado,
     autorizarVendaSelecionada: autorizarVendaSelecionada,
+    revogarVendaSelecionada: revogarVendaSelecionada,
+    sincronizarVendaSelecionada: sincronizarVendaSelecionada,
     alternarVisibilidadeSelecionada: alternarVisibilidadeSelecionada,
     gerarCodigoEventoSelecionado: gerarCodigoEventoSelecionado,
     revogarCodigoEventoSelecionado: revogarCodigoEventoSelecionado,
     arquivarEventoSelecionado: arquivarEventoSelecionado,
+    aplicarValidacoesAdministrativas: aplicarValidacoesAdministrativas,
     codigoHash: codigoHash, COL: COL,
   };
 }

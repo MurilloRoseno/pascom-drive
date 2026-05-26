@@ -12,6 +12,7 @@ const eventRows = [
 const photoRows = [
   row({ FotoID: 'F1', EventoID: 'EV1', PreviewFileID: 'PREVIEW_1', OriginalFileID: 'PRIVATE_1', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F2', EventoID: 'EV2', PreviewFileID: 'PREVIEW_2', OriginalFileID: 'PRIVATE_2', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'F3', EventoID: 'EV1', PreviewFileID: 'PREVIEW_LEGACY', OriginalFileID: 'PRIVATE_LEGACY', StatusProcessamento: 'Processada', PrecoUnitario: '10' }),
 ];
 const sheets = {
   Eventos: { getRows: jest.fn().mockResolvedValue(eventRows) },
@@ -30,7 +31,7 @@ it('lista apenas evento publicado e remove configuracao secreta', async () => {
   expect(await listarEventosPublicados()).toEqual([expect.objectContaining({ eventoId: 'EV1', title: 'Missa' })]);
 });
 
-it('expoe apenas preview vendavel de evento publico, nunca original', async () => {
+it('expoe apenas preview explicitamente liberado de evento publico, nunca original', async () => {
   const photos = await listarFotos();
   expect(photos).toHaveLength(1);
   expect(photos[0].url).toContain('PREVIEW_1');
