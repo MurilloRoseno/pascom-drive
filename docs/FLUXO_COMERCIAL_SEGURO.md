@@ -37,9 +37,20 @@ Execute `inicializarEstrutura()` no Apps Script antes da estreia. A funcao cria 
 - `Downloads`: autorizacoes temporarias, expiracao e limite de usos.
 - `RegrasPagamento`: taxas estimadas ativas por meio de pagamento.
 
-Ao executar `inicializarEstrutura()`, as colunas com opcoes controladas recebem listas suspensas. Se a planilha atual tiver somente `Fotos` e `Eventos`, execute esta funcao novamente depois de copiar a versao mais recente do Apps Script para criar as abas comerciais que faltam.
+Ao executar `inicializarEstrutura()`, as colunas com opcoes controladas recebem listas suspensas. Se a planilha atual tiver somente `Fotos` e `Eventos`, execute esta funcao novamente depois de copiar a versao mais recente do Apps Script para criar as abas comerciais que faltam. Como o projeto Apps Script e independente da planilha, a confirmacao aparece em `Registro de execucao`, e nao em uma caixa de dialogo.
 
 Eventos existentes permanecem conservadoramente em rascunho/protegidos/sem venda ate revisao manual.
+
+### Inicio Limpo Antes Da Estreia
+
+Se todas as linhas atuais forem apenas testes, use a funcao protegida `reiniciarDadosParaEstreia()` em vez de excluir celulas manualmente:
+
+1. Em `Configuracoes do projeto > Propriedades do script`, crie `CONFIRMAR_RESET_INICIAL` com valor `APAGAR_DADOS_DE_TESTE`.
+2. Execute `reiniciarDadosParaEstreia()`.
+3. Confira no registro a mensagem de conclusao. A propriedade de confirmacao e removida automaticamente.
+4. Execute `inicializarEstrutura()` e `criarTriggers()`.
+
+O reset remove dados das abas `Eventos`, `Fotos`, `Pedidos`, `ItensPedido`, `Webhooks`, `Downloads` e `RegrasPagamento`, mantendo apenas os cabecalhos novos e as listas suspensas. Ele nao apaga arquivos que ja tenham sido gerados no Drive. Se uma pasta de entrada de teste ja foi processada e removida, crie novamente a pasta em `Fotos_Origem` com as fotos para que o evento seja cadastrado na base limpa.
 
 ## Opcoes Da Aba Eventos
 
@@ -48,36 +59,42 @@ Eventos existentes permanecem conservadoramente em rascunho/protegidos/sem venda
 | `Categoria` | `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento`, `uncao-dos-enfermos`, `ordem` | Define filtro e agrupamento no site. |
 | `StatusProcessamento` | preenchido pelo script, normalmente `Pendente`, `Processando`, `Processado` ou `Erro` | Indica se previews e originais foram preparados. |
 | `Visibilidade` | `publica` ou `protegida` | `publica` abre previews sem codigo; `protegida` exige codigo valido. |
-| `VendaAutorizada` | `SIM` ou `NAO` | Autoriza checkout, mas deve ser alterada pelo menu para sincronizar a aba `Fotos`. |
+| `VendaAutorizada` | `SIM` ou `NAO` | Autoriza checkout; o script sincroniza esse valor para as fotos no proximo processamento ou por execucao manual. |
 | `Publicacao` | `rascunho`, `publicado` ou `arquivado` | Somente `publicado` aparece no site. |
 | `ProtecaoMenores` | `SIM` ou `NAO` | Com `SIM`, o evento deve continuar `protegida`. |
 
-Nao edite `CodigoHash` manualmente. Em galerias protegidas, use o menu `Gerar codigo de acesso`; somente o hash fica salvo na planilha.
+Nao edite `CodigoHash` manualmente. Em galerias protegidas, execute `gerarCodigoEventoSelecionado()` conforme as instrucoes abaixo; somente o hash fica salvo na planilha.
 
 ## Liberacao Administrativa
 
-Na aba `Eventos`, selecione a linha e use o menu `Pascom Drive`:
+O projeto atual do Apps Script e independente da planilha. Por isso ele nao possui menu dentro do Google Sheets, e a administracao principal deve ser feita diretamente nas colunas com lista suspensa da aba `Eventos`:
 
 1. Valide categoria, data, autorizacao de imagem e eventual protecao de menores.
-2. Use `Alternar visibilidade selecionada` somente para galerias adequadas a acesso publico.
-3. Em galeria protegida, use `Gerar codigo de acesso`; compartilhe o codigo exibido uma unica vez. A planilha guarda apenas o hash.
-4. Use `Autorizar venda selecionada` somente com autorizacao comercial confirmada.
-5. Use `Publicar evento selecionado` para torna-lo visivel no site.
-6. Use `Revogar codigo de acesso` ou `Arquivar evento selecionado` sempre que necessario.
+2. Escolha `Visibilidade=publica` somente para galerias adequadas a acesso publico; use `protegida` nos demais casos.
+3. Preencha `VendaAutorizada=SIM` somente com autorizacao comercial confirmada, ou `NAO` para manter apenas visualizacao.
+4. Execute `sincronizarConfiguracoesAdministrativas()` ou aguarde o proximo trigger `processarEventos`, para refletir `VendaAutorizada` em `DisponivelVenda` na aba `Fotos`.
+5. Troque `Publicacao` para `publicado` para tornar o evento visivel no site; use `arquivado` para retira-lo do ar.
 
 Galerias com menores devem permanecer protegidas e demandam revisao expressa antes de publicacao e venda.
+
+Para gerar ou revogar codigo em uma galeria protegida:
+
+1. Copie o valor da coluna `EventoID` da linha desejada.
+2. Em `Propriedades do script`, defina `ADMIN_EVENTO_ID` com esse valor.
+3. Execute `gerarCodigoEventoSelecionado()` e anote imediatamente o codigo exibido no `Registro de execucao`, ou execute `revogarCodigoEventoSelecionado()` para bloquear o codigo existente.
+4. Exclua `ADMIN_EVENTO_ID` ao concluir para evitar agir no evento errado no futuro.
 
 ### Fazer Uma Pasta Processada Aparecer No Site
 
 Depois que a linha do evento estiver com `StatusProcessamento=Processado`:
 
 1. Confira `Titulo`, `Categoria` e `DataEvento`.
-2. Para uma galeria aberta, deixe `Visibilidade=publica`; para galeria privada, deixe `Visibilidade=protegida` e use `Gerar codigo de acesso`.
-3. Se as fotos poderao ser vendidas, selecione a linha e use `Autorizar venda selecionada`. Nao basta digitar `SIM` manualmente, pois o comando tambem altera `DisponivelVenda` nas fotos.
-4. Se `VendaAutorizada` ja foi digitada manualmente, use `Sincronizar venda com fotos` para corrigir as linhas da aba `Fotos`.
-5. Use `Publicar evento selecionado`. A coluna `Publicacao` passara a `publicado`, e o card surgira na home e na busca.
+2. Para uma galeria aberta, escolha `Visibilidade=publica`; para galeria privada, escolha `Visibilidade=protegida` e gere o codigo.
+3. Escolha `VendaAutorizada=SIM` para fotos comercializaveis, ou `NAO` para apenas exibir a galeria.
+4. Execute `sincronizarConfiguracoesAdministrativas()` para liberar imediatamente as fotos autorizadas; o trigger tambem executa esta sincronizacao automaticamente.
+5. Escolha `Publicacao=publicado`. O card surgira na home e na busca assim que a API consultar a planilha atualizada.
 
-Para retirar um evento do ar, use `Arquivar evento selecionado`. Para manter o evento visivel sem compra, use `Revogar venda selecionada`.
+Para retirar um evento do ar, escolha `Publicacao=arquivado`. Para manter o evento visivel sem compra, escolha `VendaAutorizada=NAO` e execute a sincronizacao.
 
 ## Opcoes Da Aba RegrasPagamento
 

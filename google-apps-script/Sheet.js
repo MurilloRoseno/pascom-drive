@@ -47,6 +47,16 @@ var REGRA_PAGAMENTO_OPCOES = {
   Ativo: ['SIM', 'NAO'],
 };
 
+var ABAS_COMERCIAIS = [
+  ['Eventos', EVENTOS_HEADERS],
+  ['Fotos', FOTOS_HEADERS],
+  ['Pedidos', PEDIDOS_HEADERS],
+  ['ItensPedido', ITENS_HEADERS],
+  ['Webhooks', WEBHOOK_HEADERS],
+  ['Downloads', DOWNLOAD_HEADERS],
+  ['RegrasPagamento', REGRAS_HEADERS],
+];
+
 var COL = {
   ID: 1, EVENTO: 2, LINK_ORIGINAL: 3, LINK_AMOSTRA: 4, STATUS: 5,
   WHATSAPP: 6, TOTAL_PAGO: 7, ID_MERCADO_PAGO: 8, DATA_PROCESSAMENTO: 9,
@@ -114,17 +124,42 @@ function rowToObject(headers, row) {
   return object;
 }
 
+function notificarAdministracao(message) {
+  Logger.log(message);
+  try {
+    SpreadsheetApp.getUi().alert(message);
+  } catch (error) {
+    // Standalone Apps Script projects do not have spreadsheet UI access.
+  }
+}
+
 function inicializarEstrutura() {
-  ensureSheet('Eventos', EVENTOS_HEADERS);
-  ensureSheet('Fotos', FOTOS_HEADERS);
-  ensureSheet('Pedidos', PEDIDOS_HEADERS);
-  ensureSheet('ItensPedido', ITENS_HEADERS);
-  ensureSheet('Webhooks', WEBHOOK_HEADERS);
-  ensureSheet('Downloads', DOWNLOAD_HEADERS);
-  ensureSheet('RegrasPagamento', REGRAS_HEADERS);
+  ABAS_COMERCIAIS.forEach(function(definition) {
+    ensureSheet(definition[0], definition[1]);
+  });
   aplicarValidacoesAdministrativas();
-  SpreadsheetApp.getUi().alert(
+  notificarAdministracao(
     'Estrutura preparada com opcoes de preenchimento. Revise eventos antigos antes de publica-los ou autorizar vendas.'
+  );
+}
+
+function reiniciarDadosParaEstreia() {
+  if (getConfig('CONFIRMAR_RESET_INICIAL') !== 'APAGAR_DADOS_DE_TESTE') {
+    throw new Error(
+      'Reset bloqueado. Defina CONFIRMAR_RESET_INICIAL=APAGAR_DADOS_DE_TESTE nas propriedades do script e execute novamente.'
+    );
+  }
+  var ss = getSpreadsheet();
+  ABAS_COMERCIAIS.forEach(function(definition) {
+    var sheet = ss.getSheetByName(definition[0]) || ss.insertSheet(definition[0]);
+    sheet.clear();
+    sheet.getRange(1, 1, 1, definition[1].length).setValues([definition[1]]);
+    if (sheet.setFrozenRows) sheet.setFrozenRows(1);
+  });
+  aplicarValidacoesAdministrativas();
+  PropertiesService.getScriptProperties().deleteProperty('CONFIRMAR_RESET_INICIAL');
+  notificarAdministracao(
+    'Dados de teste removidos das abas comerciais. Arquivos ja gerados no Drive nao foram apagados.'
   );
 }
 
@@ -281,11 +316,25 @@ function eventoProntoParaRemover(eventoId) {
 
 function getEventoSelecionado() {
   var sheet = getEventosSheet();
-  var active = sheet.getActiveRange();
-  var row = active && active.getRow();
-  if (!row || row <= 1) throw new Error('Selecione uma linha de evento.');
-  var data = sheet.getDataRange().getValues();
-  return { sheet: sheet, rowNumber: row, item: rowToObject(data[0], data[row - 1]) };
+  try {
+    var active = sheet.getActiveRange();
+    var row = active && active.getRow();
+    if (row && row > 1) {
+      var data = sheet.getDataRange().getValues();
+      return { sheet: sheet, rowNumber: row, item: rowToObject(data[0], data[row - 1]) };
+    }
+  } catch (error) {
+    // A selection exists only when the script is bound to the spreadsheet.
+  }
+  var configuredId = getConfig('ADMIN_EVENTO_ID');
+  if (configuredId) {
+    var configuredEvent = findEventoRow(configuredId);
+    if (configuredEvent) return configuredEvent;
+    throw new Error('ADMIN_EVENTO_ID nao corresponde a um EventoID existente.');
+  }
+  throw new Error(
+    'Em script independente, defina ADMIN_EVENTO_ID nas propriedades do script para executar esta acao.'
+  );
 }
 
 function publicarEventoSelecionado() {
@@ -320,7 +369,26 @@ function sincronizarVendaSelecionada() {
   }
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', value);
   atualizarDisponibilidadeFotos(selected.item.EventoID, value);
-  SpreadsheetApp.getUi().alert('Fotos sincronizadas com VendaAutorizada=' + value + '.');
+  notificarAdministracao('Fotos sincronizadas com VendaAutorizada=' + value + '.');
+}
+
+function sincronizarConfiguracoesAdministrativas() {
+  var sheet = getEventosSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  for (var i = 1; i < data.length; i++) {
+    var item = rowToObject(headers, data[i]);
+    if (!item.EventoID) continue;
+    var venda = String(item.VendaAutorizada || 'NAO').toUpperCase() === 'SIM' ? 'SIM' : 'NAO';
+    if (venda === 'SIM' && item.ProtecaoMenores === 'SIM' && item.Visibilidade !== 'protegida') {
+      setField(sheet, i + 1, 'VendaAutorizada', 'NAO');
+      atualizarDisponibilidadeFotos(item.EventoID, 'NAO');
+      Logger.log('Venda bloqueada para evento com menores em galeria nao protegida: ' + item.EventoID);
+      continue;
+    }
+    atualizarDisponibilidadeFotos(item.EventoID, venda);
+  }
+  Logger.log('Disponibilidade de fotos sincronizada com as configuracoes dos eventos.');
 }
 
 function alternarVisibilidadeSelecionada() {
@@ -351,7 +419,7 @@ function gerarCodigoEventoSelecionado() {
   setField(selected.sheet, selected.rowNumber, 'CodigoVersao', versao);
   setField(selected.sheet, selected.rowNumber, 'CodigoGeradoEm', new Date().toISOString());
   setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', '');
-  SpreadsheetApp.getUi().alert('Codigo de acesso (anote agora): ' + codigo);
+  notificarAdministracao('Codigo de acesso (anote agora): ' + codigo);
 }
 
 function revogarCodigoEventoSelecionado() {
@@ -373,11 +441,13 @@ if (typeof module !== 'undefined') {
     registrarEvento: registrarEvento, atualizarStatusEvento: atualizarStatusEvento,
     getStatusEvento: getStatusEvento, getStatusEventoByFolderId: getStatusEventoByFolderId,
     eventoProntoParaRemover: eventoProntoParaRemover, inicializarEstrutura: inicializarEstrutura,
+    reiniciarDadosParaEstreia: reiniciarDadosParaEstreia,
     atualizarDisponibilidadeFotos: atualizarDisponibilidadeFotos,
     publicarEventoSelecionado: publicarEventoSelecionado,
     autorizarVendaSelecionada: autorizarVendaSelecionada,
     revogarVendaSelecionada: revogarVendaSelecionada,
     sincronizarVendaSelecionada: sincronizarVendaSelecionada,
+    sincronizarConfiguracoesAdministrativas: sincronizarConfiguracoesAdministrativas,
     alternarVisibilidadeSelecionada: alternarVisibilidadeSelecionada,
     gerarCodigoEventoSelecionado: gerarCodigoEventoSelecionado,
     revogarCodigoEventoSelecionado: revogarCodigoEventoSelecionado,

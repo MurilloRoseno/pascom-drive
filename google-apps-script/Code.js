@@ -14,20 +14,24 @@ function criarTriggers() {
 }
 
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('Pascom Drive')
-    .addItem('Preparar estrutura segura', 'inicializarEstrutura')
-    .addSeparator()
-    .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
-    .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')
-    .addItem('Revogar venda selecionada', 'revogarVendaSelecionada')
-    .addItem('Sincronizar venda com fotos', 'sincronizarVendaSelecionada')
-    .addItem('Alternar visibilidade selecionada', 'alternarVisibilidadeSelecionada')
-    .addSeparator()
-    .addItem('Gerar codigo de acesso', 'gerarCodigoEventoSelecionado')
-    .addItem('Revogar codigo de acesso', 'revogarCodigoEventoSelecionado')
-    .addItem('Arquivar evento selecionado', 'arquivarEventoSelecionado')
-    .addToUi();
+  try {
+    SpreadsheetApp.getUi()
+      .createMenu('Pascom Drive')
+      .addItem('Preparar estrutura segura', 'inicializarEstrutura')
+      .addSeparator()
+      .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
+      .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')
+      .addItem('Revogar venda selecionada', 'revogarVendaSelecionada')
+      .addItem('Sincronizar venda com fotos', 'sincronizarVendaSelecionada')
+      .addItem('Alternar visibilidade selecionada', 'alternarVisibilidadeSelecionada')
+      .addSeparator()
+      .addItem('Gerar codigo de acesso', 'gerarCodigoEventoSelecionado')
+      .addItem('Revogar codigo de acesso', 'revogarCodigoEventoSelecionado')
+      .addItem('Arquivar evento selecionado', 'arquivarEventoSelecionado')
+      .addToUi();
+  } catch (error) {
+    Logger.log('Menu indisponivel em script independente. Use as colunas da aba Eventos e as funcoes administrativas.');
+  }
 }
 
 /**
@@ -46,6 +50,9 @@ function processarFotosNovas() {
  */
 function processarEventos() {
   Logger.log('processarEventos: ' + new Date());
+
+  // Propagate spreadsheet administration to sale flags before exposing photos.
+  sincronizarConfiguracoesAdministrativas();
 
   // 1. Remove entradas cujas fotos ja foram preservadas em armazenamento privado.
   verificarEventosProntosParaRemover();

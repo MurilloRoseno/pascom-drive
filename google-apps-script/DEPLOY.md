@@ -6,8 +6,10 @@ O erro `ReferenceError: jest is not defined` ocorre quando arquivos de teste sao
 
 1. No editor do Apps Script, exclua `jest-setup.gs`, `jest.config.gs` e qualquer arquivo de teste ou cobertura publicado.
 2. Confirme que restam apenas `appsscript.json`, `Code`, `Drive`, `EventQueue`, `Sheet`, `Watermark` e `WhatsApp`.
-3. Execute `inicializarEstrutura()` uma vez para preparar as abas seguras.
+3. Execute `inicializarEstrutura()` uma vez para preparar as abas seguras. Em projeto independente, a conclusao sera informada no `Registro de execucao`, sem alerta visual.
 4. Execute `criarTriggers()` para reinstalar apenas o processamento de eventos.
+
+Se a base ainda contem somente dados de desenvolvimento e deve iniciar limpa, defina temporariamente a propriedade de script `CONFIRMAR_RESET_INICIAL=APAGAR_DADOS_DE_TESTE` e execute `reiniciarDadosParaEstreia()` antes de criar novos eventos. O reset nao remove arquivos antigos do Drive.
 
 ## Proximas publicacoes
 

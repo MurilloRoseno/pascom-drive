@@ -1,4 +1,4 @@
-const { getSheet, registrarFoto } = require('../Sheet');
+const { getSheet, registrarFoto, inicializarEstrutura } = require('../Sheet');
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -23,4 +23,9 @@ it('registra preview e identificador privado sem link publico do original', () =
   expect(row).toContain('PREVIEW_FILE');
   expect(row).not.toContain('https://link-original-publico.test');
   expect(row).toContain('NAO');
+});
+
+it('inicializa a estrutura em script independente sem exigir interface da planilha', () => {
+  expect(() => inicializarEstrutura()).not.toThrow();
+  expect(Logger.log).toHaveBeenCalledWith(expect.stringContaining('Estrutura preparada'));
 });
