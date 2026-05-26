@@ -97,6 +97,8 @@
 .eventos-grid, .test-grid { grid-template-columns: repeat(3, 1fr); gap: 28px; }
 .evento-card { overflow: hidden; border-radius: 10px; background: var(--branco); box-shadow: 0 2px 12px rgba(0,0,0,.06); transition: box-shadow .25s, transform .2s; }
 .evento-card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.12); }
+.evento-card-link { display: block; height: 100%; color: inherit; }
+.evento-card-link:focus-visible { outline: 3px solid rgba(201,162,39,.75); outline-offset: -3px; border-radius: 10px; }
 .evento-foto { position: relative; height: 200px; overflow: hidden; }
 .evento-foto img { width: 100%; height: 100%; object-fit: cover; }
 .evento-data-badge { position: absolute; bottom: 16px; left: 16px; overflow: hidden; min-width: 52px; color: var(--branco); text-align: center; border-radius: 6px; background: var(--roxo); }

@@ -46,21 +46,23 @@ function EventCard({ event }) {
   const month = date && !Number.isNaN(date.valueOf()) ? date.toLocaleString('pt-BR', { month: 'short' }).replace('.', '').toUpperCase() : 'DATA';
   return (
     <article className="evento-card">
-      <div className="evento-foto">
-        <img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
-        <div className="evento-data-badge"><span className="dia">{day}</span><span className="mes">{month}</span></div>
-        {event.isDemo && <span className="demo-badge">Demonstração</span>}
-      </div>
-      <div className="evento-info">
-        <div className="evento-titulo">{event.title}</div>
-        <div className="evento-meta">
-          <span>◷ {event.dateLabel || event.date} às {event.time || 'Horário a confirmar'}</span>
-          <span>⌖ {event.location || 'Paróquia São Rafael'}</span>
+      <Link to={`/evento/${encodeURIComponent(event.eventoId)}`} className="evento-card-link" aria-label={`Abrir galeria de ${event.title}`}>
+        <div className="evento-foto">
+          <img src={event.cover || '/assets/previews/cover-institucional.webp'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
+          <div className="evento-data-badge"><span className="dia">{day}</span><span className="mes">{month}</span></div>
+          {event.isDemo && <span className="demo-badge">Demonstração</span>}
         </div>
-        <Link to={`/evento/${encodeURIComponent(event.eventoId)}`} className="evento-link">
-          {event.visibility === 'protegida' ? 'Ver galeria protegida' : 'Ver fotos'} →
-        </Link>
-      </div>
+        <div className="evento-info">
+          <div className="evento-titulo">{event.title}</div>
+          <div className="evento-meta">
+            <span>◷ {event.dateLabel || event.date} às {event.time || 'Horário a confirmar'}</span>
+            <span>⌖ {event.location || 'Paróquia São Rafael'}</span>
+          </div>
+          <span className="evento-link">
+            {event.visibility === 'protegida' ? 'Ver galeria protegida' : 'Ver fotos'} →
+          </span>
+        </div>
+      </Link>
     </article>
   );
 }
