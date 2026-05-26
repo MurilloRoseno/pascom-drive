@@ -124,7 +124,6 @@ export default function EventPage() {
 
   const locked = !event.isDemo && event.visibility === 'protegida' && !eventToken(eventoId);
   const canBuy = !event.isDemo && event.salesAuthorized;
-  const status = event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida';
 
   return (
     <main className="event-detail-page">
@@ -146,21 +145,6 @@ export default function EventPage() {
       </section>
       <section className="main-content">
         {photoId && !activePhoto && photos.length > 0 && <div className="notice">A foto solicitada não foi encontrada. Você ainda pode explorar a galeria deste evento.</div>}
-        <div className="security-panel">
-          <div className="security-copy">
-            <span className="security-pill">{status}</span>
-            <h2>{event.minorProtection ? 'Privacidade reforçada para famílias' : 'Visualização cuidada e segura'}</h2>
-            <p>{event.privacyNote || 'As prévias disponíveis respeitam as autorizações definidas pela secretaria paroquial.'}</p>
-            <p className="privacy-level">{event.visibility === 'protegida' ? 'Acesso mediante código válido e sessão temporária.' : 'Imagens institucionais abertas para visualização.'}</p>
-          </div>
-          <div className="purchase-card">
-            <p className="purchase-kicker">Compra segura</p>
-            <h3>{canBuy ? 'Selecione suas fotos' : 'Compra em preparação'}</h3>
-            <p>{canBuy ? 'Cada foto custa R$ 10,00. Taxas aparecem no checkout.' : 'Esta apresentação não inicia pagamento nem adiciona itens ao carrinho.'}</p>
-            {canBuy ? <Link className="purchase-button" to="/checkout">Ir para o carrinho</Link> : <span className="purchase-disabled">Venda indisponível nesta galeria</span>}
-          </div>
-        </div>
-        {event.isDemo && <div className="demo-notice">Demonstração visual: esta galeria ilustra a experiência futura e nenhuma foto pode ser comprada.</div>}
         {locked ? (
           <div className="access-card">
             <h2>Acesso reservado</h2>
@@ -198,20 +182,22 @@ export default function EventPage() {
               <button className="lightbox-close" ref={closeRef} type="button" onClick={() => setParams({}, { replace: true })} aria-label="Fechar foto">×</button>
               <h2>{event.title}</h2>
               <p className="lightbox-caption">{activePhoto.caption}</p>
-              <div className="lightbox-security">
-                <strong>{activePhoto.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</strong>
-                <span>{canBuy ? 'A foto adquirida será entregue sem marca d água.' : 'Compra indisponível nesta demonstração.'}</span>
-              </div>
+              {(activePhoto.watermarkedPreview || canBuy) && (
+                <div className="lightbox-security">
+                  <strong>{activePhoto.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</strong>
+                  {canBuy && <span>A foto adquirida será entregue sem marca d água.</span>}
+                </div>
+              )}
               <div className="lightbox-actions">
                 <div className="gallery-nav">
                   <button className="ghost-button" type="button" onClick={() => changePhoto(-1)}>Anterior</button>
                   <button className="ghost-button" type="button" onClick={() => changePhoto(1)}>Próxima</button>
                 </div>
-                {canBuy ? (
+                {canBuy && (
                   <button className="purchase-button" type="button" onClick={() => togglePurchase(activePhoto)}>
                     {isSelected(activePhoto.id) ? 'Remover do carrinho' : 'Selecionar por R$ 10,00'}
                   </button>
-                ) : <span className="purchase-disabled">Compra em preparação</span>}
+                )}
               </div>
             </div>
           </div>
