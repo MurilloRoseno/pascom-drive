@@ -8,6 +8,9 @@ jest.mock('../lib/gallery-access', () => ({
 jest.mock('../lib/google-drive', () => ({
   downloadFile: jest.fn(),
 }));
+jest.mock('../lib/runtime-cache', () => ({
+  readThrough: jest.fn(async (_key, loader) => ({ value: await loader(), source: 'cache_miss' })),
+}));
 
 const request = require('supertest');
 const express = require('express');
@@ -22,7 +25,7 @@ app.get('/api/eventos/:eventoId/previews/:fotoId', handler);
 beforeEach(() => {
   jest.clearAllMocks();
   sheets.buscarEvento.mockResolvedValue({ eventoId: 'EV1', publication: 'publicado', visibility: 'protegida' });
-  sheets.buscarPreviewFoto.mockResolvedValue({ previewFileId: 'PREVIEW_PRIVATE_ID' });
+  sheets.buscarPreviewFoto.mockResolvedValue({ derivativeFileId: 'PREVIEW_PRIVATE_ID', variant: 'preview' });
   access.tokenAllowsEvent.mockReturnValue(false);
   drive.downloadFile.mockResolvedValue({ buffer: Buffer.from('preview-bytes'), mimeType: 'image/jpeg' });
 });
@@ -51,8 +54,9 @@ it('transmite amostra real de evento publico sem exigir codigo', async () => {
 });
 
 it('transmite capa editorial publicada sem abrir as demais fotos protegidas', async () => {
-  sheets.buscarPreviewFoto.mockResolvedValueOnce({ previewFileId: 'COVER_PRIVATE_ID', type: 'capa' });
+  sheets.buscarPreviewFoto.mockResolvedValueOnce({ derivativeFileId: 'COVER_PRIVATE_ID', type: 'capa', variant: 'preview' });
   const response = await request(app).get('/api/eventos/EV1/previews/CAPA1');
   expect(response.status).toBe(200);
+  expect(response.headers['vercel-cdn-cache-control']).toContain('max-age=86400');
   expect(drive.downloadFile).toHaveBeenCalledWith('COVER_PRIVATE_ID');
 });

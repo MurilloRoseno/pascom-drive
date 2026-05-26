@@ -16,12 +16,28 @@ const pagamento = rateLimit({
   message: { error: 'Limite de tentativas de pagamento atingido. Aguarde 1 minuto.' },
 });
 
+const cotacao = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas atualizacoes de valores. Aguarde alguns segundos.' },
+});
+
 const fotos = rateLimit({
   windowMs: 60 * 1000,
-  max: 30,
+  max: 120,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Muitas requisições à galeria. Tente novamente em 1 minuto.' },
+});
+
+const midiaGaleria = rateLimit({
+  windowMs: 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas requisicoes de imagens. Tente novamente em 1 minuto.' },
 });
 
 const statusConsulta = rateLimit({
@@ -32,12 +48,12 @@ const statusConsulta = rateLimit({
   message: { error: 'Muitas consultas de status. Aguarde 1 minuto.' },
 });
 
-const watermark = rateLimit({
+const processamento = rateLimit({
   windowMs: 60 * 1000,
-  max: 10,
+  max: 240,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Limite de processamento de imagens atingido. Aguarde 1 minuto.' },
+  message: { error: 'Limite de processamento em lote atingido. Aguarde 1 minuto.' },
 });
 
 const acessoGaleria = rateLimit({
@@ -56,4 +72,23 @@ const download = rateLimit({
   message: { error: 'Muitos downloads. Aguarde um minuto.' },
 });
 
-module.exports = { geral, pagamento, fotos, statusConsulta, watermark, acessoGaleria, download };
+const webhook = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas notificacoes de pagamento. Aguarde 1 minuto.' },
+});
+
+const administracao = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas atualizacoes administrativas. Aguarde 1 minuto.' },
+});
+
+module.exports = {
+  geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
+  processamento, acessoGaleria, download, webhook, administracao,
+};

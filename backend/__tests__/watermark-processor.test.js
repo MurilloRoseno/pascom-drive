@@ -46,8 +46,15 @@ describe('compositeWatermark', () => {
   it('output dimensions are ≤1200px on both sides', async () => {
     const result = await compositeWatermark(largeJpeg, 'color');
     const { width, height } = await sharp(result).metadata();
-    expect(width).toBeLessThanOrEqual(1200);
-    expect(height).toBeLessThanOrEqual(1200);
+    expect(width).toBeLessThanOrEqual(1280);
+    expect(height).toBeLessThanOrEqual(1280);
+  });
+
+  it('produces a thumbnail variant limited to 480px', async () => {
+    const result = await compositeWatermark(largeJpeg, 'color', 'thumbnail');
+    const { width, height } = await sharp(result).metadata();
+    expect(width).toBeLessThanOrEqual(480);
+    expect(height).toBeLessThanOrEqual(480);
   });
 
   it('output JPEG has EXIF metadata embedded', async () => {

@@ -2,7 +2,10 @@ const sharp = require('sharp');
 const { z } = require('zod');
 const { downloadFile } = require('../lib/google-drive');
 
-const schema = z.object({ fileId: z.string().min(1) });
+const schema = z.object({
+  fileId: z.string().min(1),
+  variant: z.enum(['preview', 'thumbnail']).default('preview'),
+});
 
 function sendJson(res, status, body) {
   res.writeHead(status, { 'Content-Type': 'application/json' });
@@ -16,12 +19,15 @@ module.exports = async function handler(req, res, next) {
     return sendJson(res, 401, { error: 'Nao autorizado' });
   }
   try {
-    const { fileId } = schema.parse(req.body);
+    const { fileId, variant } = schema.parse(req.body);
+    const output = variant === 'thumbnail'
+      ? { size: 480, quality: 76 }
+      : { size: 1280, quality: 84 };
     const { buffer } = await downloadFile(fileId);
     const preview = await sharp(buffer)
       .rotate()
-      .resize(1280, 1280, { fit: 'inside', withoutEnlargement: true })
-      .jpeg({ quality: 88 })
+      .resize(output.size, output.size, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: output.quality, mozjpeg: true })
       .toBuffer();
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     return res.end(preview);

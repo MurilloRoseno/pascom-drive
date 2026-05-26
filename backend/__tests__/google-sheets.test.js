@@ -10,8 +10,8 @@ const eventRows = [
   row({ EventoID: 'EV2', Titulo: 'Rascunho', Publicacao: 'rascunho', Visibilidade: 'protegida', VendaAutorizada: 'NAO' }),
 ];
 const photoRows = [
-  row({ FotoID: 'CAPA1', EventoID: 'EV1', TipoFoto: 'capa', PreviewFileID: 'COVER_1', OriginalFileID: 'PRIVATE_COVER', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
-  row({ FotoID: 'F1', EventoID: 'EV1', PreviewFileID: 'PREVIEW_1', OriginalFileID: 'PRIVATE_1', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'CAPA1', EventoID: 'EV1', TipoFoto: 'capa', PreviewFileID: 'COVER_1', ThumbnailFileID: 'COVER_THUMB', OriginalFileID: 'PRIVATE_COVER', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'F1', EventoID: 'EV1', PreviewFileID: 'PREVIEW_1', ThumbnailFileID: 'THUMB_1', OriginalFileID: 'PRIVATE_1', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F2', EventoID: 'EV2', PreviewFileID: 'PREVIEW_2', OriginalFileID: 'PRIVATE_2', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F3', EventoID: 'EV1', PreviewFileID: 'PREVIEW_LEGACY', OriginalFileID: 'PRIVATE_LEGACY', StatusProcessamento: 'Processada', PrecoUnitario: '10' }),
 ];
@@ -36,6 +36,7 @@ it('lista apenas evento publicado e remove configuracao secreta', async () => {
     dateLabel: '26 de maio de 2026',
     time: '15:32',
     cover: '/api/eventos/EV1/previews/CAPA1',
+    coverThumbnail: '/api/eventos/EV1/previews/CAPA1?variant=thumbnail',
   })]);
 });
 
@@ -53,6 +54,12 @@ it('separa preview processado da autorizacao comercial da foto', async () => {
   expect(photos[0].previewUrl).toBe('/api/eventos/EV2/previews/F2');
   expect(photos[0]).not.toHaveProperty('previewFileId');
   expect(photos[0]).not.toHaveProperty('originalFileId');
+});
+
+it('envia thumbnail leve distinta quando o derivado ja foi gerado', async () => {
+  const photos = await listarFotosEvento('EV1');
+  expect(photos[0].thumbnailUrl).toBe('/api/eventos/EV1/previews/F1?variant=thumbnail');
+  expect(photos[0].previewUrl).toBe('/api/eventos/EV1/previews/F1');
 });
 
 it('registra pedidos e itens em abas separadas', async () => {

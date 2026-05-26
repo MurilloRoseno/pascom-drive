@@ -10,16 +10,26 @@ const mockCopyFileToFolder  = jest.fn();
 const mockGetShareableLink  = jest.fn();
 const mockGetOriginaisFolder = jest.fn();
 const mockGetAmostrasFolder  = jest.fn();
+const mockGetThumbnailsFolder = jest.fn();
+const mockTrashFileById       = jest.fn();
 const mockRegistrarFoto      = jest.fn();
+const mockAtualizarDerivadosFoto = jest.fn().mockReturnValue(true);
+const mockListarFotosParaReprocessar = jest.fn();
+const mockInvalidarCacheSite = jest.fn();
 
 jest.mock('../Drive', () => ({
   copyFileToFolder:   (...a) => mockCopyFileToFolder(...a),
   getShareableLink:   (...a) => mockGetShareableLink(...a),
   getOriginaisFolder: (...a) => mockGetOriginaisFolder(...a),
   getAmostrasFolder:  (...a) => mockGetAmostrasFolder(...a),
+  getThumbnailsFolder: (...a) => mockGetThumbnailsFolder(...a),
+  trashFileById:       (...a) => mockTrashFileById(...a),
 }));
 jest.mock('../Sheet', () => ({
   registrarFoto: (...a) => mockRegistrarFoto(...a),
+  atualizarDerivadosFoto: (...a) => mockAtualizarDerivadosFoto(...a),
+  listarFotosParaReprocessar: (...a) => mockListarFotosParaReprocessar(...a),
+  invalidarCacheSite: (...a) => mockInvalidarCacheSite(...a),
 }));
 
 global.UrlFetchApp = { fetch: jest.fn() };
@@ -65,7 +75,7 @@ describe('ehArquivoCapa', () => {
 });
 
 describe('processarFoto', () => {
-  let mockArquivo, mockAmostraFile, mockAmostrasFolder;
+  let mockArquivo, mockAmostraFile, mockAmostrasFolder, mockThumbnailFile, mockThumbnailsFolder;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -76,6 +86,10 @@ describe('processarFoto', () => {
     mockAmostraFile  = { getId: jest.fn().mockReturnValue('amostra-file-id') };
     mockAmostrasFolder = { createFile: jest.fn().mockReturnValue(mockAmostraFile) };
     mockGetAmostrasFolder.mockReturnValue(mockAmostrasFolder);
+    mockThumbnailFile = { getId: jest.fn().mockReturnValue('thumbnail-file-id') };
+    mockThumbnailsFolder = { createFile: jest.fn().mockReturnValue(mockThumbnailFile) };
+    mockGetThumbnailsFolder.mockReturnValue(mockThumbnailsFolder);
+    mockAtualizarDerivadosFoto.mockReturnValue(true);
 
     mockArquivo = {
       getId:      jest.fn().mockReturnValue('file-drive-id'),
@@ -105,6 +119,11 @@ describe('processarFoto', () => {
         getResponseCode: jest.fn().mockReturnValue(200),
         getContentText:  jest.fn().mockReturnValue(''),
         getBlob:         jest.fn().mockReturnValue(mockBlob),
+      })
+      .mockReturnValueOnce({
+        getResponseCode: jest.fn().mockReturnValue(200),
+        getContentText:  jest.fn().mockReturnValue(''),
+        getBlob:         jest.fn().mockReturnValue({ setName: jest.fn() }),
       });
   });
 
@@ -117,7 +136,7 @@ describe('processarFoto', () => {
     );
   });
 
-  it('calls backend /api/watermark with fileId in payload', () => {
+  it('calls backend /api/watermark with preview and thumbnail variants', () => {
     processarFoto(mockArquivo);
     expect(global.UrlFetchApp.fetch).toHaveBeenCalledWith(
       'https://pascom-drive.vercel.app/api/watermark',
@@ -129,6 +148,8 @@ describe('processarFoto', () => {
     const fetchCall = UrlFetchApp.fetch.mock.calls[1];
     const fetchOptions = fetchCall[1];
     expect(fetchOptions.headers['x-watermark-secret']).toBeDefined();
+    expect(fetchOptions.payload).toContain('"variant":"preview"');
+    expect(UrlFetchApp.fetch.mock.calls[2][1].payload).toContain('"variant":"thumbnail"');
   });
 
   it('gera capa editorial sem solicitar watermark e a marca como nao vendavel', () => {
@@ -141,6 +162,7 @@ describe('processarFoto', () => {
   it('saves returned blob to AMOSTRAS folder via createFile', () => {
     processarFoto(mockArquivo);
     expect(mockAmostrasFolder.createFile).toHaveBeenCalled();
+    expect(mockThumbnailsFolder.createFile).toHaveBeenCalled();
   });
 
   it('registers foto with linkAmostra derived from saved file id', () => {
@@ -150,6 +172,7 @@ describe('processarFoto', () => {
         linkAmostra: expect.stringContaining('amostra-file-id'),
         originalFileId: 'copia-original-id',
         previewFileId: 'amostra-file-id',
+        thumbnailFileId: 'thumbnail-file-id',
       })
     );
   });
@@ -166,6 +189,9 @@ describe('processarFoto', () => {
 
     expect(() => processarFoto(mockArquivo)).toThrow('Validacao da planilha bloqueou a linha');
     expect(mockArquivo.setTrashed).not.toHaveBeenCalled();
+    expect(mockTrashFileById).toHaveBeenCalledWith('amostra-file-id');
+    expect(mockTrashFileById).toHaveBeenCalledWith('thumbnail-file-id');
+    expect(mockTrashFileById).toHaveBeenCalledWith('copia-original-id');
   });
 
   it('sends admin email and reports API failure to the event orchestrator', () => {
@@ -226,6 +252,11 @@ describe('processarFoto', () => {
         getResponseCode: jest.fn().mockReturnValue(422),
         getContentText:  jest.fn().mockReturnValue('{"error":"Formato não suportado"}'),
         getBlob:         jest.fn().mockReturnValue(null),
+      })
+      .mockReturnValueOnce({
+        getResponseCode: jest.fn().mockReturnValue(200),
+        getContentText:  jest.fn().mockReturnValue(''),
+        getBlob:         jest.fn().mockReturnValue({ setName: jest.fn() }),
       })
       .mockReturnValueOnce({
         getResponseCode: jest.fn().mockReturnValue(200),

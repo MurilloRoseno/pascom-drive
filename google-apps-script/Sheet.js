@@ -12,6 +12,7 @@ var EVENTOS_HEADERS = [
 
 var FOTOS_HEADERS = [
   'FotoID', 'EventoID', 'OriginalFileID', 'PreviewFileID',
+  'ThumbnailFileID', 'ThumbnailStatus', 'ThumbnailGeradaEm',
   'TipoFoto', 'StatusProcessamento', 'DisponivelVenda', 'PrecoUnitario',
   'DataProcessamento',
 ];
@@ -131,6 +132,30 @@ function notificarAdministracao(message) {
     SpreadsheetApp.getUi().alert(message);
   } catch (error) {
     // Standalone Apps Script projects do not have spreadsheet UI access.
+  }
+}
+
+function invalidarCacheSite(eventoId, scopes) {
+  var backendUrl = getConfig('BACKEND_URL');
+  var secret = getConfig('CACHE_INVALIDATION_SECRET');
+  if (!backendUrl || !secret) {
+    Logger.log('Cache nao invalidado: configure BACKEND_URL e CACHE_INVALIDATION_SECRET.');
+    return false;
+  }
+  try {
+    var response = UrlFetchApp.fetch(backendUrl + '/api/admin/cache/invalidate', {
+      method: 'post',
+      contentType: 'application/json',
+      headers: { 'x-cache-invalidation-secret': secret },
+      payload: JSON.stringify({ eventoId: eventoId, scopes: scopes || ['catalogo', 'evento', 'media'] }),
+      muteHttpExceptions: true,
+    });
+    var ok = response.getResponseCode() === 204;
+    if (!ok) Logger.log('Falha ao invalidar cache (' + response.getResponseCode() + '): ' + response.getContentText());
+    return ok;
+  } catch (error) {
+    Logger.log('Falha ao chamar invalidacao de cache: ' + error.message);
+    return false;
   }
 }
 
@@ -296,6 +321,9 @@ function registrarFoto(dados) {
     EventoID: dados.eventoId || '',
     OriginalFileID: dados.originalFileId,
     PreviewFileID: dados.previewFileId,
+    ThumbnailFileID: dados.thumbnailFileId || '',
+    ThumbnailStatus: dados.thumbnailFileId ? 'Processada' : 'Pendente',
+    ThumbnailGeradaEm: dados.thumbnailFileId ? new Date().toISOString() : '',
     TipoFoto: dados.tipoFoto === 'capa' ? 'capa' : 'foto',
     StatusProcessamento: 'Processada',
     DisponivelVenda: 'NAO',
@@ -317,18 +345,57 @@ function atualizarDisponibilidadeFotos(eventoId, value) {
   var eventoCol = headers.indexOf('EventoID');
   var tipoFotoCol = headers.indexOf('TipoFoto');
   var disponibilidadeCol = headers.indexOf('DisponivelVenda');
-  if (eventoCol < 0 || disponibilidadeCol < 0) return;
+  if (eventoCol < 0 || disponibilidadeCol < 0) return false;
+  var changed = false;
   for (var i = 1; i < data.length; i++) {
     if (data[i][eventoCol] === eventoId) {
       var ehCapa = tipoFotoCol >= 0 && data[i][tipoFotoCol] === 'capa';
-      sheet.getRange(i + 1, disponibilidadeCol + 1).setValue(ehCapa ? 'NAO' : value);
+      var nextValue = ehCapa ? 'NAO' : value;
+      if (data[i][disponibilidadeCol] !== nextValue) {
+        sheet.getRange(i + 1, disponibilidadeCol + 1).setValue(nextValue);
+        changed = true;
+      }
     }
   }
+  return changed;
+}
+
+function atualizarDerivadosFoto(fotoId, previewFileId, thumbnailFileId) {
+  var sheet = getSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var idCol = headers.indexOf('FotoID');
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][idCol] === fotoId) {
+      setField(sheet, i + 1, 'PreviewFileID', previewFileId);
+      setField(sheet, i + 1, 'ThumbnailFileID', thumbnailFileId);
+      setField(sheet, i + 1, 'ThumbnailStatus', 'Processada');
+      setField(sheet, i + 1, 'ThumbnailGeradaEm', new Date().toISOString());
+      return true;
+    }
+  }
+  return false;
+}
+
+function listarFotosParaReprocessar(limite) {
+  var sheet = getSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var output = [];
+  for (var i = 1; i < data.length && output.length < (limite || 5); i++) {
+    var item = rowToObject(headers, data[i]);
+    if (item.FotoID && item.PreviewFileID && !item.ThumbnailFileID && item.StatusProcessamento === 'Processada') {
+      output.push(item);
+    }
+  }
+  return output;
 }
 
 /**
- * Cadastra apenas tarifas oficiais confirmadas para Checkout online D0.
- * Debito fica desativado ate que a taxa aplicavel apareca no painel da conta.
+ * Cadastra tarifas publicadas pelo Mercado Pago para Checkout online D0.
+ * A tabela publica nao discrimina o debito virtual no Checkout Pro; por
+ * seguranca financeira, ele usa a tarifa conservadora do credito 1x D0.
+ * Confirme no painel da conta caso existam condicoes comerciais personalizadas.
  */
 function cadastrarRegrasMercadoPagoD0() {
   var sheet = ensureSheet('RegrasPagamento', REGRAS_HEADERS);
@@ -337,7 +404,7 @@ function cadastrarRegrasMercadoPagoD0() {
   var regras = [
     { MeioPagamento: 'pix', PercentualEstimado: 0.99, ValorFixo: 0, Vigencia: 'Tabela Mercado Pago 03/11/2025 - Checkout D0', Ativo: 'SIM' },
     { MeioPagamento: 'credit_card', PercentualEstimado: 4.98, ValorFixo: 0, Vigencia: 'Tabela Mercado Pago 03/11/2025 - Checkout D0 1x', Ativo: 'SIM' },
-    { MeioPagamento: 'debit_card', PercentualEstimado: 0, ValorFixo: 0, Vigencia: 'Aguardando taxa Checkout Pro da conta', Ativo: 'NAO' },
+    { MeioPagamento: 'debit_card', PercentualEstimado: 4.98, ValorFixo: 0, Vigencia: 'Estimativa conservadora - credito 1x D0 ate confirmar debito virtual no painel', Ativo: 'SIM' },
   ];
   regras.forEach(function(regra) {
     var rowNumber = -1;
@@ -356,7 +423,7 @@ function cadastrarRegrasMercadoPagoD0() {
     }
   });
   aplicarValidacoesAdministrativas();
-  notificarAdministracao('Pix e credito 1x D0 cadastrados. Debito permanece desativado ate confirmar a tarifa da conta Mercado Pago.');
+  notificarAdministracao('Taxas D0 cadastradas: Pix 0,99%, credito 1x 4,98% e debito virtual estimado conservadoramente em 4,98% ate confirmacao no painel Mercado Pago.');
 }
 
 function normalizarMetadadosEventos() {
@@ -417,6 +484,7 @@ function publicarEventoSelecionado() {
   }
   setField(selected.sheet, selected.rowNumber, 'Publicacao', 'publicado');
   setField(selected.sheet, selected.rowNumber, 'DataPublicacao', new Date().toISOString());
+  invalidarCacheSite(selected.item.EventoID);
 }
 
 function autorizarVendaSelecionada() {
@@ -426,12 +494,14 @@ function autorizarVendaSelecionada() {
   }
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'SIM');
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'SIM');
+  invalidarCacheSite(selected.item.EventoID);
 }
 
 function revogarVendaSelecionada() {
   var selected = getEventoSelecionado();
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
+  invalidarCacheSite(selected.item.EventoID);
 }
 
 function sincronizarVendaSelecionada() {
@@ -442,6 +512,7 @@ function sincronizarVendaSelecionada() {
   }
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', value);
   atualizarDisponibilidadeFotos(selected.item.EventoID, value);
+  invalidarCacheSite(selected.item.EventoID);
   notificarAdministracao('Fotos sincronizadas com VendaAutorizada=' + value + '.');
 }
 
@@ -449,6 +520,7 @@ function sincronizarConfiguracoesAdministrativas() {
   var sheet = getEventosSheet();
   var data = sheet.getDataRange().getValues();
   var headers = data[0] || [];
+  var props = PropertiesService.getScriptProperties();
   for (var i = 1; i < data.length; i++) {
     var item = rowToObject(headers, data[i]);
     if (!item.EventoID) continue;
@@ -457,9 +529,16 @@ function sincronizarConfiguracoesAdministrativas() {
       setField(sheet, i + 1, 'VendaAutorizada', 'NAO');
       atualizarDisponibilidadeFotos(item.EventoID, 'NAO');
       Logger.log('Venda bloqueada para evento com menores em galeria nao protegida: ' + item.EventoID);
-      continue;
+      item.VendaAutorizada = 'NAO';
+      venda = 'NAO';
     }
     atualizarDisponibilidadeFotos(item.EventoID, venda);
+    var fingerprint = [item.Publicacao, item.Visibilidade, item.VendaAutorizada, item.ProtecaoMenores, item.CodigoVersao].join('|');
+    var key = 'CACHE_CONFIG_' + item.EventoID;
+    if (props.getProperty(key) !== fingerprint) {
+      invalidarCacheSite(item.EventoID);
+      if (props.setProperty) props.setProperty(key, fingerprint);
+    }
   }
   Logger.log('Disponibilidade de fotos sincronizada com as configuracoes dos eventos.');
 }
@@ -472,6 +551,7 @@ function alternarVisibilidadeSelecionada() {
     throw new Error('Evento com menores nao pode ser publico.');
   }
   setField(selected.sheet, selected.rowNumber, 'Visibilidade', nova);
+  invalidarCacheSite(selected.item.EventoID);
 }
 
 function codigoHash(codigo) {
@@ -492,13 +572,17 @@ function gerarCodigoEventoSelecionado() {
   setField(selected.sheet, selected.rowNumber, 'CodigoVersao', versao);
   setField(selected.sheet, selected.rowNumber, 'CodigoGeradoEm', new Date().toISOString());
   setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', '');
+  invalidarCacheSite(selected.item.EventoID);
   notificarAdministracao('Codigo de acesso (anote agora): ' + codigo);
 }
 
 function revogarCodigoEventoSelecionado() {
   var selected = getEventoSelecionado();
+  var versao = (parseInt(selected.item.CodigoVersao, 10) || 0) + 1;
   setField(selected.sheet, selected.rowNumber, 'CodigoHash', '');
+  setField(selected.sheet, selected.rowNumber, 'CodigoVersao', versao);
   setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', new Date().toISOString());
+  invalidarCacheSite(selected.item.EventoID);
 }
 
 function arquivarEventoSelecionado() {
@@ -506,6 +590,7 @@ function arquivarEventoSelecionado() {
   setField(selected.sheet, selected.rowNumber, 'Publicacao', 'arquivado');
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
+  invalidarCacheSite(selected.item.EventoID);
 }
 
 if (typeof module !== 'undefined') {
@@ -516,6 +601,9 @@ if (typeof module !== 'undefined') {
     eventoProntoParaRemover: eventoProntoParaRemover, inicializarEstrutura: inicializarEstrutura,
     reiniciarDadosParaEstreia: reiniciarDadosParaEstreia,
     atualizarDisponibilidadeFotos: atualizarDisponibilidadeFotos,
+    atualizarDerivadosFoto: atualizarDerivadosFoto,
+    listarFotosParaReprocessar: listarFotosParaReprocessar,
+    invalidarCacheSite: invalidarCacheSite,
     publicarEventoSelecionado: publicarEventoSelecionado,
     autorizarVendaSelecionada: autorizarVendaSelecionada,
     revogarVendaSelecionada: revogarVendaSelecionada,

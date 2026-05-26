@@ -10,6 +10,7 @@ const { compositeWatermark } = require('../lib/watermark-processor');
 const schema = z.object({
   fileId:        z.string().min(1),
   watermarkType: z.enum(['color', 'bw', 'auto']).default('auto'),
+  variant:       z.enum(['preview', 'thumbnail']).default('preview'),
 });
 
 // Use only native Node.js ServerResponse methods (setHeader/writeHead/end).
@@ -36,7 +37,7 @@ module.exports = async function handler(req, res, next) {
   try {
     const params = schema.parse(req.body);
     const { buffer } = await downloadFile(params.fileId);
-    const watermarked = await compositeWatermark(buffer, params.watermarkType);
+    const watermarked = await compositeWatermark(buffer, params.watermarkType, params.variant);
     // Return raw JPEG — caller (Apps Script) saves blob to Drive as the user (who has quota)
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     res.end(watermarked);

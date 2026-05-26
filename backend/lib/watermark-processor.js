@@ -9,7 +9,10 @@ const sharp = require('sharp');
 const path = require('path');
 
 // --- Output quality ---
-const JPEG_QUALITY = 100; // max quality; mozjpeg handles file-size compression
+const VARIANTS = {
+  preview: { size: 1280, quality: 84 },
+  thumbnail: { size: 480, quality: 76 },
+};
 
 const ASSETS = {
   color: path.join(__dirname, '../assets/watermark-color.png'),
@@ -44,10 +47,11 @@ async function detectWatermarkType(resizedBuffer) {
  * @param {'color'|'bw'|'auto'} type  Which watermark variant to use
  * @returns {Promise<Buffer>}          JPEG output (quality=100, mozjpeg compressed)
  */
-async function compositeWatermark(imageBuffer, type = 'auto') {
+async function compositeWatermark(imageBuffer, type = 'auto', variant = 'preview') {
+  const output = VARIANTS[variant] || VARIANTS.preview;
   // 1. Resize input to ≤1200px on longest side
   const resizedBuffer = await sharp(imageBuffer)
-    .resize(1200, 1200, { fit: 'inside', withoutEnlargement: true })
+    .resize(output.size, output.size, { fit: 'inside', withoutEnlargement: true })
     .png()
     .toBuffer();
 
@@ -77,8 +81,8 @@ async function compositeWatermark(imageBuffer, type = 'auto') {
     .withMetadata({
       exif: { IFD0: { ImageDescription: 'AMOSTRA - PROIBIDA REPRODUCAO' } },
     })
-    .jpeg({ quality: JPEG_QUALITY, mozjpeg: true })
+    .jpeg({ quality: output.quality, mozjpeg: true })
     .toBuffer();
 }
 
-module.exports = { compositeWatermark };
+module.exports = { compositeWatermark, VARIANTS };

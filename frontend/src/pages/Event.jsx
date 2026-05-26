@@ -131,7 +131,7 @@ export default function EventPage() {
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg><span>{event.location || 'Paróquia São Rafael'}</span></li>
             </ul>
           </div>
-          <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.png'} alt={`Capa de ${event.title}`} draggable="false" /></div>
+          <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Capa de ${event.title}`} decoding="async" draggable="false" /></div>
         </div>
       </section>
       <section className="main-content">
@@ -162,7 +162,7 @@ export default function EventPage() {
                 return (
                   <article className={`photo-tile${selected ? ' is-selected' : ''}`} key={photo.id}>
                     <button className="photo-button" type="button" onClick={() => setParams({ foto: photo.id })} onContextMenu={(mouseEvent) => mouseEvent.preventDefault()}>
-                      <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
+                      <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" decoding="async" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
                       <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
                       {selected && <span className="selected-chip">Selecionada</span>}
                     </button>
@@ -181,7 +181,7 @@ export default function EventPage() {
       {activePhoto && (
         <div className="lightbox" role="dialog" aria-modal="true" aria-label="Visualização da foto">
           <div className="lightbox-dialog">
-            <div className="lightbox-image-wrap"><img className={`lightbox-image ${activePhoto.watermarkedPreview ? 'photo-blur-target' : ''}`} src={activePhoto.previewUrl} alt={activePhoto.alt || activePhoto.caption} draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} /></div>
+            <div className="lightbox-image-wrap"><img className={`lightbox-image ${activePhoto.watermarkedPreview ? 'photo-blur-target' : ''}`} src={activePhoto.previewUrl} alt={activePhoto.alt || activePhoto.caption} decoding="async" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} /></div>
             <div className="lightbox-panel">
               <button className="lightbox-close" ref={closeRef} type="button" onClick={() => setParams({}, { replace: true })} aria-label="Fechar foto">×</button>
               <h2>{event.title}</h2>

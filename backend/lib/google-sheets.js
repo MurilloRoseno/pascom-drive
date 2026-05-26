@@ -1,13 +1,15 @@
 const crypto = require('crypto');
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
+const { readThrough } = require('./runtime-cache');
 
 function drivePreviewUrl(fileId) {
   return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1280` : '';
 }
 
-function applicationPreviewUrl(eventoId, fotoId) {
-  return `/api/eventos/${encodeURIComponent(eventoId)}/previews/${encodeURIComponent(fotoId)}`;
+function applicationPreviewUrl(eventoId, fotoId, variant = 'preview') {
+  const query = variant === 'thumbnail' ? '?variant=thumbnail' : '';
+  return `/api/eventos/${encodeURIComponent(eventoId)}/previews/${encodeURIComponent(fotoId)}${query}`;
 }
 
 function driveUrlToThumbnail(sharingUrl) {
@@ -39,21 +41,30 @@ function dateLabel(value) {
 }
 
 let _doc = null;
+let _docPromise = null;
 
 async function getDoc() {
   if (_doc) return _doc;
-  const encodedKey = process.env.GOOGLE_PRIVATE_KEY_B64;
-  const privateKey = encodedKey
-    ? Buffer.from(encodedKey, 'base64').toString('utf8')
-    : String(process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
-  const auth = new JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: privateKey,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  if (_docPromise) return _docPromise;
+  _docPromise = (async () => {
+    const encodedKey = process.env.GOOGLE_PRIVATE_KEY_B64;
+    const privateKey = encodedKey
+      ? Buffer.from(encodedKey, 'base64').toString('utf8')
+      : String(process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+    const auth = new JWT({
+      email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: privateKey,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+    const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, auth);
+    await doc.loadInfo();
+    _doc = doc;
+    return doc;
+  })().catch((error) => {
+    _docPromise = null;
+    throw error;
   });
-  _doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, auth);
-  await _doc.loadInfo();
-  return _doc;
+  return _docPromise;
 }
 
 async function sheet(title) {
@@ -92,17 +103,20 @@ function eventoFromRow(row) {
 function fotoFromRow(row) {
   const id = row.get('FotoID') || row.get('ID');
   const previewId = row.get('PreviewFileID');
+  const thumbnailId = row.get('ThumbnailFileID');
   const type = row.get('TipoFoto') === 'capa' ? 'capa' : 'foto';
   return {
     id,
     eventoId: row.get('EventoID') || '',
     previewFileId: previewId || '',
+    thumbnailFileId: thumbnailId || '',
     previewUrl: previewId ? drivePreviewUrl(previewId) : driveUrlToThumbnail(row.get('Link_Amostra')),
     price: Number(row.get('PrecoUnitario') || row.get('Preco') || 10),
     type,
     // Fail closed: legacy or incomplete rows are not saleable without explicit approval.
     availableForSale: type !== 'capa' && yes(row.get('DisponivelVenda')),
     status: row.get('StatusProcessamento') || row.get('Status'),
+    thumbnailStatus: row.get('ThumbnailStatus') || '',
     originalFileId: row.get('OriginalFileID') || '',
   };
 }
@@ -111,27 +125,47 @@ async function listarEventos() {
   return (await rows('Eventos')).map(eventoFromRow);
 }
 
+async function catalogoPublicado() {
+  const { value } = await readThrough('catalogo-publicado:v2', async () => {
+    const startedAt = Date.now();
+    const [eventRows, photoRows] = await Promise.all([rows('Eventos'), rows('Fotos')]);
+    console.log(JSON.stringify({
+      event: 'sheets_catalog_read',
+      elapsedMs: Date.now() - startedAt,
+      ts: new Date().toISOString(),
+    }));
+    return {
+      events: eventRows.map(eventoFromRow).filter((event) => event.publication === 'publicado'),
+      photos: photoRows.map(fotoFromRow),
+    };
+  }, { ttl: 300, tags: ['catalogo-eventos'], name: 'catalogo-eventos' });
+  return value;
+}
+
 async function listarEventosPublicados({ categoria = '', q = '' } = {}) {
   const term = q.trim().toLowerCase();
-  const events = (await listarEventos())
-    .filter((event) => event.publication === 'publicado')
+  const catalog = await catalogoPublicado();
+  const events = catalog.events
     .filter((event) => !categoria || event.category === categoria)
     .filter((event) => !term || `${event.title} ${event.category} ${event.date}`.toLowerCase().includes(term));
-  const photoRows = (await rows('Fotos')).map(fotoFromRow);
   return events.map((event) => {
       const publicEvent = { ...event };
       delete publicEvent.codeHash;
       delete publicEvent.codeVersion;
-      const cover = photoRows.find((foto) =>
+      const cover = catalog.photos.find((foto) =>
         foto.eventoId === event.eventoId && foto.type === 'capa' && foto.status === 'Processada' && foto.previewFileId
       );
       if (cover) {
-        publicEvent.cover = applicationPreviewUrl(event.eventoId, cover.id);
+        publicEvent.cover = applicationPreviewUrl(event.eventoId, cover.id, 'preview');
+        publicEvent.coverThumbnail = applicationPreviewUrl(event.eventoId, cover.id, 'thumbnail');
       } else if (event.visibility === 'publica') {
-        const firstPhoto = photoRows.find((foto) =>
+        const firstPhoto = catalog.photos.find((foto) =>
           foto.eventoId === event.eventoId && foto.status === 'Processada' && foto.previewFileId
         );
-        if (firstPhoto) publicEvent.cover = applicationPreviewUrl(event.eventoId, firstPhoto.id);
+        if (firstPhoto) {
+          publicEvent.cover = applicationPreviewUrl(event.eventoId, firstPhoto.id, 'preview');
+          publicEvent.coverThumbnail = applicationPreviewUrl(event.eventoId, firstPhoto.id, 'thumbnail');
+        }
       }
       return publicEvent;
     });
@@ -141,35 +175,50 @@ async function buscarEvento(eventoId) {
   return (await listarEventos()).find((event) => event.eventoId === eventoId) || null;
 }
 
+async function buscarEventoPublicadoCatalogo(eventoId) {
+  const catalog = await catalogoPublicado();
+  return catalog.events.find((event) => event.eventoId === eventoId) || null;
+}
+
 async function listarFotosEvento(eventoId) {
-  return (await rows('Fotos'))
-    .map(fotoFromRow)
+  const { value: photos } = await readThrough(`fotos-evento:${eventoId}:v2`, async () => (
+    (await rows('Fotos')).map(fotoFromRow)
+  ), { ttl: 300, tags: [`evento-${eventoId}`, `media-${eventoId}`], name: 'fotos-evento' });
+  return photos
     .filter((foto) => foto.eventoId === eventoId && foto.type !== 'capa' && foto.status === 'Processada')
     .map((foto) => {
       const preview = {
         ...foto,
-        previewUrl: applicationPreviewUrl(foto.eventoId, foto.id),
-        thumbnailUrl: applicationPreviewUrl(foto.eventoId, foto.id),
+        previewUrl: applicationPreviewUrl(foto.eventoId, foto.id, 'preview'),
+        thumbnailUrl: foto.thumbnailFileId
+          ? applicationPreviewUrl(foto.eventoId, foto.id, 'thumbnail')
+          : applicationPreviewUrl(foto.eventoId, foto.id, 'preview'),
       };
       delete preview.originalFileId;
       delete preview.previewFileId;
+      delete preview.thumbnailFileId;
       return preview;
     });
 }
 
-async function buscarPreviewFoto(eventoId, fotoId) {
-  const photo = (await rows('Fotos'))
-    .map(fotoFromRow)
+async function buscarPreviewFoto(eventoId, fotoId, variant = 'preview') {
+  const { value: photos } = await readThrough(`derivados-evento:${eventoId}:v2`, async () => (
+    (await rows('Fotos')).map(fotoFromRow)
+  ), { ttl: 300, tags: [`evento-${eventoId}`, `media-${eventoId}`], name: 'derivados-evento' });
+  const photo = photos
     .find((foto) => foto.eventoId === eventoId && foto.id === fotoId && foto.status === 'Processada');
   if (!photo || !photo.previewFileId) return null;
-  return { previewFileId: photo.previewFileId, type: photo.type };
+  const derivativeFileId = variant === 'thumbnail' && photo.thumbnailFileId
+    ? photo.thumbnailFileId
+    : photo.previewFileId;
+  return { derivativeFileId, type: photo.type, variant: derivativeFileId === photo.thumbnailFileId ? 'thumbnail' : 'preview' };
 }
 
 async function buscarCapaEvento(eventoId) {
   const cover = (await rows('Fotos'))
     .map(fotoFromRow)
     .find((foto) => foto.eventoId === eventoId && foto.type === 'capa' && foto.status === 'Processada' && foto.previewFileId);
-  return cover ? applicationPreviewUrl(eventoId, cover.id) : '';
+  return cover ? applicationPreviewUrl(eventoId, cover.id, 'preview') : '';
 }
 
 async function listarFotos() {
@@ -362,7 +411,7 @@ function novoPedidoId() {
 
 module.exports = {
   driveUrlToThumbnail, applicationPreviewUrl, listarFotos, listarEventos, listarEventosPublicados,
-  buscarEvento, listarFotosEvento, buscarPreviewFoto, buscarCapaEvento, buscarFotosParaCompra, listarRegrasPagamento,
+  buscarEvento, buscarEventoPublicadoCatalogo, listarFotosEvento, buscarPreviewFoto, buscarCapaEvento, buscarFotosParaCompra, listarRegrasPagamento,
   registrarPedido, buscarPedidoById, buscarPedidoByPreferenceOrPayment,
   atualizarPedidoPagamento, registrarEntrega, registrarWebhookSeNovo, finalizarWebhook,
   listarItensPedido, buscarOriginaisPedido, criarAutorizacoesDownload,

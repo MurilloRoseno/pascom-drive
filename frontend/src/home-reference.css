@@ -20,6 +20,13 @@
   background:
     linear-gradient(90deg, rgba(71,28,105,.94) 0%, rgba(83,38,120,.88) 24%, rgba(88,43,124,.64) 46%, rgba(88,43,124,.18) 68%, rgba(88,43,124,.03) 100%),
     url("/assets/hero-igreja-sao-rafael.png") center center / cover no-repeat;
+  background:
+    linear-gradient(90deg, rgba(71,28,105,.94) 0%, rgba(83,38,120,.88) 24%, rgba(88,43,124,.64) 46%, rgba(88,43,124,.18) 68%, rgba(88,43,124,.03) 100%),
+    image-set(
+      url("/assets/hero-igreja-sao-rafael.avif") type("image/avif"),
+      url("/assets/hero-igreja-sao-rafael.webp") type("image/webp"),
+      url("/assets/hero-igreja-sao-rafael.png") type("image/png")
+    ) center center / cover no-repeat;
 }
 .home-page .hero::after {
   content: "";
@@ -177,6 +184,30 @@
 .card-sale { margin: 9px 0; color: var(--roxo); font-size: .78rem; font-weight: 700; }
 .home-events-state { max-width: 1200px; margin: 0 auto; color: var(--texto-leve); text-align: center; }
 .home-events-state + .eventos-grid { margin-top: 26px; }
+.skeleton-block {
+  position: relative;
+  overflow: hidden;
+  border-radius: 7px;
+  background: #eee9e1;
+}
+.skeleton-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 8%, rgba(255,255,255,.68) 38%, transparent 68%);
+  transform: translateX(-100%);
+  animation: skeleton-shimmer 1.25s ease-in-out infinite;
+}
+.skeleton-cover { height: 200px; border-radius: 0; }
+.skeleton-title { width: 68%; height: 18px; margin-bottom: 14px; }
+.skeleton-line { width: 88%; height: 12px; margin-bottom: 10px; }
+.skeleton-line.short { width: 58%; margin-bottom: 0; }
+.skeleton-date { flex-shrink: 0; width: 56px; height: 58px; }
+.skeleton-copy { flex: 1; }
+.home-skeleton-list { margin-bottom: 16px; }
+@keyframes skeleton-shimmer {
+  to { transform: translateX(100%); }
+}
 body.lightbox-open { overflow: hidden; }
 
 @media (max-width: 980px) {

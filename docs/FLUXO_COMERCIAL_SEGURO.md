@@ -11,7 +11,7 @@ casamento__2026-05-20__joao-e-maria
 
 Categorias aceitas: `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento`, `uncao-dos-enfermos` e `ordem`.
 
-O Apps Script processa fotos imediatamente para original privado e preview com marca d'agua. Todo evento novo nasce oculto com `Publicacao=rascunho`, `Visibilidade=protegida` e `VendaAutorizada=NAO`. Nomes invalidos ficam pendentes de configuracao e nunca sao publicados automaticamente.
+O Apps Script processa fotos imediatamente para original privado, thumbnail leve e preview com marca d'agua. Todo evento novo nasce oculto com `Publicacao=rascunho`, `Visibilidade=protegida` e `VendaAutorizada=NAO`. Nomes invalidos ficam pendentes de configuracao e nunca sao publicados automaticamente.
 
 Para escolher a imagem do card e do cabecalho do evento, inclua na pasta uma imagem chamada exatamente `capa` com extensao de imagem, por exemplo `capa.jpg`. Ela e tratada como imagem editorial publica: recebe reducao para ate `1280px`, nao recebe marca d'agua e nunca e liberada para venda. Use nessa capa somente uma imagem autorizada para exposicao publica. As demais imagens continuam como previews protegidas com marca d'agua.
 
@@ -23,6 +23,8 @@ A aba `Fotos` possui colunas antigas e novas porque a planilha foi migrada sem p
 | --- | --- |
 | `OriginalFileID` | ID privado do original, usado apenas pelo backend depois da compra aprovada. Deve estar preenchido nas fotos novas. |
 | `PreviewFileID` | ID da amostra com marca d'agua exibida no site. |
+| `ThumbnailFileID` | ID da miniatura leve usada nas grades de cards/fotos. |
+| `ThumbnailStatus` / `ThumbnailGeradaEm` | Controle operacional da geracao ou migracao de miniaturas. |
 | `TipoFoto` | `foto` para item vendavel ou `capa` para a imagem editorial publica sem marca d'agua. |
 | `Link_Amostra` | Compatibilidade visual com linhas antigas; pode continuar preenchido. |
 | `Link_Original` | Campo legado. Em fotos novas deve ficar vazio de proposito. |
@@ -49,6 +51,14 @@ Se o processamento ja falhou antes dessa correcao, atualize `Sheet.gs` e `Waterm
 Se uma linha existente ficou com o carimbo de quarentena no nome, por exemplo `_202605261456`, copie tambem `EventQueue.gs` e execute `normalizarMetadadosEventos()`. O script remove o carimbo de `NomePasta` e recompõe `Titulo`, `Categoria` e `DataEvento` sem mexer em publicacao ou venda.
 
 Eventos existentes permanecem conservadoramente em rascunho/protegidos/sem venda ate revisao manual.
+
+### Miniaturas E Performance
+
+Novas fotos geram dois derivados: `ThumbnailFileID` para a grade (`480px`) e `PreviewFileID` para a ampliacao (`1280px`). Originais permanecem privados e nao sao usados na navegacao publica.
+
+Para fotos antigas sem `ThumbnailFileID`, execute `reprocessarMiniaturasEmLote()`. A funcao parte da previa ja protegida, gera versoes mais leves sem duplicar a marca d'agua, atualiza somente os campos derivados e preserva preco, venda e original. Depois da atualizacao confirmada na planilha, a previa pesada substituida e movida para a lixeira. O lote padrao e de `5` fotos; use a propriedade `THUMBNAIL_BATCH_SIZE` apenas se precisar ajustar o tempo de execucao.
+
+Configure `THUMBNAILS_FOLDER_ID` nas propriedades do Apps Script apontando para uma pasta privada `Miniaturas`. `AMOSTRAS_FOLDER_ID` passa a concentrar as previews para ampliacao e `THUMBNAILS_FOLDER_ID` guarda somente imagens leves da grade. O fallback para `AMOSTRAS` existe apenas para compatibilidade enquanto a nova pasta ainda nao tiver sido configurada.
 
 ### Inicio Limpo Antes Da Estreia
 
@@ -105,13 +115,15 @@ Depois que a linha do evento estiver com `StatusProcessamento=Processado`:
 2. Para uma galeria aberta, escolha `Visibilidade=publica`; para galeria privada, escolha `Visibilidade=protegida` e gere o codigo.
 3. Escolha `VendaAutorizada=SIM` para fotos comercializaveis, ou `NAO` para apenas exibir a galeria.
 4. Execute `sincronizarConfiguracoesAdministrativas()` para liberar imediatamente as fotos autorizadas; o trigger tambem executa esta sincronizacao automaticamente.
-5. Escolha `Publicacao=publicado`. O card surgira na home e na busca assim que a API consultar a planilha atualizada.
+5. Escolha `Publicacao=publicado` ou execute `publicarEventoSelecionado()`. Usando as funcoes administrativas, o cache do site e invalidado imediatamente; alteracoes diretas na planilha sao refletidas na proxima sincronizacao automatica.
 
 Para retirar um evento do ar, escolha `Publicacao=arquivado`. Para manter o evento visivel sem compra, escolha `VendaAutorizada=NAO` e execute a sincronizacao.
 
 O site nao possui catalogo demonstrativo: home, busca, atividades e galeria mostram somente eventos publicados na aba `Eventos` e fotos processadas na aba `Fotos`.
 
 As imagens exibidas nao usam link publico permanente do Drive. Para galerias `publica`, a API transmite a amostra real com marca d'agua por uma URL interna do evento. Para galerias `protegida`, a mesma URL so responde enquanto houver uma sessao temporaria valida obtida pelo codigo da galeria. Os originais permanecem privados e sao usados apenas na entrega apos pagamento aprovado.
+
+A API usa cache interno da Vercel somente depois de validar o acesso. Capas editoriais podem receber cache publico por serem deliberadamente publicas; previews comerciais continuam sem cache publico duradouro para que uma galeria alterada para `protegida` interrompa novas entregas nao autorizadas.
 
 A unica excecao intencional e `capa.jpg`: por ser a imagem de divulgacao escolhida pela secretaria, ela e servida publicamente sem marca d'agua e nao aparece na grade compravel.
 
@@ -139,8 +151,8 @@ Para iniciar com as tarifas oficiais confirmadas para Checkout online em liberac
 | Meio | Percentual | Ativo | Fonte |
 | --- | ---: | --- | --- |
 | `pix` | `0.99` | `SIM` | Tabela Mercado Pago, vigente a partir de 03/11/2025, Checkout Pix/Open Finance D0. |
+| `debit_card` | `4.98` | `SIM` | Estimativa conservadora: mesma tarifa do credito 1x D0 ate confirmar no painel a tarifa especifica do debito virtual. |
 | `credit_card` | `4.98` | `SIM` | Tabela Mercado Pago, vigente a partir de 03/11/2025, Checkout cartao de credito 1x D0. |
-| `debit_card` | `0` | `NAO` | Aguardando a tarifa de Checkout Pro confirmada no painel da conta. |
 
 A tarifa estimada e calculada sobre o valor final cobrado, para que a propria tarifa nao reduza o valor base de fotos e taxas fixas. Se a configuracao da conta Mercado Pago diferir da tabela publica, atualize a aba `RegrasPagamento` antes de aceitar compras.
 
@@ -171,6 +183,7 @@ MP_WEBHOOK_SECRET
 DOWNLOAD_JWT_SECRET
 GALLERY_SESSION_SECRET
 GALLERY_CODE_SALT
+CACHE_INVALIDATION_SECRET
 PUBLIC_APP_URL
 SMTP_HOST
 SMTP_PORT
@@ -182,6 +195,8 @@ SMTP_REPLY_TO
 ```
 
 Configure `GALLERY_CODE_SALT` tambem nas propriedades privadas do Apps Script, com o mesmo valor usado no backend. Nunca registre tokens, senhas ou codigos abertos em documentos, commits ou planilhas publicas.
+
+Configure `CACHE_INVALIDATION_SECRET` tambem nas propriedades privadas do Apps Script, identico ao valor da Vercel. Ele autentica apenas a invalidacao de cache quando eventos sao publicados, arquivados, protegidos ou reprocessados; nunca o exponha no frontend.
 
 Para a configuracao inicial do Gmail:
 

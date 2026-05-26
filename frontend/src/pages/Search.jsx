@@ -21,7 +21,7 @@ function SearchCard({ event }) {
     <article className="event-card">
       <Link className="event-card-link" to={`/evento/${encodeURIComponent(event.eventoId)}`} aria-label={`Abrir galeria de ${event.title}`}>
         <div className="event-cover">
-          <img src={event.cover || '/assets/hero-igreja-sao-rafael.png'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
+          <img src={event.coverThumbnail || event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Galeria de ${event.title}`} loading="lazy" decoding="async" draggable="false" />
           <span className="event-tag">{categoryLabel(event.category)}</span>
           <span className={event.visibility === 'publica' ? 'event-open' : 'event-lock'}>{event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida'}</span>
         </div>
@@ -45,6 +45,7 @@ SearchCard.propTypes = {
     dateLabel: PropTypes.string,
     location: PropTypes.string,
     cover: PropTypes.string,
+    coverThumbnail: PropTypes.string,
     visibility: PropTypes.string,
     salesAuthorized: PropTypes.bool,
   }).isRequired,

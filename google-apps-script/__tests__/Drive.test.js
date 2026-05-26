@@ -2,6 +2,7 @@ const {
   getSourceFolder,
   getOriginaisFolder,
   getAmostrasFolder,
+  getThumbnailsFolder,
   listNewFiles,
   copyFileToFolder,
   getShareableLink,
@@ -27,6 +28,16 @@ describe('getAmostrasFolder', () => {
   it('fetches folder by AMOSTRAS_FOLDER_ID', () => {
     getAmostrasFolder();
     expect(DriveApp.getFolderById).toHaveBeenCalledWith('amostras-folder-id-test');
+  });
+});
+
+describe('getThumbnailsFolder', () => {
+  it('uses THUMBNAILS_FOLDER_ID when configured', () => {
+    PropertiesService.getScriptProperties().getProperty.mockImplementationOnce((key) => (
+      key === 'THUMBNAILS_FOLDER_ID' ? 'thumbnails-folder-id-test' : null
+    ));
+    getThumbnailsFolder();
+    expect(DriveApp.getFolderById).toHaveBeenCalledWith('thumbnails-folder-id-test');
   });
 });
 

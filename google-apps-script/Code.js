@@ -19,6 +19,7 @@ function onOpen() {
       .createMenu('Pascom Drive')
       .addItem('Preparar estrutura segura', 'inicializarEstrutura')
       .addItem('Normalizar nomes de eventos', 'normalizarMetadadosEventos')
+      .addItem('Reprocessar miniaturas pendentes', 'reprocessarMiniaturasEmLote')
       .addSeparator()
       .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
       .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')

@@ -18,6 +18,12 @@ function getAmostrasFolder() {
   );
 }
 
+function getThumbnailsFolder() {
+  var folderId = PropertiesService.getScriptProperties().getProperty('THUMBNAILS_FOLDER_ID');
+  // Compatibility fallback: new deployments should configure a separate folder.
+  return folderId ? DriveApp.getFolderById(folderId) : getAmostrasFolder();
+}
+
 function listNewFiles() {
   var folder = getSourceFolder();
   var iterator = folder.getFiles();
@@ -79,15 +85,19 @@ function copyFileToFolder(file, destinationFolder, newName) {
   return file.makeCopy(newName, destinationFolder);
 }
 
+function trashFileById(fileId) {
+  if (fileId) DriveApp.getFileById(fileId).setTrashed(true);
+}
+
 function getShareableLink(file) {
   return 'https://drive.google.com/file/d/' + file.getId() + '/view?usp=sharing';
 }
 
 if (typeof module !== 'undefined') {
   module.exports = {
-    getSourceFolder, getOriginaisFolder, getAmostrasFolder,
+    getSourceFolder, getOriginaisFolder, getAmostrasFolder, getThumbnailsFolder,
     listNewFiles, listarArquivosDoEvento,
     moverParaQuarentena, removerPastaEvento,
-    copyFileToFolder, getShareableLink,
+    copyFileToFolder, trashFileById, getShareableLink,
   };
 }

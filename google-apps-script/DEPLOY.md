@@ -8,9 +8,12 @@ O erro `ReferenceError: jest is not defined` ocorre quando arquivos de teste sao
 2. Confirme que restam apenas `appsscript.json`, `Code`, `Drive`, `EventQueue`, `Sheet`, `Watermark` e `WhatsApp`.
 3. Execute `inicializarEstrutura()` uma vez para preparar as abas seguras. Em projeto independente, a conclusao sera informada no `Registro de execucao`, sem alerta visual.
 4. Se ja existirem nomes com carimbo de erro como `_202605261456`, execute `normalizarMetadadosEventos()`.
-5. Execute `cadastrarRegrasMercadoPagoD0()` para habilitar Pix e credito 1x nas taxas oficiais de Checkout D0; debito continua aguardando confirmacao no painel.
+5. Execute `cadastrarRegrasMercadoPagoD0()` para habilitar Pix (`0,99%`) e credito em 1x (`4,98%`) nas taxas publicadas de Checkout online D0. O debito virtual usa provisoriamente `4,98%`, a estimativa conservadora do credito 1x, ate a tarifa especifica ser confirmada no painel da conta.
 6. Execute `criarTriggers()` para reinstalar apenas o processamento de eventos.
 7. Ao executar uma funcao manualmente depois de atualizar `appsscript.json`, aceite a nova permissao de envio de e-mail (`script.send_mail`). Sem ela, o processamento continua registrando o erro real, mas os avisos por e-mail para a administracao nao serao enviados.
+8. Configure `CACHE_INVALIDATION_SECRET` nas propriedades do script com o mesmo segredo privado cadastrado na Vercel; ele atualiza imediatamente o cache apos publicacao, protecao ou reprocessamento.
+9. Para fotos processadas antes das miniaturas leves, execute `reprocessarMiniaturasEmLote()` repetidamente ate o registro informar `0` fotos pendentes. Opcionalmente defina `THUMBNAIL_BATCH_SIZE`; o padrao seguro inicial e `5`.
+10. Crie uma pasta privada `Miniaturas` no Drive e configure seu ID em `THUMBNAILS_FOLDER_ID`. Sem essa propriedade, o script continua funcional, mas grava miniaturas junto das previews em `AMOSTRAS`.
 
 Se a base ainda contem somente dados de desenvolvimento e deve iniciar limpa, defina temporariamente a propriedade de script `CONFIRMAR_RESET_INICIAL=APAGAR_DADOS_DE_TESTE` e execute `reiniciarDadosParaEstreia()` antes de criar novos eventos. O reset nao remove arquivos antigos do Drive.
 

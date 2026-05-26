@@ -35,3 +35,12 @@ it('gera capa reduzida sem chamar o processador de marca dagua', async () => {
   expect(drive.downloadFile).toHaveBeenCalledWith('CAPA_ID');
   expect(sharp().resize).toHaveBeenCalledWith(1280, 1280, { fit: 'inside', withoutEnlargement: true });
 });
+
+it('gera thumbnail leve de capa para cards', async () => {
+  const response = await request(app)
+    .post('/api/cover-preview')
+    .set('x-watermark-secret', 'test-secret')
+    .send({ fileId: 'CAPA_ID', variant: 'thumbnail' });
+  expect(response.status).toBe(200);
+  expect(sharp().resize).toHaveBeenCalledWith(480, 480, { fit: 'inside', withoutEnlargement: true });
+});

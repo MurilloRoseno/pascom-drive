@@ -3,7 +3,6 @@ const { tokenAllowsEvent } = require('../lib/gallery-access');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
-  res.setHeader('Cache-Control', 'private, no-store');
   res.setHeader('X-Robots-Tag', 'noindex, noimageindex');
   try {
     const event = await buscarEvento(req.params.eventoId);
@@ -12,6 +11,7 @@ module.exports = async function handler(req, res, next) {
     }
     const token = req.headers['x-gallery-token'];
     if (!tokenAllowsEvent(token, event)) {
+      res.setHeader('Cache-Control', 'private, no-store');
       return res.status(401).json({ protected: true, error: 'Informe o codigo para acessar esta galeria.' });
     }
     const safeEvent = { ...event };
@@ -19,6 +19,12 @@ module.exports = async function handler(req, res, next) {
     delete safeEvent.codeVersion;
     const photos = await listarFotosEvento(event.eventoId);
     const tokenQuery = event.visibility === 'protegida' ? `?token=${encodeURIComponent(token)}` : '';
+    if (event.visibility === 'publica') {
+      res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
+      res.setHeader('Vercel-Cache-Tag', `evento-${event.eventoId},media-${event.eventoId}`);
+    } else {
+      res.setHeader('Cache-Control', 'private, no-store');
+    }
     return res.json({
       event: safeEvent,
       photos: photos.map((photo) => ({

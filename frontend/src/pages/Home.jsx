@@ -41,7 +41,7 @@ function EventCard({ event }) {
     <article className="evento-card">
       <Link to={`/evento/${encodeURIComponent(event.eventoId)}`} className="evento-card-link" aria-label={`Abrir galeria de ${event.title}`}>
         <div className="evento-foto">
-          <img src={event.cover || '/assets/hero-igreja-sao-rafael.png'} alt={`Galeria de ${event.title}`} loading="lazy" draggable="false" />
+          <img src={event.coverThumbnail || event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Galeria de ${event.title}`} loading="lazy" decoding="async" draggable="false" />
           <div className="evento-data-badge"><span className="dia">{day}</span><span className="mes">{month}</span></div>
         </div>
         <div className="evento-info">
@@ -77,9 +77,43 @@ EventCard.propTypes = {
     time: PropTypes.string,
     location: PropTypes.string,
     cover: PropTypes.string,
+    coverThumbnail: PropTypes.string,
     visibility: PropTypes.string,
   }).isRequired,
 };
+
+function EventCardsSkeleton() {
+  return (
+    <div className="eventos-grid home-skeleton-grid" aria-hidden="true">
+      {[1, 2, 3].map((item) => (
+        <div className="evento-card skeleton-card" key={item}>
+          <div className="skeleton-block skeleton-cover" />
+          <div className="evento-info">
+            <div className="skeleton-block skeleton-title" />
+            <div className="skeleton-block skeleton-line" />
+            <div className="skeleton-block skeleton-line short" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ActivitySkeleton() {
+  return (
+    <div className="atividades-lista home-skeleton-list" aria-hidden="true">
+      {[1, 2, 3].map((item) => (
+        <div className="ativ-item skeleton-activity" key={item}>
+          <div className="skeleton-block skeleton-date" />
+          <div className="skeleton-copy">
+            <div className="skeleton-block skeleton-title" />
+            <div className="skeleton-block skeleton-line short" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -133,7 +167,7 @@ export default function HomePage() {
       <section className="eventos" id="eventos">
         <Ornament />
         <h2 className="sec-titulo">Eventos Recentes</h2>
-        {eventsLoading && <p className="home-events-state">Carregando eventos publicados...</p>}
+        {eventsLoading && <EventCardsSkeleton />}
         {!eventsLoading && events.length === 0 && <p className="home-events-state">Nenhum evento publicado no momento.</p>}
         <div className="eventos-grid">{events.slice(0, 3).map((event) => <EventCard key={event.eventoId} event={event} />)}</div>
       </section>
@@ -151,12 +185,19 @@ export default function HomePage() {
             </div>
             <a href="/#sobre" className="btn-missao">Conheça Nossa História</a>
           </div>
-          <div className="missao-foto"><img src="/assets/hero-igreja-sao-rafael.png" alt="Igreja São Rafael" loading="lazy" /></div>
+          <div className="missao-foto">
+            <picture>
+              <source srcSet="/assets/hero-igreja-sao-rafael.avif" type="image/avif" />
+              <source srcSet="/assets/hero-igreja-sao-rafael.webp" type="image/webp" />
+              <img src="/assets/hero-igreja-sao-rafael.png" alt="Igreja São Rafael" loading="lazy" decoding="async" />
+            </picture>
+          </div>
         </div>
       </section>
       <section className="atividades">
         <Ornament />
         <h2 className="sec-titulo">Próximas Atividades</h2>
+        {eventsLoading && <ActivitySkeleton />}
         <div className="atividades-lista">
           {!eventsLoading && events.length === 0 && <p className="home-events-state">Nenhuma atividade publicada no momento.</p>}
           {events.slice(0, 4).map((event) => {
