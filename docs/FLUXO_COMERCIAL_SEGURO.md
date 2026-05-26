@@ -32,7 +32,7 @@ Execute `inicializarEstrutura()` no Apps Script antes da estreia. A funcao cria 
 
 - `Eventos`: configuracao editorial, visibilidade, autorizacao comercial e hash do codigo.
 - `Fotos`: apenas IDs privados e previews processados, preco unitario e disponibilidade de venda.
-- `Pedidos` e `ItensPedido`: snapshot de comprador, taxas e itens cobrados.
+- `Pedidos` e `ItensPedido`: snapshot de comprador, taxas, itens cobrados e status da entrega por e-mail.
 - `Webhooks`: idempotencia persistida das notificacoes Mercado Pago.
 - `Downloads`: autorizacoes temporarias, expiracao e limite de usos.
 - `RegrasPagamento`: taxas estimadas ativas por meio de pagamento.
@@ -128,10 +128,13 @@ O Mercado Pago hospeda o pagamento em Checkout Pro. A notificacao assinada e con
 Depois da aprovacao:
 
 - O backend gera links temporarios registrados em `Downloads`, com expiracao e limite de uso.
-- O Resend envia os links por e-mail automaticamente.
-- A planilha recebe um link de WhatsApp com mensagem pronta para envio assistido pela secretaria.
+- O backend tenta enviar os links pelo Gmail SMTP autenticado com senha de app, para baixo volume inicial.
+- A aba `Pedidos` registra `EmailStatus`, `EmailErro` e `EmailUltimaTentativaEm`; falha no SMTP nao anula o pagamento aprovado.
+- A planilha recebe um link de WhatsApp com mensagem pronta para envio assistido pela secretaria, inclusive quando o e-mail falha.
 
 Originais nunca devem ser compartilhados publicamente no Drive, retornados por API de galeria ou inseridos no HTML.
+
+O Gmail pessoal e uma solucao inicial, limitada e sujeita a bloqueio automatizado pelo Google; monitore falhas e migre para um provedor transacional quando o volume ou a confiabilidade exigirem.
 
 ## Segredos E Implantacao
 
@@ -143,12 +146,30 @@ MP_WEBHOOK_SECRET
 DOWNLOAD_JWT_SECRET
 GALLERY_SESSION_SECRET
 GALLERY_CODE_SALT
-RESEND_API_KEY
-DELIVERY_FROM_EMAIL
 PUBLIC_APP_URL
+SMTP_HOST
+SMTP_PORT
+SMTP_SECURE
+SMTP_USER
+SMTP_APP_PASSWORD
+SMTP_FROM_NAME
+SMTP_REPLY_TO
 ```
 
 Configure `GALLERY_CODE_SALT` tambem nas propriedades privadas do Apps Script, com o mesmo valor usado no backend. Nunca registre tokens, senhas ou codigos abertos em documentos, commits ou planilhas publicas.
+
+Para a configuracao inicial do Gmail:
+
+```text
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=murillo.roseno.lima@gmail.com
+SMTP_FROM_NAME=Paroquia Sao Rafael - Fotos
+SMTP_REPLY_TO=murillo.roseno.lima@gmail.com
+```
+
+Cadastre `SMTP_APP_PASSWORD` apenas como variavel criptografada no Vercel, usando a senha de app do Google sem espacos. Depois de copiar a nova versao do Apps Script, execute `inicializarEstrutura()` novamente para adicionar as colunas de status em `Pedidos` sem apagar as linhas existentes.
 
 Credenciais de teste previamente compartilhadas ou expostas devem ser rotacionadas antes de homologacao compartilhada e obrigatoriamente antes da producao.
 

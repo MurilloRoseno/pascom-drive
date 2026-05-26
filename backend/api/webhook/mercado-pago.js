@@ -31,11 +31,11 @@ module.exports = async function handler(req, res, next) {
     const pedido = await atualizarPedidoPagamento(stored.id, payment);
     if (payment.status === 'approved') {
       const downloads = await criarDownloadsDoPedido(pedido);
-      const emailSent = await enviarEmailEntrega(pedido, downloads);
+      const emailResult = await enviarEmailEntrega(pedido, downloads);
       const digits = String(pedido.whatsapp || '').replace(/\D/g, '');
       const number = digits.startsWith('55') ? digits : `55${digits}`;
       const whatsappLink = `https://wa.me/${number}?text=${encodeURIComponent(criarMensagemWhatsApp(downloads))}`;
-      await registrarEntrega(pedido.id, { emailSent, whatsappLink });
+      await registrarEntrega(pedido.id, { emailResult, whatsappLink });
     }
     await finalizarWebhook(eventKey, 'Processado');
     return res.json({ ok: true });

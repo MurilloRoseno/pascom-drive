@@ -14,17 +14,18 @@ const photoRows = [
   row({ FotoID: 'F2', EventoID: 'EV2', PreviewFileID: 'PREVIEW_2', OriginalFileID: 'PRIVATE_2', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F3', EventoID: 'EV1', PreviewFileID: 'PREVIEW_LEGACY', OriginalFileID: 'PRIVATE_LEGACY', StatusProcessamento: 'Processada', PrecoUnitario: '10' }),
 ];
+const pedidoRow = row({ PedidoID: 'PED_1', Status: 'Pagamento Confirmado', Email: 'maria@example.com' });
 const sheets = {
   Eventos: { getRows: jest.fn().mockResolvedValue(eventRows) },
   Fotos: { getRows: jest.fn().mockResolvedValue(photoRows) },
-  Pedidos: { addRow: jest.fn().mockResolvedValue() },
+  Pedidos: { addRow: jest.fn().mockResolvedValue(), getRows: jest.fn().mockResolvedValue([pedidoRow]) },
   ItensPedido: { addRow: jest.fn().mockResolvedValue() },
 };
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 GoogleSpreadsheet.mockImplementation(() => ({ loadInfo: jest.fn().mockResolvedValue(), sheetsByTitle: sheets }));
 
 const {
-  driveUrlToThumbnail, listarEventosPublicados, listarFotos, listarFotosEvento, registrarPedido,
+  driveUrlToThumbnail, listarEventosPublicados, listarFotos, listarFotosEvento, registrarPedido, registrarEntrega,
 } = require('../lib/google-sheets');
 
 it('lista apenas evento publicado e remove configuracao secreta', async () => {
@@ -59,6 +60,18 @@ it('registra pedidos e itens em abas separadas', async () => {
   }, [{ foto: { id: 'F1', eventoId: 'EV1', price: 10 } }]);
   expect(sheets.Pedidos.addRow).toHaveBeenCalled();
   expect(sheets.ItensPedido.addRow).toHaveBeenCalledWith(expect.objectContaining({ FotoID: 'F1' }));
+});
+
+it('persiste status e falha do envio de e-mail preservando WhatsApp assistido', async () => {
+  await registrarEntrega('PED_1', {
+    emailResult: { status: 'falhou', error: 'SMTP indisponivel', attemptedAt: '2026-05-26T12:00:00.000Z' },
+    whatsappLink: 'https://wa.me/5599982061089',
+  });
+
+  expect(pedidoRow.set).toHaveBeenCalledWith('EmailStatus', 'falhou');
+  expect(pedidoRow.set).toHaveBeenCalledWith('EmailErro', 'SMTP indisponivel');
+  expect(pedidoRow.set).toHaveBeenCalledWith('EmailUltimaTentativaEm', '2026-05-26T12:00:00.000Z');
+  expect(pedidoRow.set).toHaveBeenCalledWith('WhatsAppLink', 'https://wa.me/5599982061089');
 });
 
 it('gera apenas thumbnail de preview com limite de tamanho', () => {

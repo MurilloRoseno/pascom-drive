@@ -20,7 +20,8 @@ var PEDIDOS_HEADERS = [
   'PedidoID', 'PreferenceID', 'PaymentID', 'Status', 'Nome', 'Email',
   'WhatsApp', 'MeioPagamento', 'Subtotal', 'TaxaServico', 'TaxaComodidade',
   'CustoPagamentoEstimado', 'Total', 'TarifaReal', 'DataCriacao',
-  'DataPagamento', 'EmailEnviadoEm', 'WhatsAppLink',
+  'DataPagamento', 'EmailEnviadoEm', 'EmailStatus', 'EmailErro',
+  'EmailUltimaTentativaEm', 'WhatsAppLink',
 ];
 
 var ITENS_HEADERS = ['PedidoID', 'FotoID', 'EventoID', 'PrecoUnitario'];

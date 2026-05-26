@@ -237,10 +237,15 @@ async function atualizarPedidoPagamento(pedidoId, payment) {
   return { ...pedido, status: payment.status };
 }
 
-async function registrarEntrega(pedidoId, { emailSent, whatsappLink }) {
+async function registrarEntrega(pedidoId, { emailResult, whatsappLink }) {
   const pedido = await buscarPedidoById(pedidoId);
   if (!pedido) throw new Error('Pedido nao encontrado.');
-  if (emailSent) pedido.row.set('EmailEnviadoEm', new Date().toISOString());
+  if (emailResult) {
+    pedido.row.set('EmailStatus', emailResult.status);
+    pedido.row.set('EmailErro', emailResult.error || '');
+    pedido.row.set('EmailUltimaTentativaEm', emailResult.attemptedAt || new Date().toISOString());
+    if (emailResult.status === 'enviado') pedido.row.set('EmailEnviadoEm', new Date().toISOString());
+  }
   if (whatsappLink) pedido.row.set('WhatsAppLink', whatsappLink);
   await pedido.row.save();
 }

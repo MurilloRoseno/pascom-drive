@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const { signToken } = require('./jwt-utils');
 const { buscarOriginaisPedido, criarAutorizacoesDownload } = require('./google-sheets');
 
@@ -25,24 +26,45 @@ async function criarDownloadsDoPedido(pedido) {
   return records;
 }
 
-async function enviarEmailEntrega(pedido, downloads) {
-  if (!process.env.RESEND_API_KEY || !process.env.DELIVERY_FROM_EMAIL) return false;
-  const links = downloads.map((item, index) => `<li><a href="${item.url}">Baixar foto ${index + 1}</a></li>`).join('');
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
+function smtpConfigured() {
+  return Boolean(process.env.SMTP_USER && process.env.SMTP_APP_PASSWORD);
+}
+
+function createTransporter() {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: Number(process.env.SMTP_PORT || 465),
+    secure: String(process.env.SMTP_SECURE || 'true').toLowerCase() === 'true',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: String(process.env.SMTP_APP_PASSWORD || '').replace(/\s/g, ''),
     },
-    body: JSON.stringify({
-      from: process.env.DELIVERY_FROM_EMAIL,
-      to: [pedido.email],
+  });
+}
+
+async function enviarEmailEntrega(pedido, downloads) {
+  const attemptedAt = new Date().toISOString();
+  if (!smtpConfigured()) {
+    return { status: 'nao_configurado', error: 'SMTP nao configurado.', attemptedAt };
+  }
+  const links = downloads.map((item, index) => `<li><a href="${item.url}">Baixar foto ${index + 1}</a></li>`).join('');
+  const fromName = process.env.SMTP_FROM_NAME || 'Paroquia Sao Rafael - Fotos';
+  try {
+    await createTransporter().sendMail({
+      from: `"${fromName}" <${process.env.SMTP_USER}>`,
+      replyTo: process.env.SMTP_REPLY_TO || process.env.SMTP_USER,
+      to: pedido.email,
       subject: 'Suas fotos - Paroquia Sao Rafael',
       html: `<p>Pagamento confirmado. Seus links seguros expiram em 24 horas.</p><ul>${links}</ul>`,
-    }),
-  });
-  if (!response.ok) throw new Error('Falha ao enviar e-mail de entrega.');
-  return true;
+    });
+    return { status: 'enviado', error: '', attemptedAt };
+  } catch (error) {
+    return {
+      status: 'falhou',
+      error: String(error.message || 'Falha ao enviar e-mail de entrega.').slice(0, 500),
+      attemptedAt,
+    };
+  }
 }
 
 function criarMensagemWhatsApp(downloads) {

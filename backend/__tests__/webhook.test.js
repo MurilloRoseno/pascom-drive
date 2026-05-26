@@ -37,7 +37,7 @@ beforeEach(() => {
   sheets.buscarPedidoByPreferenceOrPayment.mockResolvedValue({ id: 'PED_1' });
   sheets.atualizarPedidoPagamento.mockResolvedValue({ id: 'PED_1', email: 'maria@example.com', whatsapp: '99982061089' });
   delivery.criarDownloadsDoPedido.mockResolvedValue([{ url: 'https://safe.test/download' }]);
-  delivery.enviarEmailEntrega.mockResolvedValue(true);
+  delivery.enviarEmailEntrega.mockResolvedValue({ status: 'enviado', error: '', attemptedAt: '2026-05-26T12:00:00.000Z' });
 });
 
 function post() {
@@ -52,7 +52,26 @@ it('valida assinatura, consulta pagamento e libera entrega aprovada', async () =
   expect(res.status).toBe(200);
   expect(mp.validarAssinaturaWebhook).toHaveBeenCalled();
   expect(delivery.criarDownloadsDoPedido).toHaveBeenCalled();
-  expect(sheets.registrarEntrega).toHaveBeenCalledWith('PED_1', expect.objectContaining({ emailSent: true }));
+  expect(sheets.registrarEntrega).toHaveBeenCalledWith('PED_1', expect.objectContaining({
+    emailResult: expect.objectContaining({ status: 'enviado' }),
+  }));
+  expect(sheets.finalizarWebhook).toHaveBeenCalledWith('REQ_1:PAY_1:payment.updated', 'Processado');
+});
+
+it('registra WhatsApp e conclui webhook mesmo quando o SMTP falha', async () => {
+  delivery.enviarEmailEntrega.mockResolvedValueOnce({
+    status: 'falhou',
+    error: 'SMTP indisponivel',
+    attemptedAt: '2026-05-26T12:00:00.000Z',
+  });
+
+  const res = await post();
+
+  expect(res.status).toBe(200);
+  expect(sheets.registrarEntrega).toHaveBeenCalledWith('PED_1', expect.objectContaining({
+    emailResult: expect.objectContaining({ status: 'falhou' }),
+    whatsappLink: expect.stringContaining('wa.me'),
+  }));
   expect(sheets.finalizarWebhook).toHaveBeenCalledWith('REQ_1:PAY_1:payment.updated', 'Processado');
 });
 

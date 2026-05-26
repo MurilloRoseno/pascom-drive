@@ -50,8 +50,13 @@ MP_WEBHOOK_SECRET           = <seu-webhook-secret-mp>
 DOWNLOAD_JWT_SECRET        = <segredo-aleatorio-longo>
 GALLERY_SESSION_SECRET     = <segredo-aleatorio-longo-diferente>
 GALLERY_CODE_SALT          = <salt-aleatorio-longo>
-RESEND_API_KEY             = <chave-resend>
-DELIVERY_FROM_EMAIL        = fotos@<seu-dominio-verificado>
+SMTP_HOST                  = smtp.gmail.com
+SMTP_PORT                  = 465
+SMTP_SECURE                = true
+SMTP_USER                  = murillo.roseno.lima@gmail.com
+SMTP_APP_PASSWORD          = <senha-de-app-do-gmail-sem-espacos>
+SMTP_FROM_NAME             = Paroquia Sao Rafael - Fotos
+SMTP_REPLY_TO              = murillo.roseno.lima@gmail.com
 PUBLIC_APP_URL             = https://pascom-drive.vercel.app
 FRONTEND_URL                = http://localhost:3000
 NODE_ENV                    = development
@@ -72,7 +77,7 @@ NODE_ENV                    = development
 | `DOWNLOAD_JWT_SECRET` | Segredo privado para links temporários de entrega |
 | `GALLERY_SESSION_SECRET` | Segredo privado para sessões de galerias protegidas |
 | `GALLERY_CODE_SALT` | Salt privado compartilhado com Apps Script para hash dos códigos |
-| `RESEND_API_KEY` | Resend: chave para envio automático da entrega |
+| `SMTP_APP_PASSWORD` | Google: senha de app da conta Gmail usada apenas para entrega SMTP; cadastre como segredo no Vercel |
 
 ---
 
