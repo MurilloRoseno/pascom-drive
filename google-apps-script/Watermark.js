@@ -149,11 +149,7 @@ function processarFoto(arquivo, eventoId, counter) {
     var amostraFile = _helpers.getAmostrasFolder().createFile(blob);
     var linkAmostra = 'https://drive.google.com/file/d/' + amostraFile.getId() + '/view?usp=sharing';
 
-    // 4. Remove source file from SOURCE folder (avoid reprocessing on next trigger run).
-    //    Trash it — original is already safely backed up in ORIGINAIS (step 0).
-    arquivo.setTrashed(true);
-
-    // 5. Register in Sheet
+    // 4. Persist references before removing the source so failures can be retried.
     _helpers.registrarFoto({
       id:           id,
       evento:       evento,
@@ -163,6 +159,9 @@ function processarFoto(arquivo, eventoId, counter) {
       linkAmostra:  linkAmostra,
       preco:        PRECO_PADRAO,
     });
+
+    // Remove source only after successful persistence in the sheet.
+    arquivo.setTrashed(true);
 
     Logger.log('Foto processada: ' + id);
   } catch (e) {

@@ -184,8 +184,21 @@ function aplicarValidacaoLista(sheet, field, options) {
   sheet.getRange(2, column + 1, rows, 1).setDataValidation(rule);
 }
 
+function limparValidacoesAntigas(sheet) {
+  if (!sheet.getMaxRows) return;
+  var headers = headersMap(sheet).headers;
+  if (!headers.length) return;
+  var rows = Math.max(sheet.getMaxRows() - 1, 1);
+  var range = sheet.getRange(2, 1, rows, headers.length);
+  if (range.clearDataValidations) range.clearDataValidations();
+}
+
 function aplicarValidacoesAdministrativas() {
+  ABAS_COMERCIAIS.forEach(function(definition) {
+    limparValidacoesAntigas(ensureSheet(definition[0], definition[1]));
+  });
   var eventos = getEventosSheet();
+  // Column additions can leave an old list rule attached to a date/status cell.
   Object.keys(EVENTO_OPCOES).forEach(function(field) {
     aplicarValidacaoLista(eventos, field, EVENTO_OPCOES[field]);
   });

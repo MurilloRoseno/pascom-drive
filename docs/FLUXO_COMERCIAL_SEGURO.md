@@ -39,6 +39,10 @@ Execute `inicializarEstrutura()` no Apps Script antes da estreia. A funcao cria 
 
 Ao executar `inicializarEstrutura()`, as colunas com opcoes controladas recebem listas suspensas. Se a planilha atual tiver somente `Fotos` e `Eventos`, execute esta funcao novamente depois de copiar a versao mais recente do Apps Script para criar as abas comerciais que faltam. Como o projeto Apps Script e independente da planilha, a confirmacao aparece em `Registro de execucao`, e nao em uma caixa de dialogo.
 
+Se uma atualizacao anterior tiver deixado validacao `SIM/NAO` em coluna de data ou status (por exemplo, erro em `DataInicio`), a versao atual de `inicializarEstrutura()` remove as validacoes antigas das abas administradas e reaplica somente as listas corretas, sem apagar os dados.
+
+Se o processamento ja falhou antes dessa correcao, atualize `Sheet.gs` e `Watermark.gs`, execute `inicializarEstrutura()` e recoloque a pasta em fila: uma pasta renomeada para `_ERRO_*` deve voltar ao formato `{categoria}__{AAAA-MM-DD}__{titulo}`. Caso a versao anterior tenha enviado a foto de origem para a lixeira antes de registrar sua linha, restaure ou adicione novamente essa foto na pasta do evento antes de executar `processarEventos()`.
+
 Eventos existentes permanecem conservadoramente em rascunho/protegidos/sem venda ate revisao manual.
 
 ### Inicio Limpo Antes Da Estreia

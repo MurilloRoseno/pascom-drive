@@ -29,3 +29,16 @@ it('inicializa a estrutura em script independente sem exigir interface da planil
   expect(() => inicializarEstrutura()).not.toThrow();
   expect(Logger.log).toHaveBeenCalledWith(expect.stringContaining('Estrutura preparada'));
 });
+
+it('remove validacoes antigas antes de reaplicar as listas administrativas', () => {
+  const clearDataValidations = jest.fn();
+  __mockRange__.clearDataValidations = clearDataValidations;
+  __mockSheet__.getMaxRows = jest.fn().mockReturnValue(10);
+  try {
+    inicializarEstrutura();
+    expect(clearDataValidations).toHaveBeenCalled();
+  } finally {
+    delete __mockRange__.clearDataValidations;
+    delete __mockSheet__.getMaxRows;
+  }
+});

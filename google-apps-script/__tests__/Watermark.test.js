@@ -143,6 +143,15 @@ describe('processarFoto', () => {
     expect(mockArquivo.setTrashed).toHaveBeenCalledWith(true);
   });
 
+  it('keeps the source file available when registering the processed photo fails', () => {
+    mockRegistrarFoto.mockImplementationOnce(() => {
+      throw new Error('Validacao da planilha bloqueou a linha');
+    });
+
+    expect(() => processarFoto(mockArquivo)).toThrow('Validacao da planilha bloqueou a linha');
+    expect(mockArquivo.setTrashed).not.toHaveBeenCalled();
+  });
+
   it('sends admin email and reports API failure to the event orchestrator', () => {
     const errorResponse = {
       getResponseCode: jest.fn().mockReturnValue(500),
