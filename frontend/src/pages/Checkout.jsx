@@ -1,15 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { checkoutSchema } from '../lib/validation.js';
 import { cotarCheckout, criarPagamento } from '../lib/api.js';
 
 const money = (value) => `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
 const methods = [
-  ['pix', 'Pix', 'Confirmacao rapida'],
-  ['debit_card', 'Cartao de debito', 'Pagamento em debito'],
-  ['credit_card', 'Cartao de credito', 'Credito em 1x'],
+  { id: 'pix', label: 'Pix', hint: 'Confirmação rápida', detail: 'Pagamento instantâneo' },
+  { id: 'debit_card', label: 'Cartão de débito', hint: 'Taxa a confirmar', detail: 'Pagamento à vista' },
+  { id: 'credit_card', label: 'Cartão de crédito', hint: 'Crédito em 1x', detail: 'Recebimento imediato' },
 ];
+
+function PaymentIcon({ method }) {
+  if (method === 'pix') {
+    return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5 20.5 12 12 20.5 3.5 12 12 3.5Z" /><path d="m8.3 12 2.3 2.3 5-5" /></svg>;
+  }
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.75" y="5" width="18.5" height="14" rx="2.5" /><path d="M3 9.5h18M6.5 15h4" /></svg>;
+}
+
+PaymentIcon.propTypes = { method: PropTypes.string.isRequired };
 
 export default function CheckoutPage() {
   const { fotos, totais, removeFoto } = useCarrinho();
@@ -96,10 +106,16 @@ export default function CheckoutPage() {
             <p className="delivery-note">O e-mail recebe os links automaticamente. O WhatsApp sera usado pela secretaria para envio assistido.</p>
             <h2>3. Forma de pagamento</h2>
             <div className="payment-options">
-              {methods.map(([id, label, hint]) => (
-                <label className={method === id ? 'selected' : ''} key={id}>
-                  <input type="radio" checked={method === id} onChange={() => setMethod(id)} />
-                  <strong>{label}</strong><span>{hint}</span>
+              {methods.map(({ id, label, hint, detail }) => (
+                <label className={`payment-option${method === id ? ' selected' : ''}`} key={id}>
+                  <input type="radio" name="payment-method" checked={method === id} onChange={() => setMethod(id)} />
+                  <span className="payment-check" aria-hidden="true" />
+                  <span className="payment-icon"><PaymentIcon method={id} /></span>
+                  <span className="payment-copy">
+                    <strong>{label}</strong>
+                    <small>{detail}</small>
+                    <em>{hint}</em>
+                  </span>
                 </label>
               ))}
             </div>
@@ -117,7 +133,7 @@ export default function CheckoutPage() {
             <button className="payment-button" type="button" disabled={!pricing || loading} onClick={pay}>
               {loading ? 'Abrindo Mercado Pago...' : 'Pagar no Mercado Pago'}
             </button>
-            <small>O custo do pagamento e estimado conforme a regra administrativa ativa para o meio escolhido.</small>
+            <small>O custo de processamento é estimado conforme a regra administrativa ativa para o meio escolhido.</small>
           </aside>
         </div>
       )}

@@ -16,20 +16,28 @@ var CATEGORIAS_EVENTO = [
  * Invalid folders are processed as drafts and never automatically published.
  */
 function interpretarNomePasta(nomePasta) {
-  var partes = String(nomePasta || '').split('__');
+  // Pastas que voltam da quarentena podem carregar o carimbo operacional.
+  // Ele nunca deve virar parte do titulo exibido ao visitante.
+  var nomeNormalizado = String(nomePasta || '')
+    .replace(/^_(?:ERRO|QUARANTINE)_/, '')
+    .replace(/_\d{12}$/, '');
+  var partes = nomeNormalizado.split('__');
   var categoria = partes[0] || '';
   var dataEvento = partes[1] || '';
   var tituloSlug = partes.slice(2).join('__');
   var categoriaValida = CATEGORIAS_EVENTO.indexOf(categoria) !== -1;
   var dataValida = /^\d{4}-\d{2}-\d{2}$/.test(dataEvento) &&
     !isNaN(new Date(dataEvento + 'T12:00:00').getTime());
-  var tituloValido = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(tituloSlug);
+  var tituloValido = /^[a-z0-9\u00c0-\u024f]+(?:-[a-z0-9\u00c0-\u024f]+)*$/i.test(tituloSlug);
   var valido = categoriaValida && dataValida && tituloValido;
   var titulo = tituloSlug
-    ? tituloSlug.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); })
-    : String(nomePasta || '');
+    ? tituloSlug.split('-').map(function(palavra) {
+      return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+    }).join(' ')
+    : nomeNormalizado;
   return {
     valido: valido,
+    nomeNormalizado: nomeNormalizado,
     categoria: categoriaValida ? categoria : '',
     dataEvento: dataValida ? dataEvento : '',
     titulo: titulo,

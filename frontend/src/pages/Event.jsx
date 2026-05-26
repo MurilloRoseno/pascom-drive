@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { listarFotosEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
 import { categoryLabel } from '../data/categories.js';
+import { dateLabel } from '../lib/event-format.js';
 
 function eventToken(eventoId) {
   return sessionStorage.getItem(`gallery:${eventoId}`) || '';
@@ -125,7 +126,7 @@ export default function EventPage() {
             <h1 className="page-title">{event.title}</h1>
             <p className="page-summary">{event.description}</p>
             <ul className="event-details">
-              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M3 10h18" /></svg><span>{event.dateLabel || event.date}</span></li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M3 10h18" /></svg><span>{dateLabel(event)}</span></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg><span>{event.time || 'Horário a confirmar'}</span></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg><span>{event.location || 'Paróquia São Rafael'}</span></li>
             </ul>
@@ -155,12 +156,24 @@ export default function EventPage() {
             {loading && <div className="empty-state"><p>Carregando fotos...</p></div>}
             {!loading && photos.length === 0 && <div className="empty-state"><p>Ainda não há fotos disponíveis neste evento.</p></div>}
             <div className="photo-grid">
-              {photos.map((photo) => (
-                <button className="photo-button" type="button" key={photo.id} onClick={() => setParams({ foto: photo.id })} onContextMenu={(mouseEvent) => mouseEvent.preventDefault()}>
-                  <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
-                  <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
-                </button>
-              ))}
+              {photos.map((photo) => {
+                const selected = isSelected(photo.id);
+                const selectable = canBuy && photo.availableForSale === true;
+                return (
+                  <article className={`photo-tile${selected ? ' is-selected' : ''}`} key={photo.id}>
+                    <button className="photo-button" type="button" onClick={() => setParams({ foto: photo.id })} onContextMenu={(mouseEvent) => mouseEvent.preventDefault()}>
+                      <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
+                      <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
+                      {selected && <span className="selected-chip">Selecionada</span>}
+                    </button>
+                    {selectable && (
+                      <button className={`photo-select${selected ? ' selected' : ''}`} type="button" onClick={() => togglePurchase(photo)}>
+                        {selected ? 'Remover seleção' : `Selecionar foto - R$ ${Number(photo.price || 10).toFixed(2).replace('.', ',')}`}
+                      </button>
+                    )}
+                  </article>
+                );
+              })}
             </div>
           </>
         )}

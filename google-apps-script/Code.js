@@ -18,12 +18,15 @@ function onOpen() {
     SpreadsheetApp.getUi()
       .createMenu('Pascom Drive')
       .addItem('Preparar estrutura segura', 'inicializarEstrutura')
+      .addItem('Normalizar nomes de eventos', 'normalizarMetadadosEventos')
       .addSeparator()
       .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
       .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')
       .addItem('Revogar venda selecionada', 'revogarVendaSelecionada')
       .addItem('Sincronizar venda com fotos', 'sincronizarVendaSelecionada')
       .addItem('Alternar visibilidade selecionada', 'alternarVisibilidadeSelecionada')
+      .addSeparator()
+      .addItem('Cadastrar taxas Mercado Pago D0', 'cadastrarRegrasMercadoPagoD0')
       .addSeparator()
       .addItem('Gerar codigo de acesso', 'gerarCodigoEventoSelecionado')
       .addItem('Revogar codigo de acesso', 'revogarCodigoEventoSelecionado')
@@ -66,7 +69,8 @@ function processarEventos() {
 
   // 3. Processa um evento por vez (lock evita paralelismo)
   var evento   = novos[0];
-  var eventoId = gerarEventoId(evento.nomePasta);
+  var metadados = interpretarNomePasta(evento.nomePasta);
+  var eventoId = gerarEventoId(metadados.nomeNormalizado || evento.nomePasta);
 
   if (!acquireLock(eventoId)) {
     var lock = getLockStatus();
@@ -78,10 +82,9 @@ function processarEventos() {
   try {
     // Registra antes de mudar status (garante linha existente para atualizarStatusEvento)
     var arquivos = listarArquivosDoEvento(evento.folderId);
-    var metadados = interpretarNomePasta(evento.nomePasta);
     registrarEvento({
       eventoId:   eventoId,
-      nomePasta:  evento.nomePasta,
+      nomePasta:  metadados.nomeNormalizado || evento.nomePasta,
       folderId:   evento.folderId,
       totalFotos: arquivos.length,
       titulo: metadados.titulo,

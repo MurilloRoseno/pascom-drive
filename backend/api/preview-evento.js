@@ -9,11 +9,11 @@ module.exports = async function handler(req, res, next) {
     if (!event || event.publication !== 'publicado') {
       return res.status(404).json({ error: 'Evento nao encontrado.' });
     }
-    if (!tokenAllowsEvent(String(req.query.token || ''), event)) {
-      return res.status(401).json({ error: 'Acesso a previa nao autorizado.' });
-    }
     const photo = await buscarPreviewFoto(event.eventoId, req.params.fotoId);
     if (!photo) return res.status(404).json({ error: 'Previa nao encontrada.' });
+    if (photo.type !== 'capa' && !tokenAllowsEvent(String(req.query.token || ''), event)) {
+      return res.status(401).json({ error: 'Acesso a previa nao autorizado.' });
+    }
 
     const { buffer, mimeType } = await downloadFile(photo.previewFileId);
     res.setHeader('Cache-Control', 'private, no-store');

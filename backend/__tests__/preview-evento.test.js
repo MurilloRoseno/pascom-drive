@@ -49,3 +49,10 @@ it('transmite amostra real de evento publico sem exigir codigo', async () => {
   expect(response.status).toBe(200);
   expect(drive.downloadFile).toHaveBeenCalledWith('PREVIEW_PRIVATE_ID');
 });
+
+it('transmite capa editorial publicada sem abrir as demais fotos protegidas', async () => {
+  sheets.buscarPreviewFoto.mockResolvedValueOnce({ previewFileId: 'COVER_PRIVATE_ID', type: 'capa' });
+  const response = await request(app).get('/api/eventos/EV1/previews/CAPA1');
+  expect(response.status).toBe(200);
+  expect(drive.downloadFile).toHaveBeenCalledWith('COVER_PRIVATE_ID');
+});

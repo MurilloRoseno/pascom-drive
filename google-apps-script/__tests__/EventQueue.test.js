@@ -11,3 +11,10 @@ it('interpreta pasta com categoria e data permitidas', () => {
 it('mantem pasta invalida pendente de configuracao', () => {
   expect(interpretarNomePasta('formatura__publica__turma')).toEqual(expect.objectContaining({ valido: false }));
 });
+
+it('remove carimbo de quarentena do titulo ao reprocessar pasta', () => {
+  expect(interpretarNomePasta('_ERRO_ordem__2026-05-26__padre-paulo-na-frança_202605261456')).toEqual(expect.objectContaining({
+    valido: true,
+    titulo: 'Padre Paulo Na França',
+  }));
+});

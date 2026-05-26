@@ -13,7 +13,12 @@ function calculatePricing(quantity, method, rules) {
   if (!rule) throw new Error('Pagamento indisponivel ate cadastrar a taxa estimada deste meio.');
   const subtotal = roundMoney(quantity * PHOTO_PRICE);
   const feeBase = subtotal + SERVICE_FEE + CONVENIENCE_FEE;
-  const paymentCost = roundMoney((feeBase * rule.percentage) / 100 + rule.fixed);
+  const percentage = Number(rule.percentage || 0) / 100;
+  if (percentage < 0 || percentage >= 1) throw new Error('Taxa administrativa invalida.');
+  // The Mercado Pago tariff applies to the amount charged, including the
+  // processing cost line. Gross-up keeps the estimated net at feeBase.
+  const chargedTotal = (feeBase + Number(rule.fixed || 0)) / (1 - percentage);
+  const paymentCost = roundMoney(chargedTotal - feeBase);
   return {
     unitPrice: PHOTO_PRICE,
     subtotal,

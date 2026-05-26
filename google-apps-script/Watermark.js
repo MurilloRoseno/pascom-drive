@@ -44,6 +44,10 @@ function gerarNomeAmostra(nome) {
   return '[AMOSTRA]' + nome;
 }
 
+function ehArquivoCapa(nome) {
+  return /^capa(?:\.[^.]+)?$/i.test(String(nome || '').trim());
+}
+
 /**
  * Call /api/preprocess to convert format + compress.
  * Returns parsed JSON body on success, null if unsupported format (422 → skip silently).
@@ -99,6 +103,7 @@ function processarFoto(arquivo, eventoId, counter) {
   try {
     var id = gerarIdFoto();
     var nomeOriginal = arquivo.getName();
+    var capa = ehArquivoCapa(nomeOriginal);
     // Quando chamado pelo orquestrador multi-evento, eventoId já vem como parâmetro.
     // Fallback para comportamento legado (pasta pai) se não for passado.
     var evento = eventoId || (arquivo.getParents().hasNext()
@@ -126,7 +131,8 @@ function processarFoto(arquivo, eventoId, counter) {
       watermarkType: 'auto',  // backend auto-detects color vs B&W based on image saturation
     });
 
-    var response = UrlFetchApp.fetch(backendUrl + '/api/watermark', {
+    var rotaImagem = capa ? '/api/cover-preview' : '/api/watermark';
+    var response = UrlFetchApp.fetch(backendUrl + rotaImagem, {
       method:             'POST',
       headers:            headers,
       payload:            payload,
@@ -134,14 +140,16 @@ function processarFoto(arquivo, eventoId, counter) {
     });
 
     if (response.getResponseCode() !== 200) {
-      throw new Error('Watermark API falhou (' + response.getResponseCode() + '): ' + response.getContentText());
+      throw new Error('Preview API falhou (' + response.getResponseCode() + '): ' + response.getContentText());
     }
 
     // 3. Save the returned JPEG blob to AMOSTRAS folder as the authenticated user
     //    (service account has no Drive quota, but Apps Script runs as the user who does)
     //    Always use .jpg extension — backend always returns JPEG regardless of input format.
     //    Multi-event: se tiver eventoId e counter, usa nomenclatura padronizada.
-    var nomeAmostra = (eventoId && counter)
+    var nomeAmostra = capa && eventoId
+      ? '[CAPA]' + eventoId + '.jpg'
+      : (eventoId && counter)
       ? gerarNomeAmostra(eventoId + '_' + String(counter).padStart(4, '0') + '.jpg')
       : gerarNomeAmostra(id + '_' + nomeOriginal.replace(/\.[^.]+$/, '.jpg'));
     var blob = response.getBlob();
@@ -157,6 +165,7 @@ function processarFoto(arquivo, eventoId, counter) {
       originalFileId: originalFileId,
       previewFileId:  amostraFile.getId(),
       linkAmostra:  linkAmostra,
+      tipoFoto:     capa ? 'capa' : 'foto',
       preco:        PRECO_PADRAO,
     });
 
@@ -173,5 +182,5 @@ function processarFoto(arquivo, eventoId, counter) {
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { gerarIdFoto, gerarNomeAmostra, notificarErroProcessamento, processarFoto };
+  module.exports = { gerarIdFoto, gerarNomeAmostra, ehArquivoCapa, notificarErroProcessamento, processarFoto };
 }

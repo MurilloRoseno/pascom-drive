@@ -6,10 +6,11 @@ function row(data) {
 }
 
 const eventRows = [
-  row({ EventoID: 'EV1', Titulo: 'Missa', Categoria: 'celebracoes', Publicacao: 'publicado', Visibilidade: 'publica', VendaAutorizada: 'SIM' }),
+  row({ EventoID: 'EV1', Titulo: 'Padre Paulo Na FranÇA_202605261456', Categoria: 'celebracoes', DataEvento: '2026-05-26', HorarioEvento: '15:32', Publicacao: 'publicado', Visibilidade: 'publica', VendaAutorizada: 'SIM' }),
   row({ EventoID: 'EV2', Titulo: 'Rascunho', Publicacao: 'rascunho', Visibilidade: 'protegida', VendaAutorizada: 'NAO' }),
 ];
 const photoRows = [
+  row({ FotoID: 'CAPA1', EventoID: 'EV1', TipoFoto: 'capa', PreviewFileID: 'COVER_1', OriginalFileID: 'PRIVATE_COVER', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F1', EventoID: 'EV1', PreviewFileID: 'PREVIEW_1', OriginalFileID: 'PRIVATE_1', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F2', EventoID: 'EV2', PreviewFileID: 'PREVIEW_2', OriginalFileID: 'PRIVATE_2', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
   row({ FotoID: 'F3', EventoID: 'EV1', PreviewFileID: 'PREVIEW_LEGACY', OriginalFileID: 'PRIVATE_LEGACY', StatusProcessamento: 'Processada', PrecoUnitario: '10' }),
@@ -31,8 +32,10 @@ const {
 it('lista apenas evento publicado e remove configuracao secreta', async () => {
   expect(await listarEventosPublicados()).toEqual([expect.objectContaining({
     eventoId: 'EV1',
-    title: 'Missa',
-    cover: '/api/eventos/EV1/previews/F1',
+    title: 'Padre Paulo Na França',
+    dateLabel: '26 de maio de 2026',
+    time: '15:32',
+    cover: '/api/eventos/EV1/previews/CAPA1',
   })]);
 });
 

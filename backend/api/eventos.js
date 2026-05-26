@@ -1,4 +1,4 @@
-const { listarEventosPublicados, buscarEvento, listarFotosEvento } = require('../lib/google-sheets');
+const { listarEventosPublicados, buscarEvento, listarFotosEvento, buscarCapaEvento } = require('../lib/google-sheets');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -9,7 +9,10 @@ module.exports = async function handler(req, res, next) {
       const safeEvent = { ...event };
       delete safeEvent.codeHash;
       delete safeEvent.codeVersion;
-      if (safeEvent.visibility === 'publica') {
+      const cover = await buscarCapaEvento(safeEvent.eventoId);
+      if (cover) {
+        safeEvent.cover = cover;
+      } else if (safeEvent.visibility === 'publica') {
         const photos = await listarFotosEvento(safeEvent.eventoId);
         if (photos.length) safeEvent.cover = photos[0].previewUrl;
       }

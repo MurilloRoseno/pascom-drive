@@ -2,6 +2,7 @@
 const {
   gerarIdFoto,
   gerarNomeAmostra,
+  ehArquivoCapa,
   processarFoto,
 } = require('../Watermark');
 
@@ -52,6 +53,14 @@ describe('gerarIdFoto', () => {
 describe('gerarNomeAmostra', () => {
   it('prepends [AMOSTRA] to the filename', () => {
     expect(gerarNomeAmostra('foto.jpg')).toBe('[AMOSTRA]foto.jpg');
+  });
+});
+
+describe('ehArquivoCapa', () => {
+  it('reconhece somente arquivo editorial nomeado capa', () => {
+    expect(ehArquivoCapa('capa.jpg')).toBe(true);
+    expect(ehArquivoCapa('Capa.PNG')).toBe(true);
+    expect(ehArquivoCapa('capa-foto.jpg')).toBe(false);
   });
 });
 
@@ -120,6 +129,13 @@ describe('processarFoto', () => {
     const fetchCall = UrlFetchApp.fetch.mock.calls[1];
     const fetchOptions = fetchCall[1];
     expect(fetchOptions.headers['x-watermark-secret']).toBeDefined();
+  });
+
+  it('gera capa editorial sem solicitar watermark e a marca como nao vendavel', () => {
+    mockArquivo.getName.mockReturnValueOnce('capa.jpg');
+    processarFoto(mockArquivo, 'EV1', 1);
+    expect(global.UrlFetchApp.fetch.mock.calls[1][0]).toContain('/api/cover-preview');
+    expect(mockRegistrarFoto).toHaveBeenCalledWith(expect.objectContaining({ tipoFoto: 'capa' }));
   });
 
   it('saves returned blob to AMOSTRAS folder via createFile', () => {

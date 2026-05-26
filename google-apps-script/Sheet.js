@@ -2,7 +2,7 @@
 // The Eventos sheet is the source of truth for publication, access and sales.
 
 var EVENTOS_HEADERS = [
-  'EventoID', 'NomePasta', 'FolderID', 'Titulo', 'Categoria', 'DataEvento',
+  'EventoID', 'NomePasta', 'FolderID', 'Titulo', 'Categoria', 'DataEvento', 'HorarioEvento',
   'StatusProcessamento', 'Visibilidade', 'VendaAutorizada', 'Publicacao',
   'ProtecaoMenores', 'CodigoHash', 'CodigoVersao', 'CodigoGeradoEm',
   'CodigoRevogadoEm', 'TotalFotos', 'FotosProcessadas', 'FotosEntregues',
@@ -12,7 +12,7 @@ var EVENTOS_HEADERS = [
 
 var FOTOS_HEADERS = [
   'FotoID', 'EventoID', 'OriginalFileID', 'PreviewFileID',
-  'StatusProcessamento', 'DisponivelVenda', 'PrecoUnitario',
+  'TipoFoto', 'StatusProcessamento', 'DisponivelVenda', 'PrecoUnitario',
   'DataProcessamento',
 ];
 
@@ -217,6 +217,7 @@ function registrarEvento(eventData) {
     Titulo: eventData.titulo || eventData.nomePasta,
     Categoria: eventData.categoria || '',
     DataEvento: eventData.dataEvento || '',
+    HorarioEvento: eventData.horarioEvento || '',
     StatusProcessamento: 'Pendente',
     Visibilidade: 'protegida',
     VendaAutorizada: 'NAO',
@@ -295,6 +296,7 @@ function registrarFoto(dados) {
     EventoID: dados.eventoId || '',
     OriginalFileID: dados.originalFileId,
     PreviewFileID: dados.previewFileId,
+    TipoFoto: dados.tipoFoto === 'capa' ? 'capa' : 'foto',
     StatusProcessamento: 'Processada',
     DisponivelVenda: 'NAO',
     PrecoUnitario: dados.preco || 10,
@@ -313,13 +315,70 @@ function atualizarDisponibilidadeFotos(eventoId, value) {
   var data = sheet.getDataRange().getValues();
   var headers = data[0] || [];
   var eventoCol = headers.indexOf('EventoID');
+  var tipoFotoCol = headers.indexOf('TipoFoto');
   var disponibilidadeCol = headers.indexOf('DisponivelVenda');
   if (eventoCol < 0 || disponibilidadeCol < 0) return;
   for (var i = 1; i < data.length; i++) {
     if (data[i][eventoCol] === eventoId) {
-      sheet.getRange(i + 1, disponibilidadeCol + 1).setValue(value);
+      var ehCapa = tipoFotoCol >= 0 && data[i][tipoFotoCol] === 'capa';
+      sheet.getRange(i + 1, disponibilidadeCol + 1).setValue(ehCapa ? 'NAO' : value);
     }
   }
+}
+
+/**
+ * Cadastra apenas tarifas oficiais confirmadas para Checkout online D0.
+ * Debito fica desativado ate que a taxa aplicavel apareca no painel da conta.
+ */
+function cadastrarRegrasMercadoPagoD0() {
+  var sheet = ensureSheet('RegrasPagamento', REGRAS_HEADERS);
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var regras = [
+    { MeioPagamento: 'pix', PercentualEstimado: 0.99, ValorFixo: 0, Vigencia: 'Tabela Mercado Pago 03/11/2025 - Checkout D0', Ativo: 'SIM' },
+    { MeioPagamento: 'credit_card', PercentualEstimado: 4.98, ValorFixo: 0, Vigencia: 'Tabela Mercado Pago 03/11/2025 - Checkout D0 1x', Ativo: 'SIM' },
+    { MeioPagamento: 'debit_card', PercentualEstimado: 0, ValorFixo: 0, Vigencia: 'Aguardando taxa Checkout Pro da conta', Ativo: 'NAO' },
+  ];
+  regras.forEach(function(regra) {
+    var rowNumber = -1;
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][headers.indexOf('MeioPagamento')] === regra.MeioPagamento) {
+        rowNumber = i + 1;
+        break;
+      }
+    }
+    if (rowNumber < 0) {
+      appendMappedRow(sheet, regra);
+    } else {
+      Object.keys(regra).forEach(function(field) {
+        setField(sheet, rowNumber, field, regra[field]);
+      });
+    }
+  });
+  aplicarValidacoesAdministrativas();
+  notificarAdministracao('Pix e credito 1x D0 cadastrados. Debito permanece desativado ate confirmar a tarifa da conta Mercado Pago.');
+}
+
+function normalizarMetadadosEventos() {
+  var sheet = getEventosSheet();
+  var data = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var atualizados = 0;
+  for (var i = 1; i < data.length; i++) {
+    var item = rowToObject(headers, data[i]);
+    if (!item.EventoID || !item.NomePasta) continue;
+    var metadados = interpretarNomePasta(item.NomePasta);
+    if (metadados.nomeNormalizado !== item.NomePasta) {
+      setField(sheet, i + 1, 'NomePasta', metadados.nomeNormalizado);
+      atualizados += 1;
+    }
+    if (metadados.valido) {
+      setField(sheet, i + 1, 'Titulo', metadados.titulo);
+      setField(sheet, i + 1, 'Categoria', metadados.categoria);
+      setField(sheet, i + 1, 'DataEvento', metadados.dataEvento);
+    }
+  }
+  notificarAdministracao(atualizados + ' evento(s) com nome operacional normalizado(s).');
 }
 
 function eventoProntoParaRemover(eventoId) {
@@ -467,6 +526,8 @@ if (typeof module !== 'undefined') {
     revogarCodigoEventoSelecionado: revogarCodigoEventoSelecionado,
     arquivarEventoSelecionado: arquivarEventoSelecionado,
     aplicarValidacoesAdministrativas: aplicarValidacoesAdministrativas,
+    cadastrarRegrasMercadoPagoD0: cadastrarRegrasMercadoPagoD0,
+    normalizarMetadadosEventos: normalizarMetadadosEventos,
     codigoHash: codigoHash, COL: COL,
   };
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
+import { scheduleLabel } from '../lib/event-format.js';
 
 const sacraments = [
   ['batismo', 'Batismo', 'Novo nascimento na vida cristã', 'batismo.ico'],
@@ -46,7 +47,7 @@ function EventCard({ event }) {
         <div className="evento-info">
           <div className="evento-titulo">{event.title}</div>
           <div className="evento-meta">
-            <span>◷ {event.dateLabel || event.date} às {event.time || 'Horário a confirmar'}</span>
+            <span>◷ {scheduleLabel(event)}</span>
             <span>⌖ {event.location || 'Paróquia São Rafael'}</span>
           </div>
           <span className="evento-link">
@@ -163,7 +164,7 @@ export default function HomePage() {
             return (
               <Link className="ativ-item" to={`/evento/${encodeURIComponent(event.eventoId)}`} key={event.eventoId} aria-label={`Abrir evento ${event.title}`}>
                 <div className="ativ-data"><span className="dia">{day}</span><span className="mes">{month}</span></div>
-                <div className="ativ-texto"><div className="ativ-nome">{event.title}</div><div className="ativ-local">{event.location || 'Paróquia São Rafael'} · {event.time || 'Horário a confirmar'}</div></div>
+                <div className="ativ-texto"><div className="ativ-nome">{event.title}</div><div className="ativ-local">{event.location || 'Paróquia São Rafael'} · {scheduleLabel(event)}</div></div>
               </Link>
             );
           })}

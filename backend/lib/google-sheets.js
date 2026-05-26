@@ -19,6 +19,25 @@ function yes(value) {
   return String(value || '').toUpperCase() === 'SIM' || value === true;
 }
 
+function displayTitle(value) {
+  const clean = String(value || '').replace(/_\d{12}$/, '').replace(/_/g, ' ').trim();
+  // Repairs titles produced by the old ASCII word-boundary title casing
+  // (for example, "FranÇA") without rewriting intentionally authored titles.
+  return clean.replace(/([a-zà-ÿ])([A-ZÀ-Ý]{2,})/g, (_match, first, tail) => (
+    first + tail.toLocaleLowerCase('pt-BR')
+  ));
+}
+
+function dateLabel(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))) return '';
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${value}T12:00:00Z`));
+}
+
 let _doc = null;
 
 async function getDoc() {
@@ -48,12 +67,15 @@ async function rows(title) {
 }
 
 function eventoFromRow(row) {
+  const date = row.get('DataEvento') || '';
   return {
     eventoId: row.get('EventoID'),
-    title: row.get('Titulo') || row.get('NomePasta'),
+    title: displayTitle(row.get('Titulo') || row.get('NomePasta')),
     nomePasta: row.get('NomePasta'),
     category: row.get('Categoria') || '',
-    date: row.get('DataEvento') || '',
+    date,
+    dateLabel: dateLabel(date),
+    time: row.get('HorarioEvento') || '',
     visibility: row.get('Visibilidade') || 'protegida',
     salesAuthorized: yes(row.get('VendaAutorizada')),
     publication: row.get('Publicacao') || 'rascunho',
@@ -70,14 +92,16 @@ function eventoFromRow(row) {
 function fotoFromRow(row) {
   const id = row.get('FotoID') || row.get('ID');
   const previewId = row.get('PreviewFileID');
+  const type = row.get('TipoFoto') === 'capa' ? 'capa' : 'foto';
   return {
     id,
     eventoId: row.get('EventoID') || '',
     previewFileId: previewId || '',
     previewUrl: previewId ? drivePreviewUrl(previewId) : driveUrlToThumbnail(row.get('Link_Amostra')),
     price: Number(row.get('PrecoUnitario') || row.get('Preco') || 10),
+    type,
     // Fail closed: legacy or incomplete rows are not saleable without explicit approval.
-    availableForSale: yes(row.get('DisponivelVenda')),
+    availableForSale: type !== 'capa' && yes(row.get('DisponivelVenda')),
     status: row.get('StatusProcessamento') || row.get('Status'),
     originalFileId: row.get('OriginalFileID') || '',
   };
@@ -98,7 +122,12 @@ async function listarEventosPublicados({ categoria = '', q = '' } = {}) {
       const publicEvent = { ...event };
       delete publicEvent.codeHash;
       delete publicEvent.codeVersion;
-      if (event.visibility === 'publica') {
+      const cover = photoRows.find((foto) =>
+        foto.eventoId === event.eventoId && foto.type === 'capa' && foto.status === 'Processada' && foto.previewFileId
+      );
+      if (cover) {
+        publicEvent.cover = applicationPreviewUrl(event.eventoId, cover.id);
+      } else if (event.visibility === 'publica') {
         const firstPhoto = photoRows.find((foto) =>
           foto.eventoId === event.eventoId && foto.status === 'Processada' && foto.previewFileId
         );
@@ -115,7 +144,7 @@ async function buscarEvento(eventoId) {
 async function listarFotosEvento(eventoId) {
   return (await rows('Fotos'))
     .map(fotoFromRow)
-    .filter((foto) => foto.eventoId === eventoId && foto.status === 'Processada')
+    .filter((foto) => foto.eventoId === eventoId && foto.type !== 'capa' && foto.status === 'Processada')
     .map((foto) => {
       const preview = {
         ...foto,
@@ -133,7 +162,14 @@ async function buscarPreviewFoto(eventoId, fotoId) {
     .map(fotoFromRow)
     .find((foto) => foto.eventoId === eventoId && foto.id === fotoId && foto.status === 'Processada');
   if (!photo || !photo.previewFileId) return null;
-  return { previewFileId: photo.previewFileId };
+  return { previewFileId: photo.previewFileId, type: photo.type };
+}
+
+async function buscarCapaEvento(eventoId) {
+  const cover = (await rows('Fotos'))
+    .map(fotoFromRow)
+    .find((foto) => foto.eventoId === eventoId && foto.type === 'capa' && foto.status === 'Processada' && foto.previewFileId);
+  return cover ? applicationPreviewUrl(eventoId, cover.id) : '';
 }
 
 async function listarFotos() {
@@ -326,7 +362,7 @@ function novoPedidoId() {
 
 module.exports = {
   driveUrlToThumbnail, applicationPreviewUrl, listarFotos, listarEventos, listarEventosPublicados,
-  buscarEvento, listarFotosEvento, buscarPreviewFoto, buscarFotosParaCompra, listarRegrasPagamento,
+  buscarEvento, listarFotosEvento, buscarPreviewFoto, buscarCapaEvento, buscarFotosParaCompra, listarRegrasPagamento,
   registrarPedido, buscarPedidoById, buscarPedidoByPreferenceOrPayment,
   atualizarPedidoPagamento, registrarEntrega, registrarWebhookSeNovo, finalizarWebhook,
   listarItensPedido, buscarOriginaisPedido, criarAutorizacoesDownload,

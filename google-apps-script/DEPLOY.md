@@ -7,10 +7,14 @@ O erro `ReferenceError: jest is not defined` ocorre quando arquivos de teste sao
 1. No editor do Apps Script, exclua `jest-setup.gs`, `jest.config.gs` e qualquer arquivo de teste ou cobertura publicado.
 2. Confirme que restam apenas `appsscript.json`, `Code`, `Drive`, `EventQueue`, `Sheet`, `Watermark` e `WhatsApp`.
 3. Execute `inicializarEstrutura()` uma vez para preparar as abas seguras. Em projeto independente, a conclusao sera informada no `Registro de execucao`, sem alerta visual.
-4. Execute `criarTriggers()` para reinstalar apenas o processamento de eventos.
-5. Ao executar uma funcao manualmente depois de atualizar `appsscript.json`, aceite a nova permissao de envio de e-mail (`script.send_mail`). Sem ela, o processamento continua registrando o erro real, mas os avisos por e-mail para a administracao nao serao enviados.
+4. Se ja existirem nomes com carimbo de erro como `_202605261456`, execute `normalizarMetadadosEventos()`.
+5. Execute `cadastrarRegrasMercadoPagoD0()` para habilitar Pix e credito 1x nas taxas oficiais de Checkout D0; debito continua aguardando confirmacao no painel.
+6. Execute `criarTriggers()` para reinstalar apenas o processamento de eventos.
+7. Ao executar uma funcao manualmente depois de atualizar `appsscript.json`, aceite a nova permissao de envio de e-mail (`script.send_mail`). Sem ela, o processamento continua registrando o erro real, mas os avisos por e-mail para a administracao nao serao enviados.
 
 Se a base ainda contem somente dados de desenvolvimento e deve iniciar limpa, defina temporariamente a propriedade de script `CONFIRMAR_RESET_INICIAL=APAGAR_DADOS_DE_TESTE` e execute `reiniciarDadosParaEstreia()` antes de criar novos eventos. O reset nao remove arquivos antigos do Drive.
+
+Eventos usam `DataEvento=AAAA-MM-DD` e `HorarioEvento=HH:mm`; nao preencha `DataPublicacao` com horario da missa, pois ela registra apenas o momento em que a galeria foi publicada. Para uma capa publica sem marca d'agua e fora da venda, coloque `capa.jpg` dentro da pasta antes do primeiro processamento.
 
 ## Proximas publicacoes
 

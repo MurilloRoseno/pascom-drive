@@ -13,6 +13,8 @@ Categorias aceitas: `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento
 
 O Apps Script processa fotos imediatamente para original privado e preview com marca d'agua. Todo evento novo nasce oculto com `Publicacao=rascunho`, `Visibilidade=protegida` e `VendaAutorizada=NAO`. Nomes invalidos ficam pendentes de configuracao e nunca sao publicados automaticamente.
 
+Para escolher a imagem do card e do cabecalho do evento, inclua na pasta uma imagem chamada exatamente `capa` com extensao de imagem, por exemplo `capa.jpg`. Ela e tratada como imagem editorial publica: recebe reducao para ate `1280px`, nao recebe marca d'agua e nunca e liberada para venda. Use nessa capa somente uma imagem autorizada para exposicao publica. As demais imagens continuam como previews protegidas com marca d'agua.
+
 ## Onde Fica A Foto Original
 
 A aba `Fotos` possui colunas antigas e novas porque a planilha foi migrada sem perder historico:
@@ -21,6 +23,7 @@ A aba `Fotos` possui colunas antigas e novas porque a planilha foi migrada sem p
 | --- | --- |
 | `OriginalFileID` | ID privado do original, usado apenas pelo backend depois da compra aprovada. Deve estar preenchido nas fotos novas. |
 | `PreviewFileID` | ID da amostra com marca d'agua exibida no site. |
+| `TipoFoto` | `foto` para item vendavel ou `capa` para a imagem editorial publica sem marca d'agua. |
 | `Link_Amostra` | Compatibilidade visual com linhas antigas; pode continuar preenchido. |
 | `Link_Original` | Campo legado. Em fotos novas deve ficar vazio de proposito. |
 
@@ -43,6 +46,8 @@ Se uma atualizacao anterior tiver deixado validacao `SIM/NAO` em coluna de data 
 
 Se o processamento ja falhou antes dessa correcao, atualize `Sheet.gs` e `Watermark.gs`, execute `inicializarEstrutura()` e recoloque a pasta em fila: uma pasta renomeada para `_ERRO_*` deve voltar ao formato `{categoria}__{AAAA-MM-DD}__{titulo}`. Caso a versao anterior tenha enviado a foto de origem para a lixeira antes de registrar sua linha, restaure ou adicione novamente essa foto na pasta do evento antes de executar `processarEventos()`.
 
+Se uma linha existente ficou com o carimbo de quarentena no nome, por exemplo `_202605261456`, copie tambem `EventQueue.gs` e execute `normalizarMetadadosEventos()`. O script remove o carimbo de `NomePasta` e recompõe `Titulo`, `Categoria` e `DataEvento` sem mexer em publicacao ou venda.
+
 Eventos existentes permanecem conservadoramente em rascunho/protegidos/sem venda ate revisao manual.
 
 ### Inicio Limpo Antes Da Estreia
@@ -61,6 +66,8 @@ O reset remove dados das abas `Eventos`, `Fotos`, `Pedidos`, `ItensPedido`, `Web
 | Coluna | Valores Permitidos | Efeito |
 | --- | --- | --- |
 | `Categoria` | `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento`, `uncao-dos-enfermos`, `ordem` | Define filtro e agrupamento no site. |
+| `DataEvento` | data no formato `AAAA-MM-DD`, por exemplo `2026-05-26` | Define a data da celebracao exibida no site. |
+| `HorarioEvento` | hora no formato `HH:mm`, por exemplo `15:32` | Exibe `26 de maio de 2026 as 15:32`; deixe vazio para `Horario a confirmar`. |
 | `StatusProcessamento` | preenchido pelo script, normalmente `Pendente`, `Processando`, `Processado` ou `Erro` | Indica se previews e originais foram preparados. |
 | `Visibilidade` | `publica` ou `protegida` | `publica` abre previews sem codigo; `protegida` exige codigo valido. |
 | `VendaAutorizada` | `SIM` ou `NAO` | Autoriza checkout; o script sincroniza esse valor para as fotos no proximo processamento ou por execucao manual. |
@@ -68,6 +75,8 @@ O reset remove dados das abas `Eventos`, `Fotos`, `Pedidos`, `ItensPedido`, `Web
 | `ProtecaoMenores` | `SIM` ou `NAO` | Com `SIM`, o evento deve continuar `protegida`. |
 
 Nao edite `CodigoHash` manualmente. Em galerias protegidas, execute `gerarCodigoEventoSelecionado()` conforme as instrucoes abaixo; somente o hash fica salvo na planilha.
+
+`DataPublicacao` nao e o horario do evento: ela e preenchida pelo script ao publicar e registra quando a galeria entrou no ar. Para o horario da celebracao, use somente `HorarioEvento`.
 
 ## Liberacao Administrativa
 
@@ -92,7 +101,7 @@ Para gerar ou revogar codigo em uma galeria protegida:
 
 Depois que a linha do evento estiver com `StatusProcessamento=Processado`:
 
-1. Confira `Titulo`, `Categoria` e `DataEvento`.
+1. Confira `Titulo`, `Categoria`, `DataEvento` e preencha `HorarioEvento` se o horario ja for conhecido.
 2. Para uma galeria aberta, escolha `Visibilidade=publica`; para galeria privada, escolha `Visibilidade=protegida` e gere o codigo.
 3. Escolha `VendaAutorizada=SIM` para fotos comercializaveis, ou `NAO` para apenas exibir a galeria.
 4. Execute `sincronizarConfiguracoesAdministrativas()` para liberar imediatamente as fotos autorizadas; o trigger tambem executa esta sincronizacao automaticamente.
@@ -103,6 +112,8 @@ Para retirar um evento do ar, escolha `Publicacao=arquivado`. Para manter o even
 O site nao possui catalogo demonstrativo: home, busca, atividades e galeria mostram somente eventos publicados na aba `Eventos` e fotos processadas na aba `Fotos`.
 
 As imagens exibidas nao usam link publico permanente do Drive. Para galerias `publica`, a API transmite a amostra real com marca d'agua por uma URL interna do evento. Para galerias `protegida`, a mesma URL so responde enquanto houver uma sessao temporaria valida obtida pelo codigo da galeria. Os originais permanecem privados e sao usados apenas na entrega apos pagamento aprovado.
+
+A unica excecao intencional e `capa.jpg`: por ser a imagem de divulgacao escolhida pela secretaria, ela e servida publicamente sem marca d'agua e nao aparece na grade compravel.
 
 ## Opcoes Da Aba RegrasPagamento
 
@@ -122,6 +133,16 @@ As imagens exibidas nao usam link publico permanente do Drive. Para galerias `pu
 - Custo estimado do pagamento: calculado no backend conforme a aba `RegrasPagamento`.
 
 Cadastre em `RegrasPagamento` uma linha ativa por meio (`pix`, `debit_card`, `credit_card`) com percentual e valor fixo obtidos no painel Mercado Pago. Sem regra ativa, o checkout permanece bloqueado.
+
+Para iniciar com as tarifas oficiais confirmadas para Checkout online em liberacao imediata (`D0`), execute `cadastrarRegrasMercadoPagoD0()` no Apps Script. A funcao registra:
+
+| Meio | Percentual | Ativo | Fonte |
+| --- | ---: | --- | --- |
+| `pix` | `0.99` | `SIM` | Tabela Mercado Pago, vigente a partir de 03/11/2025, Checkout Pix/Open Finance D0. |
+| `credit_card` | `4.98` | `SIM` | Tabela Mercado Pago, vigente a partir de 03/11/2025, Checkout cartao de credito 1x D0. |
+| `debit_card` | `0` | `NAO` | Aguardando a tarifa de Checkout Pro confirmada no painel da conta. |
+
+A tarifa estimada e calculada sobre o valor final cobrado, para que a propria tarifa nao reduza o valor base de fotos e taxas fixas. Se a configuracao da conta Mercado Pago diferir da tabela publica, atualize a aba `RegrasPagamento` antes de aceitar compras.
 
 O frontend nunca envia um total confiavel. O backend valida fotos, evento publicado, venda autorizada, sessao de galeria protegida e recalcula o valor antes de criar a preferencia Checkout Pro.
 

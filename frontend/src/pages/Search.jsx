@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
 import { categories, categoryLabel } from '../data/categories.js';
+import { scheduleLabel } from '../lib/event-format.js';
 
 function monthLabel(key) {
   const match = /^(\d{4})-(\d{2})$/.exec(key);
@@ -26,7 +27,7 @@ function SearchCard({ event }) {
         </div>
         <div className="event-body">
           <h3>{event.title}</h3>
-          <ul className="event-meta"><li>{event.dateLabel || event.date || 'Data a confirmar'}</li><li>{event.location || 'Paróquia São Rafael'}</li></ul>
+          <ul className="event-meta"><li>{scheduleLabel(event)}</li><li>{event.location || 'Paróquia São Rafael'}</li></ul>
           {event.salesAuthorized && <p className="card-sale">Fotos disponíveis para compra</p>}
           <span className="event-link">Ver fotos →</span>
         </div>
