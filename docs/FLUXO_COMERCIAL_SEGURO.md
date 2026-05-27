@@ -13,6 +13,8 @@ Categorias aceitas: `celebracoes`, `batismo`, `eucaristia`, `crisma`, `casamento
 
 O Apps Script processa fotos imediatamente para original privado, thumbnail leve e preview com marca d'agua. Todo evento novo nasce oculto com `Publicacao=rascunho`, `Visibilidade=protegida` e `VendaAutorizada=NAO`. Nomes invalidos ficam pendentes de configuracao e nunca sao publicados automaticamente.
 
+Uma pasta criada antecipadamente sem nenhuma foto e preservada em `Fotos_Origem` e nao gera linha na planilha. Assim que receber ao menos uma imagem, o proximo processamento a cadastra normalmente; somente uma pasta que efetivamente continha fotos processadas pode ser removida da entrada.
+
 Para escolher a imagem do card e do cabecalho do evento, inclua na pasta uma imagem chamada exatamente `capa` com extensao de imagem, por exemplo `capa.jpg`. Ela e tratada como imagem editorial publica: recebe reducao para ate `1280px`, nao recebe marca d'agua e nunca e liberada para venda. Use nessa capa somente uma imagem autorizada para exposicao publica. As demais imagens continuam como previews protegidas com marca d'agua.
 
 ## Onde Fica A Foto Original
@@ -133,7 +135,7 @@ A unica excecao intencional e `capa.jpg`: por ser a imagem de divulgacao escolhi
 
 | Coluna | Valores Permitidos | Uso |
 | --- | --- | --- |
-| `MeioPagamento` | `pix`, `debit_card`, `credit_card` | Forma oferecida no checkout. |
+| `MeioPagamento` | `pix`, `credit_card` | Forma oferecida no checkout. Linhas legadas `debit_card` permanecem somente como historico inativo. |
 | `PercentualEstimado` | numero decimal | Percentual estimado de tarifa do Mercado Pago. |
 | `ValorFixo` | numero decimal | Parcela fixa estimada da tarifa. |
 | `Vigencia` | data/texto administrativo | Referencia da tabela cadastrada. |
@@ -146,17 +148,19 @@ A unica excecao intencional e `capa.jpg`: por ser a imagem de divulgacao escolhi
 - Taxa de comodidade: `R$ 1,00` por pedido.
 - Custo estimado do pagamento: calculado no backend conforme a aba `RegrasPagamento`.
 
-Cadastre em `RegrasPagamento` uma linha ativa por meio (`pix`, `debit_card`, `credit_card`) com percentual e valor fixo obtidos no painel Mercado Pago. Sem regra ativa, o checkout permanece bloqueado.
+Cadastre em `RegrasPagamento` uma linha ativa para `pix` e `credit_card` com percentual e valor fixo obtidos no painel Mercado Pago. Sem regra ativa, o checkout permanece bloqueado.
 
 Para iniciar com as tarifas oficiais confirmadas para Checkout online em liberacao imediata (`D0`), execute `cadastrarRegrasMercadoPagoD0()` no Apps Script. A funcao registra:
 
 | Meio | Percentual | Ativo | Fonte |
 | --- | ---: | --- | --- |
 | `pix` | `0.99` | `SIM` | Tabela Mercado Pago, vigente a partir de 03/11/2025, Checkout Pix/Open Finance D0. |
-| `debit_card` | `4.98` | `SIM` | Estimativa conservadora: mesma tarifa do credito 1x D0 ate confirmar no painel a tarifa especifica do debito virtual. |
 | `credit_card` | `4.98` | `SIM` | Tabela Mercado Pago, vigente a partir de 03/11/2025, Checkout cartao de credito 1x D0. |
+| `debit_card` | `0` | `NAO` | Opcao removida do checkout publico; mantida apenas para neutralizar eventual linha legada. |
 
 A tarifa estimada e calculada sobre o valor final cobrado, para que a propria tarifa nao reduza o valor base de fotos e taxas fixas. Se a configuracao da conta Mercado Pago diferir da tabela publica, atualize a aba `RegrasPagamento` antes de aceitar compras.
+
+Para oferecer Pix no Checkout Pro, cadastre uma chave Pix na conta Mercado Pago, habilite Pix nos meios da aplicacao e utilize credenciais de producao. Segundo a documentacao do Mercado Pago, Pix corresponde ao tipo de pagamento `bank_transfer` e nao fica disponivel em modo de teste. O backend nao forca mais `default_payment_method_id=pix`, evitando o erro de metodo padrao excluido quando a conta ou a preferencia nao o disponibiliza.
 
 O frontend nunca envia um total confiavel. O backend valida fotos, evento publicado, venda autorizada, sessao de galeria protegida e recalcula o valor antes de criar a preferencia Checkout Pro.
 

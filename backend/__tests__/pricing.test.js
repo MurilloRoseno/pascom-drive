@@ -18,3 +18,8 @@ it('compensa a tarifa percentual aplicada ao valor final cobrado', () => {
 it('impede checkout sem regra administrativa ativa', () => {
   expect(() => calculatePricing(1, 'pix', [])).toThrow(/Pagamento indisponivel/);
 });
+
+it('recusa debito virtual removido do checkout publico', () => {
+  expect(() => calculatePricing(1, 'debit_card', [{ method: 'debit_card', percentage: 4.98, fixed: 0 }]))
+    .toThrow(/Meio de pagamento invalido/);
+});

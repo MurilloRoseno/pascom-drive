@@ -405,9 +405,8 @@ function listarFotosComMiniatura() {
 
 /**
  * Cadastra tarifas publicadas pelo Mercado Pago para Checkout online D0.
- * A tabela publica nao discrimina o debito virtual no Checkout Pro; por
- * seguranca financeira, ele usa a tarifa conservadora do credito 1x D0.
- * Confirme no painel da conta caso existam condicoes comerciais personalizadas.
+ * O checkout publico oferece somente Pix e credito em 1x. Uma linha antiga
+ * de debito permanece desativada para nao apagar historico administrativo.
  */
 function cadastrarRegrasMercadoPagoD0() {
   var sheet = ensureSheet('RegrasPagamento', REGRAS_HEADERS);
@@ -416,7 +415,7 @@ function cadastrarRegrasMercadoPagoD0() {
   var regras = [
     { MeioPagamento: 'pix', PercentualEstimado: 0.99, ValorFixo: 0, Vigencia: 'Tabela Mercado Pago 03/11/2025 - Checkout D0', Ativo: 'SIM' },
     { MeioPagamento: 'credit_card', PercentualEstimado: 4.98, ValorFixo: 0, Vigencia: 'Tabela Mercado Pago 03/11/2025 - Checkout D0 1x', Ativo: 'SIM' },
-    { MeioPagamento: 'debit_card', PercentualEstimado: 4.98, ValorFixo: 0, Vigencia: 'Estimativa conservadora - credito 1x D0 ate confirmar debito virtual no painel', Ativo: 'SIM' },
+    { MeioPagamento: 'debit_card', PercentualEstimado: 0, ValorFixo: 0, Vigencia: 'Opcao removida do checkout publico', Ativo: 'NAO' },
   ];
   regras.forEach(function(regra) {
     var rowNumber = -1;
@@ -435,7 +434,7 @@ function cadastrarRegrasMercadoPagoD0() {
     }
   });
   aplicarValidacoesAdministrativas();
-  notificarAdministracao('Taxas D0 cadastradas: Pix 0,99%, credito 1x 4,98% e debito virtual estimado conservadoramente em 4,98% ate confirmacao no painel Mercado Pago.');
+  notificarAdministracao('Taxas D0 cadastradas: Pix 0,99% e credito 1x 4,98% ativos. Debito virtual permanece desativado no checkout publico.');
 }
 
 function normalizarMetadadosEventos() {

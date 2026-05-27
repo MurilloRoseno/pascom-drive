@@ -9,12 +9,9 @@ function client() {
 function paymentMethods(method) {
   const common = { installments: 1, default_installments: 1 };
   if (method === 'pix') {
-    return { ...common, default_payment_method_id: 'pix', excluded_payment_types: [{ id: 'credit_card' }, { id: 'debit_card' }] };
+    return { ...common, excluded_payment_types: [{ id: 'credit_card' }, { id: 'debit_card' }, { id: 'ticket' }] };
   }
-  if (method === 'debit_card') {
-    return { ...common, excluded_payment_methods: [{ id: 'pix' }], excluded_payment_types: [{ id: 'credit_card' }, { id: 'ticket' }] };
-  }
-  return { ...common, excluded_payment_methods: [{ id: 'pix' }], excluded_payment_types: [{ id: 'debit_card' }, { id: 'ticket' }] };
+  return { ...common, excluded_payment_types: [{ id: 'bank_transfer' }, { id: 'debit_card' }, { id: 'ticket' }] };
 }
 
 async function criarPreferencia({ pedidoId, buyer, items, pricing, paymentMethod }) {

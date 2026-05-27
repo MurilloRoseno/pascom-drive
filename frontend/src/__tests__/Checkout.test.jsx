@@ -38,6 +38,7 @@ it('mostra preco e taxas devolvidos pelo servidor', async () => {
   await waitFor(() => expect(screen.getByText('R$ 13,50')).toBeInTheDocument());
   expect(screen.getByText(/taxa de servico/i)).toBeInTheDocument();
   expect(screen.getByText(/custo estimado do pagamento/i)).toBeInTheDocument();
+  expect(screen.queryByText(/d.bito virtual/i)).not.toBeInTheDocument();
 });
 
 it('envia fotos, contato e metodo sem enviar total calculado no navegador', async () => {

@@ -82,8 +82,13 @@ function processarEventos() {
   }
 
   try {
-    // Registra antes de mudar status (garante linha existente para atualizarStatusEvento)
     var arquivos = listarArquivosDoEvento(evento.folderId);
+    if (arquivos.length === 0) {
+      Logger.log('Pasta preservada sem processamento: o evento ainda nao recebeu fotos (' + evento.nomePasta + ').');
+      return;
+    }
+
+    // Registra apenas eventos com fotos, evitando duplicatas para eventos futuros.
     registrarEvento({
       eventoId:   eventoId,
       nomePasta:  metadados.nomeNormalizado || evento.nomePasta,

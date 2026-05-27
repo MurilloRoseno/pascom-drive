@@ -8,7 +8,6 @@ import { cotarCheckout, criarPagamento } from '../lib/api.js';
 const money = (value) => `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
 const methods = [
   { id: 'pix', label: 'Pix', hint: 'Confirmação rápida', detail: 'Pagamento instantâneo' },
-  { id: 'debit_card', label: 'Débito virtual CAIXA', hint: 'Recebimento imediato', detail: 'Pagamento à vista' },
   { id: 'credit_card', label: 'Cartão de crédito', hint: 'Crédito em 1x', detail: 'Recebimento imediato' },
 ];
 

@@ -1,7 +1,7 @@
 const PHOTO_PRICE = 10;
 const SERVICE_FEE = 2;
 const CONVENIENCE_FEE = 1;
-const PAYMENT_METHODS = ['pix', 'debit_card', 'credit_card'];
+const PAYMENT_METHODS = ['pix', 'credit_card'];
 
 function roundMoney(value) {
   return Math.round(Number(value) * 100) / 100;

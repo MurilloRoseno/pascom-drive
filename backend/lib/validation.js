@@ -1,7 +1,7 @@
 const { z } = require('zod');
 
 const whatsappSchema = z.string().regex(/^\d{10,13}$/, 'WhatsApp invalido');
-const methodSchema = z.enum(['pix', 'debit_card', 'credit_card']);
+const methodSchema = z.enum(['pix', 'credit_card']);
 
 const criarPagamentoSchema = z.object({
   name: z.string().trim().min(2, 'Nome obrigatorio').max(120),

@@ -2,10 +2,13 @@ const crypto = require('crypto');
 const { paymentMethods, validarAssinaturaWebhook } = require('../lib/mercado-pago');
 
 describe('metodos permitidos no Checkout Pro', () => {
-  it('limita credito a uma parcela e separa pix de cartoes', () => {
-    expect(paymentMethods('pix').default_payment_method_id).toBe('pix');
-    expect(paymentMethods('credit_card').installments).toBe(1);
-    expect(paymentMethods('credit_card').excluded_payment_methods).toContainEqual({ id: 'pix' });
+  it('mantem Pix disponivel sem forcar metodo padrao incompativel', () => {
+    const pix = paymentMethods('pix');
+    const credit = paymentMethods('credit_card');
+    expect(pix).not.toHaveProperty('default_payment_method_id');
+    expect(pix.excluded_payment_types).not.toContainEqual({ id: 'bank_transfer' });
+    expect(credit.installments).toBe(1);
+    expect(credit.excluded_payment_types).toContainEqual({ id: 'bank_transfer' });
   });
 });
 

@@ -237,7 +237,7 @@ button { cursor: pointer; }
   border-radius: 13px;
 }
 .event-cover { position: relative; height: 205px; overflow: hidden; }
-.event-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.event-cover img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.3s; }
 .event-card:hover .event-cover img { transform: scale(1.04); }
 .event-tag {
   position: absolute;
@@ -339,7 +339,7 @@ button { cursor: pointer; }
   overflow: hidden;
   box-shadow: 0 22px 44px rgba(15,5,30,0.3);
 }
-.event-cover-large img { width: 100%; height: 100%; object-fit: cover; }
+.event-cover-large img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .gallery-header {
   display: flex;
   align-items: end;
@@ -485,7 +485,7 @@ button { cursor: pointer; }
   -webkit-user-drag: none;
   user-select: none;
 }
-.photo-button img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.25s, filter 0.25s; }
+.photo-button img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 0.25s, filter 0.25s; }
 .photo-button::after {
   content: "Ampliar previa";
   position: absolute;
