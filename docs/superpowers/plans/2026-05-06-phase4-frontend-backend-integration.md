@@ -72,7 +72,7 @@ ORIGINAIS_FOLDER_ID=1B8b2Sbs9w-63rTsCM0feagKpgC1mREaz
 AMOSTRAS_FOLDER_ID=1KenzlPhegw4OCZbpA7SExe7OpkRDlwQL
 
 MP_ACCESS_TOKEN=TEST-<configure-no-ambiente-seguro>
-MP_WEBHOOK_SECRET=c97c74e28ca4ca8a48e82d4d8a603bd963874f61dfbd44ce9cea99e11e5a5e78
+MP_WEBHOOK_SECRET=<configure-no-ambiente-seguro>
 
 ADMIN_EMAIL=murillo.roseno.lima@gmail.com
 ```

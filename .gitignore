@@ -39,3 +39,6 @@ credentials.json
 token.json
 
 .vercel
+
+# Local assistant worktrees are separate Git checkouts, never project content.
+.claude/worktrees/
