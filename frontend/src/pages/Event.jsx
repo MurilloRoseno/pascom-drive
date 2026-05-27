@@ -61,6 +61,12 @@ export default function EventPage() {
   const activeIndex = photos.findIndex((photo) => photo.id === photoId);
   const activePhoto = activeIndex >= 0 ? photos[activeIndex] : null;
 
+  const changePhoto = useCallback((direction) => {
+    if (!photos.length) return;
+    const next = (activeIndex + direction + photos.length) % photos.length;
+    setParams({ foto: photos[next].id }, { replace: true });
+  }, [activeIndex, photos, setParams]);
+
   useEffect(() => {
     if (!activePhoto) return undefined;
     closeRef.current?.focus();
@@ -75,13 +81,7 @@ export default function EventPage() {
       document.body.classList.remove('lightbox-open');
       document.removeEventListener('keydown', onKeyDown);
     };
-  });
-
-  function changePhoto(direction) {
-    if (!photos.length) return;
-    const next = (activeIndex + direction + photos.length) % photos.length;
-    setParams({ foto: photos[next].id }, { replace: true });
-  }
+  }, [activePhoto, changePhoto, setParams]);
 
   async function unlock(submitEvent) {
     submitEvent.preventDefault();

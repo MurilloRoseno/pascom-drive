@@ -5,11 +5,10 @@ import { useCarrinho } from '../hooks/useCarrinho.js';
 const FOTO_MOCK = { id: '1', price: 25, event: 'Teste', url: '' };
 
 function TestComponent() {
-  const { fotos, addFoto, removeFoto, clearCarrinho, isSelected, totais } = useCarrinho();
+  const { fotos, addFoto, removeFoto, clearCarrinho, isSelected } = useCarrinho();
   return (
     <div>
       <span data-testid="count">{fotos.length}</span>
-      <span data-testid="total">{totais.preliminaryTotal.toFixed(2)}</span>
       <span data-testid="selected">{isSelected('1') ? 'sim' : 'nao'}</span>
       <button onClick={() => addFoto(FOTO_MOCK)}>add</button>
       <button onClick={() => removeFoto('1')}>remove</button>
@@ -56,10 +55,4 @@ describe('CarrinhoContext', () => {
     expect(screen.getByTestId('count').textContent).toBe('0');
   });
 
-  it('calcula total corretamente', () => {
-    renderWithProvider();
-    fireEvent.click(screen.getByText('add'));
-    // Preview local: foto + taxas fixas; custo do pagamento vem apenas do backend.
-    expect(parseFloat(screen.getByTestId('total').textContent)).toBeCloseTo(28, 1);
-  });
 });

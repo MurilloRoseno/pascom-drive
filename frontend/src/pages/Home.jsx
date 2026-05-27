@@ -19,6 +19,15 @@ const testimonials = [
   ['Ana Lúcia Santos', 'Membro do Coral', 'Lugar de acolhimento e amor. Meus filhos cresceram na fé graças ao trabalho desta linda comunidade.', '32'],
 ];
 
+function initials(name) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || '')
+    .join('');
+}
+
 function Ornament({ hero = false }) {
   if (!hero) return <div className="ornamento" aria-hidden="true"><span>✛</span></div>;
   return (
@@ -215,11 +224,11 @@ export default function HomePage() {
         <Ornament />
         <h2 className="sec-titulo">O que Dizem Nossos Fiéis</h2>
         <div className="test-grid">
-          {testimonials.map(([name, role, testimony, avatar]) => (
+          {testimonials.map(([name, role, testimony]) => (
             <article className="test-card" key={name}>
               <div className="test-aspas">“</div><div className="test-estrelas">★★★★★</div>
               <p className="test-texto">{testimony}</p>
-              <div className="test-autor"><img className="test-avatar" src={`https://i.pravatar.cc/100?img=${avatar}`} alt={name} loading="lazy" /><div><div className="test-nome">{name}</div><div className="test-funcao">{role}</div></div></div>
+              <div className="test-autor"><div className="test-avatar" aria-hidden="true">{initials(name)}</div><div><div className="test-nome">{name}</div><div className="test-funcao">{role}</div></div></div>
             </article>
           ))}
         </div>

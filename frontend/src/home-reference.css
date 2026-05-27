@@ -142,7 +142,7 @@
 .test-estrelas { margin-bottom: 14px; color: var(--dourado); letter-spacing: 3px; }
 .test-texto { margin-bottom: 24px; color: var(--texto-leve); font-size: .88rem; line-height: 1.7; font-style: italic; }
 .test-autor { display: flex; align-items: center; gap: 12px; }
-.test-avatar { width: 46px; height: 46px; object-fit: cover; border: 2px solid var(--dourado); border-radius: 50%; }
+.test-avatar { display: grid; place-items: center; width: 46px; height: 46px; border: 2px solid var(--dourado); border-radius: 50%; background: rgba(201, 162, 39, .12); color: var(--vinho); font-size: .82rem; font-weight: 700; letter-spacing: .05em; }
 .test-nome { font-size: .88rem; font-weight: 700; }
 .test-funcao { color: var(--texto-leve); font-size: .75rem; }
 .institutional-footer { color: #fff; background: radial-gradient(circle at 78% 0%, rgba(201,162,39,.11), transparent 25%), linear-gradient(180deg, #351457 0%, #210c38 100%); }

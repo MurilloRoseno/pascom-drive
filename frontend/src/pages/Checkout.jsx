@@ -21,7 +21,7 @@ function PaymentIcon({ method }) {
 PaymentIcon.propTypes = { method: PropTypes.string.isRequired };
 
 export default function CheckoutPage() {
-  const { fotos, totais, removeFoto } = useCarrinho();
+  const { fotos, removeFoto } = useCarrinho();
   const [buyer, setBuyer] = useState({ name: '', email: '', whatsapp: '' });
   const [method, setMethod] = useState('pix');
   const [pricing, setPricing] = useState(null);
@@ -122,9 +122,9 @@ export default function CheckoutPage() {
           <aside className="order-summary">
             <p className="hero-kicker">Resumo</p>
             <h2>{fotos.length} foto{fotos.length !== 1 ? 's' : ''}</h2>
-            <div className="total-row"><span>Subtotal</span><strong>{money(pricing?.subtotal ?? totais.subtotal)}</strong></div>
-            <div className="total-row"><span>Taxa de servico</span><strong>{money(pricing?.serviceFee ?? totais.serviceFee)}</strong></div>
-            <div className="total-row"><span>Taxa de comodidade</span><strong>{money(pricing?.convenienceFee ?? totais.convenienceFee)}</strong></div>
+            <div className="total-row"><span>Subtotal</span><strong>{pricing ? money(pricing.subtotal) : '--'}</strong></div>
+            <div className="total-row"><span>Taxa de servico</span><strong>{pricing ? money(pricing.serviceFee) : '--'}</strong></div>
+            <div className="total-row"><span>Taxa de comodidade</span><strong>{pricing ? money(pricing.convenienceFee) : '--'}</strong></div>
             <div className="total-row muted"><span>Custo estimado do pagamento</span><strong>{pricing ? money(pricing.paymentCost) : '--'}</strong></div>
             <div className="total-row final"><span>Total</span><strong>{pricing ? money(pricing.total) : '--'}</strong></div>
             {quoteError && <p className="form-error">{quoteError}</p>}

@@ -8,7 +8,6 @@ const {
 const errorHandler = require('./middleware/error-handler');
 
 const healthHandler = require('./api/health.js');
-const fotosHandler = require('./api/fotos');
 const checkoutPreferenceHandler = require('./api/checkout-preference');
 const checkoutQuoteHandler = require('./api/checkout-quote');
 const statusPagamentoHandler = require('./api/status-pagamento');
@@ -52,7 +51,6 @@ app.use((req, res, next) => {
 app.use(geral);
 
 app.get('/api/health', healthHandler);
-app.get('/api/fotos', fotos, fotosHandler);
 app.post('/api/checkout/preference', pagamento, checkoutPreferenceHandler);
 app.post('/api/checkout/quote', cotacao, checkoutQuoteHandler);
 app.post('/api/criar-pagamento', pagamento, checkoutPreferenceHandler);

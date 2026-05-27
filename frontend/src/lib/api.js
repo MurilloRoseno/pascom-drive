@@ -7,11 +7,6 @@ async function request(url, options) {
   return data;
 }
 
-// Retained for the legacy gallery hook while the institutional routes are adopted.
-export function listarFotos() {
-  return request('/api/fotos');
-}
-
 export function listarEventos({ q = '', categoria = '' } = {}) {
   const params = new URLSearchParams();
   if (q) params.set('q', q);

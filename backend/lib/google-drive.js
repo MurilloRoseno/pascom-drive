@@ -40,8 +40,7 @@ function parsePrivateKey(raw) {
 
   if (!key.includes(BEGIN) || !key.includes(END)) {
     // Log safe diagnostic info (no key content exposed)
-    console.error('[drive] Key missing PEM markers. Length:', key.length,
-      'Starts with:', JSON.stringify(key.substring(0, 30)));
+    console.error('[drive] Key missing PEM markers. Length:', key.length);
     throw new Error('GOOGLE_PRIVATE_KEY is missing PEM markers (-----BEGIN/END PRIVATE KEY-----)');
   }
 

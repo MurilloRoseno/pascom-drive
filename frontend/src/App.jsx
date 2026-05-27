@@ -18,22 +18,24 @@ function LegacyCategoryRedirect() {
 export default function App() {
   return (
     <BrowserRouter>
-      <CarrinhoProvider>
-        <div className="parish-app">
-          <ScrollToTop />
-          <Header />
+      <div className="parish-app">
+        <ScrollToTop />
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/buscar" element={<SearchPage />} />
+          <Route path="/categoria" element={<LegacyCategoryRedirect />} />
+          <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
+        </Routes>
+        <CarrinhoProvider>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/buscar" element={<SearchPage />} />
-            <Route path="/categoria" element={<LegacyCategoryRedirect />} />
             <Route path="/evento/:eventoId" element={<EventPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
           </Routes>
-          <Footer />
           <CartSummary />
-        </div>
-      </CarrinhoProvider>
+        </CarrinhoProvider>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }

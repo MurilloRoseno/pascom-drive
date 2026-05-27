@@ -26,7 +26,7 @@ const { GoogleSpreadsheet } = require('google-spreadsheet');
 GoogleSpreadsheet.mockImplementation(() => ({ loadInfo: jest.fn().mockResolvedValue(), sheetsByTitle: sheets }));
 
 const {
-  driveUrlToThumbnail, listarEventosPublicados, listarFotos, listarFotosEvento, registrarPedido, registrarEntrega,
+  driveUrlToThumbnail, listarEventosPublicados, listarFotosEvento, registrarPedido, registrarEntrega,
 } = require('../lib/google-sheets');
 
 it('lista apenas evento publicado e remove configuracao secreta', async () => {
@@ -38,14 +38,6 @@ it('lista apenas evento publicado e remove configuracao secreta', async () => {
     cover: '/api/eventos/EV1/previews/CAPA1',
     coverThumbnail: '/api/eventos/EV1/previews/CAPA1?variant=thumbnail',
   })]);
-});
-
-it('expoe apenas preview explicitamente liberado de evento publico, nunca original', async () => {
-  const photos = await listarFotos();
-  expect(photos).toHaveLength(1);
-  expect(photos[0].url).toBe('/api/eventos/EV1/previews/F1');
-  expect(photos[0]).not.toHaveProperty('previewFileId');
-  expect(photos[0]).not.toHaveProperty('originalFileId');
 });
 
 it('separa preview processado da autorizacao comercial da foto', async () => {

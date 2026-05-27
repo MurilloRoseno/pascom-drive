@@ -10,11 +10,6 @@ import { useCarrinho } from '../hooks/useCarrinho.js';
 
 const mockCarrinho = (fotos) => ({
   fotos,
-  totais: {
-    subtotal: fotos.reduce((s, f) => s + f.price, 0),
-    taxa: 0.5,
-    total: fotos.reduce((s, f) => s + f.price, 0) + 0.5,
-  },
   addFoto: jest.fn(),
   removeFoto: jest.fn(),
   clearCarrinho: jest.fn(),
@@ -38,6 +33,7 @@ test('não renderiza quando carrinho está vazio', () => {
 test('renderiza barra quando há fotos no carrinho', () => {
   wrap([{ id: '1', event: 'Missa', url: '/img.jpg', price: 15 }]);
   expect(screen.getByText(/^1 foto$/i)).toBeInTheDocument();
+  expect(screen.getByText(/subtotal confirmado no checkout/i)).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /finalizar/i })).toBeInTheDocument();
 });
 
