@@ -224,12 +224,12 @@
     "hash": "0e57bdcb307fbd3c184aa66c515cdc1f"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\App.jsx": {
-    "mtime": 1779909850.1280918,
-    "hash": "6b9b2545dd58ccf84b8f1ff0cf42126a"
+    "mtime": 1779912785.8048053,
+    "hash": "ecdafdf945965a575da6f668dec62abf"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\main.jsx": {
-    "mtime": 1779907971.6138813,
-    "hash": "8a69f7136ee8cc24d3d7b0271f84885f"
+    "mtime": 1779912785.8055027,
+    "hash": "5da0406aaf1eead3a1a49cab3aab39a8"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\setupTests.js": {
     "mtime": 1778080112.6755967,
@@ -263,6 +263,10 @@
     "mtime": 1779810500.8119202,
     "hash": "dd26030b0b5aefe82ac7e33c24686ed7"
   },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\desktop\\DesktopApp.jsx": {
+    "mtime": 1779912785.8012373,
+    "hash": "282e205ee0a570facccbb0bf3fec989f"
+  },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\hooks\\useCarrinho.js": {
     "mtime": 1779909850.123054,
     "hash": "edf3536c0471c02e0a5b2a25d776e2c6"
@@ -278,6 +282,10 @@
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\lib\\validation.js": {
     "mtime": 1779738719.6774087,
     "hash": "354dd0996792b441f97dba360b8a3f40"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\mobile\\MobileApp.jsx": {
+    "mtime": 1779913386.0088916,
+    "hash": "702dfdd4ab037a08325f3d8d13e36ec0"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\pages\\Checkout.jsx": {
     "mtime": 1779909850.1265862,
@@ -298,6 +306,14 @@
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\pages\\Search.jsx": {
     "mtime": 1779829041.4015846,
     "hash": "1dfe11cd0e956dcb9e0c4c7e714ecc40"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\shared\\gallery.js": {
+    "mtime": 1779912785.8042989,
+    "hash": "a72806132ffb82fcf0f0df93d829b414"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\shared\\platform.js": {
+    "mtime": 1779912785.8032901,
+    "hash": "1b23b38098e77a9fd16cb05b4d3b281d"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__mocks__\\fileMock.js": {
     "mtime": 1778080115.2063136,
@@ -330,6 +346,10 @@
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\PhotoCard.test.jsx": {
     "mtime": 1779739867.8023841,
     "hash": "0854780fd76f6be7a22561134cfeca88"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\platform.test.js": {
+    "mtime": 1779913320.5178201,
+    "hash": "d531018c74e92b44f917137dec34c150"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\ScrollToTop.test.jsx": {
     "mtime": 1779826182.8188343,
@@ -476,12 +496,12 @@
     "hash": "70180474b595f221bad3e2814366a866"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\architecture.md": {
-    "mtime": 1779911134.3349407,
-    "hash": "747f169f9db0cbd664b5a2a5654b58f7"
+    "mtime": 1779913320.5204842,
+    "hash": "66affbb920bccd0b54e9b04334acc6a0"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\components.md": {
-    "mtime": 1779911134.3349407,
-    "hash": "56cffc228bf4b78c2b3313df32c1ed7c"
+    "mtime": 1779913331.2494059,
+    "hash": "360e9bda1b106d72af231f3efc87c51c"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\conventions.md": {
     "mtime": 1779911134.3403134,
@@ -499,29 +519,33 @@
     "mtime": 1779911134.341467,
     "hash": "22949fc92217768c377fd9c0a243d153"
   },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\mobile-experience.md": {
+    "mtime": 1779913320.5184765,
+    "hash": "689415b9132a8c2b7f43f30bd89d2218"
+  },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\project-overview.md": {
     "mtime": 1779911134.3339336,
     "hash": "567242fff19543b5f91e4d010286cd73"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\README.md": {
-    "mtime": 1779911134.331772,
-    "hash": "892374270b1ff3ef152305218bfe44d5"
+    "mtime": 1779913320.51948,
+    "hash": "698ba6078a0f960065bd2880a3a80455"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\setup-environment.md": {
     "mtime": 1779911134.3389902,
     "hash": "1462faf95e06e861203b66be886a440d"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\system-flows.md": {
-    "mtime": 1779911134.3359902,
-    "hash": "88713432da1a84a342968e4a3842b6e5"
+    "mtime": 1779913320.5222325,
+    "hash": "c5c312743e0892e8d1b1be47dd19d064"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-audit.md": {
-    "mtime": 1779911134.3389902,
-    "hash": "d29f4290093601a14288df56e6063c2f"
+    "mtime": 1779913320.5233207,
+    "hash": "c297511bd784220af5dd016dfaac4de0"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-changelog.md": {
-    "mtime": 1779911134.3424716,
-    "hash": "881199d81462c7be8e464c98b2550a79"
+    "mtime": 1779913320.5243318,
+    "hash": "4b0664e79cfa0667614ee68450d5a657"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-roadmap.md": {
     "mtime": 1779911134.3403134,
@@ -636,8 +660,8 @@
     "hash": "38edd7e0ef478ac9e088a9ab53621a3e"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\index.html": {
-    "mtime": 1779829097.7513192,
-    "hash": "64baf69f12613dcb6823f90a5c3d287c"
+    "mtime": 1779912785.806509,
+    "hash": "67dffbf9f5884e5574970c80079759e3"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\SETUP.md": {
     "mtime": 1779908258.0879538,

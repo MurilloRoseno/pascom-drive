@@ -9,7 +9,7 @@
       "source_file": "backend/server.js",
       "source_location": "L1",
       "id": "backend_server_js",
-      "community": 41,
+      "community": 43,
       "norm_label": "server.js"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "backend/api/cache-invalidate.js",
       "source_location": "L1",
       "id": "backend_api_cache_invalidate_js",
-      "community": 20,
+      "community": 22,
       "norm_label": "cache-invalidate.js"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "backend/api/cache-invalidate.js",
       "source_location": "L10",
       "id": "api_cache_invalidate_authorized",
-      "community": 20,
+      "community": 22,
       "norm_label": "authorized()"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "backend/api/checkout-preference.js",
       "source_location": "L1",
       "id": "backend_api_checkout_preference_js",
-      "community": 42,
+      "community": 44,
       "norm_label": "checkout-preference.js"
     },
     {
@@ -45,7 +45,7 @@
       "source_file": "backend/api/checkout-quote.js",
       "source_location": "L1",
       "id": "backend_api_checkout_quote_js",
-      "community": 43,
+      "community": 45,
       "norm_label": "checkout-quote.js"
     },
     {
@@ -54,7 +54,7 @@
       "source_file": "backend/api/cover-preview.js",
       "source_location": "L1",
       "id": "backend_api_cover_preview_js",
-      "community": 21,
+      "community": 23,
       "norm_label": "cover-preview.js"
     },
     {
@@ -63,7 +63,7 @@
       "source_file": "backend/api/cover-preview.js",
       "source_location": "L10",
       "id": "api_cover_preview_sendjson",
-      "community": 21,
+      "community": 23,
       "norm_label": "sendjson()"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "backend/api/download.js",
       "source_location": "L1",
       "id": "backend_api_download_js",
-      "community": 44,
+      "community": 46,
       "norm_label": "download.js"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "backend/api/eventos.js",
       "source_location": "L1",
       "id": "backend_api_eventos_js",
-      "community": 45,
+      "community": 47,
       "norm_label": "eventos.js"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "backend/api/fotos-evento.js",
       "source_location": "L1",
       "id": "backend_api_fotos_evento_js",
-      "community": 46,
+      "community": 48,
       "norm_label": "fotos-evento.js"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "backend/api/galeria-acesso.js",
       "source_location": "L1",
       "id": "backend_api_galeria_acesso_js",
-      "community": 47,
+      "community": 49,
       "norm_label": "galeria-acesso.js"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "backend/api/health.js",
       "source_location": "L1",
       "id": "backend_api_health_js",
-      "community": 48,
+      "community": 50,
       "norm_label": "health.js"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "backend/api/index.js",
       "source_location": "L1",
       "id": "backend_api_index_js",
-      "community": 49,
+      "community": 51,
       "norm_label": "index.js"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "backend/api/preprocess.js",
       "source_location": "L1",
       "id": "backend_api_preprocess_js",
-      "community": 22,
+      "community": 24,
       "norm_label": "preprocess.js"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "backend/api/preprocess.js",
       "source_location": "L12",
       "id": "api_preprocess_sendjson",
-      "community": 22,
+      "community": 24,
       "norm_label": "sendjson()"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "backend/api/preview-evento.js",
       "source_location": "L1",
       "id": "backend_api_preview_evento_js",
-      "community": 50,
+      "community": 52,
       "norm_label": "preview-evento.js"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "backend/api/status-pagamento.js",
       "source_location": "L1",
       "id": "backend_api_status_pagamento_js",
-      "community": 51,
+      "community": 53,
       "norm_label": "status-pagamento.js"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "backend/api/watermark.js",
       "source_location": "L1",
       "id": "backend_api_watermark_js",
-      "community": 23,
+      "community": 25,
       "norm_label": "watermark.js"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "backend/api/watermark.js",
       "source_location": "L19",
       "id": "api_watermark_sendjson",
-      "community": 23,
+      "community": 25,
       "norm_label": "sendjson()"
     },
     {
@@ -180,7 +180,7 @@
       "source_file": "backend/api/webhook/mercado-pago.js",
       "source_location": "L1",
       "id": "backend_api_webhook_mercado_pago_js",
-      "community": 52,
+      "community": 54,
       "norm_label": "mercado-pago.js"
     },
     {
@@ -189,7 +189,7 @@
       "source_file": "backend/coverage/lcov-report/block-navigation.js",
       "source_location": "L1",
       "id": "backend_coverage_lcov_report_block_navigation_js",
-      "community": 13,
+      "community": 15,
       "norm_label": "block-navigation.js"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
       "source_location": "L24",
       "id": "lcov_report_block_navigation_toggleclass",
-      "community": 13,
+      "community": 15,
       "norm_label": "toggleclass()"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
       "source_location": "L31",
       "id": "lcov_report_block_navigation_makecurrent",
-      "community": 13,
+      "community": 15,
       "norm_label": "makecurrent()"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
       "source_location": "L41",
       "id": "lcov_report_block_navigation_gotoprevious",
-      "community": 13,
+      "community": 15,
       "norm_label": "gotoprevious()"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
       "source_location": "L52",
       "id": "lcov_report_block_navigation_gotonext",
-      "community": 13,
+      "community": 15,
       "norm_label": "gotonext()"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "backend/coverage/lcov-report/prettify.js",
       "source_location": "L1",
       "id": "backend_coverage_lcov_report_prettify_js",
-      "community": 9,
+      "community": 11,
       "norm_label": "prettify.js"
     },
     {
@@ -243,7 +243,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_k",
-      "community": 9,
+      "community": 11,
       "norm_label": "k()"
     },
     {
@@ -252,7 +252,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_a",
-      "community": 9,
+      "community": 11,
       "norm_label": "a()"
     },
     {
@@ -261,7 +261,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_b",
-      "community": 9,
+      "community": 11,
       "norm_label": "b()"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_o",
-      "community": 9,
+      "community": 11,
       "norm_label": "o()"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_g",
-      "community": 9,
+      "community": 11,
       "norm_label": "g()"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_i",
-      "community": 9,
+      "community": 11,
       "norm_label": "i()"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_q",
-      "community": 9,
+      "community": 11,
       "norm_label": "q()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_d",
-      "community": 9,
+      "community": 11,
       "norm_label": "d()"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_c",
-      "community": 9,
+      "community": 11,
       "norm_label": "c()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L2",
       "id": "lcov_report_prettify_y",
-      "community": 9,
+      "community": 11,
       "norm_label": "y()"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "backend/coverage/lcov-report/sorter.js",
       "source_location": "L1",
       "id": "backend_coverage_lcov_report_sorter_js",
-      "community": 7,
+      "community": 9,
       "norm_label": "sorter.js"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L11",
       "id": "lcov_report_sorter_gettable",
-      "community": 7,
+      "community": 9,
       "norm_label": "gettable()"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L15",
       "id": "lcov_report_sorter_gettableheader",
-      "community": 7,
+      "community": 9,
       "norm_label": "gettableheader()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L19",
       "id": "lcov_report_sorter_gettablebody",
-      "community": 7,
+      "community": 9,
       "norm_label": "gettablebody()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L23",
       "id": "lcov_report_sorter_getnthcolumn",
-      "community": 7,
+      "community": 9,
       "norm_label": "getnthcolumn()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L27",
       "id": "lcov_report_sorter_onfilterinput",
-      "community": 7,
+      "community": 9,
       "norm_label": "onfilterinput()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L59",
       "id": "lcov_report_sorter_addsearchbox",
-      "community": 7,
+      "community": 9,
       "norm_label": "addsearchbox()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L67",
       "id": "lcov_report_sorter_loadcolumns",
-      "community": 7,
+      "community": 9,
       "norm_label": "loadcolumns()"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L92",
       "id": "lcov_report_sorter_loadrowdata",
-      "community": 7,
+      "community": 9,
       "norm_label": "loadrowdata()"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L111",
       "id": "lcov_report_sorter_loaddata",
-      "community": 7,
+      "community": 9,
       "norm_label": "loaddata()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L120",
       "id": "lcov_report_sorter_sortbyindex",
-      "community": 7,
+      "community": 9,
       "norm_label": "sortbyindex()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L151",
       "id": "lcov_report_sorter_removesortindicators",
-      "community": 7,
+      "community": 9,
       "norm_label": "removesortindicators()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L159",
       "id": "lcov_report_sorter_addsortindicators",
-      "community": 7,
+      "community": 9,
       "norm_label": "addsortindicators()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L165",
       "id": "lcov_report_sorter_enableui",
-      "community": 7,
+      "community": 9,
       "norm_label": "enableui()"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "backend/lib/delivery.js",
       "source_location": "L1",
       "id": "backend_lib_delivery_js",
-      "community": 3,
+      "community": 5,
       "norm_label": "delivery.js"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "backend/lib/delivery.js",
       "source_location": "L6",
       "id": "lib_delivery_criardownloadsdopedido",
-      "community": 3,
+      "community": 5,
       "norm_label": "criardownloadsdopedido()"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "backend/lib/delivery.js",
       "source_location": "L29",
       "id": "lib_delivery_smtpconfigured",
-      "community": 3,
+      "community": 5,
       "norm_label": "smtpconfigured()"
     },
     {
@@ -486,7 +486,7 @@
       "source_file": "backend/lib/delivery.js",
       "source_location": "L33",
       "id": "lib_delivery_createtransporter",
-      "community": 3,
+      "community": 5,
       "norm_label": "createtransporter()"
     },
     {
@@ -495,7 +495,7 @@
       "source_file": "backend/lib/delivery.js",
       "source_location": "L45",
       "id": "lib_delivery_enviaremailentrega",
-      "community": 3,
+      "community": 5,
       "norm_label": "enviaremailentrega()"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "backend/lib/delivery.js",
       "source_location": "L70",
       "id": "lib_delivery_criarmensagemwhatsapp",
-      "community": 3,
+      "community": 5,
       "norm_label": "criarmensagemwhatsapp()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L1",
       "id": "backend_lib_gallery_access_js",
-      "community": 8,
+      "community": 10,
       "norm_label": "gallery-access.js"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L4",
       "id": "lib_gallery_access_getsecret",
-      "community": 8,
+      "community": 10,
       "norm_label": "getsecret()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L8",
       "id": "lib_gallery_access_hashcode",
-      "community": 8,
+      "community": 10,
       "norm_label": "hashcode()"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L13",
       "id": "lib_gallery_access_verifycode",
-      "community": 8,
+      "community": 10,
       "norm_label": "verifycode()"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L20",
       "id": "lib_gallery_access_issuegallerytoken",
-      "community": 8,
+      "community": 10,
       "norm_label": "issuegallerytoken()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L31",
       "id": "lib_gallery_access_tokenallowsevent",
-      "community": 8,
+      "community": 10,
       "norm_label": "tokenallowsevent()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L1",
       "id": "backend_lib_google_drive_js",
-      "community": 12,
+      "community": 14,
       "norm_label": "google-drive.js"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L29",
       "id": "lib_google_drive_parseprivatekey",
-      "community": 12,
+      "community": 14,
       "norm_label": "parseprivatekey()"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L61",
       "id": "lib_google_drive_getaccesstoken",
-      "community": 12,
+      "community": 14,
       "norm_label": "getaccesstoken()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L115",
       "id": "lib_google_drive_downloadfile",
-      "community": 12,
+      "community": 14,
       "norm_label": "downloadfile()"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L141",
       "id": "lib_google_drive_downloadfileasjpeg",
-      "community": 12,
+      "community": 14,
       "norm_label": "downloadfileasjpeg()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L184",
       "id": "lib_google_drive_uploadfile",
-      "community": 12,
+      "community": 14,
       "norm_label": "uploadfile()"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L225",
       "id": "lib_google_drive_updatefile",
-      "community": 12,
+      "community": 14,
       "norm_label": "updatefile()"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L1",
       "id": "backend_lib_google_sheets_catalog_js",
-      "community": 3,
+      "community": 8,
       "norm_label": "google-sheets.catalog.js"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L4",
       "id": "lib_google_sheets_catalog_listareventos",
-      "community": 3,
+      "community": 8,
       "norm_label": "listareventos()"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L8",
       "id": "lib_google_sheets_catalog_catalogopublicado",
-      "community": 3,
+      "community": 8,
       "norm_label": "catalogopublicado()"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L25",
       "id": "lib_google_sheets_catalog_listareventospublicados",
-      "community": 3,
+      "community": 8,
       "norm_label": "listareventospublicados()"
     },
     {
@@ -666,7 +666,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L54",
       "id": "lib_google_sheets_catalog_buscarevento",
-      "community": 3,
+      "community": 8,
       "norm_label": "buscarevento()"
     },
     {
@@ -675,7 +675,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L58",
       "id": "lib_google_sheets_catalog_listarfotosevento",
-      "community": 3,
+      "community": 8,
       "norm_label": "listarfotosevento()"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L79",
       "id": "lib_google_sheets_catalog_buscarpreviewfoto",
-      "community": 3,
+      "community": 8,
       "norm_label": "buscarpreviewfoto()"
     },
     {
@@ -693,7 +693,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L91",
       "id": "lib_google_sheets_catalog_buscarfotosparacompra",
-      "community": 3,
+      "community": 8,
       "norm_label": "buscarfotosparacompra()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "backend/lib/google-sheets.catalog.js",
       "source_location": "L99",
       "id": "lib_google_sheets_catalog_listarregraspagamento",
-      "community": 3,
+      "community": 8,
       "norm_label": "listarregraspagamento()"
     },
     {
@@ -720,7 +720,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L1",
       "id": "backend_lib_google_sheets_orders_js",
-      "community": 3,
+      "community": 5,
       "norm_label": "google-sheets.orders.js"
     },
     {
@@ -729,7 +729,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L4",
       "id": "lib_google_sheets_orders_registrarpedido",
-      "community": 3,
+      "community": 5,
       "norm_label": "registrarpedido()"
     },
     {
@@ -738,7 +738,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L33",
       "id": "lib_google_sheets_orders_buscarpedidobyid",
-      "community": 3,
+      "community": 5,
       "norm_label": "buscarpedidobyid()"
     },
     {
@@ -747,7 +747,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L48",
       "id": "lib_google_sheets_orders_buscarpedidobypreferenceorpayment",
-      "community": 3,
+      "community": 5,
       "norm_label": "buscarpedidobypreferenceorpayment()"
     },
     {
@@ -756,7 +756,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L57",
       "id": "lib_google_sheets_orders_atualizarpedidopagamento",
-      "community": 3,
+      "community": 5,
       "norm_label": "atualizarpedidopagamento()"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L71",
       "id": "lib_google_sheets_orders_registrarentrega",
-      "community": 3,
+      "community": 5,
       "norm_label": "registrarentrega()"
     },
     {
@@ -774,7 +774,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L84",
       "id": "lib_google_sheets_orders_registrarwebhooksenovo",
-      "community": 3,
+      "community": 5,
       "norm_label": "registrarwebhooksenovo()"
     },
     {
@@ -783,7 +783,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L100",
       "id": "lib_google_sheets_orders_finalizarwebhook",
-      "community": 3,
+      "community": 5,
       "norm_label": "finalizarwebhook()"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L109",
       "id": "lib_google_sheets_orders_listaritenspedido",
-      "community": 3,
+      "community": 5,
       "norm_label": "listaritenspedido()"
     },
     {
@@ -801,7 +801,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L115",
       "id": "lib_google_sheets_orders_buscaroriginaispedido",
-      "community": 3,
+      "community": 5,
       "norm_label": "buscaroriginaispedido()"
     },
     {
@@ -810,7 +810,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L124",
       "id": "lib_google_sheets_orders_criarautorizacoesdownload",
-      "community": 3,
+      "community": 5,
       "norm_label": "criarautorizacoesdownload()"
     },
     {
@@ -819,7 +819,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L140",
       "id": "lib_google_sheets_orders_consumirdownload",
-      "community": 3,
+      "community": 5,
       "norm_label": "consumirdownload()"
     },
     {
@@ -828,7 +828,7 @@
       "source_file": "backend/lib/google-sheets.orders.js",
       "source_location": "L154",
       "id": "lib_google_sheets_orders_novopedidoid",
-      "community": 3,
+      "community": 5,
       "norm_label": "novopedidoid()"
     },
     {
@@ -837,7 +837,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L1",
       "id": "backend_lib_google_sheets_shared_js",
-      "community": 10,
+      "community": 5,
       "norm_label": "google-sheets.shared.js"
     },
     {
@@ -846,7 +846,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L4",
       "id": "lib_google_sheets_shared_drivepreviewurl",
-      "community": 10,
+      "community": 5,
       "norm_label": "drivepreviewurl()"
     },
     {
@@ -855,7 +855,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L8",
       "id": "lib_google_sheets_shared_applicationpreviewurl",
-      "community": 10,
+      "community": 5,
       "norm_label": "applicationpreviewurl()"
     },
     {
@@ -864,7 +864,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L13",
       "id": "lib_google_sheets_shared_driveurltothumbnail",
-      "community": 10,
+      "community": 5,
       "norm_label": "driveurltothumbnail()"
     },
     {
@@ -873,7 +873,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L18",
       "id": "lib_google_sheets_shared_yes",
-      "community": 10,
+      "community": 5,
       "norm_label": "yes()"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L22",
       "id": "lib_google_sheets_shared_displaytitle",
-      "community": 10,
+      "community": 5,
       "norm_label": "displaytitle()"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L29",
       "id": "lib_google_sheets_shared_datelabel",
-      "community": 10,
+      "community": 5,
       "norm_label": "datelabel()"
     },
     {
@@ -900,7 +900,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L42",
       "id": "lib_google_sheets_shared_getdoc",
-      "community": 3,
+      "community": 5,
       "norm_label": "getdoc()"
     },
     {
@@ -909,7 +909,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L66",
       "id": "lib_google_sheets_shared_sheet",
-      "community": 3,
+      "community": 5,
       "norm_label": "sheet()"
     },
     {
@@ -918,7 +918,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L71",
       "id": "lib_google_sheets_shared_rows",
-      "community": 3,
+      "community": 5,
       "norm_label": "rows()"
     },
     {
@@ -927,7 +927,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L76",
       "id": "lib_google_sheets_shared_eventofromrow",
-      "community": 10,
+      "community": 5,
       "norm_label": "eventofromrow()"
     },
     {
@@ -936,7 +936,7 @@
       "source_file": "backend/lib/google-sheets.shared.js",
       "source_location": "L99",
       "id": "lib_google_sheets_shared_fotofromrow",
-      "community": 10,
+      "community": 5,
       "norm_label": "fotofromrow()"
     },
     {
@@ -945,7 +945,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L1",
       "id": "backend_lib_jwt_utils_js",
-      "community": 8,
+      "community": 10,
       "norm_label": "jwt-utils.js"
     },
     {
@@ -954,7 +954,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L4",
       "id": "lib_jwt_utils_base64urlencode",
-      "community": 8,
+      "community": 10,
       "norm_label": "base64urlencode()"
     },
     {
@@ -963,7 +963,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L8",
       "id": "lib_jwt_utils_base64urldecode",
-      "community": 8,
+      "community": 10,
       "norm_label": "base64urldecode()"
     },
     {
@@ -972,7 +972,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L12",
       "id": "lib_jwt_utils_signtoken",
-      "community": 8,
+      "community": 10,
       "norm_label": "signtoken()"
     },
     {
@@ -981,7 +981,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L19",
       "id": "lib_jwt_utils_verifytoken",
-      "community": 8,
+      "community": 10,
       "norm_label": "verifytoken()"
     },
     {
@@ -990,7 +990,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L1",
       "id": "backend_lib_mercado_pago_js",
-      "community": 11,
+      "community": 13,
       "norm_label": "mercado-pago.js"
     },
     {
@@ -999,7 +999,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L4",
       "id": "lib_mercado_pago_client",
-      "community": 11,
+      "community": 13,
       "norm_label": "client()"
     },
     {
@@ -1008,7 +1008,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L9",
       "id": "lib_mercado_pago_paymentmethods",
-      "community": 11,
+      "community": 13,
       "norm_label": "paymentmethods()"
     },
     {
@@ -1017,7 +1017,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L17",
       "id": "lib_mercado_pago_criarpreferencia",
-      "community": 11,
+      "community": 13,
       "norm_label": "criarpreferencia()"
     },
     {
@@ -1026,7 +1026,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L56",
       "id": "lib_mercado_pago_consultarpagamento",
-      "community": 11,
+      "community": 13,
       "norm_label": "consultarpagamento()"
     },
     {
@@ -1035,7 +1035,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L61",
       "id": "lib_mercado_pago_validarassinaturawebhook",
-      "community": 11,
+      "community": 13,
       "norm_label": "validarassinaturawebhook()"
     },
     {
@@ -1044,7 +1044,7 @@
       "source_file": "backend/lib/pricing.js",
       "source_location": "L1",
       "id": "backend_lib_pricing_js",
-      "community": 18,
+      "community": 20,
       "norm_label": "pricing.js"
     },
     {
@@ -1053,7 +1053,7 @@
       "source_file": "backend/lib/pricing.js",
       "source_location": "L6",
       "id": "lib_pricing_roundmoney",
-      "community": 18,
+      "community": 20,
       "norm_label": "roundmoney()"
     },
     {
@@ -1062,7 +1062,7 @@
       "source_file": "backend/lib/pricing.js",
       "source_location": "L10",
       "id": "lib_pricing_calculatepricing",
-      "community": 18,
+      "community": 20,
       "norm_label": "calculatepricing()"
     },
     {
@@ -1071,7 +1071,7 @@
       "source_file": "backend/lib/runtime-cache.js",
       "source_location": "L1",
       "id": "backend_lib_runtime_cache_js",
-      "community": 3,
+      "community": 8,
       "norm_label": "runtime-cache.js"
     },
     {
@@ -1080,7 +1080,7 @@
       "source_file": "backend/lib/runtime-cache.js",
       "source_location": "L5",
       "id": "lib_runtime_cache_cacheclient",
-      "community": 3,
+      "community": 8,
       "norm_label": "cacheclient()"
     },
     {
@@ -1089,7 +1089,7 @@
       "source_file": "backend/lib/runtime-cache.js",
       "source_location": "L9",
       "id": "lib_runtime_cache_logcache",
-      "community": 3,
+      "community": 8,
       "norm_label": "logcache()"
     },
     {
@@ -1098,7 +1098,7 @@
       "source_file": "backend/lib/runtime-cache.js",
       "source_location": "L13",
       "id": "lib_runtime_cache_readthrough",
-      "community": 3,
+      "community": 8,
       "norm_label": "readthrough()"
     },
     {
@@ -1107,7 +1107,7 @@
       "source_file": "backend/lib/runtime-cache.js",
       "source_location": "L37",
       "id": "lib_runtime_cache_invalidatecachetags",
-      "community": 3,
+      "community": 8,
       "norm_label": "invalidatecachetags()"
     },
     {
@@ -1116,7 +1116,7 @@
       "source_file": "backend/lib/validation.js",
       "source_location": "L1",
       "id": "backend_lib_validation_js",
-      "community": 53,
+      "community": 55,
       "norm_label": "validation.js"
     },
     {
@@ -1125,7 +1125,7 @@
       "source_file": "backend/lib/watermark-processor.js",
       "source_location": "L1",
       "id": "backend_lib_watermark_processor_js",
-      "community": 14,
+      "community": 17,
       "norm_label": "watermark-processor.js"
     },
     {
@@ -1134,7 +1134,7 @@
       "source_file": "backend/lib/watermark-processor.js",
       "source_location": "L27",
       "id": "lib_watermark_processor_detectwatermarktype",
-      "community": 14,
+      "community": 17,
       "norm_label": "detectwatermarktype()"
     },
     {
@@ -1143,7 +1143,7 @@
       "source_file": "backend/lib/watermark-processor.js",
       "source_location": "L50",
       "id": "lib_watermark_processor_compositewatermark",
-      "community": 14,
+      "community": 17,
       "norm_label": "compositewatermark()"
     },
     {
@@ -1152,7 +1152,7 @@
       "source_file": "backend/middleware/error-handler.js",
       "source_location": "L1",
       "id": "backend_middleware_error_handler_js",
-      "community": 24,
+      "community": 26,
       "norm_label": "error-handler.js"
     },
     {
@@ -1161,7 +1161,7 @@
       "source_file": "backend/middleware/error-handler.js",
       "source_location": "L1",
       "id": "middleware_error_handler_errorhandler",
-      "community": 24,
+      "community": 26,
       "norm_label": "errorhandler()"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_file": "backend/middleware/rate-limit.js",
       "source_location": "L1",
       "id": "backend_middleware_rate_limit_js",
-      "community": 54,
+      "community": 56,
       "norm_label": "rate-limit.js"
     },
     {
@@ -1179,7 +1179,7 @@
       "source_file": "backend/__tests__/cache-invalidate.test.js",
       "source_location": "L1",
       "id": "backend_tests_cache_invalidate_test_js",
-      "community": 55,
+      "community": 57,
       "norm_label": "cache-invalidate.test.js"
     },
     {
@@ -1188,7 +1188,7 @@
       "source_file": "backend/__tests__/cover-preview.test.js",
       "source_location": "L1",
       "id": "backend_tests_cover_preview_test_js",
-      "community": 56,
+      "community": 58,
       "norm_label": "cover-preview.test.js"
     },
     {
@@ -1197,7 +1197,7 @@
       "source_file": "backend/__tests__/criar-pagamento.test.js",
       "source_location": "L1",
       "id": "backend_tests_criar_pagamento_test_js",
-      "community": 57,
+      "community": 59,
       "norm_label": "criar-pagamento.test.js"
     },
     {
@@ -1206,7 +1206,7 @@
       "source_file": "backend/__tests__/delivery.test.js",
       "source_location": "L1",
       "id": "backend_tests_delivery_test_js",
-      "community": 58,
+      "community": 60,
       "norm_label": "delivery.test.js"
     },
     {
@@ -1215,7 +1215,7 @@
       "source_file": "backend/__tests__/download.test.js",
       "source_location": "L1",
       "id": "backend_tests_download_test_js",
-      "community": 8,
+      "community": 10,
       "norm_label": "download.test.js"
     },
     {
@@ -1224,7 +1224,7 @@
       "source_file": "backend/__tests__/download.test.js",
       "source_location": "L20",
       "id": "tests_download_test_token",
-      "community": 8,
+      "community": 10,
       "norm_label": "token()"
     },
     {
@@ -1233,7 +1233,7 @@
       "source_file": "backend/__tests__/eventos.test.js",
       "source_location": "L1",
       "id": "backend_tests_eventos_test_js",
-      "community": 59,
+      "community": 61,
       "norm_label": "eventos.test.js"
     },
     {
@@ -1242,7 +1242,7 @@
       "source_file": "backend/__tests__/galeria.test.js",
       "source_location": "L1",
       "id": "backend_tests_galeria_test_js",
-      "community": 60,
+      "community": 62,
       "norm_label": "galeria.test.js"
     },
     {
@@ -1251,7 +1251,7 @@
       "source_file": "backend/__tests__/google-drive.test.js",
       "source_location": "L1",
       "id": "backend_tests_google_drive_test_js",
-      "community": 15,
+      "community": 18,
       "norm_label": "google-drive.test.js"
     },
     {
@@ -1260,7 +1260,7 @@
       "source_file": "backend/__tests__/google-drive.test.js",
       "source_location": "L14",
       "id": "tests_google_drive_test_tokenresponse",
-      "community": 15,
+      "community": 18,
       "norm_label": "tokenresponse()"
     },
     {
@@ -1269,7 +1269,7 @@
       "source_file": "backend/__tests__/google-drive.test.js",
       "source_location": "L24",
       "id": "tests_google_drive_test_downloadresponse",
-      "community": 15,
+      "community": 18,
       "norm_label": "downloadresponse()"
     },
     {
@@ -1278,7 +1278,7 @@
       "source_file": "backend/__tests__/google-drive.test.js",
       "source_location": "L35",
       "id": "tests_google_drive_test_uploadresponse",
-      "community": 15,
+      "community": 18,
       "norm_label": "uploadresponse()"
     },
     {
@@ -1287,7 +1287,7 @@
       "source_file": "backend/__tests__/google-drive.test.js",
       "source_location": "L46",
       "id": "tests_google_drive_test_errorresponse",
-      "community": 15,
+      "community": 18,
       "norm_label": "errorresponse()"
     },
     {
@@ -1296,7 +1296,7 @@
       "source_file": "backend/__tests__/google-sheets.test.js",
       "source_location": "L1",
       "id": "backend_tests_google_sheets_test_js",
-      "community": 25,
+      "community": 27,
       "norm_label": "google-sheets.test.js"
     },
     {
@@ -1305,7 +1305,7 @@
       "source_file": "backend/__tests__/google-sheets.test.js",
       "source_location": "L4",
       "id": "tests_google_sheets_test_row",
-      "community": 25,
+      "community": 27,
       "norm_label": "row()"
     },
     {
@@ -1314,7 +1314,7 @@
       "source_file": "backend/__tests__/mercado-pago.test.js",
       "source_location": "L1",
       "id": "backend_tests_mercado_pago_test_js",
-      "community": 61,
+      "community": 63,
       "norm_label": "mercado-pago.test.js"
     },
     {
@@ -1323,7 +1323,7 @@
       "source_file": "backend/__tests__/preprocess.test.js",
       "source_location": "L1",
       "id": "backend_tests_preprocess_test_js",
-      "community": 26,
+      "community": 28,
       "norm_label": "preprocess.test.js"
     },
     {
@@ -1332,7 +1332,7 @@
       "source_file": "backend/__tests__/preprocess.test.js",
       "source_location": "L21",
       "id": "tests_preprocess_test_mocksharpchain",
-      "community": 26,
+      "community": 28,
       "norm_label": "mocksharpchain()"
     },
     {
@@ -1341,7 +1341,7 @@
       "source_file": "backend/__tests__/preview-evento.test.js",
       "source_location": "L1",
       "id": "backend_tests_preview_evento_test_js",
-      "community": 62,
+      "community": 64,
       "norm_label": "preview-evento.test.js"
     },
     {
@@ -1350,7 +1350,7 @@
       "source_file": "backend/__tests__/pricing.test.js",
       "source_location": "L1",
       "id": "backend_tests_pricing_test_js",
-      "community": 63,
+      "community": 65,
       "norm_label": "pricing.test.js"
     },
     {
@@ -1359,7 +1359,7 @@
       "source_file": "backend/__tests__/rate-limit-routes.test.js",
       "source_location": "L1",
       "id": "backend_tests_rate_limit_routes_test_js",
-      "community": 64,
+      "community": 66,
       "norm_label": "rate-limit-routes.test.js"
     },
     {
@@ -1368,7 +1368,7 @@
       "source_file": "backend/__tests__/status-pagamento.test.js",
       "source_location": "L1",
       "id": "backend_tests_status_pagamento_test_js",
-      "community": 65,
+      "community": 67,
       "norm_label": "status-pagamento.test.js"
     },
     {
@@ -1377,7 +1377,7 @@
       "source_file": "backend/__tests__/watermark-api.test.js",
       "source_location": "L1",
       "id": "backend_tests_watermark_api_test_js",
-      "community": 66,
+      "community": 68,
       "norm_label": "watermark-api.test.js"
     },
     {
@@ -1386,7 +1386,7 @@
       "source_file": "backend/__tests__/watermark-processor.test.js",
       "source_location": "L1",
       "id": "backend_tests_watermark_processor_test_js",
-      "community": 67,
+      "community": 69,
       "norm_label": "watermark-processor.test.js"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "frontend/jest.config.js",
       "source_location": "L1",
       "id": "frontend_jest_config_js",
-      "community": 68,
+      "community": 70,
       "norm_label": "jest.config.js"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "frontend/postcss.config.js",
       "source_location": "L1",
       "id": "frontend_postcss_config_js",
-      "community": 69,
+      "community": 71,
       "norm_label": "postcss.config.js"
     },
     {
@@ -1431,7 +1431,7 @@
       "source_file": "frontend/tailwind.config.js",
       "source_location": "L1",
       "id": "frontend_tailwind_config_js",
-      "community": 70,
+      "community": 72,
       "norm_label": "tailwind.config.js"
     },
     {
@@ -1440,7 +1440,7 @@
       "source_file": "frontend/vite.config.js",
       "source_location": "L1",
       "id": "frontend_vite_config_js",
-      "community": 71,
+      "community": 73,
       "norm_label": "vite.config.js"
     },
     {
@@ -1449,25 +1449,16 @@
       "source_file": "frontend/src/App.jsx",
       "source_location": "L1",
       "id": "frontend_src_app_jsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "app.jsx"
-    },
-    {
-      "label": "LegacyCategoryRedirect()",
-      "file_type": "code",
-      "source_file": "frontend/src/App.jsx",
-      "source_location": "L13",
-      "id": "src_app_legacycategoryredirect",
-      "community": 5,
-      "norm_label": "legacycategoryredirect()"
     },
     {
       "label": "App()",
       "file_type": "code",
       "source_file": "frontend/src/App.jsx",
-      "source_location": "L18",
+      "source_location": "L7",
       "id": "src_app_app",
-      "community": 5,
+      "community": 7,
       "norm_label": "app()"
     },
     {
@@ -1476,7 +1467,7 @@
       "source_file": "frontend/src/main.jsx",
       "source_location": "L1",
       "id": "frontend_src_main_jsx",
-      "community": 72,
+      "community": 74,
       "norm_label": "main.jsx"
     },
     {
@@ -1485,7 +1476,7 @@
       "source_file": "frontend/src/setupTests.js",
       "source_location": "L1",
       "id": "frontend_src_setuptests_js",
-      "community": 73,
+      "community": 75,
       "norm_label": "setuptests.js"
     },
     {
@@ -1494,7 +1485,7 @@
       "source_file": "frontend/src/components/CartSummary.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_cartsummary_jsx",
-      "community": 5,
+      "community": 3,
       "norm_label": "cartsummary.jsx"
     },
     {
@@ -1503,7 +1494,7 @@
       "source_file": "frontend/src/components/CartSummary.jsx",
       "source_location": "L4",
       "id": "components_cartsummary_cartsummary",
-      "community": 5,
+      "community": 3,
       "norm_label": "cartsummary()"
     },
     {
@@ -1512,7 +1503,7 @@
       "source_file": "frontend/src/components/PhotoCard.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_photocard_jsx",
-      "community": 5,
+      "community": 3,
       "norm_label": "photocard.jsx"
     },
     {
@@ -1521,7 +1512,7 @@
       "source_file": "frontend/src/components/PhotoCard.jsx",
       "source_location": "L4",
       "id": "components_photocard_photocard",
-      "community": 5,
+      "community": 3,
       "norm_label": "photocard()"
     },
     {
@@ -1530,7 +1521,7 @@
       "source_file": "frontend/src/components/layout/Footer.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_footer_jsx",
-      "community": 27,
+      "community": 29,
       "norm_label": "footer.jsx"
     },
     {
@@ -1539,7 +1530,7 @@
       "source_file": "frontend/src/components/layout/Footer.jsx",
       "source_location": "L3",
       "id": "layout_footer_footer",
-      "community": 27,
+      "community": 29,
       "norm_label": "footer()"
     },
     {
@@ -1548,7 +1539,7 @@
       "source_file": "frontend/src/components/layout/Header.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_header_jsx",
-      "community": 5,
+      "community": 3,
       "norm_label": "header.jsx"
     },
     {
@@ -1557,7 +1548,7 @@
       "source_file": "frontend/src/components/layout/Header.jsx",
       "source_location": "L3",
       "id": "layout_header_header",
-      "community": 5,
+      "community": 3,
       "norm_label": "header()"
     },
     {
@@ -1566,7 +1557,7 @@
       "source_file": "frontend/src/components/layout/ScrollToTop.jsx",
       "source_location": "L1",
       "id": "frontend_src_components_layout_scrolltotop_jsx",
-      "community": 28,
+      "community": 30,
       "norm_label": "scrolltotop.jsx"
     },
     {
@@ -1575,7 +1566,7 @@
       "source_file": "frontend/src/components/layout/ScrollToTop.jsx",
       "source_location": "L4",
       "id": "layout_scrolltotop_scrolltotop",
-      "community": 28,
+      "community": 30,
       "norm_label": "scrolltotop()"
     },
     {
@@ -1584,7 +1575,7 @@
       "source_file": "frontend/src/context/CarrinhoContext.jsx",
       "source_location": "L1",
       "id": "frontend_src_context_carrinhocontext_jsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "carrinhocontext.jsx"
     },
     {
@@ -1593,7 +1584,7 @@
       "source_file": "frontend/src/context/CarrinhoContext.jsx",
       "source_location": "L6",
       "id": "context_carrinhocontext_carrinhoreducer",
-      "community": 5,
+      "community": 7,
       "norm_label": "carrinhoreducer()"
     },
     {
@@ -1602,7 +1593,7 @@
       "source_file": "frontend/src/context/CarrinhoContext.jsx",
       "source_location": "L20",
       "id": "context_carrinhocontext_carrinhoprovider",
-      "community": 5,
+      "community": 7,
       "norm_label": "carrinhoprovider()"
     },
     {
@@ -1611,7 +1602,7 @@
       "source_file": "frontend/src/context/CarrinhoContext.jsx",
       "source_location": "L31",
       "id": "context_carrinhocontext_usecarrinhocontext",
-      "community": 5,
+      "community": 3,
       "norm_label": "usecarrinhocontext()"
     },
     {
@@ -1633,12 +1624,39 @@
       "norm_label": "categorylabel()"
     },
     {
+      "label": "DesktopApp.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/desktop/DesktopApp.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_desktop_desktopapp_jsx",
+      "community": 7,
+      "norm_label": "desktopapp.jsx"
+    },
+    {
+      "label": "LegacyCategoryRedirect()",
+      "file_type": "code",
+      "source_file": "frontend/src/desktop/DesktopApp.jsx",
+      "source_location": "L16",
+      "id": "desktop_desktopapp_legacycategoryredirect",
+      "community": 7,
+      "norm_label": "legacycategoryredirect()"
+    },
+    {
+      "label": "DesktopApp()",
+      "file_type": "code",
+      "source_file": "frontend/src/desktop/DesktopApp.jsx",
+      "source_location": "L21",
+      "id": "desktop_desktopapp_desktopapp",
+      "community": 7,
+      "norm_label": "desktopapp()"
+    },
+    {
       "label": "useCarrinho.js",
       "file_type": "code",
       "source_file": "frontend/src/hooks/useCarrinho.js",
       "source_location": "L1",
       "id": "frontend_src_hooks_usecarrinho_js",
-      "community": 5,
+      "community": 3,
       "norm_label": "usecarrinho.js"
     },
     {
@@ -1647,7 +1665,7 @@
       "source_file": "frontend/src/hooks/useCarrinho.js",
       "source_location": "L6",
       "id": "hooks_usecarrinho_usecarrinho",
-      "community": 5,
+      "community": 3,
       "norm_label": "usecarrinho()"
     },
     {
@@ -1764,8 +1782,188 @@
       "source_file": "frontend/src/lib/validation.js",
       "source_location": "L1",
       "id": "frontend_src_lib_validation_js",
-      "community": 74,
+      "community": 76,
       "norm_label": "validation.js"
+    },
+    {
+      "label": "MobileApp.jsx",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L1",
+      "id": "frontend_src_mobile_mobileapp_jsx",
+      "community": 0,
+      "norm_label": "mobileapp.jsx"
+    },
+    {
+      "label": "Icon()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L29",
+      "id": "mobile_mobileapp_icon",
+      "community": 0,
+      "norm_label": "icon()"
+    },
+    {
+      "label": "useEventos()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L33",
+      "id": "mobile_mobileapp_useeventos",
+      "community": 0,
+      "norm_label": "useeventos()"
+    },
+    {
+      "label": "ScrollToTop()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L46",
+      "id": "mobile_mobileapp_scrolltotop",
+      "community": 0,
+      "norm_label": "scrolltotop()"
+    },
+    {
+      "label": "MobileRoutes()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L52",
+      "id": "mobile_mobileapp_mobileroutes",
+      "community": 3,
+      "norm_label": "mobileroutes()"
+    },
+    {
+      "label": "MobileApp()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L76",
+      "id": "mobile_mobileapp_mobileapp",
+      "community": 0,
+      "norm_label": "mobileapp()"
+    },
+    {
+      "label": "MobileTopBar()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L86",
+      "id": "mobile_mobileapp_mobiletopbar",
+      "community": 3,
+      "norm_label": "mobiletopbar()"
+    },
+    {
+      "label": "BottomNav()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L104",
+      "id": "mobile_mobileapp_bottomnav",
+      "community": 0,
+      "norm_label": "bottomnav()"
+    },
+    {
+      "label": "MobileHome()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L114",
+      "id": "mobile_mobileapp_mobilehome",
+      "community": 0,
+      "norm_label": "mobilehome()"
+    },
+    {
+      "label": "MobileSearch()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L148",
+      "id": "mobile_mobileapp_mobilesearch",
+      "community": 0,
+      "norm_label": "mobilesearch()"
+    },
+    {
+      "label": "EventCard()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L175",
+      "id": "mobile_mobileapp_eventcard",
+      "community": 0,
+      "norm_label": "eventcard()"
+    },
+    {
+      "label": "MobileEvent()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L184",
+      "id": "mobile_mobileapp_mobileevent",
+      "community": 0,
+      "norm_label": "mobileevent()"
+    },
+    {
+      "label": "AccessCard()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L245",
+      "id": "mobile_mobileapp_accesscard",
+      "community": 0,
+      "norm_label": "accesscard()"
+    },
+    {
+      "label": "Lightbox()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L249",
+      "id": "mobile_mobileapp_lightbox",
+      "community": 0,
+      "norm_label": "lightbox()"
+    },
+    {
+      "label": "FloatingCart()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L257",
+      "id": "mobile_mobileapp_floatingcart",
+      "community": 3,
+      "norm_label": "floatingcart()"
+    },
+    {
+      "label": "CartSheet()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L263",
+      "id": "mobile_mobileapp_cartsheet",
+      "community": 3,
+      "norm_label": "cartsheet()"
+    },
+    {
+      "label": "MobileCheckout()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L272",
+      "id": "mobile_mobileapp_mobilecheckout",
+      "community": 3,
+      "norm_label": "mobilecheckout()"
+    },
+    {
+      "label": "MobilePaymentReturn()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L306",
+      "id": "mobile_mobileapp_mobilepaymentreturn",
+      "community": 0,
+      "norm_label": "mobilepaymentreturn()"
+    },
+    {
+      "label": "SkeletonList()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L316",
+      "id": "mobile_mobileapp_skeletonlist",
+      "community": 0,
+      "norm_label": "skeletonlist()"
+    },
+    {
+      "label": "EmptyState()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L320",
+      "id": "mobile_mobileapp_emptystate",
+      "community": 0,
+      "norm_label": "emptystate()"
     },
     {
       "label": "Checkout.jsx",
@@ -1773,7 +1971,7 @@
       "source_file": "frontend/src/pages/Checkout.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_checkout_jsx",
-      "community": 0,
+      "community": 3,
       "norm_label": "checkout.jsx"
     },
     {
@@ -1782,7 +1980,7 @@
       "source_file": "frontend/src/pages/Checkout.jsx",
       "source_location": "L8",
       "id": "pages_checkout_money",
-      "community": 0,
+      "community": 3,
       "norm_label": "money()"
     },
     {
@@ -1791,7 +1989,7 @@
       "source_file": "frontend/src/pages/Checkout.jsx",
       "source_location": "L14",
       "id": "pages_checkout_paymenticon",
-      "community": 0,
+      "community": 3,
       "norm_label": "paymenticon()"
     },
     {
@@ -1800,7 +1998,7 @@
       "source_file": "frontend/src/pages/Checkout.jsx",
       "source_location": "L23",
       "id": "pages_checkout_checkoutpage",
-      "community": 0,
+      "community": 3,
       "norm_label": "checkoutpage()"
     },
     {
@@ -1975,12 +2173,102 @@
       "norm_label": "searchpage()"
     },
     {
+      "label": "gallery.js",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L1",
+      "id": "frontend_src_shared_gallery_js",
+      "community": 0,
+      "norm_label": "gallery.js"
+    },
+    {
+      "label": "galleryToken()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L1",
+      "id": "shared_gallery_gallerytoken",
+      "community": 0,
+      "norm_label": "gallerytoken()"
+    },
+    {
+      "label": "saveGalleryToken()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L5",
+      "id": "shared_gallery_savegallerytoken",
+      "community": 0,
+      "norm_label": "savegallerytoken()"
+    },
+    {
+      "label": "normalizePhoto()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L9",
+      "id": "shared_gallery_normalizephoto",
+      "community": 0,
+      "norm_label": "normalizephoto()"
+    },
+    {
+      "label": "money()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L18",
+      "id": "shared_gallery_money",
+      "community": 0,
+      "norm_label": "money()"
+    },
+    {
+      "label": "platform.js",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L1",
+      "id": "frontend_src_shared_platform_js",
+      "community": 7,
+      "norm_label": "platform.js"
+    },
+    {
+      "label": "detectPlatform()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L6",
+      "id": "shared_platform_detectplatform",
+      "community": 7,
+      "norm_label": "detectplatform()"
+    },
+    {
+      "label": "getPlatformSnapshot()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L15",
+      "id": "shared_platform_getplatformsnapshot",
+      "community": 7,
+      "norm_label": "getplatformsnapshot()"
+    },
+    {
+      "label": "subscribePlatform()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L28",
+      "id": "shared_platform_subscribeplatform",
+      "community": 7,
+      "norm_label": "subscribeplatform()"
+    },
+    {
+      "label": "isMobileExperience()",
+      "file_type": "code",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L39",
+      "id": "shared_platform_ismobileexperience",
+      "community": 7,
+      "norm_label": "ismobileexperience()"
+    },
+    {
       "label": "fileMock.js",
       "file_type": "code",
       "source_file": "frontend/src/__mocks__/fileMock.js",
       "source_location": "L1",
       "id": "frontend_src_mocks_filemock_js",
-      "community": 75,
+      "community": 77,
       "norm_label": "filemock.js"
     },
     {
@@ -1989,7 +2277,7 @@
       "source_file": "frontend/src/__tests__/api.test.js",
       "source_location": "L1",
       "id": "frontend_src_tests_api_test_js",
-      "community": 19,
+      "community": 21,
       "norm_label": "api.test.js"
     },
     {
@@ -1998,7 +2286,7 @@
       "source_file": "frontend/src/__tests__/api.test.js",
       "source_location": "L10",
       "id": "tests_api_test_mockok",
-      "community": 19,
+      "community": 21,
       "norm_label": "mockok()"
     },
     {
@@ -2007,7 +2295,7 @@
       "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_carrinhocontext_test_jsx",
-      "community": 5,
+      "community": 3,
       "norm_label": "carrinhocontext.test.jsx"
     },
     {
@@ -2016,7 +2304,7 @@
       "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
       "source_location": "L7",
       "id": "tests_carrinhocontext_test_testcomponent",
-      "community": 5,
+      "community": 3,
       "norm_label": "testcomponent()"
     },
     {
@@ -2025,7 +2313,7 @@
       "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
       "source_location": "L20",
       "id": "tests_carrinhocontext_test_renderwithprovider",
-      "community": 5,
+      "community": 3,
       "norm_label": "renderwithprovider()"
     },
     {
@@ -2034,7 +2322,7 @@
       "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_cartsummary_test_jsx",
-      "community": 5,
+      "community": 3,
       "norm_label": "cartsummary.test.jsx"
     },
     {
@@ -2043,7 +2331,7 @@
       "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
       "source_location": "L11",
       "id": "tests_cartsummary_test_mockcarrinho",
-      "community": 5,
+      "community": 3,
       "norm_label": "mockcarrinho()"
     },
     {
@@ -2052,7 +2340,7 @@
       "source_file": "frontend/src/__tests__/CartSummary.test.jsx",
       "source_location": "L19",
       "id": "tests_cartsummary_test_wrap",
-      "community": 5,
+      "community": 3,
       "norm_label": "wrap()"
     },
     {
@@ -2061,7 +2349,7 @@
       "source_file": "frontend/src/__tests__/Checkout.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_checkout_test_jsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "checkout.test.jsx"
     },
     {
@@ -2070,7 +2358,7 @@
       "source_file": "frontend/src/__tests__/Checkout.test.jsx",
       "source_location": "L15",
       "id": "tests_checkout_test_rendercheckout",
-      "community": 5,
+      "community": 7,
       "norm_label": "rendercheckout()"
     },
     {
@@ -2079,7 +2367,7 @@
       "source_file": "frontend/src/__tests__/Event.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_event_test_jsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "event.test.jsx"
     },
     {
@@ -2088,7 +2376,7 @@
       "source_file": "frontend/src/__tests__/Header.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_header_test_jsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "header.test.jsx"
     },
     {
@@ -2097,7 +2385,7 @@
       "source_file": "frontend/src/__tests__/Header.test.jsx",
       "source_location": "L6",
       "id": "tests_header_test_renderheader",
-      "community": 5,
+      "community": 7,
       "norm_label": "renderheader()"
     },
     {
@@ -2106,8 +2394,17 @@
       "source_file": "frontend/src/__tests__/PhotoCard.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_photocard_test_jsx",
-      "community": 76,
+      "community": 78,
       "norm_label": "photocard.test.jsx"
+    },
+    {
+      "label": "platform.test.js",
+      "file_type": "code",
+      "source_file": "frontend/src/__tests__/platform.test.js",
+      "source_location": "L1",
+      "id": "frontend_src_tests_platform_test_js",
+      "community": 7,
+      "norm_label": "platform.test.js"
     },
     {
       "label": "ScrollToTop.test.jsx",
@@ -2115,7 +2412,7 @@
       "source_file": "frontend/src/__tests__/ScrollToTop.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_scrolltotop_test_jsx",
-      "community": 29,
+      "community": 31,
       "norm_label": "scrolltotop.test.jsx"
     },
     {
@@ -2124,7 +2421,7 @@
       "source_file": "frontend/src/__tests__/ScrollToTop.test.jsx",
       "source_location": "L6",
       "id": "tests_scrolltotop_test_testroutes",
-      "community": 29,
+      "community": 31,
       "norm_label": "testroutes()"
     },
     {
@@ -2133,7 +2430,7 @@
       "source_file": "frontend/src/__tests__/validation.test.js",
       "source_location": "L1",
       "id": "frontend_src_tests_validation_test_js",
-      "community": 77,
+      "community": 79,
       "norm_label": "validation.test.js"
     },
     {
@@ -2385,7 +2682,7 @@
       "source_file": "google-apps-script/jest-setup.js",
       "source_location": "L1",
       "id": "google_apps_script_jest_setup_js",
-      "community": 78,
+      "community": 80,
       "norm_label": "jest-setup.js"
     },
     {
@@ -2394,7 +2691,7 @@
       "source_file": "google-apps-script/jest.config.js",
       "source_location": "L1",
       "id": "google_apps_script_jest_config_js",
-      "community": 79,
+      "community": 81,
       "norm_label": "jest.config.js"
     },
     {
@@ -2772,7 +3069,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L1",
       "id": "google_apps_script_watermark_js",
-      "community": 4,
+      "community": 12,
       "norm_label": "watermark.js"
     },
     {
@@ -2781,7 +3078,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L53",
       "id": "google_apps_script_watermark_geraridfoto",
-      "community": 4,
+      "community": 12,
       "norm_label": "geraridfoto()"
     },
     {
@@ -2790,7 +3087,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L58",
       "id": "google_apps_script_watermark_gerarnomeamostra",
-      "community": 4,
+      "community": 12,
       "norm_label": "gerarnomeamostra()"
     },
     {
@@ -2799,7 +3096,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L62",
       "id": "google_apps_script_watermark_eharquivocapa",
-      "community": 4,
+      "community": 12,
       "norm_label": "eharquivocapa()"
     },
     {
@@ -2808,7 +3105,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L75",
       "id": "google_apps_script_watermark_preprocessararquivo",
-      "community": 4,
+      "community": 12,
       "norm_label": "_preprocessararquivo()"
     },
     {
@@ -2817,7 +3114,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L103",
       "id": "google_apps_script_watermark_notificarerroprocessamento",
-      "community": 4,
+      "community": 12,
       "norm_label": "notificarerroprocessamento()"
     },
     {
@@ -2826,7 +3123,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L117",
       "id": "google_apps_script_watermark_solicitarderivado",
-      "community": 4,
+      "community": 12,
       "norm_label": "solicitarderivado()"
     },
     {
@@ -2835,7 +3132,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L134",
       "id": "google_apps_script_watermark_salvarderivado",
-      "community": 4,
+      "community": 12,
       "norm_label": "salvarderivado()"
     },
     {
@@ -2844,7 +3141,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L139",
       "id": "google_apps_script_watermark_processarfoto",
-      "community": 4,
+      "community": 12,
       "norm_label": "processarfoto()"
     },
     {
@@ -2853,7 +3150,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L217",
       "id": "google_apps_script_watermark_reprocessarminiaturasemlote",
-      "community": 4,
+      "community": 12,
       "norm_label": "reprocessarminiaturasemlote()"
     },
     {
@@ -2862,7 +3159,7 @@
       "source_file": "google-apps-script/Watermark.js",
       "source_location": "L253",
       "id": "google_apps_script_watermark_organizarminiaturasempasta",
-      "community": 4,
+      "community": 12,
       "norm_label": "organizarminiaturasempasta()"
     },
     {
@@ -2871,7 +3168,7 @@
       "source_file": "google-apps-script/WhatsApp.js",
       "source_location": "L1",
       "id": "google_apps_script_whatsapp_js",
-      "community": 16,
+      "community": 4,
       "norm_label": "whatsapp.js"
     },
     {
@@ -2880,7 +3177,7 @@
       "source_file": "google-apps-script/WhatsApp.js",
       "source_location": "L8",
       "id": "google_apps_script_whatsapp_notificarfalhaentrega",
-      "community": 16,
+      "community": 4,
       "norm_label": "notificarfalhaentrega()"
     },
     {
@@ -2889,7 +3186,7 @@
       "source_file": "google-apps-script/WhatsApp.js",
       "source_location": "L18",
       "id": "google_apps_script_whatsapp_gerarlinkwame",
-      "community": 16,
+      "community": 4,
       "norm_label": "gerarlinkwame()"
     },
     {
@@ -2898,7 +3195,7 @@
       "source_file": "google-apps-script/WhatsApp.js",
       "source_location": "L25",
       "id": "google_apps_script_whatsapp_tentarentrega",
-      "community": 16,
+      "community": 4,
       "norm_label": "tentarentrega()"
     },
     {
@@ -2907,7 +3204,7 @@
       "source_file": "google-apps-script/WhatsApp.js",
       "source_location": "L44",
       "id": "google_apps_script_whatsapp_processarentregas",
-      "community": 16,
+      "community": 4,
       "norm_label": "processarentregas()"
     },
     {
@@ -2916,7 +3213,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/block-navigation.js",
       "source_location": "L1",
       "id": "google_apps_script_coverage_lcov_report_block_navigation_js",
-      "community": 13,
+      "community": 15,
       "norm_label": "block-navigation.js"
     },
     {
@@ -2925,7 +3222,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/prettify.js",
       "source_location": "L1",
       "id": "google_apps_script_coverage_lcov_report_prettify_js",
-      "community": 9,
+      "community": 11,
       "norm_label": "prettify.js"
     },
     {
@@ -2934,7 +3231,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L1",
       "id": "google_apps_script_coverage_lcov_report_sorter_js",
-      "community": 7,
+      "community": 9,
       "norm_label": "sorter.js"
     },
     {
@@ -2943,7 +3240,7 @@
       "source_file": "google-apps-script/scripts/validate-clasp-release.js",
       "source_location": "L1",
       "id": "google_apps_script_scripts_validate_clasp_release_js",
-      "community": 80,
+      "community": 82,
       "norm_label": "validate-clasp-release.js"
     },
     {
@@ -2952,7 +3249,7 @@
       "source_file": "google-apps-script/__tests__/Code.test.js",
       "source_location": "L1",
       "id": "google_apps_script_tests_code_test_js",
-      "community": 81,
+      "community": 83,
       "norm_label": "code.test.js"
     },
     {
@@ -2961,7 +3258,7 @@
       "source_file": "google-apps-script/__tests__/Drive.test.js",
       "source_location": "L1",
       "id": "google_apps_script_tests_drive_test_js",
-      "community": 82,
+      "community": 84,
       "norm_label": "drive.test.js"
     },
     {
@@ -2970,7 +3267,7 @@
       "source_file": "google-apps-script/__tests__/EventQueue.test.js",
       "source_location": "L1",
       "id": "google_apps_script_tests_eventqueue_test_js",
-      "community": 83,
+      "community": 85,
       "norm_label": "eventqueue.test.js"
     },
     {
@@ -2979,7 +3276,7 @@
       "source_file": "google-apps-script/__tests__/Sheet.test.js",
       "source_location": "L1",
       "id": "google_apps_script_tests_sheet_test_js",
-      "community": 84,
+      "community": 86,
       "norm_label": "sheet.test.js"
     },
     {
@@ -2988,7 +3285,7 @@
       "source_file": "google-apps-script/__tests__/Watermark.test.js",
       "source_location": "L1",
       "id": "google_apps_script_tests_watermark_test_js",
-      "community": 85,
+      "community": 87,
       "norm_label": "watermark.test.js"
     },
     {
@@ -2997,8 +3294,17 @@
       "source_file": "google-apps-script/__tests__/WhatsApp.test.js",
       "source_location": "L1",
       "id": "google_apps_script_tests_whatsapp_test_js",
-      "community": 86,
+      "community": 88,
       "norm_label": "whatsapp.test.js"
+    },
+    {
+      "label": "LegacyCategoryRedirect()",
+      "file_type": "code",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L13",
+      "community": 7,
+      "norm_label": "legacycategoryredirect()",
+      "id": "src_app_legacycategoryredirect"
     },
     {
       "label": "drivePreviewUrl()",
@@ -3140,7 +3446,7 @@
       "file_type": "code",
       "source_file": "backend/lib/google-sheets.js",
       "source_location": "L178",
-      "community": 3,
+      "community": 8,
       "norm_label": "listarfotosevento()",
       "id": "lib_google_sheets_listarfotosevento"
     },
@@ -3149,7 +3455,7 @@
       "file_type": "code",
       "source_file": "backend/lib/google-sheets.js",
       "source_location": "L199",
-      "community": 3,
+      "community": 8,
       "norm_label": "buscarpreviewfoto()",
       "id": "lib_google_sheets_buscarpreviewfoto"
     },
@@ -3257,7 +3563,7 @@
       "file_type": "code",
       "source_file": "backend/lib/google-sheets.js",
       "source_location": "L352",
-      "community": 3,
+      "community": 5,
       "norm_label": "criarautorizacoesdownload()",
       "id": "lib_google_sheets_criarautorizacoesdownload"
     },
@@ -3284,7 +3590,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/CartSummary.jsx",
       "source_location": "L4",
-      "community": 5,
+      "community": 3,
       "norm_label": "money()",
       "id": "components_cartsummary_money"
     },
@@ -3293,7 +3599,7 @@
       "file_type": "code",
       "source_file": "frontend/src/lib/calculations.js",
       "source_location": "L1",
-      "community": 5,
+      "community": 3,
       "norm_label": "calculations.js",
       "id": "frontend_src_lib_calculations_js"
     },
@@ -3302,7 +3608,7 @@
       "file_type": "code",
       "source_file": "frontend/src/lib/calculations.js",
       "source_location": "L5",
-      "community": 5,
+      "community": 3,
       "norm_label": "calculartotais()",
       "id": "lib_calculations_calculartotais"
     },
@@ -3311,7 +3617,7 @@
       "file_type": "code",
       "source_file": "frontend/src/__tests__/calculations.test.js",
       "source_location": "L1",
-      "community": 5,
+      "community": 3,
       "norm_label": "calculations.test.js",
       "id": "frontend_src_tests_calculations_test_js"
     },
@@ -3320,7 +3626,7 @@
       "file_type": "code",
       "source_file": "time-dilation/eslint.config.js",
       "source_location": "L1",
-      "community": 87,
+      "community": 89,
       "norm_label": "eslint.config.js",
       "id": "time_dilation_eslint_config_js"
     },
@@ -3329,7 +3635,7 @@
       "file_type": "code",
       "source_file": "time-dilation/postcss.config.js",
       "source_location": "L1",
-      "community": 88,
+      "community": 90,
       "norm_label": "postcss.config.js",
       "id": "time_dilation_postcss_config_js"
     },
@@ -3338,7 +3644,7 @@
       "file_type": "code",
       "source_file": "time-dilation/tailwind.config.js",
       "source_location": "L1",
-      "community": 89,
+      "community": 91,
       "norm_label": "tailwind.config.js",
       "id": "time_dilation_tailwind_config_js"
     },
@@ -3347,7 +3653,7 @@
       "file_type": "code",
       "source_file": "time-dilation/vite.config.js",
       "source_location": "L1",
-      "community": 90,
+      "community": 92,
       "norm_label": "vite.config.js",
       "id": "time_dilation_vite_config_js"
     },
@@ -3374,7 +3680,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/main.jsx",
       "source_location": "L1",
-      "community": 91,
+      "community": 93,
       "norm_label": "main.jsx",
       "id": "time_dilation_src_main_jsx"
     },
@@ -3473,7 +3779,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/layout/Section.jsx",
       "source_location": "L1",
-      "community": 30,
+      "community": 32,
       "norm_label": "section.jsx",
       "id": "time_dilation_src_components_layout_section_jsx"
     },
@@ -3482,7 +3788,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/layout/Section.jsx",
       "source_location": "L1",
-      "community": 30,
+      "community": 32,
       "norm_label": "section()",
       "id": "layout_section_section"
     },
@@ -3491,7 +3797,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/layout/SectionLabel.jsx",
       "source_location": "L1",
-      "community": 31,
+      "community": 33,
       "norm_label": "sectionlabel.jsx",
       "id": "time_dilation_src_components_layout_sectionlabel_jsx"
     },
@@ -3500,7 +3806,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/layout/SectionLabel.jsx",
       "source_location": "L1",
-      "community": 31,
+      "community": 33,
       "norm_label": "sectionlabel()",
       "id": "layout_sectionlabel_sectionlabel"
     },
@@ -3509,7 +3815,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/layout/Starfield.jsx",
       "source_location": "L1",
-      "community": 32,
+      "community": 34,
       "norm_label": "starfield.jsx",
       "id": "time_dilation_src_components_layout_starfield_jsx"
     },
@@ -3518,7 +3824,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/layout/Starfield.jsx",
       "source_location": "L1",
-      "community": 32,
+      "community": 34,
       "norm_label": "starfield()",
       "id": "layout_starfield_starfield"
     },
@@ -3563,7 +3869,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/Accordion.jsx",
       "source_location": "L1",
-      "community": 33,
+      "community": 35,
       "norm_label": "accordion.jsx",
       "id": "time_dilation_src_components_ui_accordion_jsx"
     },
@@ -3572,7 +3878,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/Accordion.jsx",
       "source_location": "L4",
-      "community": 33,
+      "community": 35,
       "norm_label": "accordion()",
       "id": "ui_accordion_accordion"
     },
@@ -3581,7 +3887,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/Button.jsx",
       "source_location": "L1",
-      "community": 34,
+      "community": 36,
       "norm_label": "button.jsx",
       "id": "time_dilation_src_components_ui_button_jsx"
     },
@@ -3590,7 +3896,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/Button.jsx",
       "source_location": "L3",
-      "community": 34,
+      "community": 36,
       "norm_label": "button()",
       "id": "ui_button_button"
     },
@@ -3599,7 +3905,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/CornerFrame.jsx",
       "source_location": "L1",
-      "community": 35,
+      "community": 37,
       "norm_label": "cornerframe.jsx",
       "id": "time_dilation_src_components_ui_cornerframe_jsx"
     },
@@ -3608,7 +3914,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/CornerFrame.jsx",
       "source_location": "L1",
-      "community": 35,
+      "community": 37,
       "norm_label": "cornerframe()",
       "id": "ui_cornerframe_cornerframe"
     },
@@ -3644,7 +3950,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/Panel.jsx",
       "source_location": "L1",
-      "community": 36,
+      "community": 38,
       "norm_label": "panel.jsx",
       "id": "time_dilation_src_components_ui_panel_jsx"
     },
@@ -3653,7 +3959,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/components/ui/Panel.jsx",
       "source_location": "L3",
-      "community": 36,
+      "community": 38,
       "norm_label": "panel()",
       "id": "ui_panel_panel"
     },
@@ -3698,7 +4004,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/i18n/en.js",
       "source_location": "L1",
-      "community": 92,
+      "community": 94,
       "norm_label": "en.js",
       "id": "time_dilation_src_i18n_en_js"
     },
@@ -3725,7 +4031,7 @@
       "file_type": "code",
       "source_file": "time-dilation/src/i18n/pt-BR.js",
       "source_location": "L1",
-      "community": 93,
+      "community": 95,
       "norm_label": "pt-br.js",
       "id": "time_dilation_src_i18n_pt_br_js"
     },
@@ -3878,7 +4184,7 @@
       "file_type": "code",
       "source_file": "backend/api/criar-pagamento.js",
       "source_location": "L1",
-      "community": 94,
+      "community": 96,
       "norm_label": "criar-pagamento.js",
       "id": "backend_api_criar_pagamento_js"
     },
@@ -3887,7 +4193,7 @@
       "file_type": "code",
       "source_file": "backend/api/fotos.js",
       "source_location": "L1",
-      "community": 95,
+      "community": 97,
       "norm_label": "fotos.js",
       "id": "backend_api_fotos_js"
     },
@@ -3923,7 +4229,7 @@
       "file_type": "code",
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L9",
-      "community": 11,
+      "community": 13,
       "norm_label": "criarpagamentopix()",
       "id": "lib_mercado_pago_criarpagamentopix"
     },
@@ -3932,7 +4238,7 @@
       "file_type": "code",
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L27",
-      "community": 11,
+      "community": 13,
       "norm_label": "consultarstatus()",
       "id": "lib_mercado_pago_consultarstatus"
     },
@@ -3941,7 +4247,7 @@
       "file_type": "code",
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L32",
-      "community": 11,
+      "community": 13,
       "norm_label": "validarhmac()",
       "id": "lib_mercado_pago_validarhmac"
     },
@@ -3950,7 +4256,7 @@
       "file_type": "code",
       "source_file": "backend/lib/watermark-processor.js",
       "source_location": "L19",
-      "community": 14,
+      "community": 17,
       "norm_label": "buildwatermarktile()",
       "id": "lib_watermark_processor_buildwatermarktile"
     },
@@ -3959,7 +4265,7 @@
       "file_type": "code",
       "source_file": "backend/lib/watermark-processor.js",
       "source_location": "L36",
-      "community": 14,
+      "community": 17,
       "norm_label": "buildspacedtile()",
       "id": "lib_watermark_processor_buildspacedtile"
     },
@@ -3968,7 +4274,7 @@
       "file_type": "code",
       "source_file": "backend/__tests__/fotos.test.js",
       "source_location": "L1",
-      "community": 96,
+      "community": 98,
       "norm_label": "fotos.test.js",
       "id": "backend_tests_fotos_test_js"
     },
@@ -3986,7 +4292,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/CartSummary.jsx",
       "source_location": "L4",
-      "community": 5,
+      "community": 3,
       "norm_label": "fmt()",
       "id": "components_cartsummary_fmt"
     },
@@ -3995,7 +4301,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/FilterEvent.jsx",
       "source_location": "L1",
-      "community": 37,
+      "community": 39,
       "norm_label": "filterevent.jsx",
       "id": "frontend_src_components_filterevent_jsx"
     },
@@ -4004,7 +4310,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/FilterEvent.jsx",
       "source_location": "L3",
-      "community": 37,
+      "community": 39,
       "norm_label": "filterevent()",
       "id": "components_filterevent_filterevent"
     },
@@ -4013,7 +4319,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/Gallery.jsx",
       "source_location": "L1",
-      "community": 0,
+      "community": 16,
       "norm_label": "gallery.jsx",
       "id": "frontend_src_components_gallery_jsx"
     },
@@ -4022,7 +4328,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/Gallery.jsx",
       "source_location": "L6",
-      "community": 0,
+      "community": 16,
       "norm_label": "skeletoncard()",
       "id": "components_gallery_skeletoncard"
     },
@@ -4031,7 +4337,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/Gallery.jsx",
       "source_location": "L14",
-      "community": 0,
+      "community": 16,
       "norm_label": "gallery()",
       "id": "components_gallery_gallery"
     },
@@ -4040,7 +4346,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/PixDisplay.jsx",
       "source_location": "L1",
-      "community": 38,
+      "community": 40,
       "norm_label": "pixdisplay.jsx",
       "id": "frontend_src_components_pixdisplay_jsx"
     },
@@ -4049,7 +4355,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/PixDisplay.jsx",
       "source_location": "L3",
-      "community": 38,
+      "community": 40,
       "norm_label": "pixdisplay()",
       "id": "components_pixdisplay_pixdisplay"
     },
@@ -4058,7 +4364,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/common/icons.jsx",
       "source_location": "L1",
-      "community": 17,
+      "community": 19,
       "norm_label": "icons.jsx",
       "id": "frontend_src_components_common_icons_jsx"
     },
@@ -4067,7 +4373,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/common/icons.jsx",
       "source_location": "L214",
-      "community": 17,
+      "community": 19,
       "norm_label": "eyebrow()",
       "id": "common_icons_eyebrow"
     },
@@ -4076,7 +4382,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/common/icons.jsx",
       "source_location": "L217",
-      "community": 17,
+      "community": 19,
       "norm_label": "sectiontitle()",
       "id": "common_icons_sectiontitle"
     },
@@ -4085,7 +4391,7 @@
       "file_type": "code",
       "source_file": "frontend/src/components/common/icons.jsx",
       "source_location": "L227",
-      "community": 17,
+      "community": 19,
       "norm_label": "divider()",
       "id": "common_icons_divider"
     },
@@ -4094,7 +4400,7 @@
       "file_type": "code",
       "source_file": "frontend/src/hooks/useFotos.js",
       "source_location": "L1",
-      "community": 0,
+      "community": 16,
       "norm_label": "usefotos.js",
       "id": "frontend_src_hooks_usefotos_js"
     },
@@ -4103,7 +4409,7 @@
       "file_type": "code",
       "source_file": "frontend/src/hooks/useFotos.js",
       "source_location": "L9",
-      "community": 0,
+      "community": 16,
       "norm_label": "usefotos()",
       "id": "hooks_usefotos_usefotos"
     },
@@ -4112,7 +4418,7 @@
       "file_type": "code",
       "source_file": "frontend/src/hooks/useMediaQuery.js",
       "source_location": "L1",
-      "community": 39,
+      "community": 41,
       "norm_label": "usemediaquery.js",
       "id": "frontend_src_hooks_usemediaquery_js"
     },
@@ -4121,7 +4427,7 @@
       "file_type": "code",
       "source_file": "frontend/src/hooks/useMediaQuery.js",
       "source_location": "L7",
-      "community": 39,
+      "community": 41,
       "norm_label": "usemediaquery()",
       "id": "hooks_usemediaquery_usemediaquery"
     },
@@ -4130,7 +4436,7 @@
       "file_type": "code",
       "source_file": "frontend/src/hooks/usePollingStatus.js",
       "source_location": "L1",
-      "community": 0,
+      "community": 3,
       "norm_label": "usepollingstatus.js",
       "id": "frontend_src_hooks_usepollingstatus_js"
     },
@@ -4139,7 +4445,7 @@
       "file_type": "code",
       "source_file": "frontend/src/hooks/usePollingStatus.js",
       "source_location": "L9",
-      "community": 0,
+      "community": 3,
       "norm_label": "usepollingstatus()",
       "id": "hooks_usepollingstatus_usepollingstatus"
     },
@@ -4157,7 +4463,7 @@
       "file_type": "code",
       "source_file": "frontend/src/lib/calculations.js",
       "source_location": "L5",
-      "community": 5,
+      "community": 3,
       "norm_label": "calculartaxa()",
       "id": "lib_calculations_calculartaxa"
     },
@@ -4166,7 +4472,7 @@
       "file_type": "code",
       "source_file": "frontend/src/pages/Checkout.jsx",
       "source_location": "L9",
-      "community": 0,
+      "community": 3,
       "norm_label": "fmt()",
       "id": "pages_checkout_fmt"
     },
@@ -4175,7 +4481,7 @@
       "file_type": "code",
       "source_file": "frontend/src/pages/Gallery.jsx",
       "source_location": "L1",
-      "community": 40,
+      "community": 42,
       "norm_label": "gallery.jsx",
       "id": "frontend_src_pages_gallery_jsx"
     },
@@ -4184,7 +4490,7 @@
       "file_type": "code",
       "source_file": "frontend/src/pages/Gallery.jsx",
       "source_location": "L3",
-      "community": 40,
+      "community": 42,
       "norm_label": "gallerypage()",
       "id": "pages_gallery_gallerypage"
     },
@@ -4193,7 +4499,7 @@
       "file_type": "code",
       "source_file": "frontend/src/__tests__/api.test.js",
       "source_location": "L21",
-      "community": 19,
+      "community": 21,
       "norm_label": "mockerr()",
       "id": "tests_api_test_mockerr"
     },
@@ -4202,7 +4508,7 @@
       "file_type": "code",
       "source_file": "frontend/src/__tests__/Checkout.test.jsx",
       "source_location": "L77",
-      "community": 5,
+      "community": 7,
       "norm_label": "advancetostep2()",
       "id": "tests_checkout_test_advancetostep2"
     },
@@ -4211,7 +4517,7 @@
       "file_type": "code",
       "source_file": "frontend/src/__tests__/Header.test.jsx",
       "source_location": "L6",
-      "community": 5,
+      "community": 7,
       "norm_label": "wrap()",
       "id": "tests_header_test_wrap"
     },
@@ -4220,7 +4526,7 @@
       "file_type": "code",
       "source_file": "frontend/src/__tests__/useFotos.test.js",
       "source_location": "L1",
-      "community": 0,
+      "community": 16,
       "norm_label": "usefotos.test.js",
       "id": "frontend_src_tests_usefotos_test_js"
     },
@@ -4229,7 +4535,7 @@
       "file_type": "code",
       "source_file": "frontend/src/__tests__/usePollingStatus.test.js",
       "source_location": "L1",
-      "community": 0,
+      "community": 3,
       "norm_label": "usepollingstatus.test.js",
       "id": "frontend_src_tests_usepollingstatus_test_js"
     },
@@ -4265,7 +4571,7 @@
       "file_type": "code",
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L8",
-      "community": 12,
+      "community": 14,
       "norm_label": "createauth()",
       "id": "lib_google_drive_createauth"
     }
@@ -6988,6 +7294,49 @@
       "source_file": "frontend/src/App.jsx",
       "source_location": "L2",
       "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "shared_platform_getplatformsnapshot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "shared_platform_ismobileexperience",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "shared_platform_subscribeplatform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_app_jsx",
+      "target": "src_app_app"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/App.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_app_jsx",
       "target": "context_carrinhocontext_carrinhoprovider"
@@ -7003,14 +7352,15 @@
       "target": "src_app_legacycategoryredirect"
     },
     {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "frontend/src/App.jsx",
-      "source_location": "L8",
+      "source_location": "L15",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "frontend_src_app_jsx",
-      "target": "src_app_app"
+      "source": "src_app_app",
+      "target": "shared_platform_ismobileexperience"
     },
     {
       "relation": "contains",
@@ -7214,6 +7564,28 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/desktop/DesktopApp.jsx",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "frontend_src_desktop_desktopapp_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "context_carrinhocontext_carrinhoprovider",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/__tests__/CarrinhoContext.test.jsx",
       "source_location": "L2",
       "weight": 1.0,
@@ -7290,6 +7662,17 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "data_categories_categorylabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L5",
       "weight": 1.0,
@@ -7306,6 +7689,28 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_pages_search_jsx",
+      "target": "data_categories_categorylabel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_eventcard",
+      "target": "data_categories_categorylabel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L233",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobileevent",
       "target": "data_categories_categorylabel"
     },
     {
@@ -7344,6 +7749,26 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/desktop/DesktopApp.jsx",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "frontend_src_desktop_desktopapp_jsx",
+      "target": "desktop_desktopapp_legacycategoryredirect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/desktop/DesktopApp.jsx",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "frontend_src_desktop_desktopapp_jsx",
+      "target": "desktop_desktopapp_desktopapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/hooks/useCarrinho.js",
       "source_location": "L7",
       "weight": 1.0,
@@ -7361,6 +7786,17 @@
       "confidence_score": 1.0,
       "source": "frontend_src_hooks_usecarrinho_js",
       "target": "lib_calculations_calculartotais"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "hooks_usecarrinho_usecarrinho",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -7404,6 +7840,72 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_tests_cartsummary_test_jsx",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobileroutes",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobiletopbar",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L187",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobileevent",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L258",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_floatingcart",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L265",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_cartsheet",
+      "target": "hooks_usecarrinho_usecarrinho"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L273",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobilecheckout",
       "target": "hooks_usecarrinho_usecarrinho"
     },
     {
@@ -7632,6 +8134,17 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_listareventos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L4",
       "weight": 1.0,
@@ -7654,12 +8167,34 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_obterevento",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L4",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_pages_event_jsx",
       "target": "lib_api_obterevento"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_listarfotosevento",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -7676,12 +8211,34 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_validaracessogaleria",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L4",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_pages_event_jsx",
       "target": "lib_api_validaracessogaleria"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_cotarcheckout",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -7698,12 +8255,34 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_criarpagamento",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/Checkout.jsx",
       "source_location": "L5",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_pages_checkout_jsx",
       "target": "lib_api_criarpagamento"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_api_statuspagamento",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -7762,12 +8341,34 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_event_format_datelabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L6",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "frontend_src_pages_event_jsx",
       "target": "lib_event_format_datelabel"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "lib_event_format_schedulelabel",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -7796,6 +8397,17 @@
       "context": "call",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L179",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_eventcard",
+      "target": "lib_event_format_schedulelabel"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L59",
       "weight": 1.0,
@@ -7812,6 +8424,262 @@
       "weight": 1.0,
       "source": "pages_search_searchcard",
       "target": "lib_event_format_schedulelabel"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "shared_gallery_gallerytoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "shared_gallery_money",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "shared_gallery_normalizephoto",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "shared_gallery_savegallerytoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_icon",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_useeventos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_scrolltotop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobileroutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobileapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobiletopbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_bottomnav",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobilehome",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L148",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobilesearch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L175",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_eventcard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L184",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobileevent",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L245",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_accesscard",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L249",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_lightbox",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L257",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_floatingcart",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L263",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_cartsheet",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L272",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobilecheckout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L306",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_mobilepaymentreturn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L316",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_skeletonlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L320",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_mobileapp_jsx",
+      "target": "mobile_mobileapp_emptystate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobilehome",
+      "target": "mobile_mobileapp_useeventos",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/MobileApp.jsx",
+      "source_location": "L153",
+      "weight": 1.0,
+      "source": "mobile_mobileapp_mobilesearch",
+      "target": "mobile_mobileapp_useeventos",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -8057,6 +8925,119 @@
       "confidence_score": 1.0,
       "source": "frontend_src_pages_search_jsx",
       "target": "pages_search_searchpage"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "frontend_src_shared_gallery_js",
+      "target": "shared_gallery_gallerytoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "frontend_src_shared_gallery_js",
+      "target": "shared_gallery_savegallerytoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "frontend_src_shared_gallery_js",
+      "target": "shared_gallery_normalizephoto",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/gallery.js",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "frontend_src_shared_gallery_js",
+      "target": "shared_gallery_money",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "frontend_src_shared_platform_js",
+      "target": "shared_platform_detectplatform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "frontend_src_shared_platform_js",
+      "target": "shared_platform_getplatformsnapshot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "frontend_src_shared_platform_js",
+      "target": "shared_platform_subscribeplatform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "frontend_src_shared_platform_js",
+      "target": "shared_platform_ismobileexperience",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/shared/platform.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "shared_platform_getplatformsnapshot",
+      "target": "shared_platform_detectplatform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/platform.test.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "frontend_src_tests_platform_test_js",
+      "target": "shared_platform_detectplatform",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/platform.test.js",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "frontend_src_tests_platform_test_js",
+      "target": "shared_platform_ismobileexperience",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -11883,5 +12864,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "9e78ee13aa5889e66bda03d901cde0f46e091ed7"
+  "built_at_commit": "44ff7d284cc701bbd35903c0c8d0f26d1609d002"
 }

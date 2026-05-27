@@ -4,7 +4,7 @@
 
 O Pascom Drive usa uma arquitetura modular simples:
 
-- Frontend SPA para experiência de compra.
+- Frontend SPA com experiências desktop e mobile/tablet separadas.
 - Backend Node.js como camada de integração e segurança.
 - Google Apps Script como worker/automação acoplado ao Drive e Sheets.
 - Google Sheets como banco operacional e painel administrativo.
@@ -29,6 +29,9 @@ Google Drive
 | Pasta | Responsabilidade |
 | --- | --- |
 | `frontend/` | Aplicação React/Vite, páginas, componentes, contexto de carrinho e testes UI |
+| `frontend/src/desktop/` | Shell desktop original com layout institucional |
+| `frontend/src/mobile/` | Experiência mobile dedicada inspirada no app prototype |
+| `frontend/src/shared/` | Detecção de plataforma e helpers reutilizados entre experiências |
 | `frontend/src/pages/` | Rotas principais: home, busca, evento, checkout e retorno de pagamento |
 | `frontend/src/components/` | Componentes compartilhados como cartão de foto, resumo do carrinho e layout |
 | `frontend/src/context/` | Estado global do carrinho |
@@ -124,6 +127,8 @@ Frontend:
 - `/checkout` formulário e criação de pagamento.
 - `/pagamento/:resultado` retorno do Mercado Pago.
 
+As rotas são as mesmas em desktop e mobile, mas a árvore de componentes é escolhida por plataforma em `frontend/src/App.jsx`.
+
 Backend:
 
 - Rotas públicas de catálogo e checkout em `/api`.
@@ -164,6 +169,7 @@ Mecanismos atuais:
 ## Estratégia de Renderização
 
 - Frontend é SPA estática gerada por Vite.
+- Desktop e mobile são carregados por `React.lazy`, gerando separação de bundle por experiência.
 - Vercel entrega `frontend/dist` com fallback para `index.html`.
 - Dados são buscados no cliente.
 - Não há SSR, SSG dinâmico ou hidratação server-side.
@@ -190,6 +196,7 @@ Apps Script
 - Express é mantido para desenvolvimento local e compatibilidade Vercel.
 - Apps Script fica responsável pela automação nativa do Google Workspace.
 - O backend processa imagens para evitar limitações do Apps Script.
+- Mobile/tablet usa interface própria em vez de depender apenas de CSS responsivo.
 
 ## Riscos Arquiteturais
 

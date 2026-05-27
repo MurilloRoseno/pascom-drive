@@ -2,11 +2,31 @@
 
 ## Visão Geral
 
-O frontend atual é uma SPA React com poucas páginas e componentes compartilhados. A estrutura favorece simplicidade: estado global apenas para carrinho, busca em páginas e contratos HTTP concentrados em `frontend/src/lib/api.js`.
+O frontend atual é uma SPA React com duas experiências: desktop original e mobile/tablet dedicada. A estrutura favorece simplicidade: estado global apenas para carrinho, busca em páginas e contratos HTTP concentrados em `frontend/src/lib/api.js`.
 
 ## `App`
 
 - **Arquivo:** `frontend/src/App.jsx`
+- **Responsabilidade:** detectar plataforma e carregar desktop ou mobile por `React.lazy`.
+- **Hooks:** `useState`, `useEffect`.
+- **Melhoria:** manter a detecção em `shared/platform.js` para não duplicar regras.
+
+## `DesktopApp`
+
+- **Arquivo:** `frontend/src/desktop/DesktopApp.jsx`
+- **Responsabilidade:** preservar a experiência desktop original.
+- **Observação:** importa CSS desktop e páginas existentes.
+
+## `MobileApp`
+
+- **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
+- **Responsabilidade:** experiência mobile/tablet dedicada com app bar, bottom nav, galeria touch-first, lightbox, carrinho sheet e checkout vertical.
+- **Dependências:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria.
+- **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop.
+
+## `Desktop Layout Interno`
+
+- **Arquivo:** `frontend/src/desktop/DesktopApp.jsx`
 - **Responsabilidade:** compor providers, layout, rotas e carrinho global.
 - **Props:** nenhuma.
 - **Dependências:** `react-router-dom`, `CarrinhoProvider`, `Header`, `Footer`, `ScrollToTop`, `CartSummary`, páginas.

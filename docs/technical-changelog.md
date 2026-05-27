@@ -1,5 +1,16 @@
 # Changelog Técnico
 
+## 2026-05-27 — Experiência mobile dedicada
+
+- **Tipo:** `feat`
+- **Responsável:** Codex
+- **Alteração:** criação de detecção de plataforma, carregamento lazy de desktop/mobile, experiência mobile dedicada e documentação `mobile-experience.md`.
+- **Motivo:** oferecer UI mobile-first real para smartphones/tablets sem depender apenas de responsividade desktop.
+- **Impacto:** usuários mobile/tablet recebem `MobileApp`; desktop permanece em `DesktopApp`.
+- **Breaking changes:** nenhum contrato de API alterado.
+- **Migrações necessárias:** nenhuma.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/architecture.md`, `docs/components.md`, `docs/system-flows.md`, `docs/technical-audit.md`.
+
 ## 2026-05-27 — Consolidação da documentação canônica
 
 - **Tipo:** `docs`

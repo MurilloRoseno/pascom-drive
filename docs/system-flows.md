@@ -4,6 +4,8 @@
 
 ```text
 Cliente
+  -> index.html detecta desktop/mobile/tablet
+  -> React carrega DesktopApp ou MobileApp
   -> acessa /
   -> busca evento em /buscar
   -> abre /evento/:eventoId
@@ -15,6 +17,8 @@ Cliente
   -> retorna para /pagamento/:resultado
   -> recebe links seguros por e-mail ou WhatsApp assistido
 ```
+
+Em smartphones e tablets, a jornada usa a interface dedicada mobile com navegação inferior, carrinho em bottom sheet e lightbox fullscreen.
 
 ## Fluxo de Publicação de Evento
 

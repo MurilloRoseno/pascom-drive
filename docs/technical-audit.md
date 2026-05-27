@@ -16,6 +16,7 @@ O projeto está funcionalmente estruturado, mas carrega dívida documental, muda
 | `EventPage` concentra responsabilidades | Média | Risco de regressão | Média | Extrair hook de galeria/acesso |
 | `CheckoutPage` concentra cotação e pagamento | Média | Risco em fluxo financeiro | Média | Extrair hook/service e ampliar testes |
 | Alias legado `/api/criar-pagamento` | Baixa | Confusão de contrato | Baixa | Documentar depreciação antes de remover |
+| Duas UIs para o mesmo domínio | Média | Regras podem divergir entre desktop e mobile | Média | Manter lógica compartilhada em `lib/`, `context/` e `shared/`; testar fluxos críticos nas duas experiências |
 | CSP permite `unsafe-inline` | Média | Superfície XSS maior | Média | Remover após ajustar estilos/scripts |
 | Timestamps ISO sem conversão clara | Média | Diverge da política `America/Sao_Paulo` | Média | Padronizar util de data |
 | SMTP opcional | Baixa | Entrega automática pode não ocorrer | Baixa | Alertas operacionais e fallback assistido |
@@ -40,6 +41,7 @@ Recomendação:
 - Ausência de migração/versão formal do schema Sheets.
 - Pouca observabilidade estruturada.
 - Componentes de página grandes.
+- Mobile dedicado aumenta necessidade de testes de paridade.
 - Fluxos financeiros dependem de integração externa e precisam smoke test sandbox recorrente.
 - Documentação anterior estava espalhada entre raiz e `docs/`.
 

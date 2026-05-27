@@ -11,11 +11,12 @@ Este diretório é a fonte canônica de documentação do Pascom Drive. O códig
 5. `apis.md` — contratos HTTP reais do backend.
 6. `database.md` — modelo Google Sheets usado como banco.
 7. `components.md` — páginas, componentes React e estado.
-8. `technical-audit.md` — riscos, problemas e recomendações.
-9. `technical-roadmap.md` — evolução técnica sugerida.
-10. `conventions.md` — padrões obrigatórios.
-11. `documentation-policy.md` — cultura de documentação contínua.
-12. `technical-changelog.md` — histórico técnico contínuo.
+8. `mobile-experience.md` — arquitetura da experiência mobile dedicada.
+9. `technical-audit.md` — riscos, problemas e recomendações.
+10. `technical-roadmap.md` — evolução técnica sugerida.
+11. `conventions.md` — padrões obrigatórios.
+12. `documentation-policy.md` — cultura de documentação contínua.
+13. `technical-changelog.md` — histórico técnico contínuo.
 
 ## Mapa de Documentos
 
@@ -24,6 +25,7 @@ Este diretório é a fonte canônica de documentação do Pascom Drive. O códig
 | `project-overview.md` | Explica o sistema e seu problema de negócio | Todos |
 | `architecture.md` | Descreve decisões e relacionamento entre módulos | Devs e mantenedores |
 | `components.md` | Detalha componentes atuais do frontend | Frontend |
+| `mobile-experience.md` | Explica mobile/tablet separado do desktop | Frontend |
 | `apis.md` | Documenta endpoints, payloads e erros | Frontend/backend |
 | `system-flows.md` | Explica jornadas ponta a ponta | Produto, suporte e devs |
 | `database.md` | Documenta abas e entidades do Google Sheets | Backend, Apps Script |
