@@ -20,8 +20,9 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 ## `MobileApp`
 
 - **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
-- **Responsabilidade:** experiência mobile/tablet dedicada com app bar, bottom nav, galeria touch-first, lightbox, carrinho sheet e checkout vertical.
+- **Responsabilidade:** orquestrar a experiência mobile/tablet portada do layout `pascom-drive-mobile`, com app bar, bottom nav, galeria touch-first, lightbox, carrinho sheet e checkout vertical.
 - **Dependências:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria.
+- **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx` e CSS `reference-*`.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop.
 
 ## `Desktop Layout Interno`

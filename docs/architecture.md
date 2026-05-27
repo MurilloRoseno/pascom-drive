@@ -30,7 +30,7 @@ Google Drive
 | --- | --- |
 | `frontend/` | Aplicação React/Vite, páginas, componentes, contexto de carrinho e testes UI |
 | `frontend/src/desktop/` | Shell desktop original com layout institucional |
-| `frontend/src/mobile/` | Experiência mobile dedicada inspirada no app prototype |
+| `frontend/src/mobile/` | Experiência mobile dedicada portada fielmente do projeto `pascom-drive-mobile` |
 | `frontend/src/shared/` | Detecção de plataforma e helpers reutilizados entre experiências |
 | `frontend/src/pages/` | Rotas principais: home, busca, evento, checkout e retorno de pagamento |
 | `frontend/src/components/` | Componentes compartilhados como cartão de foto, resumo do carrinho e layout |

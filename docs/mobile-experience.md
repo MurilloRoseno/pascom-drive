@@ -1,41 +1,51 @@
-# Experiência Mobile Dedicada
+﻿# Experiência Mobile Dedicada
 
 ## Objetivo
 
-O frontend agora possui duas experiências separadas:
+A experiência mobile/tablet do Pascom Drive foi refeita para usar como base fiel o projeto de design `C:\Users\muril\OneDrive\Documentos\claude\Pessoal\pascom-drive-mobile`.
 
-- **Desktop:** interface original preservada em `frontend/src/desktop/DesktopApp.jsx`.
-- **Mobile/tablet:** interface dedicada em `frontend/src/mobile/MobileApp.jsx`, inspirada no protótipo `pascom-drive-mobile`.
+A regra arquitetural atual é:
 
-A experiência mobile não é apenas responsividade. Ela tem navegação inferior, app bar, carrinho em sheet, grade de fotos touch-first, lightbox fullscreen e checkout em fluxo vertical.
+- **Desktop:** continua usando a experiência original em `frontend/src/desktop/DesktopApp.jsx`.
+- **Mobile/tablet:** usa a experiência própria em `frontend/src/mobile/MobileApp.jsx`, portada do layout pesquisado e planejado no projeto `pascom-drive-mobile`.
+
+O mobile não é uma versão responsiva do desktop. Ele segue o desenho app-like da referência: app bar alta, navegação inferior, seções litúrgicas, cards visuais, galeria touch-first, lightbox fullscreen, carrinho em bottom sheet e checkout vertical.
+
+## Origem Visual
+
+A referência visual ativa é o projeto externo:
+
+```text
+C:\Users\muril\OneDrive\Documentos\claude\Pessoal\pascom-drive-mobile
+```
+
+Elementos preservados da referência:
+
+- tokens de cor, tipografia, espaçamento e superfícies;
+- estrutura `app`, `appbar`, `scroll`, `section`, `card`, `botnav`, `sheet`, `wm` e `cart-bar`;
+- linguagem visual paroquial com roxo, dourado, ornamentos e textura institucional;
+- fluxo de home, galerias, evento, galeria de fotos, lightbox, carrinho e checkout;
+- comportamento app-like com bottom navigation e bottom sheet.
 
 ## Estratégia de Detecção
 
-A detecção ocorre em duas etapas:
+A detecção ocorre antes e depois do carregamento React:
 
-1. `frontend/index.html` define `data-platform` antes do bundle React carregar.
-2. `frontend/src/shared/platform.js` confirma a plataforma no runtime e escuta resize/orientation.
+1. `frontend/index.html` define `data-platform` antes do bundle principal.
+2. `frontend/src/shared/platform.js` recalcula plataforma no runtime com user-agent, viewport e ponteiro coarse.
+3. `frontend/src/App.jsx` decide entre `DesktopApp` e `MobileApp` usando `React.lazy`.
 
-Critérios:
+Critérios principais:
 
 - user-agent de smartphone → `mobile`;
 - user-agent de tablet → `tablet`;
-- ponteiro coarse entre `600px` e `1024px` → `tablet`;
 - viewport menor que `768px` → `mobile`;
+- ponteiro coarse entre `600px` e `1024px` → `tablet`;
 - demais casos → `desktop`.
 
-`mobile` e `tablet` usam a experiência mobile.
+`mobile` e `tablet` carregam a experiência mobile dedicada.
 
-## Roteamento e Code Splitting
-
-`frontend/src/App.jsx` usa `React.lazy`:
-
-- `./desktop/DesktopApp.jsx`
-- `./mobile/MobileApp.jsx`
-
-Isso evita carregar a árvore React desktop no primeiro bundle mobile e mantém a experiência desktop isolada. Os CSS específicos também são importados dentro de cada experiência.
-
-## Organização
+## Organização Atual
 
 ```text
 frontend/src/
@@ -43,64 +53,69 @@ frontend/src/
 │  └─ DesktopApp.jsx
 ├─ mobile/
 │  ├─ MobileApp.jsx
-│  ├─ mobile.css
-│  └─ mobile-overlays.css
+│  ├─ referenceIcons.jsx
+│  ├─ referenceUtils.jsx
+│  ├─ referencePublicScreens.jsx
+│  ├─ referenceFlowScreens.jsx
+│  ├─ reference-tokens.css
+│  ├─ reference-layout.css
+│  └─ reference-adapter.css
 └─ shared/
    ├─ gallery.js
    └─ platform.js
 ```
 
-## Código Compartilhado
+## Integração com Dados Reais
 
-A versão mobile reutiliza:
+O projeto `pascom-drive-mobile` era um protótipo com dados globais/mockados. No Pascom Drive real, a UI foi conectada a:
 
-- `CarrinhoProvider` e `useCarrinho`;
-- APIs de `frontend/src/lib/api.js`;
-- validação `checkoutSchema`;
-- `categories`, `categoryLabel`, `dateLabel` e `scheduleLabel`;
-- tokens de galeria por `sessionStorage` via `shared/gallery.js`.
+- `listarEventos` para catálogo publicado;
+- `obterEvento` para detalhe do evento;
+- `listarFotosEvento` para galeria;
+- `validarAcessoGaleria` para galerias protegidas;
+- `cotarCheckout` para preço final;
+- `criarPagamento` para Checkout Pro Mercado Pago;
+- `statusPagamento` para retorno de pagamento;
+- `CarrinhoProvider` e `useCarrinho` para estado compartilhado.
+
+A tradução entre backend e layout fica em `frontend/src/mobile/referenceUtils.jsx`, que converte eventos/fotos reais para o formato visual esperado pela referência.
 
 ## Fluxo Mobile
 
 ```text
-index.html detecta plataforma
-  -> App escolhe MobileApp
-  -> MobileApp monta BrowserRouter + CarrinhoProvider
-  -> Home/Search/Event/Checkout usam APIs reais
-  -> Carrinho aparece como floating bar e bottom sheet
-  -> Checkout redireciona para Mercado Pago
+Usuário acessa site por celular/tablet
+  -> index.html marca data-platform
+  -> App carrega MobileApp por lazy import
+  -> MobileApp usa BrowserRouter + CarrinhoProvider
+  -> Home mostra catálogo real no layout da referência
+  -> Evento abre detalhe visual institucional
+  -> Galeria protegida solicita código quando necessário
+  -> Fotos podem ser ampliadas em lightbox fullscreen
+  -> Carrinho abre como bottom sheet
+  -> Checkout vertical redireciona para Mercado Pago
+  -> Retorno consulta status do pedido
 ```
-
-## UX Mobile
-
-- App bar sticky com voltar e carrinho.
-- Bottom navigation com áreas principais.
-- Hero compacto e busca grande para toque.
-- Chips horizontais para categorias.
-- Cards com imagem quadrada e texto curto.
-- Grade de fotos 3 colunas.
-- Lightbox fullscreen.
-- Checkout em blocos verticais.
-- Respeito a safe-area em iOS.
 
 ## Performance
 
-- Separação por lazy loading reduz JS inicial por plataforma.
-- Imagens usam `loading="lazy"` quando listadas.
-- CSS mobile é escopado em classes `m-*`.
-- Mobile evita importar componentes desktop.
-- Carrinho e checkout reutilizam estado global existente.
+- Desktop e mobile permanecem em bundles separados.
+- CSS da experiência mobile é carregado apenas quando `MobileApp` é importado.
+- Imagens de lista usam carregamento preguiçoso.
+- O layout mobile evita carregar componentes desktop.
+- Arquivos mobile foram divididos para manter manutenção e respeitar limite de 500 linhas por arquivo.
 
-## Riscos e Limitações
+## Riscos e Cuidados
 
-- A detecção por user-agent nunca é perfeita; viewport atua como fallback.
-- Troca de tamanho em desktop pode alternar experiência se cruzar o breakpoint.
-- A versão mobile ainda compartilha algumas APIs com contratos pensados inicialmente para desktop.
-- Não há virtualização de listas; se eventos/fotos crescerem muito, será necessário otimizar.
+- O layout mobile agora segue uma referência externa; alterações futuras devem comparar contra `pascom-drive-mobile` antes de mudar visualmente.
+- A experiência mobile possui telas próprias, então mudanças de regra no desktop precisam ser refletidas no mobile.
+- A detecção por user-agent/viewport não é perfeita; o fallback por viewport reduz erro, mas não elimina casos híbridos.
+- Como a aplicação é CSR, SEO continua limitado pelo modelo SPA atual.
 
-## Manutenção Futura
+## Regra de Manutenção
 
-- Novas regras de negócio devem ir para `shared/` ou `lib/`, não duplicadas em mobile/desktop.
-- Componentes visuais exclusivos devem ficar em `mobile/` ou `desktop/`.
-- Alterações de rota precisam ser refletidas nas duas experiências.
-- Testes de plataforma ficam em `frontend/src/__tests__/platform.test.js`.
+Toda mudança futura no mobile deve responder:
+
+1. A alteração preserva o layout/base do `pascom-drive-mobile`?
+2. A regra de negócio continua centralizada em `lib/`, `context/` ou `shared/`?
+3. A documentação e o changelog técnico foram atualizados?
+4. O fluxo foi validado em viewport mobile real ou emulação equivalente?

@@ -1,16 +1,16 @@
 # Graph Report - Drive  (2026-05-27)
 
 ## Corpus Check
-- 108 files · ~928,716 words
+- 112 files · ~934,123 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 508 nodes · 788 edges · 99 communities (97 shown, 2 thin omitted)
-- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 94 edges (avg confidence: 0.8)
+- 555 nodes · 874 edges · 100 communities (99 shown, 1 thin omitted)
+- Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 105 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `44ff7d28`
+- Built from commit: `39cf8d3f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -59,27 +59,27 @@
 - `listarFotosEvento()` --calls--> `readThrough()`  [INFERRED]
   backend/lib/google-sheets.catalog.js → backend/lib/runtime-cache.js
 
-## Communities (99 total, 2 thin omitted)
+## Communities (100 total, 1 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.06
-Nodes (27): categoryLabel(), cotarCheckout(), criarPagamento(), listarEventos(), listarFotos(), listarFotosEvento(), obterEvento(), request() (+19 more)
+Cohesion: 0.05
+Nodes (37): EventRoute(), MobileHome(), MobileRoutes(), MobileSearch(), routeNameFromLocation(), useEventGallery(), useEventos(), useEventosCatalog() (+29 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.15
-Nodes (42): alternarVisibilidadeSelecionada(), aplicarValidacaoLista(), aplicarValidacoesAdministrativas(), appendMappedRow(), arquivarEventoSelecionado(), atualizarCelula(), atualizarDerivadosFoto(), atualizarDisponibilidadeFotos() (+34 more)
+Cohesion: 0.06
+Nodes (26): Gallery(), categoryLabel(), useFotos(), usePollingStatus(), cotarCheckout(), criarPagamento(), listarEventos(), listarFotos() (+18 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.09
-Nodes (24): Calculator(), Didactic(), Faq(), Hero(), useCalculator(), useSimulation(), LanguageProvider(), useTranslation() (+16 more)
+Cohesion: 0.13
+Nodes (46): alternarVisibilidadeSelecionada(), aplicarValidacaoLista(), aplicarValidacoesAdministrativas(), appendMappedRow(), arquivarEventoSelecionado(), atualizarCelula(), atualizarDerivadosFoto(), atualizarDisponibilidadeFotos() (+38 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.09
-Nodes (21): CartSummary(), fmt(), money(), PhotoCard(), useCarrinhoContext(), useCarrinho(), usePollingStatus(), Header() (+13 more)
+Nodes (24): Calculator(), Didactic(), Faq(), Hero(), useCalculator(), useSimulation(), LanguageProvider(), useTranslation() (+16 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.09
-Nodes (22): entregarFotos(), processarEventos(), processarFotosNovas(), verificarEventosProntosParaRemover(), getAmostrasFolder(), getSourceFolder(), getThumbnailsFolder(), listarArquivosDoEvento() (+14 more)
+Cohesion: 0.07
+Nodes (19): CartSummary(), fmt(), money(), PhotoCard(), CarrinhoProvider(), useCarrinhoContext(), useCarrinho(), Header() (+11 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.11
@@ -90,8 +90,8 @@ Cohesion: 0.12
 Nodes (29): atualizarPedidoPagamento(), atualizarStatus(), buscarEvento(), buscarFotosParaCompra(), buscarOriginaisPedido(), buscarPedidoById(), buscarPedidoByPreferenceOrPayment(), catalogoPublicado() (+21 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.12
-Nodes (8): CarrinhoProvider(), detectPlatform(), getPlatformSnapshot(), isMobileExperience(), subscribePlatform(), App(), advanceToStep2(), renderCheckout()
+Cohesion: 0.11
+Nodes (18): entregarFotos(), processarEventos(), processarFotosNovas(), verificarEventosProntosParaRemover(), getAmostrasFolder(), getSourceFolder(), getThumbnailsFolder(), listarArquivosDoEvento() (+10 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.2
@@ -118,10 +118,14 @@ Cohesion: 0.31
 Nodes (4): client(), consultarPagamento(), criarPreferencia(), paymentMethods()
 
 ### Community 14 - "Community 14"
+Cohesion: 0.36
+Nodes (5): detectPlatform(), getPlatformSnapshot(), isMobileExperience(), subscribePlatform(), App()
+
+### Community 15 - "Community 15"
 Cohesion: 0.5
 Nodes (7): createAuth(), downloadFile(), downloadFileAsJpeg(), getAccessToken(), parsePrivateKey(), updateFile(), uploadFile()
 
-### Community 15 - "Community 15"
+### Community 16 - "Community 16"
 Cohesion: 0.73
 Nodes (4): goToNext(), goToPrevious(), makeCurrent(), toggleClass()
 
@@ -130,15 +134,15 @@ Cohesion: 0.7
 Nodes (4): buildSpacedTile(), buildWatermarkTile(), compositeWatermark(), detectWatermarkType()
 
 ## Knowledge Gaps
-- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **1 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `CarrinhoProvider()` connect `Community 7` to `Community 0`, `Community 3`?**
-  _High betweenness centrality (0.052) - this node is a cross-community bridge._
-- **Why does `App()` connect `Community 7` to `Community 2`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `CarrinhoProvider()` connect `Community 4` to `Community 0`, `Community 14`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
+- **Why does `App()` connect `Community 14` to `Community 3`?**
+  _High betweenness centrality (0.044) - this node is a cross-community bridge._
 - **Are the 14 inferred relationships involving `useCarrinho()` (e.g. with `CartSummary()` and `PhotoCard()`) actually correct?**
   _`useCarrinho()` has 14 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 8 inferred relationships involving `useTranslation()` (e.g. with `AppContent()` and `Calculator()`) actually correct?**
@@ -146,6 +150,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 12 inferred relationships involving `processarEventos()` (e.g. with `sincronizarConfiguracoesAdministrativas()` and `listarEventosNovos()`) actually correct?**
   _`processarEventos()` has 12 INFERRED edges - model-reasoned connections that need verification._
 - **Should `Community 0` be split into smaller, more focused modules?**
+  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
+- **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.06 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.09 - nodes in this community are weakly interconnected._

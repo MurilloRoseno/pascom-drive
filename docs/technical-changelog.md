@@ -1,5 +1,16 @@
 # Changelog Técnico
 
+## 2026-05-27 — Reimplementação fiel do layout mobile
+
+- **Tipo:** `refactor`
+- **Responsável:** Codex
+- **Alteração:** substituição da primeira UI mobile por um porte fiel do projeto `pascom-drive-mobile`, preservando tokens, classes, fluxo visual, bottom navigation, cards, galeria, lightbox, carrinho sheet e checkout vertical.
+- **Motivo:** o projeto `pascom-drive-mobile` foi criado especificamente como referência pesquisada e planejada para melhorar o fluxo mobile; a implementação anterior estava apenas inspirada nela.
+- **Impacto:** usuários mobile/tablet recebem uma experiência visual mais próxima do design aprovado, mantendo integrações reais com APIs, carrinho e Mercado Pago.
+- **Breaking changes:** nenhum contrato de API alterado.
+- **Migrações necessárias:** nenhuma.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/architecture.md`, `docs/components.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-27 — Experiência mobile dedicada
 
 - **Tipo:** `feat`
