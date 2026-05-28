@@ -9,34 +9,47 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Arquivo:** `frontend/src/App.jsx`
 - **Responsabilidade:** detectar plataforma e carregar desktop ou mobile por `React.lazy`.
 - **Hooks:** `useState`, `useEffect`.
-- **Melhoria:** manter a detecção em `shared/platform.js` para não duplicar regras.
+- **Melhoria:** manter a deteccao em `shared/platform.js` para nao duplicar regras.
 
 ## `DesktopApp`
 
 - **Arquivo:** `frontend/src/desktop/DesktopApp.jsx`
-- **Responsabilidade:** preservar a experiência desktop original.
-- **Observação:** importa CSS desktop e páginas existentes.
+- **Responsabilidade:** preservar a experiencia desktop original.
+- **Observacao:** importa CSS desktop e paginas existentes.
 
 ## `MobileApp`
 
 - **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
-- **Responsabilidade:** orquestrar a experiência mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendário completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper e perfil/Pascom.
-- **Dependências:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria.
+- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper e perfil/Pascom.
+- **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
 - **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx` e CSS `reference-*`.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop e substituir placeholders do standalone quando houver backend real.
+
+## `useDevtoolsGuard`
+
+- **Arquivo:** `frontend/src/shared/devtoolsGuard.js`
+- **Responsabilidade:** aplicar protecao discreta contra inspecao casual de previas nas galerias.
+- **Props/opcoes:** `enabled`, alem de opcoes internas de teste para producao, threshold e intervalo.
+- **Dependencias:** `useEffect`, `useState`, `window`, `document.body.classList`.
+- **Estado interno:** `isDevtoolsOpen`, contadores de histerese para abertura/fechamento.
+- **Hooks:** `useEffect`, `useState`.
+- **Fluxo:** em producao, mede diferenca entre viewport externa/interna; apos duas leituras suspeitas adiciona `body.devtools-open`; apos tres leituras limpas remove a classe.
+- **Problemas:** deteccao por viewport pode ter falso positivo com janelas estreitas, por isso a resposta e apenas visual e reversivel.
+- **Melhoria:** manter como antifraude leve; nao transformar em DRM ou bloqueio agressivo.
+- **Risco futuro:** qualquer tentativa de travar navegador ou bloquear checkout prejudica suporte, acessibilidade e confianca.
 
 ## `Desktop Layout Interno`
 
 - **Arquivo:** `frontend/src/desktop/DesktopApp.jsx`
 - **Responsabilidade:** compor providers, layout, rotas e carrinho global.
 - **Props:** nenhuma.
-- **Dependências:** `react-router-dom`, `CarrinhoProvider`, `Header`, `Footer`, `ScrollToTop`, `CartSummary`, páginas.
+- **Dependencias:** `react-router-dom`, `CarrinhoProvider`, `Header`, `Footer`, `ScrollToTop`, `CartSummary`, paginas.
 - **Estado interno:** nenhum.
 - **Hooks:** `useLocation` no helper `LegacyCategoryRedirect`.
-- **Fluxo:** monta `BrowserRouter`, envolve tudo com `CarrinhoProvider`, renderiza rotas públicas, `CartSummary`, rotas comerciais e footer.
+- **Fluxo:** monta `BrowserRouter`, envolve tudo com `CarrinhoProvider`, renderiza rotas publicas, `CartSummary`, rotas comerciais e footer.
 - **Problemas:** `CartSummary` fica entre dois blocos de `Routes`, o que funciona mas aumenta surpresa para novos devs.
-- **Melhoria:** separar `AppLayout` com outlet se migrar para configuração declarativa.
-- **Risco futuro:** novas rotas podem duplicar layout se não houver convenção clara.
+- **Melhoria:** separar `AppLayout` com outlet se migrar para configuracao declarativa.
+- **Risco futuro:** novas rotas podem duplicar layout se nao houver convencao clara.
 
 ## `CarrinhoProvider` e `useCarrinhoContext`
 
@@ -159,7 +172,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Arquivo:** `frontend/src/pages/Event.jsx`
 - **Responsabilidade:** mostrar galeria de um evento e controlar acesso protegido.
 - **Props:** nenhuma.
-- **Dependências:** `obterEvento`, `listarFotosEvento`, `validarAcessoGaleria`, `PhotoCard`, carrinho.
+- **Dependências:** `obterEvento`, `listarFotosEvento`, `validarAcessoGaleria`, `useDevtoolsGuard`, carrinho.
 - **Estado interno:** `event`, `photos`, `code`, `error`, `loading`, controle de foto atual.
 - **Hooks:** `useState`, `useEffect`, `useCallback`, `useRef`, `useParams`, `useSearchParams`.
 - **Fluxo:** carrega evento, tenta fotos com token, exibe formulário de código se protegido e renderiza fotos compráveis.

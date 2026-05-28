@@ -74,6 +74,17 @@ Detalhes operacionais:
 8. Frontend salva token em `sessionStorage`.
 9. Próximas chamadas usam `X-Gallery-Token`.
 
+## Fluxo de Protecao Discreta contra DevTools
+
+1. Em producao, paginas de evento/galeria/lightbox ativam `useDevtoolsGuard`.
+2. O guard mede diferencas entre viewport externa e interna em intervalo leve.
+3. Duas leituras suspeitas adicionam `body.devtools-open`.
+4. CSS borra elementos `.photo-blur-target` e a UI mostra aviso discreto.
+5. Tres leituras limpas removem a classe e restauram as previas.
+6. O fluxo nao bloqueia checkout, APIs, Mercado Pago, navegacao ou downloads autorizados.
+
+Esta protecao e antifraude leve contra captura casual, nao DRM. A seguranca real continua em marca d'agua, tokens assinados, download controlado e rate limit.
+
 ## Fluxo de Checkout
 
 1. Carrinho possui uma ou mais fotos.

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useMemo, useState } from 'react';
 import { I } from './referenceIcons.jsx';
-import { brl, categoryLabel, CornerOrnament, CoverPhoto, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, SACRAMENTOS } from './referenceUtils.jsx';
+import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, SACRAMENTOS } from './referenceUtils.jsx';
 
 export function HomeScreen({ go, eventos, loading, tweaks }) {
   const recentes = eventos.slice(0, 4);
@@ -108,7 +108,7 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
   );
 }
 
-export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart }) {
+export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, isDevtoolsOpen = false }) {
   if (!ev) return <EmptyCard text="Evento não encontrado." />;
   const cover = getCoverPhoto(ev);
   const photos = resolveEventPhotos(ev).slice(0, 6);
@@ -129,6 +129,7 @@ export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromC
       </section>
       <section className="section" style={{ paddingTop: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}><div><div className="eyebrow">Fotos do Evento</div><h2 className="h3" style={{ marginTop: 4 }}>Galeria institucional</h2></div><span className="pill pill-mute">{ev.totalFotos} fotos</span></div>
+        {isDevtoolsOpen && <div style={{ marginTop: 12 }}><DevtoolsGalleryNotice /></div>}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginTop: 12 }}>{photos.map((photo) => {
           const selected = selectedIds.has(photo.photoId);
           return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={() => go({ name: 'galeria', eventoId: ev.id })}>{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;

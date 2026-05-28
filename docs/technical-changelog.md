@@ -1,5 +1,16 @@
 # Changelog Técnico
 
+## 2026-05-28 - Protecao discreta contra DevTools nas galerias
+
+- **Tipo:** `feat/security`
+- **Responsavel:** Codex
+- **Alteracao:** criacao de `useDevtoolsGuard` production-only, integracao em evento/galeria/lightbox desktop e mobile, blur de previas `.photo-blur-target` e aviso discreto quando ha sinal consistente de DevTools aberto.
+- **Motivo:** reduzir captura casual/inspecao de previas sem usar tecnicas agressivas que travem navegador, quebrem suporte ou bloqueiem checkout.
+- **Impacto:** previas ficam ocultas visualmente enquanto DevTools parece aberto; navegacao, APIs, carrinho, Mercado Pago e downloads autorizados seguem intactos.
+- **Breaking changes:** nenhum contrato de API alterado.
+- **Migracoes necessarias:** nenhuma.
+- **Documentos afetados:** `docs/components.md`, `docs/system-flows.md`, `docs/mobile-experience.md`, `docs/technical-audit.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 — Port fiel do HTML standalone no mobile
 
 - **Tipo:** `refactor`

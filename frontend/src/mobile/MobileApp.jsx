@@ -6,6 +6,7 @@ import { useCarrinho } from '../hooks/useCarrinho.js';
 import { cotarCheckout, criarPagamento, listarEventos, listarFotosEvento, obterEvento, statusPagamento, validarAcessoGaleria } from '../lib/api.js';
 import { checkoutSchema } from '../lib/validation.js';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
+import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
 import { galleryToken, saveGalleryToken } from '../shared/gallery.js';
 import { I } from './referenceIcons.jsx';
 import { shadeColor, toReferenceEvent, toReferencePhoto } from './referenceUtils.jsx';
@@ -127,6 +128,7 @@ function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, setGridC
   const gallery = useEventGallery(eventoId, catalogEvent);
   const [accessCode, setAccessCode] = useState('');
   const [accessError, setAccessError] = useState('');
+  const { isDevtoolsOpen } = useDevtoolsGuard({ enabled: Boolean(gallery.event && !gallery.locked) });
   const view = params.get('view');
   const idx = Number(params.get('idx') || 0);
   const addToCart = (photo) => addFoto({ ...photo, id: photo.photoId, url: photo.src, event: photo.eventoTitulo, eventoId: gallery.event?.id });
@@ -143,9 +145,9 @@ function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, setGridC
   };
 
   if (gallery.error && !gallery.event) return <EmptyCard text={gallery.error} />;
-  if (view === 'foto') return <FotoLightboxScreen ev={gallery.event} photos={gallery.photos} idx={idx} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} />;
-  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} />;
-  return <EventoScreen ev={gallery.event || catalogEvent} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} />;
+  if (view === 'foto') return <FotoLightboxScreen ev={gallery.event} photos={gallery.photos} idx={idx} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
+  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} isDevtoolsOpen={isDevtoolsOpen} />;
+  return <EventoScreen ev={gallery.event || catalogEvent} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
 }
 
 function CheckoutRoute({ cart, removeFoto, go, clearCarrinho }) {

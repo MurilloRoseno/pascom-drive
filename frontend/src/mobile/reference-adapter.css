@@ -47,3 +47,8 @@
   opacity: 0.65;
   cursor: wait;
 }
+
+.devtools-open .photo-blur-target {
+  filter: blur(20px);
+  transition: filter 0.3s ease;
+}

@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { I } from './referenceIcons.jsx';
-import { brl, CornerOrnament, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
+import { brl, CornerOrnament, DevtoolsGalleryNotice, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
 import { checkoutSchema } from '../lib/validation.js';
 
-export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols }) {
+export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols, isDevtoolsOpen = false }) {
   if (!ev) return null;
   return (
     <div className="scroll" style={{ paddingBottom: cart.length > 0 ? 80 : 0 }}>
@@ -15,12 +15,12 @@ export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, se
         <h1 className="h2" style={{ color: '#fff', marginTop: 4, lineHeight: 1.15 }}>{ev.titulo}</h1>
         <div className="caption" style={{ color: 'rgba(255,255,255,0.7)', marginTop: 6, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }}><I.Calendar className="icon icon-sm" /> {ev.dataLabel}<span>·</span><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</div>
       </section>
-      {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} />}
+      {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} isDevtoolsOpen={isDevtoolsOpen} />}
     </div>
   );
 }
 
-function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true }) {
+function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true, isDevtoolsOpen = false }) {
   const selectedIds = new Set(cart.map((item) => item.photoId));
   return (
     <section className="section" style={{ paddingTop: 12, paddingBottom: sticky && cart.length > 0 ? 92 : undefined }}>
@@ -28,6 +28,7 @@ function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, g
         <div><div className="eyebrow">Selecionar fotos</div><p className="caption">Toque na foto para ampliar. Use + para adicionar.</p></div>
         <DensityToggle value={gridCols} onChange={setGridCols} />
       </div>
+      {isDevtoolsOpen && <DevtoolsGalleryNotice />}
       {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div style={{ display: 'grid', gridTemplateColumns: `repeat(${gridCols}, 1fr)`, gap: 6 }}>{photos.map((photo, index) => {
         const selected = selectedIds.has(photo.photoId);
         return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}><button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
@@ -37,7 +38,7 @@ function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, g
   );
 }
 
-export function FotoLightboxScreen({ ev, photos, idx, go, cart, addToCart, removeFromCart }) {
+export function FotoLightboxScreen({ ev, photos, idx, go, cart, addToCart, removeFromCart, isDevtoolsOpen = false }) {
   const index = Math.max(0, Math.min(Number(idx || 0), photos.length - 1));
   const photo = photos[index];
   if (!photo) return null;
@@ -46,7 +47,8 @@ export function FotoLightboxScreen({ ev, photos, idx, go, cart, addToCart, remov
   return (
     <div style={{ minHeight: '100dvh', background: '#08050a', color: '#fff', display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '12px 12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><button className="appbar-icon-btn" onClick={() => go({ name: 'galeria', eventoId: ev.id })} style={{ color: '#fff', background: 'rgba(255,255,255,0.1)' }}><I.X className="icon" /></button><div className="caption" style={{ color: 'rgba(255,255,255,0.65)' }}>{index + 1} / {photos.length}</div><button className="appbar-icon-btn" style={{ color: '#fff', background: 'rgba(255,255,255,0.1)' }} title="Compartilhar"><I.Share className="icon" /></button></div>
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px' }}><img src={photo.fullSrc || photo.src} alt={photo.caption} style={{ width: '100%', maxHeight: '62vh', objectFit: 'contain', borderRadius: 14 }} /></div>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px' }}><img className="photo-blur-target" src={photo.fullSrc || photo.src} alt={photo.caption} style={{ width: '100%', maxHeight: '62vh', objectFit: 'contain', borderRadius: 14 }} /></div>
+      {isDevtoolsOpen && <div style={{ padding: '0 18px' }}><DevtoolsGalleryNotice /></div>}
       <div style={{ padding: '18px', background: 'linear-gradient(180deg, rgba(8,5,10,0), #08050a 18%)' }}><div className="eyebrow" style={{ color: 'var(--parish-yellow)' }}>{categoryLabel(ev.sacramento)}</div><h2 className="h3" style={{ color: '#fff', marginTop: 5 }}>{photo.caption}</h2><p className="caption" style={{ color: 'rgba(255,255,255,0.62)', marginTop: 5 }}>{ev.titulo}</p><span className="pill" style={{ background: 'rgba(247,200,72,0.18)', color: 'var(--parish-yellow)', border: '1px solid rgba(247,200,72,0.30)', marginTop: 12 }}><I.Lock className="icon icon-sm" /> Prévia protegida</span><div style={{ display: 'grid', gridTemplateColumns: '44px 1fr 44px', gap: 10, marginTop: 16 }}><button className="btn btn-secondary" onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: Math.max(0, index - 1) })}><I.ChevronLeft className="icon" /></button><button className="btn btn-block" style={{ background: selected ? 'var(--parish-green)' : 'var(--accent)', color: selected ? '#fff' : 'var(--brand-d)' }} onClick={toggle}>{selected ? <><I.Check className="icon" /> Foto selecionada · {brl(photo.price)}</> : <><I.Plus className="icon" /> Selecionar por {brl(photo.price)}</>}</button><button className="btn btn-secondary" onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: Math.min(photos.length - 1, index + 1) })}><I.ChevronRight className="icon" /></button></div></div>
     </div>
   );

@@ -4,6 +4,7 @@ import { useCarrinho } from '../hooks/useCarrinho.js';
 import { listarFotosEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
 import { categoryLabel } from '../data/categories.js';
 import { dateLabel } from '../lib/event-format.js';
+import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
 
 function eventToken(eventoId) {
   return sessionStorage.getItem(`gallery:${eventoId}`) || '';
@@ -28,6 +29,8 @@ export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const closeRef = useRef(null);
   const { addFoto, removeFoto, isSelected } = useCarrinho();
+  const locked = event?.visibility === 'protegida' && !eventToken(eventoId);
+  const { isDevtoolsOpen } = useDevtoolsGuard({ enabled: Boolean(event && !locked) });
 
   const loadPhotos = useCallback(async (currentEvent) => {
     if (currentEvent.visibility === 'protegida' && !eventToken(eventoId)) {
@@ -112,7 +115,6 @@ export default function EventPage() {
     );
   }
 
-  const locked = event.visibility === 'protegida' && !eventToken(eventoId);
   const canBuy = event.salesAuthorized;
   const canBuyActivePhoto = canBuy && activePhoto?.availableForSale === true;
 
@@ -137,6 +139,7 @@ export default function EventPage() {
       <section className="main-content">
         {error && !locked && <div className="notice">{error}</div>}
         {photoId && !activePhoto && photos.length > 0 && <div className="notice">A foto solicitada não foi encontrada. Você ainda pode explorar a galeria deste evento.</div>}
+        {isDevtoolsOpen && <DevtoolsNotice />}
         {locked ? (
           <div className="access-card">
             <h2>Acesso reservado</h2>
@@ -192,6 +195,7 @@ export default function EventPage() {
                   {canBuyActivePhoto && <span>A foto adquirida será entregue sem marca d água.</span>}
                 </div>
               )}
+              {isDevtoolsOpen && <DevtoolsNotice />}
               <div className="lightbox-actions">
                 <div className="gallery-nav">
                   <button className="ghost-button" type="button" onClick={() => changePhoto(-1)}>Anterior</button>
@@ -208,5 +212,13 @@ export default function EventPage() {
         </div>
       )}
     </main>
+  );
+}
+
+function DevtoolsNotice() {
+  return (
+    <div className="notice">
+      <strong>Prévia protegida:</strong> por segurança, as imagens ficam ocultas enquanto ferramentas de inspeção estão abertas.
+    </div>
   );
 }

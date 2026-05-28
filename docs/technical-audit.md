@@ -23,6 +23,7 @@ O projeto está funcionalmente estruturado, mas carrega dívida documental, muda
 | Cache Vercel em ambiente local | Média | Testes locais podem divergir | Média | Adapter/mock local para cache |
 | Falta CI formal | Média | Regressões chegam ao deploy | Média | GitHub Actions por pacote |
 | Sem licença | Baixa | Risco jurídico para distribuição | Baixa | Adicionar `LICENSE` |
+| Protecao DevTools e apenas heuristica | Baixa | Pode gerar falsa sensacao de seguranca se tratada como DRM | Baixa | Manter como aviso/blur discreto e reforcar seguranca no backend |
 
 ## Código Morto e Arquivos Órfãos
 
@@ -75,6 +76,7 @@ Pontos fortes:
 - Rate limiting por classe.
 - Download com token assinado e hash salvo.
 - Segredos para processamento/admin.
+- Guard discreto de DevTools borra previas em producao sem bloquear fluxos legitimos.
 
 Pontos frágeis:
 
@@ -82,6 +84,7 @@ Pontos frágeis:
 - Segredos compartilhados exigem rotação manual.
 - Dados pessoais em Sheets precisam política clara de retenção.
 - Conferir se WhatsApp deve ser criptografado conforme regra operacional original.
+- Guard de DevTools e bypassavel e nao deve ser considerado barreira de seguranca primaria.
 
 ## Performance
 

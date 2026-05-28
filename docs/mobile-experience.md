@@ -106,6 +106,13 @@ Usuário acessa site por celular/tablet
 - O link principal fica em `/perfil`, junto de atendimento e recuperação de pedidos, para manter a bottom navigation focada nos fluxos de compra.
 - A política reutiliza a mesma fonte de conteúdo do desktop; apenas layout e espaçamento mudam para evitar divergência documental.
 
+
+## Protecao Discreta de Previas
+
+As telas mobile de evento, galeria e lightbox usam `useDevtoolsGuard` apenas em producao. Quando ha sinal consistente de DevTools aberto, o app adiciona `body.devtools-open`, borra imagens `.photo-blur-target` e mostra aviso discreto.
+
+A protecao nao bloqueia navegacao, carrinho, checkout ou Mercado Pago. Ela reduz captura casual das previas, mas nao substitui marca d'agua, tokens de galeria, downloads assinados e rate limits no backend.
+
 ## Performance
 
 - Desktop e mobile permanecem em bundles separados.

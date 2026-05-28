@@ -116,7 +116,7 @@ export function Photo({ photo, aspect = '1/1', selected = false, showBadge = tru
   const interactiveProps = onClick ? { role: 'button', tabIndex: 0, onClick, onKeyDown: (event) => (event.key === 'Enter' || event.key === ' ') && onClick(event) } : {};
   return (
     <div className={`wm${selected ? ' selected' : ''}`} style={{ aspectRatio: aspect, background: bg || undefined, cursor: onClick ? 'pointer' : 'default', border: 0, padding: 0, width: '100%', display: 'block' }} {...interactiveProps}>
-      {photo.src && <img src={photo.src} alt={photo.caption || ''} loading="lazy" />}
+      {photo.src && <img className="photo-blur-target" src={photo.src} alt={photo.caption || ''} loading="lazy" />}
       {!photo.src && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', padding: 12, fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 13, color: 'rgba(255,255,255,0.85)', textAlign: 'left', textShadow: '0 1px 3px rgba(0,0,0,0.4)', zIndex: 0 }}>{photo.caption}</div>}
       {ornaments && <div className="wm-pattern" />}
       {showBadge && <div className="wm-badges"><span className="pill">Prévia</span></div>}
@@ -129,6 +129,17 @@ export function Photo({ photo, aspect = '1/1', selected = false, showBadge = tru
 export function CoverPhoto({ photo, aspect = '4/3', children }) {
   const bg = photo.src ? null : `linear-gradient(135deg, oklch(0.50 0.12 ${photo.hue || 30}) 0%, oklch(0.30 0.08 ${(photo.hue || 30) + 20}) 100%)`;
   return <div style={{ position: 'relative', width: '100%', aspectRatio: aspect, borderRadius: 14, overflow: 'hidden', background: bg || undefined }}>{photo.src && <img src={photo.src} alt={photo.caption || ''} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}{children}</div>;
+}
+
+export function DevtoolsGalleryNotice() {
+  return (
+    <div className="card" style={{ padding: 12, marginBottom: 12, borderColor: 'rgba(247,200,72,0.28)', background: 'rgba(247,200,72,0.10)' }}>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+        <I.Lock className="icon icon-sm" style={{ color: 'var(--accent-d)', flexShrink: 0, marginTop: 2 }} />
+        <p className="caption" style={{ color: 'var(--ink-2)' }}><strong>Prévia protegida:</strong> por segurança, as imagens ficam ocultas enquanto ferramentas de inspeção estão abertas.</p>
+      </div>
+    </div>
+  );
 }
 
 export function CornerOrnament({ at }) {
