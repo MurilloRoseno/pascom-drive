@@ -22,10 +22,11 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
 - **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
 - **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
-- **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx` e CSS `reference-*`.
+- **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx`, CSS `reference-*` e `reference-gallery-calendar.css`.
 - **Modo escuro:** `className="app dark"` troca tokens e classes auxiliares corrigem contraste de estilos inline herdados do standalone, incluindo buscas, chips de sacramento, agenda, cart bar e atalhos Pascom.
 - **Cards mobile:** `EventCard`, `formatMobileCardTitle` e `formatMobileCardDate` em `referencePublicScreens.jsx` renderizam os cards da home e de `/buscar` no padrão do standalone `(2)`: capa grande, badges superiores, data em caixa alta, título serifado, local e rodapé `Ver fotos ->`; a troca ` e ` -> ` & ` é display-only e não altera `ev.titulo`.
-- **Galeria mobile:** `GaleriaFotosScreen` em `referenceFlowScreens.jsx` usa classes dedicadas para a página interna de galeria, mantendo o grid touch-first, proteção leve de prévias e integração real com carrinho.
+- **Evento/galeria mobile:** `EventoScreen`, `GaleriaFotosScreen` e `FotoLightboxScreen` usam `reference-gallery-calendar.css` para reproduzir a tela completa do standalone `(2)`: hero roxo, capa, metadados, bloco de previa protegida, grid com seletor `2x/3x/4x`, card de preco/WhatsApp e lightbox fullscreen escuro com contador e selecao.
+- **Calendario mobile:** `CalendarioScreen` em `referencePublicScreens.jsx` implementa navegacao mensal, dias marcados por eventos reais e lista de destaques, mantendo a aba de calendario funcional no padrao visual do standalone.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop, preservar URLs `mt` retornadas pela API e substituir placeholders do standalone quando houver backend real.
 
 ## `useDevtoolsGuard`

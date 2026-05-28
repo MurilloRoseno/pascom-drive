@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-28 - Evento, galeria e calendario mobile completos
+
+- **Tipo:** frontend, mobile e documentacao.
+- **Alteracao:** a entrada do evento mobile, a pagina interna da galeria, o lightbox e a aba calendario foram refinados para seguir o HTML standalone `(2)`, com hero completo, grade 2x/3x/4x, card de preco/WhatsApp, lightbox escuro com contador e calendario navegavel.
+- **Motivo:** pedido de fidelidade visual e funcional ao prototipo aprovado para o fluxo de galeria do evento e para a aba de calendario.
+- **Impacto:** somente experiencia mobile; desktop, backend, APIs, checkout, pagamentos, downloads e banco permanecem inalterados.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/components.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 - Refinamento dos cards e galeria mobile
 
 - **Tipo:** `fix/frontend`

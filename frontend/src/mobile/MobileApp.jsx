@@ -14,6 +14,7 @@ import { CalendarioScreen, EmptyCard, EventoScreen, GaleriasScreen, HomeScreen, 
 import { CarrinhoScreen, CartBar, CheckoutScreen, FotoLightboxScreen, GaleriaFotosScreen, PaymentReturnScreen } from './referenceFlowScreens.jsx';
 import './reference-tokens.css';
 import './reference-layout.css';
+import './reference-gallery-calendar.css';
 import './reference-adapter.css';
 
 const TWEAK_DEFAULTS = { gridCols: 3, dark: false, ornaments: true, role: 'publico', accent: '#F7C848' };
@@ -147,7 +148,7 @@ function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, setGridC
   if (gallery.error && !gallery.event) return <EmptyCard text={gallery.error} />;
   if (view === 'foto') return <FotoLightboxScreen ev={gallery.event} photos={gallery.photos} idx={idx} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
   if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} isDevtoolsOpen={isDevtoolsOpen} />;
-  return <EventoScreen ev={gallery.event || catalogEvent} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
+  return <EventoScreen ev={gallery.event || catalogEvent} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
 }
 
 function CheckoutRoute({ cart, removeFoto, go, clearCarrinho }) {

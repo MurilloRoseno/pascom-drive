@@ -1,20 +1,32 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { I } from './referenceIcons.jsx';
-import { brl, CornerOrnament, DevtoolsGalleryNotice, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
+import { brl, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, getCoverPhoto, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
 import { checkoutSchema } from '../lib/validation.js';
 
 export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols, isDevtoolsOpen = false }) {
   if (!ev) return null;
+  const cover = getCoverPhoto(ev);
   return (
-    <div className="scroll" style={{ paddingBottom: cart.length > 0 ? 80 : 0 }}>
-      <section className="mobile-gallery-hero" style={{ background: 'linear-gradient(145deg, var(--brand-d), var(--brand))', color: '#fff', padding: '18px 18px 16px', position: 'relative', overflow: 'hidden' }}>
+    <div className="scroll mobile-event-detail-scroll" style={{ paddingBottom: cart.length > 0 ? 80 : 0 }}>
+      <section className="mobile-event-detail-hero mobile-gallery-hero-full">
         <CornerOrnament at="tr" />
-        <button onClick={() => go({ name: 'evento', eventoId: ev.id })} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, marginBottom: 10 }}><I.ChevronLeft className="icon icon-sm" /> Voltar ao evento</button>
-        <div className="eyebrow eyebrow-light">{categoryLabel(ev.sacramento)}</div>
-        <h1 className="h2" style={{ color: '#fff', marginTop: 4, lineHeight: 1.15 }}>{ev.titulo}</h1>
-        <div className="caption" style={{ color: 'rgba(255,255,255,0.7)', marginTop: 6, display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12 }}><I.Calendar className="icon icon-sm" /> {ev.dataLabel}<span>·</span><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</div>
+        <button className="mobile-event-back" onClick={() => go({ name: 'galerias' })}><I.ChevronLeft className="icon icon-sm" /> Voltar aos eventos</button>
+        <div className="mobile-event-hero-cover">
+          <CoverPhoto photo={cover} aspect="16/10">
+            <span className="pill pill-yellow mobile-event-hero-category">{categoryLabel(ev.sacramento)}</span>
+            <span className="pill mobile-event-hero-count"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</span>
+          </CoverPhoto>
+        </div>
+        <div className="eyebrow eyebrow-light mobile-event-hero-eyebrow">{categoryLabel(ev.sacramento)}</div>
+        <h1 className="mobile-event-hero-title">{ev.titulo}</h1>
+        <div className="mobile-event-meta-grid">
+          <MetaItem icon="Calendar">{ev.dataLabel || 'Data a confirmar'}</MetaItem>
+          <MetaItem icon="Clock">{ev.hora || 'Horário paroquial'}</MetaItem>
+          <MetaItem icon="MapPin">{ev.local}</MetaItem>
+        </div>
       </section>
+      <section className="mobile-protected-section"><FlowProtectedPreviewCard /></section>
       {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} isDevtoolsOpen={isDevtoolsOpen} />}
     </div>
   );
@@ -24,16 +36,16 @@ function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, g
   const selectedIds = new Set(cart.map((item) => item.photoId));
   return (
     <section className="section mobile-gallery-section" style={{ paddingTop: 12, paddingBottom: sticky && cart.length > 0 ? 92 : undefined }}>
-      <div className="mobile-gallery-toolbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-        <div><div className="eyebrow">Selecionar fotos</div><p className="caption">Toque na foto para ampliar. Use + para adicionar.</p></div>
+      <div className="mobile-gallery-strip-head">
+        <strong>{photos.length || ev.totalFotos} fotos</strong>
         <DensityToggle value={gridCols} onChange={setGridCols} />
       </div>
       {isDevtoolsOpen && <DevtoolsGalleryNotice />}
-      {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid" style={{ display: 'grid', gridTemplateColumns: `repeat(${gridCols}, 1fr)`, gap: 6 }}>{photos.map((photo, index) => {
+      {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid" style={{ gridTemplateColumns: `repeat(${gridCols}, 1fr)` }}>{photos.map((photo, index) => {
         const selected = selectedIds.has(photo.photoId);
         return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}><button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
       })}</div>}
-      <p className="caption" style={{ marginTop: 12 }}>Galeria institucional · {ev.fotografo}</p>
+      <FlowPriceHelpCard />
     </section>
   );
 }
@@ -45,11 +57,15 @@ export function FotoLightboxScreen({ ev, photos, idx, go, cart, addToCart, remov
   const selected = cart.some((item) => item.photoId === photo.photoId);
   const toggle = () => selected ? removeFromCart(photo.photoId) : addToCart(photo);
   return (
-    <div style={{ minHeight: '100dvh', background: '#08050a', color: '#fff', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '12px 12px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><button className="appbar-icon-btn" onClick={() => go({ name: 'galeria', eventoId: ev.id })} style={{ color: '#fff', background: 'rgba(255,255,255,0.1)' }}><I.X className="icon" /></button><div className="caption" style={{ color: 'rgba(255,255,255,0.65)' }}>{index + 1} / {photos.length}</div><button className="appbar-icon-btn" style={{ color: '#fff', background: 'rgba(255,255,255,0.1)' }} title="Compartilhar"><I.Share className="icon" /></button></div>
-      <div className="protected-preview-frame" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 12px' }} onContextMenu={(event) => event.preventDefault()}><img className="photo-blur-target" src={photo.fullSrc || photo.src} alt={photo.caption} draggable="false" style={{ width: '100%', maxHeight: '62vh', objectFit: 'contain', borderRadius: 14 }} /></div>
+    <div className="mobile-lightbox-screen">
+      <div className="mobile-lightbox-top"><button className="mobile-lightbox-close" onClick={() => go({ name: 'galeria', eventoId: ev.id })}><I.X className="icon" /></button><div className="mobile-lightbox-counter"><span>Foto</span><strong>{String(index + 1).padStart(2, '0')} / {photos.length}</strong></div><span aria-hidden="true" /></div>
+      <div className="mobile-lightbox-frame" onContextMenu={(event) => event.preventDefault()}>
+        <Photo photo={{ ...photo, src: photo.fullSrc || photo.src }} aspect="1/1" showBadge ornaments selected={selected} />
+        <button className="mobile-lightbox-nav prev" onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: Math.max(0, index - 1) })}><I.ChevronLeft className="icon" /></button>
+        <button className="mobile-lightbox-nav next" onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: Math.min(photos.length - 1, index + 1) })}><I.ChevronRight className="icon" /></button>
+      </div>
       {isDevtoolsOpen && <div style={{ padding: '0 18px' }}><DevtoolsGalleryNotice /></div>}
-      <div style={{ padding: '18px', background: 'linear-gradient(180deg, rgba(8,5,10,0), #08050a 18%)' }}><div className="eyebrow" style={{ color: 'var(--parish-yellow)' }}>{categoryLabel(ev.sacramento)}</div><h2 className="h3" style={{ color: '#fff', marginTop: 5 }}>{photo.caption}</h2><p className="caption" style={{ color: 'rgba(255,255,255,0.62)', marginTop: 5 }}>{ev.titulo}</p><span className="pill" style={{ background: 'rgba(247,200,72,0.18)', color: 'var(--parish-yellow)', border: '1px solid rgba(247,200,72,0.30)', marginTop: 12 }}><I.Lock className="icon icon-sm" /> Prévia protegida</span><div style={{ display: 'grid', gridTemplateColumns: '44px 1fr 44px', gap: 10, marginTop: 16 }}><button className="btn btn-secondary" onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: Math.max(0, index - 1) })}><I.ChevronLeft className="icon" /></button><button className="btn btn-block" style={{ background: selected ? 'var(--parish-green)' : 'var(--accent)', color: selected ? '#fff' : 'var(--brand-d)' }} onClick={toggle}>{selected ? <><I.Check className="icon" /> Foto selecionada · {brl(photo.price)}</> : <><I.Plus className="icon" /> Selecionar por {brl(photo.price)}</>}</button><button className="btn btn-secondary" onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: Math.min(photos.length - 1, index + 1) })}><I.ChevronRight className="icon" /></button></div></div>
+      <div className="mobile-lightbox-info"><div className="eyebrow">{categoryLabel(ev.sacramento)}</div><h2>{photo.caption}</h2><span className="pill mobile-lightbox-protected"><I.Lock className="icon icon-sm" /> Prévia protegida</span><p>A foto adquirida será entregue em alta resolução, <strong>sem marca d&apos;água</strong>, por e-mail e WhatsApp.</p><button className="btn btn-primary btn-block" onClick={toggle}>{selected ? <><I.Check className="icon" /> Foto selecionada · {brl(photo.price)}</> : <><I.Plus className="icon" /> Selecionar por {brl(photo.price)}</>}</button></div>
     </div>
   );
 }
@@ -103,6 +119,9 @@ export function PaymentReturnScreen({ approved, order, go }) {
 
 function CartSummary({ cart, subtotal, total, removeFromCart }) { return <div style={{ padding: '14px 18px', background: 'var(--surface-2)', borderBottom: '1px solid var(--line)' }}><div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>{cart.map((item) => <div key={item.photoId} style={{ display: 'flex', gap: 10, alignItems: 'center' }}><div style={{ width: 44, height: 44, flexShrink: 0 }}><Photo photo={item} aspect="1/1" showBadge={false} /></div><div style={{ flex: 1, minWidth: 0 }}><div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.caption}</div><div className="caption">{item.eventoTitulo}</div></div><span style={{ fontSize: 13, fontWeight: 700, color: 'var(--brand)' }}>{brl(item.price || PRECO_FOTO)}</span><button className="appbar-icon-btn" onClick={() => removeFromCart(item.photoId)}><I.Trash className="icon icon-sm" /></button></div>)}</div><div style={{ display: 'flex', flexDirection: 'column', gap: 5, paddingTop: 10, borderTop: '1px solid var(--line)' }}><Row k="Subtotal" v={brl(subtotal)} /><Row k="Taxa de serviço" v={brl(TAXA_SERVICO)} /><Row k="Taxa de comodidade" v={brl(TAXA_COMODIDADE)} /><Row k={<strong>Total</strong>} v={<strong>{brl(total)}</strong>} /></div></div>; }
 function AccessCard({ code, setCode, error, unlock }) { return <section className="section"><form className="card" style={{ padding: 18, textAlign: 'center' }} onSubmit={unlock}><I.Lock className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h2 className="h3" style={{ marginTop: 10 }}>Galeria protegida</h2><p className="body-sm" style={{ marginTop: 6 }}>Informe o código compartilhado pela secretaria.</p><input className="input" value={code} onChange={(event) => setCode(event.target.value.toUpperCase())} placeholder="Código do evento" style={{ marginTop: 14 }} />{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}<button className="btn btn-primary btn-block" style={{ marginTop: 12 }}>Acessar galeria</button></form></section>; }
+function MetaItem({ icon, children }) { const Icon = I[icon]; return <span className="mobile-event-meta-item"><span><Icon className="icon icon-sm" /></span>{children}</span>; }
+function FlowProtectedPreviewCard() { return <div className="mobile-protected-card"><I.Lock className="icon" /><div><div className="mobile-protected-title">Prévia protegida</div><p>As prévias têm marca d&apos;água. A foto adquirida é entregue em alta resolução, sem marca, por e-mail e WhatsApp.</p></div></div>; }
+function FlowPriceHelpCard() { return <div className="mobile-price-help-card"><div><div className="caption">Cada foto custa</div><strong>{brl(PRECO_FOTO)}</strong></div><a className="btn btn-outline btn-sm" href="https://wa.me/5599991646063" target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a></div>; }
 function DensityToggle({ value, onChange }) { return <div style={{ display: 'inline-flex', background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 10, padding: 2 }}>{[2, 3, 4].map((item) => <button key={item} className={item === value ? 'tag tag-yellow' : 'tag'} style={{ fontSize: 10 }} onClick={() => onChange(item)}>{item}×</button>)}</div>; }
 function Row({ k, v }) { return <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, paddingTop: 10, marginTop: 10, borderTop: '1px solid var(--line)', fontSize: 13 }}><span style={{ color: 'var(--ink-3)' }}>{k}</span><span style={{ color: 'var(--ink)', fontWeight: 700 }}>{v}</span></div>; }
 function Step({ n, label, active, done }) { return <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}><span style={{ width: 26, height: 26, borderRadius: 999, background: done ? 'var(--parish-yellow)' : active ? '#fff' : 'rgba(255,255,255,0.15)', color: (done || active) ? 'var(--parish-purple)' : 'rgba(255,255,255,0.5)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 }}>{done ? <I.Check className="icon icon-sm" /> : n}</span><span style={{ fontSize: 12, fontWeight: 600, color: (done || active) ? '#fff' : 'rgba(255,255,255,0.55)' }}>{label}</span></div>; }

@@ -27,6 +27,24 @@ export function brl(value = 0) {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
 }
 
+export function formatMobileDisplayDate(dateLabel, date) {
+  const source = dateLabel || date;
+  if (!source) return 'DATA A CONFIRMAR';
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(String(source))) {
+    const parsedDate = new Date(`${String(source).slice(0, 10)}T12:00:00`);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return parsedDate.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      }).toLocaleUpperCase('pt-BR');
+    }
+  }
+
+  return String(source).toLocaleUpperCase('pt-BR');
+}
+
 export function shadeColor(hex, percent) {
   const num = parseInt(hex.replace('#', ''), 16);
   const r = (num >> 16) & 0xff;

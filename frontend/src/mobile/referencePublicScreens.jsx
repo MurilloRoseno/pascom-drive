@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useMemo, useState } from 'react';
 import { I } from './referenceIcons.jsx';
-import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, SACRAMENTOS } from './referenceUtils.jsx';
+import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, SACRAMENTOS } from './referenceUtils.jsx';
 
 export function HomeScreen({ go, eventos, loading, tweaks }) {
   const recentes = eventos.slice(0, 4);
@@ -108,58 +108,131 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
   );
 }
 
-export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, isDevtoolsOpen = false }) {
+export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, photos: loadedPhotos = [], loading = false, locked = false, isDevtoolsOpen = false }) {
   if (!ev) return <EmptyCard text="Evento não encontrado." />;
   const cover = getCoverPhoto(ev);
-  const photos = resolveEventPhotos(ev).slice(0, 6);
+  const photos = (loadedPhotos.length ? loadedPhotos : resolveEventPhotos(ev)).slice(0, 9);
   const selectedIds = new Set(cart.map((item) => item.photoId));
   return (
-    <div className="scroll">
-      <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '12px 18px 26px', position: 'relative' }}>
-        <button onClick={() => go({ name: 'galerias' })} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.8)', fontSize: 12, marginBottom: 12 }}><I.ChevronLeft className="icon icon-sm" /> Voltar aos eventos</button>
-        <CoverPhoto photo={cover} aspect="4/3"><div style={{ position: 'absolute', left: 12, bottom: 12, display: 'flex', gap: 6 }}><span className="pill pill-yellow">{categoryLabel(ev.sacramento)}</span><span className="pill"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</span></div></CoverPhoto>
-        <div className="eyebrow eyebrow-light" style={{ marginTop: 18 }}>{categoryLabel(ev.sacramento)}</div>
-        <h1 className="h1" style={{ color: '#fff', marginTop: 6, lineHeight: 1.1 }}>{ev.titulo}</h1>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginTop: 14 }}><MetaItem icon="Calendar">{ev.dataLabel || 'Data a confirmar'} · {ev.hora || 'Horário paroquial'}</MetaItem><MetaItem icon="MapPin">{ev.local}</MetaItem><MetaItem icon="Camera">{ev.fotografo}</MetaItem></div>
+    <div className="scroll mobile-event-detail-scroll">
+      <section className="mobile-event-detail-hero">
+        <CornerOrnament at="tr" />
+        <button className="mobile-event-back" onClick={() => go({ name: 'galerias' })}><I.ChevronLeft className="icon icon-sm" /> Voltar aos eventos</button>
+        <div className="mobile-event-hero-cover">
+          <CoverPhoto photo={cover} aspect="16/10">
+            <span className="pill pill-yellow mobile-event-hero-category">{categoryLabel(ev.sacramento)}</span>
+            <span className="pill mobile-event-hero-count"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</span>
+          </CoverPhoto>
+        </div>
+        <div className="eyebrow eyebrow-light mobile-event-hero-eyebrow">{categoryLabel(ev.sacramento)}</div>
+        <h1 className="mobile-event-hero-title">{ev.titulo}</h1>
+        <div className="mobile-event-meta-grid">
+          <MetaItem icon="Calendar">{ev.dataLabel || 'Data a confirmar'}</MetaItem>
+          <MetaItem icon="Clock">{ev.hora || 'Horário paroquial'}</MetaItem>
+          <MetaItem icon="MapPin">{ev.local}</MetaItem>
+        </div>
       </section>
-      <section className="section">
-        <p className="body">{ev.descricao}</p>
-        {ev.visibility === 'protegida' && <div style={{ marginTop: 14, padding: 14, background: 'rgba(247,200,72,0.13)', border: '1px solid rgba(247,200,72,0.25)', borderRadius: 12, display: 'flex', gap: 10 }}><I.Lock className="icon" style={{ color: 'var(--accent-d)', flexShrink: 0, marginTop: 2 }} /><div><div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-d)', fontFamily: 'var(--font-mono)', letterSpacing: '0.10em', textTransform: 'uppercase' }}>Prévia protegida</div><p className="body-sm" style={{ marginTop: 4 }}>Informe o código compartilhado pela secretaria para visualizar todas as fotos.</p></div></div>}
+      <section className="mobile-protected-section">
+        <ProtectedPreviewCard />
         {tweaks.role === 'pascom' && <div style={{ marginTop: 14 }} className="card"><div style={{ padding: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><div><div className="eyebrow">Status Pascom</div><span className="tag tag-green">Publicado</span></div><PascomStat label="Receita" v={brl((cart.length || 9) * PRECO_FOTO)} /></div></div>}
       </section>
-      <section className="section" style={{ paddingTop: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}><div><div className="eyebrow">Fotos do Evento</div><h2 className="h3" style={{ marginTop: 4 }}>Galeria institucional</h2></div><span className="pill pill-mute">{ev.totalFotos} fotos</span></div>
+      <section className="mobile-event-preview-section">
+        <div className="mobile-gallery-strip-head"><strong>{ev.totalFotos} fotos</strong><button className="tag tag-yellow" onClick={() => go({ name: 'galeria', eventoId: ev.id })}>Ver todas</button></div>
         {isDevtoolsOpen && <div style={{ marginTop: 12 }}><DevtoolsGalleryNotice /></div>}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginTop: 12 }}>{photos.map((photo) => {
+        {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid mobile-gallery-grid-preview">{photos.map((photo, index) => {
           const selected = selectedIds.has(photo.photoId);
-          return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={() => go({ name: 'galeria', eventoId: ev.id })}>{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;
-        })}</div>
-        <button className="btn btn-secondary btn-block" style={{ marginTop: 16 }} onClick={() => go({ name: 'galeria', eventoId: ev.id })}><I.Grid className="icon" /> Ver todas as {ev.totalFotos} fotos</button>
-        <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 14, background: 'var(--surface-2)', borderRadius: 12 }}><div><div className="caption">Valor unitário</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: 'var(--brand)' }}>{brl(PRECO_FOTO)}</div></div><a className="btn btn-outline btn-sm" href="https://wa.me/5599991646063" target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a></div>
+          const openPhoto = () => locked ? go({ name: 'galeria', eventoId: ev.id }) : go({ name: 'foto', eventoId: ev.id, photoIdx: index });
+          return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={openPhoto}>{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;
+        })}</div>}
+        <PriceHelpCard />
       </section>
     </div>
   );
 }
 
 export function CalendarioScreen({ eventos, go }) {
-  const monthName = 'Maio 2026';
-  const linked = eventos.slice(0, 4).map((ev, index) => ({ day: [5, 12, 18, 25][index] || (index + 1), evId: ev.id, color: index % 2 ? 'green' : 'yellow' }));
+  const [monthOffset, setMonthOffset] = useState(0);
+  const visibleMonth = useMemo(() => new Date(2026, 4 + monthOffset, 1), [monthOffset]);
+  const monthName = visibleMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  const linked = useMemo(() => buildCalendarEvents(eventos, visibleMonth), [eventos, visibleMonth]);
+  const monthDays = useMemo(() => buildCalendarDays(visibleMonth), [visibleMonth]);
+  const featured = linked.length ? linked.map((item) => item.event) : eventos.slice(0, 4);
   return (
-    <div className="scroll">
-      <section style={{ background: 'linear-gradient(145deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 26px' }}><div className="eyebrow eyebrow-light">Calendário Litúrgico</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Tempos & celebrações</h1><p className="body" style={{ color: 'rgba(255,255,255,0.76)', marginTop: 8, fontSize: 13 }}>Eventos publicados e atividades da comunidade.</p></section>
-      <section className="section">
-        <div className="card" style={{ padding: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><button className="appbar-icon-btn"><I.ChevronLeft className="icon" /></button><h2 className="h3">{monthName}</h2><button className="appbar-icon-btn"><I.ChevronRight className="icon" /></button></div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 12 }}>{['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => <div key={`${day}-${i}`} style={{ textAlign: 'center', fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--ink-3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{day}</div>)}</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6, marginTop: 8 }}>{Array.from({ length: 35 }, (_, index) => {
-            const day = index - 3;
-            const marker = linked.find((item) => item.day === day);
-            return <button key={index} onClick={() => marker && go({ name: 'evento', eventoId: marker.evId })} style={{ aspectRatio: '1/1', borderRadius: 10, background: marker ? (marker.color === 'green' ? 'rgba(60,122,90,0.14)' : 'rgba(247,200,72,0.22)') : 'var(--surface-2)', color: day > 0 && day <= 31 ? 'var(--ink)' : 'var(--ink-4)', fontWeight: marker ? 800 : 600, position: 'relative' }}>{day > 0 && day <= 31 ? day : ''}{marker && <span style={{ position: 'absolute', bottom: 4, left: '50%', width: 5, height: 5, borderRadius: 999, transform: 'translateX(-50%)', background: marker.color === 'green' ? 'var(--parish-green)' : 'var(--accent-d)' }} />}</button>;
+    <div className="scroll mobile-calendar-scroll">
+      <section className="mobile-calendar-hero"><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Calendário Litúrgico</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Tempos & celebrações</h1><p className="body" style={{ color: 'rgba(255,255,255,0.76)', marginTop: 8, fontSize: 13 }}>Eventos publicados e atividades da comunidade.</p></section>
+      <section className="section mobile-calendar-section">
+        <div className="card mobile-calendar-card">
+          <div className="mobile-calendar-head"><button className="appbar-icon-btn" onClick={() => setMonthOffset((value) => value - 1)}><I.ChevronLeft className="icon" /></button><h2 className="h3">{monthName}</h2><button className="appbar-icon-btn" onClick={() => setMonthOffset((value) => value + 1)}><I.ChevronRight className="icon" /></button></div>
+          <div className="mobile-calendar-weekdays">{['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => <div key={`${day}-${i}`}>{day}</div>)}</div>
+          <div className="mobile-calendar-grid">{monthDays.map((item, index) => {
+            const marker = item.current ? linked.find((event) => event.day === item.day) : null;
+            return <button key={`${item.day}-${index}`} className={`mobile-calendar-day${item.current ? '' : ' muted'}${marker ? ' marked' : ''}`} onClick={() => marker && go({ name: 'evento', eventoId: marker.event.id })}>{item.current ? item.day : ''}{marker && <span className={`mobile-calendar-dot ${marker.color}`} />}</button>;
           })}</div>
-          <div style={{ display: 'flex', gap: 12, marginTop: 12 }}><LegendDot color="var(--accent-d)" label="Evento publicado" /><LegendDot color="var(--parish-green)" label="Agenda" /></div>
+          <div className="mobile-calendar-legend"><LegendDot color="var(--accent-d)" label="Evento publicado" /><LegendDot color="var(--parish-green)" label="Agenda" /></div>
         </div>
       </section>
-      <section className="section" style={{ paddingTop: 0 }}><h3 className="h3">Em destaque neste mês</h3><div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>{eventos.slice(0, 4).map((ev) => <button key={ev.id} onClick={() => go({ name: 'evento', eventoId: ev.id })} className="card" style={{ padding: 12, display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left' }}><div style={{ width: 52, height: 52 }}><Photo photo={getCoverPhoto(ev)} aspect="1/1" showBadge={false} ornaments={false} /></div><div style={{ flex: 1 }}><strong style={{ color: 'var(--brand)', fontSize: 14 }}>{ev.titulo}</strong><div className="caption" style={{ marginTop: 2 }}><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</div></div><I.ChevronRight className="icon" style={{ color: 'var(--ink-3)' }} /></button>)}</div></section>
+      <section className="section" style={{ paddingTop: 0 }}><h3 className="h3">Em destaque neste mês</h3><div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>{featured.map((ev) => <button key={ev.id} onClick={() => go({ name: 'evento', eventoId: ev.id })} className="card mobile-calendar-feature"><div style={{ width: 52, height: 52 }}><Photo photo={getCoverPhoto(ev)} aspect="1/1" showBadge={false} ornaments={false} /></div><div style={{ flex: 1 }}><strong>{ev.titulo}</strong><div className="caption" style={{ marginTop: 2 }}><I.Calendar className="icon icon-sm" /> {formatMobileDisplayDate(ev.dataLabel, ev.data)}</div></div><I.ChevronRight className="icon" /></button>)}</div></section>
+    </div>
+  );
+}
+
+function buildCalendarEvents(eventos, visibleMonth) {
+  const month = visibleMonth.getMonth();
+  const year = visibleMonth.getFullYear();
+  const parsed = eventos.map((event, index) => {
+    const date = parseEventDate(event.data || event.date || event.dataLabel || event.dateLabel);
+    return date ? { day: date.getDate(), month: date.getMonth(), year: date.getFullYear(), event, color: index % 2 ? 'green' : 'yellow' } : null;
+  }).filter(Boolean).filter((item) => item.month === month && item.year === year);
+
+  if (parsed.length) return parsed;
+  return eventos.slice(0, 4).map((event, index) => ({ day: [5, 12, 18, 25][index] || (index + 1), event, color: index % 2 ? 'green' : 'yellow' }));
+}
+
+function buildCalendarDays(visibleMonth) {
+  const first = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1);
+  const startOffset = first.getDay();
+  const daysInMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0).getDate();
+  return Array.from({ length: 42 }, (_, index) => {
+    const day = index - startOffset + 1;
+    return { day, current: day > 0 && day <= daysInMonth };
+  });
+}
+
+function parseEventDate(value) {
+  if (!value) return null;
+  const source = String(value).slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(source)) {
+    const date = new Date(`${source}T12:00:00`);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  const match = String(value).match(/(\d{1,2})\s+de\s+([a-zç]+)\s+de\s+(\d{4})/i);
+  if (!match) return null;
+  const months = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  const month = months.indexOf(match[2].toLowerCase());
+  if (month < 0) return null;
+  return new Date(Number(match[3]), month, Number(match[1]), 12);
+}
+
+function ProtectedPreviewCard() {
+  return (
+    <div className="mobile-protected-card">
+      <I.Lock className="icon" />
+      <div>
+        <div className="mobile-protected-title">Prévia protegida</div>
+        <p>As prévias têm marca d&apos;água. A foto adquirida é entregue em alta resolução, sem marca, por e-mail e WhatsApp.</p>
+      </div>
+    </div>
+  );
+}
+
+function PriceHelpCard() {
+  return (
+    <div className="mobile-price-help-card">
+      <div>
+        <div className="caption">Cada foto custa</div>
+        <strong>{brl(PRECO_FOTO)}</strong>
+      </div>
+      <a className="btn btn-outline btn-sm" href="https://wa.me/5599991646063" target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a>
     </div>
   );
 }
@@ -199,21 +272,7 @@ export function formatMobileCardTitle(title) {
 }
 
 export function formatMobileCardDate(dateLabel, date) {
-  const source = dateLabel || date;
-  if (!source) return 'DATA A CONFIRMAR';
-
-  if (/^\d{4}-\d{2}-\d{2}/.test(String(source))) {
-    const parsedDate = new Date(`${String(source).slice(0, 10)}T12:00:00`);
-    if (!Number.isNaN(parsedDate.getTime())) {
-      return parsedDate.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }).toLocaleUpperCase('pt-BR');
-    }
-  }
-
-  return String(source).toLocaleUpperCase('pt-BR');
+  return formatMobileDisplayDate(dateLabel, date);
 }
 
 function EventCard({ ev, onClick, isPascom }) {

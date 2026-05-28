@@ -35,7 +35,9 @@ Elementos preservados da referência:
 - modo escuro acionado pelo botão de tema no appbar, com fundo grafite, superfícies elevadas, texto branco, acentos dourados e overrides próprios para cards, botões, inputs, tags, appbar e botnav.
 - os ajustes de contraste do modo escuro devem tratar elementos mobile com estilos inline do standalone (`mobile-search-card`, `sacramento-chip`, `section-purple`, `agenda-date-tile`, `cart-bar-icon`, `pascom-action-tile`) para evitar estados branco-sobre-branco após a troca de tokens.
 - cards de eventos da home e de `/buscar` seguem o padrão visual do standalone `(2)`, com capa grande, badges superiores, data em caixa alta, título serifado, local e rodapé com `Ver fotos ->`; nesses cards, a conjunção ` e ` é exibida como ` & ` apenas na apresentação visual.
-- a página interna da galeria (`/evento/:eventoId?view=galeria`) mantém grid touch-first e classes dedicadas (`mobile-gallery-hero`, `mobile-gallery-section`, `mobile-gallery-grid`) para preservar o padrão visual do standalone sem alterar APIs.
+- a pagina de entrada do evento mobile e a pagina interna da galeria (`/evento/:eventoId?view=galeria`) seguem a tela completa do standalone `(2)`: hero roxo, capa grande, metadados, bloco de previa protegida, grade com seletor `2x/3x/4x`, card de preco e atalho de WhatsApp.
+- o lightbox mobile segue o standalone `(2)`: fundo preto, contador `FOTO 02/9`, controles laterais, previa protegida, texto de entrega sem marca d'agua e botao amarelo de selecao.
+- a aba calendario usa a estrutura funcional do standalone `(2)`, com navegacao mensal, marcadores de evento/agenda e lista de destaques vinculada aos eventos reais.
 - a moldura de iPhone e o painel `Tweaks` do protótipo não são exibidos no site público.
 
 ## Estratégia de Detecção
@@ -70,7 +72,8 @@ frontend/src/
 │  ├─ referenceFlowScreens.jsx
 │  ├─ reference-tokens.css
 │  ├─ reference-layout.css
-│  └─ reference-adapter.css
+│  ├─ reference-adapter.css
+│  └─ reference-gallery-calendar.css
 └─ shared/
    ├─ gallery.js
    └─ platform.js
@@ -102,8 +105,10 @@ Usuário acessa site por celular/tablet
   -> MobileApp usa BrowserRouter + CarrinhoProvider
   -> Home mostra catálogo real no layout da referência
   -> Evento abre detalhe visual institucional
+  -> Evento exibe hero completo, capa, metadados, aviso de previa protegida e grade inicial como no standalone (2)
   -> Galeria protegida solicita código quando necessário
-  -> Fotos podem ser ampliadas em lightbox fullscreen
+  -> Galeria mostra grade 2x/3x/4x, card de preco/WhatsApp e selecao por foto
+  -> Fotos abrem em lightbox fullscreen escuro com contador, setas, aviso protegido e botao de selecao
   -> Carrinho abre como bottom sheet
   -> Checkout usa stepper Identificação/Pagamento
   -> Pagamento real redireciona para Mercado Pago
@@ -127,6 +132,7 @@ A protecao nao bloqueia navegacao, carrinho, checkout ou Mercado Pago. Ela reduz
 
 - Desktop e mobile permanecem em bundles separados.
 - CSS da experiência mobile é carregado apenas quando `MobileApp` é importado.
+- A folha `reference-gallery-calendar.css` concentra o refinamento fiel do evento, galeria, lightbox e calendario para evitar espalhar overrides em telas nao relacionadas.
 - Imagens de lista usam carregamento preguiçoso.
 - O layout mobile evita carregar componentes desktop.
 - Arquivos mobile foram divididos para manter manutenção e respeitar limite de 500 linhas por arquivo.
