@@ -194,7 +194,46 @@ function PascomScreen({ go, setRole, eventos }) {
 }
 
 function SortChip({ value, onChange }) { return <select className="tag" value={value} onChange={(event) => onChange(event.target.value)} style={{ border: 0, outline: 0 }}><option value="recentes">Recentes</option><option value="fotos">Mais fotos</option><option value="nome">A-Z</option></select>; }
-function EventCard({ ev, onClick, isPascom }) { const cover = getCoverPhoto(ev); const photos = resolveEventPhotos(ev).slice(0, 3); return <div onClick={onClick} role="button" tabIndex="0" className="card" style={{ overflow: 'hidden', cursor: 'pointer' }}><CoverPhoto photo={cover} aspect="16/9"><div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.56), transparent 52%)' }} /><div style={{ position: 'absolute', left: 12, right: 12, bottom: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 10 }}><div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}><span className="pill pill-yellow">{categoryLabel(ev.sacramento)}</span><span className="pill"><I.Camera className="icon icon-sm" /> {ev.totalFotos}</span></div>{isPascom && <span className="tag tag-green">Publicado</span>}</div></CoverPhoto><div style={{ padding: 14 }}><h3 className="h3" style={{ lineHeight: 1.18 }}>{ev.titulo}</h3><div className="caption" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginTop: 7 }}><span><I.Calendar className="icon icon-sm" /> {ev.dataLabel || 'Data paroquial'}</span><span><I.MapPin className="icon icon-sm" /> {ev.local}</span></div><div style={{ display: 'flex', gap: 4, marginTop: 12 }}>{photos.map((photo) => <div key={photo.id || photo.photoId} style={{ width: 44, height: 44 }}><Photo photo={photo} aspect="1/1" showBadge={false} ornaments={false} /></div>)}<span className="caption" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, marginLeft: 4 }}><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(PRECO_FOTO)} cada</span></div></div></div>; }
+export function formatMobileCardTitle(title) {
+  return String(title || '').replace(/\s+e\s+/gi, ' & ');
+}
+
+function EventCard({ ev, onClick, isPascom }) {
+  const cover = getCoverPhoto(ev);
+  const photos = resolveEventPhotos(ev).slice(0, 3);
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') onClick(event);
+  };
+  return (
+    <article onClick={onClick} onKeyDown={handleKeyDown} role="button" tabIndex="0" className="mobile-event-card">
+      <div className="mobile-event-card-cover">
+        <CoverPhoto photo={cover} aspect="16/10" />
+        <div className="mobile-event-card-badges">
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            <span className="pill pill-yellow">{categoryLabel(ev.sacramento)}</span>
+            <span className="pill"><I.Camera className="icon icon-sm" /> {ev.totalFotos}</span>
+          </div>
+          {isPascom && <span className="tag tag-green">Publicado</span>}
+        </div>
+      </div>
+      <div className="mobile-event-card-content">
+        <h3 className="mobile-event-card-title">{formatMobileCardTitle(ev.titulo)}</h3>
+        <div className="caption mobile-event-card-meta">
+          <span><I.Calendar className="icon icon-sm" /> {ev.dataLabel || 'Data paroquial'}</span>
+          <span><I.MapPin className="icon icon-sm" /> {ev.local}</span>
+        </div>
+        <div className="mobile-event-card-strip">
+          {photos.map((photo) => (
+            <div key={photo.id || photo.photoId} className="mobile-event-card-thumb">
+              <Photo photo={photo} aspect="1/1" showBadge={false} ornaments={false} />
+            </div>
+          ))}
+          <span className="caption mobile-event-card-summary"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(PRECO_FOTO)} cada</span>
+        </div>
+      </div>
+    </article>
+  );
+}
 function MenuRow({ icon, label, href, onClick, disabled, last }) { const Icon = I[icon] || I.Sparkle; const content = <><span style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--surface-2)', color: 'var(--brand)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Icon className="icon icon-sm" /></span><span style={{ flex: 1, fontSize: 14, fontWeight: 700, color: disabled ? 'var(--ink-3)' : 'var(--ink)' }}>{label}</span><I.ChevronRight className="icon icon-sm" style={{ color: 'var(--ink-3)' }} /></>; const style = { width: '100%', padding: '13px 14px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: last ? 0 : '1px solid var(--line)', textAlign: 'left', cursor: disabled ? 'not-allowed' : 'pointer' }; if (href) return <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" style={style}>{content}</a>; return <button onClick={disabled ? undefined : onClick} style={style} title={disabled ? 'Funcionalidade futura' : undefined}>{content}</button>; }
 function AgendaRow({ agenda }) { return <div className="card" style={{ padding: 12, display: 'flex', alignItems: 'center', gap: 12 }}><div className="agenda-date-tile" style={{ width: 52, height: 52, borderRadius: 12, background: 'var(--brand)', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><strong style={{ fontSize: 20 }}>{agenda.dia}</strong><span style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--accent)' }}>{agenda.mes}</span></div><div style={{ flex: 1 }}><strong style={{ color: 'var(--brand)', fontSize: 14 }}>{agenda.titulo}</strong><div className="caption" style={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}><span><I.MapPin className="icon icon-sm" /> {agenda.local}</span><span><I.Clock className="icon icon-sm" /> {agenda.hora}</span></div></div><I.ChevronRight className="icon" style={{ color: 'var(--ink-3)' }} /></div>; }
 function LegendDot({ color, label }) { return <span className="caption" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: 999, background: color }} />{label}</span>; }

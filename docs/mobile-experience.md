@@ -34,6 +34,7 @@ Elementos preservados da referência:
 - comportamento app-like com bottom navigation e bottom sheet.
 - modo escuro acionado pelo botão de tema no appbar, com fundo grafite, superfícies elevadas, texto branco, acentos dourados e overrides próprios para cards, botões, inputs, tags, appbar e botnav.
 - os ajustes de contraste do modo escuro devem tratar elementos mobile com estilos inline do standalone (`mobile-search-card`, `sacramento-chip`, `section-purple`, `agenda-date-tile`, `cart-bar-icon`, `pascom-action-tile`) para evitar estados branco-sobre-branco após a troca de tokens.
+- cards de eventos da home e de `/buscar` seguem o padrão visual do standalone `(2)`, com capa em destaque, badges sobrepostos, título serifado e metadados abaixo; nesses cards, a conjunção ` e ` é exibida como ` & ` apenas na apresentação visual.
 - a moldura de iPhone e o painel `Tweaks` do protótipo não são exibidos no site público.
 
 ## Estratégia de Detecção

@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-28 - Cards mobile fieis ao standalone
+
+- **Tipo:** `fix/frontend`
+- **Responsavel:** Codex
+- **Alteracao:** cards de eventos da home mobile e de `/buscar` passam a usar estrutura visual dedicada inspirada no standalone `(2)`, com capa, badges, titulo serifado, metadados e miniaturas.
+- **Motivo:** alinhar as telas iniciais mobile ao layout aprovado no HTML standalone e corrigir a apresentacao de nomes como `Casamento de Ana & Pedro`.
+- **Impacto:** apenas apresentacao mobile; `ev.titulo`, busca, ordenacao, rotas, desktop, APIs, checkout, backend e banco permanecem inalterados.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/components.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 - Correcoes de contraste no modo escuro mobile
 
 - **Tipo:** `fix/frontend`

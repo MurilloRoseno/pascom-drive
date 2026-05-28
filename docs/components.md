@@ -24,6 +24,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
 - **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx` e CSS `reference-*`.
 - **Modo escuro:** `className="app dark"` troca tokens e classes auxiliares corrigem contraste de estilos inline herdados do standalone, incluindo buscas, chips de sacramento, agenda, cart bar e atalhos Pascom.
+- **Cards mobile:** `EventCard` e `formatMobileCardTitle` em `referencePublicScreens.jsx` renderizam os cards da home e de `/buscar` no padrão do standalone `(2)`; a troca ` e ` -> ` & ` é display-only e não altera `ev.titulo`.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop, preservar URLs `mt` retornadas pela API e substituir placeholders do standalone quando houver backend real.
 
 ## `useDevtoolsGuard`

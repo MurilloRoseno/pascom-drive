@@ -312,8 +312,8 @@
     "hash": "97c273e4af64061b1e0fea1a6df7e7a1"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\mobile\\referencePublicScreens.jsx": {
-    "mtime": 1779995650.069927,
-    "hash": "3787f5efb8d07bb8bd5052b43e447ae7"
+    "mtime": 1779996534.8000872,
+    "hash": "57eda1a523c82b96ceea88633c027b39"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\mobile\\referenceUtils.jsx": {
     "mtime": 1779995715.0580256,
@@ -386,6 +386,10 @@
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\Header.test.jsx": {
     "mtime": 1779756649.4446983,
     "hash": "25f1574f27a2d9511e71728effcdcf25"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\mobileCards.test.jsx": {
+    "mtime": 1779996545.4303954,
+    "hash": "ea4f747f631ebad6fea78125a9d065e7"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\PhotoCard.test.jsx": {
     "mtime": 1779739867.8023841,
@@ -544,8 +548,8 @@
     "hash": "ec5786c011aac962e3ddf102b1cee461"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\components.md": {
-    "mtime": 1779995745.3287222,
-    "hash": "a2476f7ede5c30f4cea5f52bd0d3b29c"
+    "mtime": 1779996563.9121752,
+    "hash": "31786ce6e749c8782ba09dd17236c051"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\conventions.md": {
     "mtime": 1779911134.3403134,
@@ -564,8 +568,8 @@
     "hash": "22949fc92217768c377fd9c0a243d153"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\mobile-experience.md": {
-    "mtime": 1779995722.0126212,
-    "hash": "25fc5f0e2d46d71ef173a986c7d8383b"
+    "mtime": 1779996553.5112004,
+    "hash": "41501ebbc1d008abc168ed8fbcc0a725"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\project-overview.md": {
     "mtime": 1779911134.3339336,
@@ -588,8 +592,8 @@
     "hash": "c33b6e5ea7680068304a7692b0be7703"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-changelog.md": {
-    "mtime": 1779995764.266507,
-    "hash": "044a34506ba393edd72027d7d9ed78e9"
+    "mtime": 1779996572.1271255,
+    "hash": "6eac0ff20a8777a7c619deb62fac607e"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-roadmap.md": {
     "mtime": 1779991437.3469708,
