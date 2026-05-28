@@ -5,6 +5,7 @@ import { CarrinhoProvider } from '../context/CarrinhoContext.jsx';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { cotarCheckout, criarPagamento, listarEventos, listarFotosEvento, obterEvento, statusPagamento, validarAcessoGaleria } from '../lib/api.js';
 import { checkoutSchema } from '../lib/validation.js';
+import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import { galleryToken, saveGalleryToken } from '../shared/gallery.js';
 import { I } from './referenceIcons.jsx';
 import { shadeColor, toReferenceEvent, toReferencePhoto } from './referenceUtils.jsx';
@@ -16,15 +17,19 @@ import './reference-adapter.css';
 
 const TWEAK_DEFAULTS = { gridCols: 3, dark: false, ornaments: true, role: 'publico', accent: '#F7C848' };
 
-function useEventosCatalog() {
-  const [state, setState] = useState({ loading: true, eventos: [], error: '' });
+function useEventosCatalog(enabled = true) {
+  const [state, setState] = useState({ loading: enabled, eventos: [], error: '' });
   useEffect(() => {
+    if (!enabled) {
+      setState((current) => current.loading ? { ...current, loading: false } : current);
+      return undefined;
+    }
     let alive = true;
     listarEventos()
       .then(({ eventos }) => alive && setState({ loading: false, eventos: eventos.map(toReferenceEvent), error: '' }))
       .catch((error) => alive && setState({ loading: false, eventos: [], error: error.message }));
     return () => { alive = false; };
-  }, []);
+  }, [enabled]);
   return state;
 }
 
@@ -56,7 +61,9 @@ function useEventGallery(eventoId, catalogEvent) {
 function MobileRoutes() {
   const navigate = useNavigate();
   const location = useLocation();
-  const catalog = useEventosCatalog();
+  const routeName = routeNameFromLocation(location);
+  const shouldLoadCatalog = ['home', 'galerias', 'calendario', 'evento', 'galeria', 'foto'].includes(routeName);
+  const catalog = useEventosCatalog(shouldLoadCatalog);
   const { fotos, addFoto, removeFoto, clearCarrinho } = useCarrinho();
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const [cartOpen, setCartOpen] = useState(false);
@@ -68,6 +75,7 @@ function MobileRoutes() {
     if (next.name === 'galerias') navigate(`/buscar${next.sacramento && next.sacramento !== 'todos' ? `?categoria=${next.sacramento}` : ''}`);
     if (next.name === 'calendario') navigate('/calendario');
     if (next.name === 'perfil') navigate('/perfil');
+    if (next.name === 'privacidade') navigate('/privacidade');
     if (next.name === 'evento') navigate(`/evento/${encodeURIComponent(next.eventoId)}`);
     if (next.name === 'galeria') navigate(`/evento/${encodeURIComponent(next.eventoId)}?view=galeria`);
     if (next.name === 'foto') navigate(`/evento/${encodeURIComponent(next.eventoId)}?view=foto&idx=${next.photoIdx}`);
@@ -75,7 +83,6 @@ function MobileRoutes() {
   }, [navigate]);
 
   const appStyle = { '--accent': tweaks.accent, '--accent-d': shadeColor(tweaks.accent, -25) };
-  const routeName = routeNameFromLocation(location);
   const isLightbox = routeName === 'foto';
   const hideChrome = isLightbox || routeName === 'checkout' || location.pathname.startsWith('/pagamento/');
   const showCartBar = cart.length > 0 && !hideChrome && !cartOpen;
@@ -90,7 +97,9 @@ function MobileRoutes() {
         <Route path="/buscar" element={<GaleriasRoute go={go} catalog={catalog} />} />
         <Route path="/categoria" element={<Navigate replace to={`/buscar${location.search}`} />} />
         <Route path="/calendario" element={<CalendarioScreen eventos={catalog.eventos} go={go} />} />
-        <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} />} />
+        <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} />} />
+        <Route path="/privacidade" element={<PrivacyPolicy mobile />} />
+        <Route path="/politica-de-privacidade" element={<PrivacyPolicy mobile />} />
         <Route path="/evento/:eventoId" element={<EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} removeFoto={removeFoto} gridCols={tweaks.gridCols} tweaks={tweaks} />} />
         <Route path="/checkout" element={<CheckoutRoute cart={cart} removeFoto={removeFoto} go={go} clearCarrinho={clearCarrinho} />} />
         <Route path="/pagamento/:resultado" element={<PaymentRoute go={go} />} />
@@ -183,7 +192,7 @@ function PaymentRoute({ go }) {
 }
 
 function AppBar({ routeName, canBack, goBack, cartCount, openCart, tweaks, setTweak }) {
-  const title = { home: 'Início', galerias: 'Galerias', calendario: 'Calendário', perfil: tweaks.role === 'pascom' ? 'Pascom' : 'Perfil', evento: 'Evento', galeria: 'Galeria' }[routeName] || '';
+  const title = { home: 'Início', galerias: 'Galerias', calendario: 'Calendário', perfil: tweaks.role === 'pascom' ? 'Pascom' : 'Perfil', privacidade: 'Privacidade', evento: 'Evento', galeria: 'Galeria' }[routeName] || '';
   return <header className="appbar"><div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, flex: 1 }}>{canBack ? <button className="appbar-back" onClick={goBack}><I.ChevronLeft className="icon" /></button> : <img src="/assets/logo-header.png" alt="Paróquia São Rafael" style={{ height: 36, width: 'auto', marginRight: 4 }} />}<div style={{ minWidth: 0 }}>{canBack ? <><div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>{routeName === 'galeria' ? 'Fotos do evento' : ''}</div><div className="appbar-title" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{title}</div></> : <><div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent-d)' }}>Paróquia</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--brand)', lineHeight: 1.1 }}>São Rafael</div></>}</div></div><div style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}><button className="appbar-icon-btn" onClick={() => setTweak('dark', !tweaks.dark)}>{tweaks.dark ? <I.Sun className="icon" /> : <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>}</button><button className="appbar-icon-btn" onClick={openCart}><I.Bag className="icon" />{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}</button></div></header>;
 }
 
@@ -197,6 +206,7 @@ function routeNameFromLocation(location) {
   if (location.pathname === '/buscar') return 'galerias';
   if (location.pathname === '/calendario') return 'calendario';
   if (location.pathname === '/perfil') return 'perfil';
+  if (location.pathname === '/privacidade' || location.pathname === '/politica-de-privacidade') return 'privacidade';
   if (location.pathname === '/checkout') return 'checkout';
   if (location.pathname.startsWith('/pagamento/')) return 'pagamento';
   if (location.search.includes('view=foto')) return 'foto';

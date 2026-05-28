@@ -1,5 +1,16 @@
 # Changelog Técnico
 
+## 2026-05-28 — Política de Privacidade pública
+
+- **Tipo:** `feat/docs`
+- **Responsável:** Codex
+- **Alteração:** criação da página `PrivacyPolicy`, rotas públicas `/privacidade` e `/politica-de-privacidade`, links de acesso no rodapé desktop e na tela `/perfil` mobile.
+- **Motivo:** tornar transparente o tratamento de dados pessoais no fluxo de venda/entrega de fotos, incluindo Google Sheets/Drive, Mercado Pago, WhatsApp, e-mail, galerias protegidas, downloads e logs técnicos.
+- **Impacto:** usuários passam a ter acesso público à política LGPD adaptada ao Pascom Drive, com seção pastoral sobre dignidade, proporcionalidade, confidencialidade e não vigilância.
+- **Breaking changes:** nenhum contrato de API alterado.
+- **Migrações necessárias:** nenhuma.
+- **Documentos afetados:** `docs/components.md`, `docs/system-flows.md`, `docs/mobile-experience.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-27 — Reimplementação fiel do layout mobile
 
 - **Tipo:** `refactor`

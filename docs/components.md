@@ -193,9 +193,22 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Melhoria:** oferecer busca por e-mail/pedido em operação futura.
 - **Risco futuro:** Mercado Pago pode retornar parâmetros diferentes por fluxo.
 
+## `PrivacyPolicy`
+
+- **Arquivo:** `frontend/src/pages/PrivacyPolicy.jsx`
+- **Responsabilidade:** publicar a Política de Privacidade do Pascom Drive nas rotas `/privacidade` e `/politica-de-privacidade`, com conteúdo único para desktop e mobile.
+- **Props:** `mobile` controla ajustes de layout e scroll quando renderizado dentro da experiência app-like mobile.
+- **Dependências:** `react-router-dom`, CSS próprio `frontend/src/pages/privacy-policy.css`.
+- **Estado interno:** nenhum.
+- **Hooks:** nenhum.
+- **Fluxo:** renderiza hero institucional, índice, seções LGPD, compartilhamento, retenção, direitos do titular e compromisso pastoral com privacidade.
+- **Problemas:** conteúdo jurídico/pastoral depende de revisão humana periódica para refletir práticas reais e obrigações legais vigentes.
+- **Melhoria:** criar rotina anual de revisão com responsável pastoral/jurídico e incluir data formal de aprovação.
+- **Risco futuro:** mudanças em checkout, downloads, fornecedores ou coleta de dados podem deixar a política desatualizada se o changelog documental não for seguido.
+
 ## Componentes Reutilizáveis
 
-- `Header`, `Footer`, `ScrollToTop`, `CartSummary`, `PhotoCard`.
+- `Header`, `Footer`, `ScrollToTop`, `CartSummary`, `PhotoCard`, `PrivacyPolicy`.
 - Subcomponentes internos de `HomePage` e `SearchPage` são candidatos a reutilização, mas ainda não justificam extração agressiva.
 
 ## Componentes Acoplados

@@ -20,6 +20,24 @@ Cliente
 
 Em smartphones e tablets, a jornada usa a interface dedicada mobile com navegação inferior, carrinho em bottom sheet e lightbox fullscreen.
 
+## Fluxo de Política de Privacidade
+
+```text
+Usuário
+  -> acessa /privacidade ou /politica-de-privacidade
+  -> React carrega DesktopApp ou MobileApp conforme plataforma
+  -> PrivacyPolicy renderiza a mesma política canônica
+  -> usuário consulta dados coletados, finalidades, direitos e contato
+```
+
+Detalhes operacionais:
+
+- A rota é pública e não chama APIs backend.
+- No desktop, o acesso fica disponível no rodapé institucional.
+- No mobile, o acesso fica na tela `/perfil`, sem poluir a navegação inferior principal.
+- O conteúdo descreve Google Sheets/Drive, Mercado Pago, Vercel, WhatsApp, SMTP/e-mail, galerias protegidas, downloads e logs técnicos.
+- Qualquer alteração futura em coleta, pagamento, entrega, fornecedores ou retenção deve atualizar a política e o changelog técnico.
+
 ## Fluxo de Publicação de Evento
 
 1. Operador cria pasta de evento em `SOURCE_FOLDER_ID`.

@@ -37,6 +37,7 @@ export default function Footer() {
               <li><a href="/#sobre">Sobre a Paróquia</a></li>
               <li><a href="/#sacramentos">Sacramentos</a></li>
               <li><Link to="/buscar">Eventos</Link></li>
+              <li><Link to="/privacidade">Política de Privacidade</Link></li>
               <li><a href="/#contato">Contato</a></li>
             </ul>
           </section>
@@ -79,7 +80,7 @@ export default function Footer() {
       <div className="inst-footer-legal">
         <div className="inst-footer-container inst-footer-legal-inner">
           <span>© 2026 Paróquia São Rafael. Todos os direitos reservados.</span>
-          <span>Açailândia · Maranhão</span>
+          <span>Açailândia · Maranhão · <Link to="/privacidade">Privacidade</Link></span>
         </div>
       </div>
       <div className="inst-footer-motto" aria-hidden="true">

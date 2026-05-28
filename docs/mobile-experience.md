@@ -96,6 +96,12 @@ Usuário acessa site por celular/tablet
   -> Retorno consulta status do pedido
 ```
 
+## Rotas Institucionais no Mobile
+
+- `/privacidade` e `/politica-de-privacidade` renderizam `PrivacyPolicy` em modo mobile, com scroll próprio dentro da shell app-like.
+- O link principal fica em `/perfil`, junto de atendimento e recuperação de pedidos, para manter a bottom navigation focada nos fluxos de compra.
+- A política reutiliza a mesma fonte de conteúdo do desktop; apenas layout e espaçamento mudam para evitar divergência documental.
+
 ## Performance
 
 - Desktop e mobile permanecem em bundles separados.

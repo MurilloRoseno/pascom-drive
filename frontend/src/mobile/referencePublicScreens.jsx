@@ -112,8 +112,40 @@ export function CalendarioScreen({ eventos, go }) {
   return <div className="scroll"><section style={{ background: 'linear-gradient(145deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 26px' }}><div className="eyebrow eyebrow-light">Calendário Litúrgico</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Tempos & celebrações</h1></section><section className="section"><h3 className="h3">Em destaque neste mês</h3><div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>{eventos.slice(0, 4).map((ev) => <button key={ev.id} onClick={() => go({ name: 'evento', eventoId: ev.id })} className="card" style={{ padding: 12, display: 'flex', alignItems: 'center', gap: 12, textAlign: 'left' }}><div style={{ width: 52, height: 52 }}><Photo photo={getCoverPhoto(ev)} aspect="1/1" showBadge={false} ornaments={false} /></div><div style={{ flex: 1 }}><strong style={{ color: 'var(--brand)', fontSize: 14 }}>{ev.titulo}</strong><div className="caption" style={{ marginTop: 2 }}><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos</div></div><I.ChevronRight className="icon" style={{ color: 'var(--ink-3)' }} /></button>)}</div></section></div>;
 }
 
-export function PerfilScreen({ setRole }) {
-  return <div className="scroll"><section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe pedidos, salve galerias favoritas e fale com a secretaria.</p></section><section className="section"><div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra para receber novamente os links das suas fotos.</p><input className="input" placeholder="seu@email.com" style={{ marginTop: 14 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }}>Recuperar fotos</button></div><div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para gerenciar uploads, ver vendas e moderar fotos.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div></section></div>;
+export function PerfilScreen({ setRole, go }) {
+  return (
+    <div className="scroll">
+      <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}>
+        <CornerOrnament at="tr" />
+        <div className="eyebrow eyebrow-light">Bem-vindo(a)</div>
+        <h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1>
+        <p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe pedidos, salve galerias favoritas e fale com a secretaria.</p>
+      </section>
+      <section className="section">
+        <div className="card" style={{ padding: 16, textAlign: 'center' }}>
+          <I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} />
+          <h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3>
+          <p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra para receber novamente os links das suas fotos.</p>
+          <input className="input" placeholder="seu@email.com" style={{ marginTop: 14 }} />
+          <button className="btn btn-primary btn-block" style={{ marginTop: 10 }}>Recuperar fotos</button>
+        </div>
+        <div className="card" style={{ marginTop: 14, padding: 14 }}>
+          <div className="eyebrow">Privacidade e atendimento</div>
+          <button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => go({ name: 'privacidade' })}>
+            <I.Lock className="icon" /> Política de privacidade
+          </button>
+          <a className="btn btn-secondary btn-block" style={{ marginTop: 8 }} href="https://wa.me/5599991646063" target="_blank" rel="noopener noreferrer">
+            <I.Whatsapp className="icon" /> Falar com a secretaria
+          </a>
+        </div>
+        <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}>
+          <div className="eyebrow">Você é da Pascom?</div>
+          <p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para gerenciar uploads, ver vendas e moderar fotos.</p>
+          <button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 function EventCard({ ev, onClick, isPascom }) {
