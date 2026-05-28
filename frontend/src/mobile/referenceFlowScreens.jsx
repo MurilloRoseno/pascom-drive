@@ -8,7 +8,7 @@ export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, se
   if (!ev) return null;
   return (
     <div className="scroll" style={{ paddingBottom: cart.length > 0 ? 80 : 0 }}>
-      <section style={{ background: 'linear-gradient(145deg, var(--brand-d), var(--brand))', color: '#fff', padding: '18px 18px 16px', position: 'relative', overflow: 'hidden' }}>
+      <section className="mobile-gallery-hero" style={{ background: 'linear-gradient(145deg, var(--brand-d), var(--brand))', color: '#fff', padding: '18px 18px 16px', position: 'relative', overflow: 'hidden' }}>
         <CornerOrnament at="tr" />
         <button onClick={() => go({ name: 'evento', eventoId: ev.id })} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, marginBottom: 10 }}><I.ChevronLeft className="icon icon-sm" /> Voltar ao evento</button>
         <div className="eyebrow eyebrow-light">{categoryLabel(ev.sacramento)}</div>
@@ -23,13 +23,13 @@ export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, se
 function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true, isDevtoolsOpen = false }) {
   const selectedIds = new Set(cart.map((item) => item.photoId));
   return (
-    <section className="section" style={{ paddingTop: 12, paddingBottom: sticky && cart.length > 0 ? 92 : undefined }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+    <section className="section mobile-gallery-section" style={{ paddingTop: 12, paddingBottom: sticky && cart.length > 0 ? 92 : undefined }}>
+      <div className="mobile-gallery-toolbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div><div className="eyebrow">Selecionar fotos</div><p className="caption">Toque na foto para ampliar. Use + para adicionar.</p></div>
         <DensityToggle value={gridCols} onChange={setGridCols} />
       </div>
       {isDevtoolsOpen && <DevtoolsGalleryNotice />}
-      {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div style={{ display: 'grid', gridTemplateColumns: `repeat(${gridCols}, 1fr)`, gap: 6 }}>{photos.map((photo, index) => {
+      {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid" style={{ display: 'grid', gridTemplateColumns: `repeat(${gridCols}, 1fr)`, gap: 6 }}>{photos.map((photo, index) => {
         const selected = selectedIds.has(photo.photoId);
         return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}><button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
       })}</div>}

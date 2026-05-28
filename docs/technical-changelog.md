@@ -1,10 +1,21 @@
 # Changelog Tecnico
 
+## 2026-05-28 - Refinamento dos cards e galeria mobile
+
+- **Tipo:** `fix/frontend`
+- **Responsavel:** Codex
+- **Alteracao:** card mobile ajustado para reproduzir o visual aprovado da imagem/standalone: capa no topo, pill do sacramento, contador de fotos, data como `24 DE MAIO DE 2026`, titulo com `&`, local e resumo no rodape; a tela interna de galeria recebeu classes dedicadas para preservar o mesmo padrao visual mobile.
+- **Motivo:** pedido de fidelidade visual para a pagina inicial mobile, aba de galerias e pagina interna da galeria.
+- **Impacto:** somente apresentacao mobile; desktop, APIs, checkout, backend, pagamentos e banco permanecem inalterados.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/components.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 - Cards mobile fieis ao standalone
 
 - **Tipo:** `fix/frontend`
 - **Responsavel:** Codex
-- **Alteracao:** cards de eventos da home mobile e de `/buscar` passam a usar estrutura visual dedicada inspirada no standalone `(2)`, com capa, badges, titulo serifado, metadados e miniaturas.
+- **Alteracao:** cards de eventos da home mobile e de `/buscar` passam a usar estrutura visual dedicada inspirada no standalone `(2)`, com capa grande, badges superiores, titulo serifado e metadados abaixo.
 - **Motivo:** alinhar as telas iniciais mobile ao layout aprovado no HTML standalone e corrigir a apresentacao de nomes como `Casamento de Ana & Pedro`.
 - **Impacto:** apenas apresentacao mobile; `ev.titulo`, busca, ordenacao, rotas, desktop, APIs, checkout, backend e banco permanecem inalterados.
 - **Breaking changes:** nenhum.

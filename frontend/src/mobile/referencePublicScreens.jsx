@@ -198,9 +198,26 @@ export function formatMobileCardTitle(title) {
   return String(title || '').replace(/\s+e\s+/gi, ' & ');
 }
 
+export function formatMobileCardDate(dateLabel, date) {
+  const source = dateLabel || date;
+  if (!source) return 'DATA A CONFIRMAR';
+
+  if (/^\d{4}-\d{2}-\d{2}/.test(String(source))) {
+    const parsedDate = new Date(`${String(source).slice(0, 10)}T12:00:00`);
+    if (!Number.isNaN(parsedDate.getTime())) {
+      return parsedDate.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      }).toLocaleUpperCase('pt-BR');
+    }
+  }
+
+  return String(source).toLocaleUpperCase('pt-BR');
+}
+
 function EventCard({ ev, onClick, isPascom }) {
   const cover = getCoverPhoto(ev);
-  const photos = resolveEventPhotos(ev).slice(0, 3);
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') onClick(event);
   };
@@ -209,26 +226,18 @@ function EventCard({ ev, onClick, isPascom }) {
       <div className="mobile-event-card-cover">
         <CoverPhoto photo={cover} aspect="16/10" />
         <div className="mobile-event-card-badges">
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <span className="pill pill-yellow">{categoryLabel(ev.sacramento)}</span>
-            <span className="pill"><I.Camera className="icon icon-sm" /> {ev.totalFotos}</span>
-          </div>
+          <span className="pill pill-yellow mobile-event-card-category">{categoryLabel(ev.sacramento)}</span>
+          <span className="pill mobile-event-card-count"><I.Camera className="icon icon-sm" /> {ev.totalFotos}</span>
           {isPascom && <span className="tag tag-green">Publicado</span>}
         </div>
       </div>
       <div className="mobile-event-card-content">
+        <div className="mobile-event-card-date"><I.Calendar className="icon icon-sm" /> {formatMobileCardDate(ev.dataLabel, ev.data)}</div>
         <h3 className="mobile-event-card-title">{formatMobileCardTitle(ev.titulo)}</h3>
-        <div className="caption mobile-event-card-meta">
-          <span><I.Calendar className="icon icon-sm" /> {ev.dataLabel || 'Data paroquial'}</span>
-          <span><I.MapPin className="icon icon-sm" /> {ev.local}</span>
-        </div>
-        <div className="mobile-event-card-strip">
-          {photos.map((photo) => (
-            <div key={photo.id || photo.photoId} className="mobile-event-card-thumb">
-              <Photo photo={photo} aspect="1/1" showBadge={false} ornaments={false} />
-            </div>
-          ))}
-          <span className="caption mobile-event-card-summary"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(PRECO_FOTO)} cada</span>
+        <div className="mobile-event-card-location"><I.MapPin className="icon icon-sm" /> {ev.local}</div>
+        <div className="mobile-event-card-footer">
+          <span className="mobile-event-card-link">Ver fotos →</span>
+          <span className="mobile-event-card-summary"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(PRECO_FOTO)} cada</span>
         </div>
       </div>
     </article>

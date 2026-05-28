@@ -333,7 +333,7 @@
       "source_file": "backend/coverage/lcov-report/sorter.js",
       "source_location": "L1",
       "id": "backend_coverage_lcov_report_sorter_js",
-      "community": 10,
+      "community": 9,
       "norm_label": "sorter.js"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L11",
       "id": "lcov_report_sorter_gettable",
-      "community": 10,
+      "community": 9,
       "norm_label": "gettable()"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L15",
       "id": "lcov_report_sorter_gettableheader",
-      "community": 10,
+      "community": 9,
       "norm_label": "gettableheader()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L19",
       "id": "lcov_report_sorter_gettablebody",
-      "community": 10,
+      "community": 9,
       "norm_label": "gettablebody()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L23",
       "id": "lcov_report_sorter_getnthcolumn",
-      "community": 10,
+      "community": 9,
       "norm_label": "getnthcolumn()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L27",
       "id": "lcov_report_sorter_onfilterinput",
-      "community": 10,
+      "community": 9,
       "norm_label": "onfilterinput()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L59",
       "id": "lcov_report_sorter_addsearchbox",
-      "community": 10,
+      "community": 9,
       "norm_label": "addsearchbox()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L67",
       "id": "lcov_report_sorter_loadcolumns",
-      "community": 10,
+      "community": 9,
       "norm_label": "loadcolumns()"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L92",
       "id": "lcov_report_sorter_loadrowdata",
-      "community": 10,
+      "community": 9,
       "norm_label": "loadrowdata()"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L111",
       "id": "lcov_report_sorter_loaddata",
-      "community": 10,
+      "community": 9,
       "norm_label": "loaddata()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L120",
       "id": "lcov_report_sorter_sortbyindex",
-      "community": 10,
+      "community": 9,
       "norm_label": "sortbyindex()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L151",
       "id": "lcov_report_sorter_removesortindicators",
-      "community": 10,
+      "community": 9,
       "norm_label": "removesortindicators()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L159",
       "id": "lcov_report_sorter_addsortindicators",
-      "community": 10,
+      "community": 9,
       "norm_label": "addsortindicators()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L165",
       "id": "lcov_report_sorter_enableui",
-      "community": 10,
+      "community": 9,
       "norm_label": "enableui()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L1",
       "id": "backend_lib_gallery_access_js",
-      "community": 11,
+      "community": 10,
       "norm_label": "gallery-access.js"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L4",
       "id": "lib_gallery_access_getsecret",
-      "community": 11,
+      "community": 10,
       "norm_label": "getsecret()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L8",
       "id": "lib_gallery_access_hashcode",
-      "community": 11,
+      "community": 10,
       "norm_label": "hashcode()"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L13",
       "id": "lib_gallery_access_verifycode",
-      "community": 11,
+      "community": 10,
       "norm_label": "verifycode()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L20",
       "id": "lib_gallery_access_issuegallerytoken",
-      "community": 11,
+      "community": 10,
       "norm_label": "issuegallerytoken()"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "backend/lib/gallery-access.js",
       "source_location": "L31",
       "id": "lib_gallery_access_tokenallowsevent",
-      "community": 11,
+      "community": 10,
       "norm_label": "tokenallowsevent()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L1",
       "id": "backend_lib_google_drive_js",
-      "community": 16,
+      "community": 17,
       "norm_label": "google-drive.js"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L29",
       "id": "lib_google_drive_parseprivatekey",
-      "community": 16,
+      "community": 17,
       "norm_label": "parseprivatekey()"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L61",
       "id": "lib_google_drive_getaccesstoken",
-      "community": 16,
+      "community": 17,
       "norm_label": "getaccesstoken()"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L115",
       "id": "lib_google_drive_downloadfile",
-      "community": 16,
+      "community": 17,
       "norm_label": "downloadfile()"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L141",
       "id": "lib_google_drive_downloadfileasjpeg",
-      "community": 16,
+      "community": 17,
       "norm_label": "downloadfileasjpeg()"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L184",
       "id": "lib_google_drive_uploadfile",
-      "community": 16,
+      "community": 17,
       "norm_label": "uploadfile()"
     },
     {
@@ -666,7 +666,7 @@
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L225",
       "id": "lib_google_drive_updatefile",
-      "community": 16,
+      "community": 17,
       "norm_label": "updatefile()"
     },
     {
@@ -1017,7 +1017,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L1",
       "id": "backend_lib_jwt_utils_js",
-      "community": 11,
+      "community": 10,
       "norm_label": "jwt-utils.js"
     },
     {
@@ -1026,7 +1026,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L4",
       "id": "lib_jwt_utils_base64urlencode",
-      "community": 11,
+      "community": 10,
       "norm_label": "base64urlencode()"
     },
     {
@@ -1035,7 +1035,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L8",
       "id": "lib_jwt_utils_base64urldecode",
-      "community": 11,
+      "community": 10,
       "norm_label": "base64urldecode()"
     },
     {
@@ -1044,7 +1044,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L12",
       "id": "lib_jwt_utils_signtoken",
-      "community": 11,
+      "community": 10,
       "norm_label": "signtoken()"
     },
     {
@@ -1053,7 +1053,7 @@
       "source_file": "backend/lib/jwt-utils.js",
       "source_location": "L19",
       "id": "lib_jwt_utils_verifytoken",
-      "community": 11,
+      "community": 10,
       "norm_label": "verifytoken()"
     },
     {
@@ -1062,7 +1062,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L1",
       "id": "backend_lib_mercado_pago_js",
-      "community": 14,
+      "community": 15,
       "norm_label": "mercado-pago.js"
     },
     {
@@ -1071,7 +1071,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L4",
       "id": "lib_mercado_pago_client",
-      "community": 14,
+      "community": 15,
       "norm_label": "client()"
     },
     {
@@ -1080,7 +1080,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L9",
       "id": "lib_mercado_pago_paymentmethods",
-      "community": 14,
+      "community": 15,
       "norm_label": "paymentmethods()"
     },
     {
@@ -1089,7 +1089,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L17",
       "id": "lib_mercado_pago_criarpreferencia",
-      "community": 14,
+      "community": 15,
       "norm_label": "criarpreferencia()"
     },
     {
@@ -1098,7 +1098,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L56",
       "id": "lib_mercado_pago_consultarpagamento",
-      "community": 14,
+      "community": 15,
       "norm_label": "consultarpagamento()"
     },
     {
@@ -1107,7 +1107,7 @@
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L61",
       "id": "lib_mercado_pago_validarassinaturawebhook",
-      "community": 14,
+      "community": 15,
       "norm_label": "validarassinaturawebhook()"
     },
     {
@@ -1332,7 +1332,7 @@
       "source_file": "backend/__tests__/download.test.js",
       "source_location": "L1",
       "id": "backend_tests_download_test_js",
-      "community": 11,
+      "community": 10,
       "norm_label": "download.test.js"
     },
     {
@@ -1341,7 +1341,7 @@
       "source_file": "backend/__tests__/download.test.js",
       "source_location": "L28",
       "id": "tests_download_test_token",
-      "community": 11,
+      "community": 10,
       "norm_label": "token()"
     },
     {
@@ -1746,7 +1746,7 @@
       "source_file": "frontend/src/data/categories.js",
       "source_location": "L1",
       "id": "frontend_src_data_categories_js",
-      "community": 9,
+      "community": 11,
       "norm_label": "categories.js"
     },
     {
@@ -1755,7 +1755,7 @@
       "source_file": "frontend/src/data/categories.js",
       "source_location": "L11",
       "id": "data_categories_categorylabel",
-      "community": 9,
+      "community": 11,
       "norm_label": "categorylabel()"
     },
     {
@@ -1890,7 +1890,7 @@
       "source_file": "frontend/src/lib/event-format.js",
       "source_location": "L1",
       "id": "frontend_src_lib_event_format_js",
-      "community": 9,
+      "community": 14,
       "norm_label": "event-format.js"
     },
     {
@@ -1899,7 +1899,7 @@
       "source_file": "frontend/src/lib/event-format.js",
       "source_location": "L1",
       "id": "lib_event_format_datelabel",
-      "community": 9,
+      "community": 14,
       "norm_label": "datelabel()"
     },
     {
@@ -1908,7 +1908,7 @@
       "source_file": "frontend/src/lib/event-format.js",
       "source_location": "L9",
       "id": "lib_event_format_schedulelabel",
-      "community": 9,
+      "community": 14,
       "norm_label": "schedulelabel()"
     },
     {
@@ -1944,7 +1944,7 @@
       "source_file": "frontend/src/mobile/MobileApp.jsx",
       "source_location": "L37",
       "id": "mobile_mobileapp_useeventgallery",
-      "community": 15,
+      "community": 16,
       "norm_label": "useeventgallery()"
     },
     {
@@ -1980,7 +1980,7 @@
       "source_file": "frontend/src/mobile/MobileApp.jsx",
       "source_location": "L124",
       "id": "mobile_mobileapp_eventroute",
-      "community": 15,
+      "community": 16,
       "norm_label": "eventroute()"
     },
     {
@@ -2272,10 +2272,19 @@
       "norm_label": "formatmobilecardtitle()"
     },
     {
-      "label": "EventCard()",
+      "label": "formatMobileCardDate()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
       "source_location": "L201",
+      "id": "mobile_referencepublicscreens_formatmobilecarddate",
+      "community": 0,
+      "norm_label": "formatmobilecarddate()"
+    },
+    {
+      "label": "EventCard()",
+      "file_type": "code",
+      "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
+      "source_location": "L219",
       "id": "mobile_referencepublicscreens_eventcard",
       "community": 0,
       "norm_label": "eventcard()"
@@ -2284,7 +2293,7 @@
       "label": "MenuRow()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L237",
+      "source_location": "L246",
       "id": "mobile_referencepublicscreens_menurow",
       "community": 0,
       "norm_label": "menurow()"
@@ -2293,7 +2302,7 @@
       "label": "AgendaRow()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L238",
+      "source_location": "L247",
       "id": "mobile_referencepublicscreens_agendarow",
       "community": 0,
       "norm_label": "agendarow()"
@@ -2302,7 +2311,7 @@
       "label": "LegendDot()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L239",
+      "source_location": "L248",
       "id": "mobile_referencepublicscreens_legenddot",
       "community": 0,
       "norm_label": "legenddot()"
@@ -2311,7 +2320,7 @@
       "label": "BigStat()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L240",
+      "source_location": "L249",
       "id": "mobile_referencepublicscreens_bigstat",
       "community": 0,
       "norm_label": "bigstat()"
@@ -2320,7 +2329,7 @@
       "label": "ActionTile()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L241",
+      "source_location": "L250",
       "id": "mobile_referencepublicscreens_actiontile",
       "community": 0,
       "norm_label": "actiontile()"
@@ -2329,7 +2338,7 @@
       "label": "MetaItem()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L242",
+      "source_location": "L251",
       "id": "mobile_referencepublicscreens_metaitem",
       "community": 0,
       "norm_label": "metaitem()"
@@ -2338,7 +2347,7 @@
       "label": "StatTile()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L243",
+      "source_location": "L252",
       "id": "mobile_referencepublicscreens_stattile",
       "community": 0,
       "norm_label": "stattile()"
@@ -2347,7 +2356,7 @@
       "label": "PascomStat()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L244",
+      "source_location": "L253",
       "id": "mobile_referencepublicscreens_pascomstat",
       "community": 0,
       "norm_label": "pascomstat()"
@@ -2356,7 +2365,7 @@
       "label": "LoadingCards()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L245",
+      "source_location": "L254",
       "id": "mobile_referencepublicscreens_loadingcards",
       "community": 0,
       "norm_label": "loadingcards()"
@@ -2365,7 +2374,7 @@
       "label": "EmptyCard()",
       "file_type": "code",
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L246",
+      "source_location": "L255",
       "id": "mobile_referencepublicscreens_emptycard",
       "community": 0,
       "norm_label": "emptycard()"
@@ -2538,7 +2547,7 @@
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_event_jsx",
-      "community": 9,
+      "community": 11,
       "norm_label": "event.jsx"
     },
     {
@@ -2547,7 +2556,7 @@
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L9",
       "id": "pages_event_eventtoken",
-      "community": 9,
+      "community": 11,
       "norm_label": "eventtoken()"
     },
     {
@@ -2556,7 +2565,7 @@
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L13",
       "id": "pages_event_formatphoto",
-      "community": 9,
+      "community": 11,
       "norm_label": "formatphoto()"
     },
     {
@@ -2565,7 +2574,7 @@
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L22",
       "id": "pages_event_eventpage",
-      "community": 9,
+      "community": 11,
       "norm_label": "eventpage()"
     },
     {
@@ -2574,7 +2583,7 @@
       "source_file": "frontend/src/pages/Event.jsx",
       "source_location": "L218",
       "id": "pages_event_devtoolsnotice",
-      "community": 9,
+      "community": 11,
       "norm_label": "devtoolsnotice()"
     },
     {
@@ -2583,7 +2592,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_home_jsx",
-      "community": 17,
+      "community": 14,
       "norm_label": "home.jsx"
     },
     {
@@ -2592,7 +2601,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L22",
       "id": "pages_home_initials",
-      "community": 17,
+      "community": 14,
       "norm_label": "initials()"
     },
     {
@@ -2601,7 +2610,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L31",
       "id": "pages_home_ornament",
-      "community": 17,
+      "community": 14,
       "norm_label": "ornament()"
     },
     {
@@ -2610,7 +2619,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L45",
       "id": "pages_home_eventcard",
-      "community": 17,
+      "community": 14,
       "norm_label": "eventcard()"
     },
     {
@@ -2619,7 +2628,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L71",
       "id": "pages_home_eventdateparts",
-      "community": 17,
+      "community": 14,
       "norm_label": "eventdateparts()"
     },
     {
@@ -2628,7 +2637,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L94",
       "id": "pages_home_eventcardsskeleton",
-      "community": 17,
+      "community": 14,
       "norm_label": "eventcardsskeleton()"
     },
     {
@@ -2637,7 +2646,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L111",
       "id": "pages_home_activityskeleton",
-      "community": 17,
+      "community": 14,
       "norm_label": "activityskeleton()"
     },
     {
@@ -2646,7 +2655,7 @@
       "source_file": "frontend/src/pages/Home.jsx",
       "source_location": "L127",
       "id": "pages_home_homepage",
-      "community": 17,
+      "community": 14,
       "norm_label": "homepage()"
     },
     {
@@ -2736,7 +2745,7 @@
       "source_file": "frontend/src/pages/Search.jsx",
       "source_location": "L1",
       "id": "frontend_src_pages_search_jsx",
-      "community": 9,
+      "community": 11,
       "norm_label": "search.jsx"
     },
     {
@@ -2745,7 +2754,7 @@
       "source_file": "frontend/src/pages/Search.jsx",
       "source_location": "L8",
       "id": "pages_search_monthlabel",
-      "community": 9,
+      "community": 11,
       "norm_label": "monthlabel()"
     },
     {
@@ -2754,7 +2763,7 @@
       "source_file": "frontend/src/pages/Search.jsx",
       "source_location": "L14",
       "id": "pages_search_filterrealevents",
-      "community": 9,
+      "community": 11,
       "norm_label": "filterrealevents()"
     },
     {
@@ -2763,7 +2772,7 @@
       "source_file": "frontend/src/pages/Search.jsx",
       "source_location": "L19",
       "id": "pages_search_searchcard",
-      "community": 9,
+      "community": 11,
       "norm_label": "searchcard()"
     },
     {
@@ -2772,7 +2781,7 @@
       "source_file": "frontend/src/pages/Search.jsx",
       "source_location": "L54",
       "id": "pages_search_searchpage",
-      "community": 9,
+      "community": 11,
       "norm_label": "searchpage()"
     },
     {
@@ -2781,7 +2790,7 @@
       "source_file": "frontend/src/shared/devtoolsGuard.js",
       "source_location": "L1",
       "id": "frontend_src_shared_devtoolsguard_js",
-      "community": 15,
+      "community": 16,
       "norm_label": "devtoolsguard.js"
     },
     {
@@ -2790,7 +2799,7 @@
       "source_file": "frontend/src/shared/devtoolsGuard.js",
       "source_location": "L8",
       "id": "shared_devtoolsguard_hasdevtoolslikeviewportgap",
-      "community": 15,
+      "community": 16,
       "norm_label": "hasdevtoolslikeviewportgap()"
     },
     {
@@ -2799,7 +2808,7 @@
       "source_file": "frontend/src/shared/devtoolsGuard.js",
       "source_location": "L14",
       "id": "shared_devtoolsguard_nextguardcounters",
-      "community": 15,
+      "community": 16,
       "norm_label": "nextguardcounters()"
     },
     {
@@ -2808,7 +2817,7 @@
       "source_file": "frontend/src/shared/devtoolsGuard.js",
       "source_location": "L32",
       "id": "shared_devtoolsguard_usedevtoolsguard",
-      "community": 15,
+      "community": 16,
       "norm_label": "usedevtoolsguard()"
     },
     {
@@ -3006,7 +3015,7 @@
       "source_file": "frontend/src/__tests__/devtoolsGuard.test.jsx",
       "source_location": "L1",
       "id": "frontend_src_tests_devtoolsguard_test_jsx",
-      "community": 15,
+      "community": 16,
       "norm_label": "devtoolsguard.test.jsx"
     },
     {
@@ -3015,7 +3024,7 @@
       "source_file": "frontend/src/__tests__/devtoolsGuard.test.jsx",
       "source_location": "L4",
       "id": "tests_devtoolsguard_test_setviewport",
-      "community": 15,
+      "community": 16,
       "norm_label": "setviewport()"
     },
     {
@@ -3024,7 +3033,7 @@
       "source_file": "frontend/src/__tests__/devtoolsGuard.test.jsx",
       "source_location": "L11",
       "id": "tests_devtoolsguard_test_guardprobe",
-      "community": 15,
+      "community": 16,
       "norm_label": "guardprobe()"
     },
     {
@@ -3906,7 +3915,7 @@
       "source_file": "google-apps-script/coverage/lcov-report/sorter.js",
       "source_location": "L1",
       "id": "google_apps_script_coverage_lcov_report_sorter_js",
-      "community": 10,
+      "community": 9,
       "norm_label": "sorter.js"
     },
     {
@@ -4031,7 +4040,7 @@
       "file_type": "code",
       "source_file": "frontend/src/mobile/MobileApp.jsx",
       "source_location": "L175",
-      "community": 9,
+      "community": 14,
       "norm_label": "eventcard()",
       "id": "mobile_mobileapp_eventcard"
     },
@@ -4040,7 +4049,7 @@
       "file_type": "code",
       "source_file": "frontend/src/mobile/MobileApp.jsx",
       "source_location": "L184",
-      "community": 9,
+      "community": 11,
       "norm_label": "mobileevent()",
       "id": "mobile_mobileapp_mobileevent"
     },
@@ -5048,7 +5057,7 @@
       "file_type": "code",
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L9",
-      "community": 14,
+      "community": 15,
       "norm_label": "criarpagamentopix()",
       "id": "lib_mercado_pago_criarpagamentopix"
     },
@@ -5057,7 +5066,7 @@
       "file_type": "code",
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L27",
-      "community": 14,
+      "community": 15,
       "norm_label": "consultarstatus()",
       "id": "lib_mercado_pago_consultarstatus"
     },
@@ -5066,7 +5075,7 @@
       "file_type": "code",
       "source_file": "backend/lib/mercado-pago.js",
       "source_location": "L32",
-      "community": 14,
+      "community": 15,
       "norm_label": "validarhmac()",
       "id": "lib_mercado_pago_validarhmac"
     },
@@ -5390,7 +5399,7 @@
       "file_type": "code",
       "source_file": "backend/lib/google-drive.js",
       "source_location": "L8",
-      "community": 16,
+      "community": 17,
       "norm_label": "createauth()",
       "id": "lib_google_drive_createauth"
     }
@@ -10432,8 +10441,18 @@
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
       "source_location": "L197",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "frontend_src_mobile_referencepublicscreens_jsx",
-      "target": "mobile_referencepublicscreens_formatmobilecardtitle",
+      "target": "mobile_referencepublicscreens_formatmobilecardtitle"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
+      "source_location": "L201",
+      "weight": 1.0,
+      "source": "frontend_src_mobile_referencepublicscreens_jsx",
+      "target": "mobile_referencepublicscreens_formatmobilecarddate",
       "confidence_score": 1.0
     },
     {
@@ -10586,8 +10605,30 @@
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
       "source_location": "L220",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "mobile_referencepublicscreens_eventcard",
-      "target": "mobile_referencepublicscreens_formatmobilecardtitle",
+      "target": "mobile_referencepublicscreens_formatmobilecardtitle"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/__tests__/mobileCards.test.jsx",
+      "source_location": "L1",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "frontend_src_tests_mobilecards_test_jsx",
+      "target": "mobile_referencepublicscreens_formatmobilecardtitle"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
+      "source_location": "L235",
+      "weight": 1.0,
+      "source": "mobile_referencepublicscreens_eventcard",
+      "target": "mobile_referencepublicscreens_formatmobilecarddate",
       "confidence_score": 1.0
     },
     {
@@ -10598,7 +10639,7 @@
       "source_location": "L1",
       "weight": 1.0,
       "source": "frontend_src_tests_mobilecards_test_jsx",
-      "target": "mobile_referencepublicscreens_formatmobilecardtitle",
+      "target": "mobile_referencepublicscreens_formatmobilecarddate",
       "confidence_score": 1.0
     },
     {
@@ -10618,10 +10659,10 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L121",
+      "source_location": "L122",
       "weight": 1.0,
       "source": "mobile_referencepublicscreens_eventcard",
-      "target": "mobile_referenceutils_resolveeventphotos"
+      "target": "mobile_referenceutils_brl"
     },
     {
       "relation": "calls",
@@ -10629,10 +10670,10 @@
       "confidence": "INFERRED",
       "confidence_score": 0.8,
       "source_file": "frontend/src/mobile/referencePublicScreens.jsx",
-      "source_location": "L122",
+      "source_location": "L121",
       "weight": 1.0,
       "source": "mobile_referencepublicscreens_eventcard",
-      "target": "mobile_referenceutils_brl"
+      "target": "mobile_referenceutils_resolveeventphotos"
     },
     {
       "relation": "contains",
@@ -15177,5 +15218,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ad118c6f9c800a89816f125f5ac9ceddc17c492b"
+  "built_at_commit": "f3de24183e6931e62b78a09355d8acd59088d352"
 }
