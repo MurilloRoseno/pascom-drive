@@ -18,7 +18,9 @@ Cliente
   -> recebe links seguros por e-mail ou WhatsApp assistido
 ```
 
-Em smartphones e tablets, a jornada usa a interface dedicada mobile com navegação inferior, carrinho em bottom sheet e lightbox fullscreen.
+Em smartphones e tablets, a jornada usa a interface dedicada mobile portada do HTML standalone, com navegação inferior, calendário completo, perfil/Pascom, carrinho em bottom sheet, checkout em duas etapas e lightbox fullscreen.
+
+Funcionalidades que existem apenas como desenho no standalone permanecem como placeholders inativos até receberem backend real: favoritos, recuperação de pedidos por e-mail, débito virtual CAIXA, upload Pascom, relatórios e moderação.
 
 ## Fluxo de Política de Privacidade
 

@@ -91,16 +91,16 @@ function MobileRoutes() {
 
   return (
     <div className={`app ${tweaks.dark ? 'dark' : ''} ${!tweaks.ornaments ? 'hide-ornaments' : ''}`} style={appStyle}>
-      {!hideChrome && <AppBar routeName={routeName} canBack={location.pathname !== '/'} goBack={() => navigate(-1)} cartCount={cart.length} openCart={() => setCartOpen(true)} tweaks={tweaks} setTweak={setTweak} />}
+      {!hideChrome && <AppBar cartCount={cart.length} openCart={() => setCartOpen(true)} tweaks={tweaks} setTweak={setTweak} />}
       <Routes>
         <Route path="/" element={<HomeScreen go={go} eventos={catalog.eventos} loading={catalog.loading} tweaks={tweaks} />} />
         <Route path="/buscar" element={<GaleriasRoute go={go} catalog={catalog} />} />
         <Route path="/categoria" element={<Navigate replace to={`/buscar${location.search}`} />} />
         <Route path="/calendario" element={<CalendarioScreen eventos={catalog.eventos} go={go} />} />
-        <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} />} />
+        <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} role={tweaks.role} eventos={catalog.eventos} />} />
         <Route path="/privacidade" element={<PrivacyPolicy mobile />} />
         <Route path="/politica-de-privacidade" element={<PrivacyPolicy mobile />} />
-        <Route path="/evento/:eventoId" element={<EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} removeFoto={removeFoto} gridCols={tweaks.gridCols} tweaks={tweaks} />} />
+        <Route path="/evento/:eventoId" element={<EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} removeFoto={removeFoto} gridCols={tweaks.gridCols} setGridCols={(value) => setTweak('gridCols', value)} tweaks={tweaks} />} />
         <Route path="/checkout" element={<CheckoutRoute cart={cart} removeFoto={removeFoto} go={go} clearCarrinho={clearCarrinho} />} />
         <Route path="/pagamento/:resultado" element={<PaymentRoute go={go} />} />
       </Routes>
@@ -120,7 +120,7 @@ function GaleriasRoute({ go, catalog }) {
   return <GaleriasScreen go={go} eventos={catalog.eventos} loading={catalog.loading} initialSacramento={params.get('categoria') || 'todos'} />;
 }
 
-function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, tweaks }) {
+function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, setGridCols, tweaks }) {
   const { eventoId } = useParams();
   const [params] = useSearchParams();
   const catalogEvent = catalog.eventos.find((event) => event.id === eventoId);
@@ -144,8 +144,8 @@ function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, tweaks }
 
   if (gallery.error && !gallery.event) return <EmptyCard text={gallery.error} />;
   if (view === 'foto') return <FotoLightboxScreen ev={gallery.event} photos={gallery.photos} idx={idx} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} />;
-  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} />;
-  return <EventoScreen ev={gallery.event || catalogEvent} go={go} tweaks={tweaks} />;
+  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} />;
+  return <EventoScreen ev={gallery.event || catalogEvent} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} />;
 }
 
 function CheckoutRoute({ cart, removeFoto, go, clearCarrinho }) {
@@ -191,9 +191,8 @@ function PaymentRoute({ go }) {
   return <PaymentReturnScreen approved={approved} order={order} go={go} />;
 }
 
-function AppBar({ routeName, canBack, goBack, cartCount, openCart, tweaks, setTweak }) {
-  const title = { home: 'Início', galerias: 'Galerias', calendario: 'Calendário', perfil: tweaks.role === 'pascom' ? 'Pascom' : 'Perfil', privacidade: 'Privacidade', evento: 'Evento', galeria: 'Galeria' }[routeName] || '';
-  return <header className="appbar"><div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 0, flex: 1 }}>{canBack ? <button className="appbar-back" onClick={goBack}><I.ChevronLeft className="icon" /></button> : <img src="/assets/logo-header.png" alt="Paróquia São Rafael" style={{ height: 36, width: 'auto', marginRight: 4 }} />}<div style={{ minWidth: 0 }}>{canBack ? <><div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--ink-3)' }}>{routeName === 'galeria' ? 'Fotos do evento' : ''}</div><div className="appbar-title" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 200 }}>{title}</div></> : <><div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent-d)' }}>Paróquia</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--brand)', lineHeight: 1.1 }}>São Rafael</div></>}</div></div><div style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}><button className="appbar-icon-btn" onClick={() => setTweak('dark', !tweaks.dark)}>{tweaks.dark ? <I.Sun className="icon" /> : <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>}</button><button className="appbar-icon-btn" onClick={openCart}><I.Bag className="icon" />{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}</button></div></header>;
+function AppBar({ cartCount, openCart, tweaks, setTweak }) {
+  return <header className="appbar"><div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}><img src="/assets/logo-header.png" alt="Paróquia São Rafael" style={{ height: 40, width: 'auto', display: 'block', flexShrink: 0 }} /><div style={{ minWidth: 0, lineHeight: 1 }}><div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent-d)', whiteSpace: 'nowrap' }}>Paróquia</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--brand)', lineHeight: 1.1, marginTop: 3, whiteSpace: 'nowrap' }}>São Rafael</div></div></div><div style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}><button className="appbar-icon-btn" onClick={() => setTweak('dark', !tweaks.dark)} title="Tema">{tweaks.dark ? <I.Sun className="icon" /> : <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>}</button><button className="appbar-icon-btn" onClick={openCart} title="Carrinho"><I.Bag className="icon" />{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}</button></div></header>;
 }
 
 function BottomNav({ routeName, go, role }) {

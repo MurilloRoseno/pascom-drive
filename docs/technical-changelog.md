@@ -1,5 +1,16 @@
 # Changelog Técnico
 
+## 2026-05-28 — Port fiel do HTML standalone no mobile
+
+- **Tipo:** `refactor`
+- **Responsável:** Codex
+- **Alteração:** reconstrução das telas mobile a partir de `C:\Users\muril\Downloads\Pascom Drive _standalone_ (1).html`, preservando appbar, bottom nav, calendário completo, perfil público/Pascom, galeria, lightbox, carrinho sheet, checkout em stepper e retorno visual de pagamento.
+- **Motivo:** tornar o mobile do site fiel ao HTML criado na ferramenta de design, sem depender apenas da implementação anterior inspirada no protótipo.
+- **Impacto:** usuários mobile recebem a experiência interna do standalone conectada às APIs reais; funcionalidades sem backend permanecem como placeholders inativos.
+- **Breaking changes:** nenhum contrato de API alterado.
+- **Migrações necessárias:** nenhuma.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/components.md`, `docs/system-flows.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 — Política de Privacidade pública
 
 - **Tipo:** `feat/docs`

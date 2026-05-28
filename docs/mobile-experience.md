@@ -2,21 +2,21 @@
 
 ## Objetivo
 
-A experiência mobile/tablet do Pascom Drive foi refeita para usar como base fiel o projeto de design `C:\Users\muril\OneDrive\Documentos\claude\Pessoal\pascom-drive-mobile`.
+A experiência mobile/tablet do Pascom Drive foi refeita para usar como base fiel o arquivo standalone `C:\Users\muril\Downloads\Pascom Drive _standalone_ (1).html`, gerado a partir do projeto de design mobile.
 
 A regra arquitetural atual é:
 
 - **Desktop:** continua usando a experiência original em `frontend/src/desktop/DesktopApp.jsx`.
-- **Mobile/tablet:** usa a experiência própria em `frontend/src/mobile/MobileApp.jsx`, portada do layout pesquisado e planejado no projeto `pascom-drive-mobile`.
+- **Mobile/tablet:** usa a experiência própria em `frontend/src/mobile/MobileApp.jsx`, portada do layout interno do HTML standalone.
 
 O mobile não é uma versão responsiva do desktop. Ele segue o desenho app-like da referência: app bar alta, navegação inferior, seções litúrgicas, cards visuais, galeria touch-first, lightbox fullscreen, carrinho em bottom sheet e checkout vertical.
 
 ## Origem Visual
 
-A referência visual ativa é o projeto externo:
+A referência visual ativa é o HTML standalone:
 
 ```text
-C:\Users\muril\OneDrive\Documentos\claude\Pessoal\pascom-drive-mobile
+C:\Users\muril\Downloads\Pascom Drive _standalone_ (1).html
 ```
 
 Elementos preservados da referência:
@@ -24,8 +24,9 @@ Elementos preservados da referência:
 - tokens de cor, tipografia, espaçamento e superfícies;
 - estrutura `app`, `appbar`, `scroll`, `section`, `card`, `botnav`, `sheet`, `wm` e `cart-bar`;
 - linguagem visual paroquial com roxo, dourado, ornamentos e textura institucional;
-- fluxo de home, galerias, evento, galeria de fotos, lightbox, carrinho e checkout;
+- fluxo de home, galerias, calendário completo, evento, galeria de fotos, lightbox, carrinho, checkout, retorno de pagamento e perfil/Pascom;
 - comportamento app-like com bottom navigation e bottom sheet.
+- a moldura de iPhone e o painel `Tweaks` do protótipo não são exibidos no site público.
 
 ## Estratégia de Detecção
 
@@ -80,6 +81,8 @@ O projeto `pascom-drive-mobile` era um protótipo com dados globais/mockados. No
 
 A tradução entre backend e layout fica em `frontend/src/mobile/referenceUtils.jsx`, que converte eventos/fotos reais para o formato visual esperado pela referência.
 
+Funcionalidades existentes apenas no HTML de design aparecem como placeholders inativos até haver backend real: favoritos, recuperação de pedidos por e-mail, débito virtual CAIXA, upload Pascom, relatórios, moderação e configurações administrativas.
+
 ## Fluxo Mobile
 
 ```text
@@ -92,8 +95,9 @@ Usuário acessa site por celular/tablet
   -> Galeria protegida solicita código quando necessário
   -> Fotos podem ser ampliadas em lightbox fullscreen
   -> Carrinho abre como bottom sheet
-  -> Checkout vertical redireciona para Mercado Pago
-  -> Retorno consulta status do pedido
+  -> Checkout usa stepper Identificação/Pagamento
+  -> Pagamento real redireciona para Mercado Pago
+  -> Retorno usa visual de confirmação do standalone e consulta status do pedido
 ```
 
 ## Rotas Institucionais no Mobile
@@ -112,8 +116,9 @@ Usuário acessa site por celular/tablet
 
 ## Riscos e Cuidados
 
-- O layout mobile agora segue uma referência externa; alterações futuras devem comparar contra `pascom-drive-mobile` antes de mudar visualmente.
+- O layout mobile agora segue o HTML standalone; alterações futuras devem comparar contra `C:\Users\muril\Downloads\Pascom Drive _standalone_ (1).html` antes de mudar visualmente.
 - A experiência mobile possui telas próprias, então mudanças de regra no desktop precisam ser refletidas no mobile.
+- Placeholders de funcionalidades futuras precisam ser substituídos por integrações reais antes de serem anunciados como disponíveis.
 - A detecção por user-agent/viewport não é perfeita; o fallback por viewport reduz erro, mas não elimina casos híbridos.
 - Como a aplicação é CSR, SEO continua limitado pelo modelo SPA atual.
 
@@ -121,7 +126,7 @@ Usuário acessa site por celular/tablet
 
 Toda mudança futura no mobile deve responder:
 
-1. A alteração preserva o layout/base do `pascom-drive-mobile`?
+1. A alteração preserva o layout/base do HTML standalone?
 2. A regra de negócio continua centralizada em `lib/`, `context/` ou `shared/`?
 3. A documentação e o changelog técnico foram atualizados?
 4. O fluxo foi validado em viewport mobile real ou emulação equivalente?
