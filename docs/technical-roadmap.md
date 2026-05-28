@@ -4,7 +4,8 @@
 
 - Consolidar commits da limpeza atual.
 - Garantir testes verdes em `frontend`, `backend` e `google-apps-script`.
-- Adicionar GitHub Actions com testes por pacote.
+- Manter GitHub Actions com testes por pacote e auditoria npm informativa.
+- Configurar `APPS_SCRIPT_HMAC_SECRET` em Vercel e Apps Script; depois desligar `ALLOW_LEGACY_WORKER_SECRET`.
 - Criar teste de contrato para headers do Google Sheets.
 - Configurar `FORENSIC_WATERMARK_SECRET` em producao e validar download fingerprinted em smoke real.
 - Formalizar checklist Mercado Pago sandbox antes de produção.
@@ -18,6 +19,7 @@
 - Melhorar tratamento do cliente HTTP para respostas não JSON.
 - Adicionar logs estruturados para webhook, entrega, download e bloqueios de midia.
 - Criar rotina de reconciliação de pedidos pagos sem entrega.
+- Executar auditoria comercial periodica para detectar pedidos pagos sem downloads, downloads sem item comprado e webhooks duplicados.
 
 ## Prioridade Baixa
 
@@ -65,6 +67,7 @@ Fase 3 — Profissionalização:
 - Métricas de entrega por e-mail.
 - Métricas de cache hit/miss.
 - Alertas para falha de processamento e entrega.
+- Alertas para `worker_signature_invalid`, `webhook_signature_invalid`, `payment_amount_mismatch` e `forensic_download_failed`.
 
 ## Estratégia de Testes
 

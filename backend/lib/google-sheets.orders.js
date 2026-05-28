@@ -51,7 +51,12 @@ async function buscarPedidoByPreferenceOrPayment(reference) {
     row.get('PreferenceID') === reference ||
     row.get('PaymentID') === reference
   );
-  return match ? { row: match, id: match.get('PedidoID') } : null;
+  return match ? {
+    row: match,
+    id: match.get('PedidoID'),
+    total: Number(match.get('Total') || 0),
+    status: match.get('Status'),
+  } : null;
 }
 
 async function atualizarPedidoPagamento(pedidoId, payment) {
@@ -66,6 +71,16 @@ async function atualizarPedidoPagamento(pedidoId, payment) {
   if (payment.status === 'approved') pedido.row.set('DataPagamento', new Date().toISOString());
   await pedido.row.save();
   return { ...pedido, status: payment.status };
+}
+
+async function marcarPedidoDivergente(pedidoId, reason, payment = {}) {
+  const pedido = await buscarPedidoById(pedidoId);
+  if (!pedido) throw new Error('Pedido nao encontrado.');
+  pedido.row.set('PaymentID', String(payment.id || pedido.paymentId || ''));
+  pedido.row.set('Status', 'PagamentoDivergente');
+  pedido.row.set('EmailErro', reason);
+  await pedido.row.save();
+  return { ...pedido, status: 'PagamentoDivergente' };
 }
 
 async function registrarEntrega(pedidoId, { emailResult, whatsappLink }) {
@@ -150,12 +165,20 @@ async function prepararDownload(downloadId, tokenHash) {
   const uses = Number(row.get('Usos') || 0);
   const maxUses = Number(row.get('UsosMaximos') || 1);
   if (uses >= maxUses) return null;
+  const pedidoId = row.get('PedidoID');
+  const fotoId = row.get('FotoID');
+  const pedido = (await rows('Pedidos')).find((item) => item.get('PedidoID') === pedidoId);
+  if (!pedido || pedido.get('Status') !== 'Pagamento Confirmado') return null;
+  const itemComprado = (await rows('ItensPedido')).some((item) =>
+    item.get('PedidoID') === pedidoId && item.get('FotoID') === fotoId
+  );
+  if (!itemComprado) return null;
   return {
     row,
     downloadId: row.get('DownloadID'),
-    pedidoId: row.get('PedidoID'),
+    pedidoId,
     originalFileId: row.get('OriginalFileID'),
-    fotoId: row.get('FotoID'),
+    fotoId,
     fingerprintId: row.get('FingerprintID') || '',
     fingerprintHash: row.get('FingerprintHash') || '',
     fingerprintVersion: row.get('FingerprintVersao') || '',
@@ -193,6 +216,55 @@ async function consumirDownload(downloadId, tokenHash) {
   return { originalFileId: authorized.originalFileId, fotoId: authorized.fotoId };
 }
 
+async function auditarConsistenciaComercial() {
+  const [pedidos, itens, downloads, webhooks] = await Promise.all([
+    rows('Pedidos'),
+    rows('ItensPedido'),
+    rows('Downloads'),
+    rows('Webhooks'),
+  ]);
+  const findings = [];
+  const itensPorPedido = new Map();
+  itens.forEach((item) => {
+    const pedidoId = item.get('PedidoID');
+    if (!itensPorPedido.has(pedidoId)) itensPorPedido.set(pedidoId, new Set());
+    itensPorPedido.get(pedidoId).add(item.get('FotoID'));
+  });
+  const downloadsPorPedido = new Map();
+  downloads.forEach((download) => {
+    const pedidoId = download.get('PedidoID');
+    if (!downloadsPorPedido.has(pedidoId)) downloadsPorPedido.set(pedidoId, []);
+    downloadsPorPedido.get(pedidoId).push(download);
+    if (!itensPorPedido.get(pedidoId)?.has(download.get('FotoID'))) {
+      findings.push({
+        severity: 'critical',
+        type: 'download_without_purchased_item',
+        pedidoId,
+        fotoId: download.get('FotoID'),
+        downloadId: download.get('DownloadID'),
+      });
+    }
+  });
+  pedidos.forEach((pedido) => {
+    const pedidoId = pedido.get('PedidoID');
+    if (pedido.get('Status') === 'Pagamento Confirmado' && !downloadsPorPedido.has(pedidoId)) {
+      findings.push({ severity: 'high', type: 'paid_order_without_downloads', pedidoId });
+    }
+    if (pedido.get('Status') === 'PagamentoDivergente') {
+      findings.push({ severity: 'critical', type: 'payment_divergent', pedidoId });
+    }
+  });
+  const webhookKeys = new Set();
+  webhooks.forEach((webhook) => {
+    const key = webhook.get('ChaveEvento');
+    if (webhookKeys.has(key)) {
+      findings.push({ severity: 'medium', type: 'duplicated_webhook_key', webhookKey: key });
+    }
+    webhookKeys.add(key);
+  });
+  return findings;
+}
+
 function novoPedidoId() {
   return `PED_${crypto.randomBytes(12).toString('hex')}`;
 }
@@ -202,6 +274,7 @@ module.exports = {
   buscarPedidoById,
   buscarPedidoByPreferenceOrPayment,
   atualizarPedidoPagamento,
+  marcarPedidoDivergente,
   registrarEntrega,
   registrarWebhookSeNovo,
   finalizarWebhook,
@@ -211,5 +284,6 @@ module.exports = {
   prepararDownload,
   registrarUsoDownload,
   consumirDownload,
+  auditarConsistenciaComercial,
   novoPedidoId,
 };

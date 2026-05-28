@@ -2,6 +2,7 @@ jest.mock('../lib/google-drive');
 jest.mock('sharp');
 
 process.env.WATERMARK_API_SECRET = 'test-secret';
+process.env.APPS_SCRIPT_HMAC_SECRET = 'apps-script-hmac-test';
 
 const request   = require('supertest');
 const express   = require('express');
@@ -9,6 +10,7 @@ const handler   = require('../api/preprocess');
 const drive     = require('../lib/google-drive');
 const sharp     = require('sharp');
 const errorHandler = require('../middleware/error-handler');
+const { workerHeaders } = require('../test-helpers/worker-signature');
 
 const app = express();
 app.use(express.json());
@@ -16,6 +18,13 @@ app.all('/api/preprocess', handler);
 app.use(errorHandler);
 
 const SMALL_JPEG = Buffer.alloc(1024 * 100); // 100 KB — below 2 MB threshold
+
+function authorizedPost(body = { fileId: 'f1' }) {
+  return request(app)
+    .post('/api/preprocess')
+    .set(workerHeaders({ path: '/api/preprocess', body }))
+    .send(body);
+}
 
 // Mock Sharp chain: .rotate().resize().jpeg().withMetadata().toBuffer()
 function mockSharpChain(outputBuffer) {
@@ -45,7 +54,7 @@ describe('POST /api/preprocess', () => {
   });
 
   it('returns 400 when fileId is missing', async () => {
-    const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({});
+    const res = await authorizedPost({});
     expect(res.status).toBe(400);
   });
 
@@ -55,17 +64,17 @@ describe('POST /api/preprocess', () => {
   });
 
   it('downloads the file by fileId', async () => {
-    await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
+    await authorizedPost();
     expect(drive.downloadFile).toHaveBeenCalledWith('f1');
   });
 
   it('converts PNG and calls updateFile with image/jpeg', async () => {
-    await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
+    await authorizedPost();
     expect(drive.updateFile).toHaveBeenCalledWith('f1', expect.any(Buffer), 'image/jpeg');
   });
 
   it('returns JSON with originalSize, processedSize, skipped:false', async () => {
-    const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
+    const res = await authorizedPost();
     expect(res.status).toBe(200);
     expect(res.body.skipped).toBe(false);
     expect(typeof res.body.originalSize).toBe('number');
@@ -74,7 +83,7 @@ describe('POST /api/preprocess', () => {
 
   it('skips small JPEG (< 2 MB) without calling updateFile', async () => {
     drive.downloadFile.mockResolvedValue({ buffer: SMALL_JPEG, mimeType: 'image/jpeg' });
-    const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
+    const res = await authorizedPost();
     expect(res.status).toBe(200);
     expect(res.body.skipped).toBe(true);
     expect(drive.updateFile).not.toHaveBeenCalled();
@@ -82,7 +91,7 @@ describe('POST /api/preprocess', () => {
 
   it('returns 422 for unsupported format (camera RAW)', async () => {
     drive.downloadFile.mockResolvedValue({ buffer: Buffer.alloc(1000), mimeType: 'image/x-canon-cr2' });
-    const res = await request(app).post('/api/preprocess').set('x-watermark-secret', 'test-secret').send({ fileId: 'f1' });
+    const res = await authorizedPost();
     expect(res.status).toBe(422);
   });
 
@@ -93,7 +102,7 @@ describe('POST /api/preprocess', () => {
     });
     const res = await request(app)
       .post('/api/preprocess')
-      .set('x-watermark-secret', 'test-secret')
+      .set(workerHeaders({ path: '/api/preprocess', body: { fileId: 'f-heic' } }))
       .send({ fileId: 'f-heic' });
     expect(res.status).toBe(200);
     expect(drive.downloadFileAsJpeg).toHaveBeenCalledWith('f-heic');
@@ -107,7 +116,7 @@ describe('POST /api/preprocess', () => {
     });
     const res = await request(app)
       .post('/api/preprocess')
-      .set('x-watermark-secret', 'test-secret')
+      .set(workerHeaders({ path: '/api/preprocess', body: { fileId: 'f-heif' } }))
       .send({ fileId: 'f-heif' });
     expect(res.status).toBe(200);
     expect(drive.downloadFileAsJpeg).toHaveBeenCalledWith('f-heif');
@@ -121,7 +130,7 @@ describe('POST /api/preprocess', () => {
     });
     const res = await request(app)
       .post('/api/preprocess')
-      .set('x-watermark-secret', 'test-secret')
+      .set(workerHeaders({ path: '/api/preprocess', body: { fileId: 'f-live' } }))
       .send({ fileId: 'f-live' });
     expect(res.status).toBe(200);
     expect(drive.downloadFileAsJpeg).toHaveBeenCalledWith('f-live');
@@ -131,7 +140,7 @@ describe('POST /api/preprocess', () => {
   it('NÃO chama downloadFileAsJpeg para PNG comum', async () => {
     await request(app)
       .post('/api/preprocess')
-      .set('x-watermark-secret', 'test-secret')
+      .set(workerHeaders({ path: '/api/preprocess', body: { fileId: 'f-png' } }))
       .send({ fileId: 'f-png' });
     expect(drive.downloadFileAsJpeg).not.toHaveBeenCalled();
   });

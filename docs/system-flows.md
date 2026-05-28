@@ -118,6 +118,7 @@ Mercado Pago
   -> registrarWebhookSeNovo()
   -> consultarPagamento()
   -> buscarPedidoByPreferenceOrPayment()
+  -> validar valor, moeda BRL e pedido esperado
   -> atualizarPedidoPagamento()
   -> criarDownloadsDoPedido()
   -> enviarEmailEntrega()
@@ -129,7 +130,8 @@ Pontos críticos:
 
 - webhook precisa ser idempotente;
 - assinatura HMAC é obrigatória;
-- pagamento aprovado é a única condição para entrega;
+- pagamento aprovado, valor correto e moeda `BRL` são condições obrigatórias para entrega;
+- divergência vira `PagamentoDivergente` e não cria downloads;
 - falha de e-mail não deve apagar pedido nem download.
 
 ## Fluxo de Download
@@ -139,7 +141,7 @@ Pontos críticos:
 3. Link contem JWT assinado com `downloadId` e `exp`.
 4. Cliente acessa `GET /api/download?token=...`.
 5. Backend valida assinatura e expiracao do JWT.
-6. Backend compara hash do token com Sheets sem consumir uso ainda.
+6. Backend compara hash do token com Sheets e exige pedido confirmado + item comprado sem consumir uso ainda.
 7. Backend baixa original privado do Drive.
 8. Backend gera copia full-res com fingerprint forense invisivel e metadados tecnicos.
 9. Somente apos a copia ser gerada, incrementa `Usos` e registra status/versao/aplicacao do fingerprint.
@@ -148,13 +150,15 @@ Pontos críticos:
 ## Fluxo de Processamento de Imagem
 
 1. Apps Script recebe arquivo do Drive.
-2. Chama `/api/preprocess` para reduzir/converter quando necessário.
-3. Chama `/api/watermark` para foto comum ou `/api/cover-preview` para capa.
-4. Watermark de fotos vendaveis usa logo/grade/texto `AMOSTRA`, seed deterministico e metadados de restricao.
-5. Backend usa Google Drive API para baixar arquivo.
-6. Backend usa Sharp para resize/composicao.
-7. Apps Script salva derivado no Drive.
-8. Apps Script atualiza `PreviewFileID`, `ThumbnailFileID` e status no Sheets.
+2. Assina a chamada interna com `x-pascom-timestamp` e `x-pascom-signature`.
+3. Chama `/api/preprocess` para reduzir/converter quando necessário.
+4. Chama `/api/watermark` para foto comum ou `/api/cover-preview` para capa.
+5. Backend valida HMAC, timestamp e janela maxima de 5 minutos.
+6. Watermark de fotos vendaveis usa logo/grade/texto `AMOSTRA`, seed deterministico e metadados de restricao.
+7. Backend usa Google Drive API para baixar arquivo.
+8. Backend usa Sharp para resize/composicao.
+9. Apps Script salva derivado no Drive.
+10. Apps Script atualiza `PreviewFileID`, `ThumbnailFileID` e status no Sheets.
 
 ## Fluxos de Erro
 

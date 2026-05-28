@@ -9,6 +9,7 @@ const runtimeFiles = [
   'Drive.js',
   'EventQueue.js',
   'Sheet.js',
+  'Security.js',
   'Watermark.js',
   'WhatsApp.js',
 ];

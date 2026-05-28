@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-28 - Hardening de seguranca multicamadas
+
+- **Tipo:** seguranca, backend, Apps Script, CI e documentacao.
+- **Alteracao:** chamadas Apps Script -> backend passam a aceitar HMAC com timestamp, webhook Mercado Pago valida valor/moeda antes da entrega, downloads exigem pedido pago e item comprado, logs estruturados foram ampliados, CI foi criado e docs de hardening/incidente foram adicionadas.
+- **Motivo:** reduzir spoofing, IDOR, divergencia financeira, abuso de worker e conhecimento operacional implicito.
+- **Impacto:** contratos publicos de checkout, galeria e download permanecem estaveis; producao deve configurar `APPS_SCRIPT_HMAC_SECRET` e manter fallback legado somente durante migracao.
+- **Breaking changes:** nenhum imediato enquanto `ALLOW_LEGACY_WORKER_SECRET=true`; apos desligar fallback, Apps Script sem HMAC sera rejeitado.
+- **Migracoes necessarias:** configurar `APPS_SCRIPT_HMAC_SECRET` na Vercel e nas propriedades Apps Script; revisar `ALLOW_LEGACY_WORKER_SECRET`.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/security-hardening-plan.md`, `docs/security-incident-response.md`, `docs/apis.md`, `docs/setup-environment.md`, `docs/system-flows.md`, `docs/technical-audit.md`, `docs/technical-roadmap.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 - Evento, galeria e calendario mobile completos
 
 - **Tipo:** frontend, mobile e documentacao.

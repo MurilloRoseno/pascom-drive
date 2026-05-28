@@ -1,6 +1,6 @@
 const {
   registrarWebhookSeNovo, finalizarWebhook, atualizarPedidoPagamento,
-  buscarPedidoByPreferenceOrPayment, registrarEntrega,
+  buscarPedidoByPreferenceOrPayment, registrarEntrega, marcarPedidoDivergente,
 } = require('../../lib/google-sheets');
 const { validarAssinaturaWebhook, consultarPagamento } = require('../../lib/mercado-pago');
 const { criarDownloadsDoPedido, enviarEmailEntrega, criarMensagemWhatsApp } = require('../../lib/delivery');
@@ -14,6 +14,14 @@ module.exports = async function handler(req, res, next) {
     const requestId = String(req.headers['x-request-id'] || '');
     const signature = req.headers['x-signature'];
     if (!validarAssinaturaWebhook({ dataId, requestId, signature, secret })) {
+      console.warn(JSON.stringify({
+        event: 'webhook_signature_invalid',
+        severity: 'critical',
+        dataId,
+        requestId,
+        ip: req.ip || req.headers['x-forwarded-for'] || '',
+        ts: new Date().toISOString(),
+      }));
       return res.status(401).json({ error: 'Assinatura invalida' });
     }
     const action = String(req.body.action || req.body.type || 'payment');
@@ -27,6 +35,26 @@ module.exports = async function handler(req, res, next) {
     if (!stored) {
       await finalizarWebhook(eventKey, 'PedidoNaoEncontrado');
       return res.status(202).json({ ok: true, unmatched: true });
+    }
+    if (payment.status === 'approved') {
+      const expectedTotal = Number(stored.total || 0);
+      const paidAmount = Number(payment.transaction_amount || 0);
+      const currency = String(payment.currency_id || '');
+      if (currency !== 'BRL' || Math.abs(paidAmount - expectedTotal) > 0.01) {
+        console.warn(JSON.stringify({
+          event: 'payment_amount_mismatch',
+          severity: 'critical',
+          pedidoId: stored.id,
+          paymentId: String(payment.id || ''),
+          expectedTotal,
+          paidAmount,
+          currency,
+          ts: new Date().toISOString(),
+        }));
+        await marcarPedidoDivergente(stored.id, 'Valor ou moeda divergente no Mercado Pago', payment);
+        await finalizarWebhook(eventKey, 'PagamentoDivergente');
+        return res.status(202).json({ ok: true, divergent: true });
+      }
     }
     const pedido = await atualizarPedidoPagamento(stored.id, payment);
     if (payment.status === 'approved') {

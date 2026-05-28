@@ -26,6 +26,8 @@ O projeto está funcionalmente estruturado, mas carrega dívida documental, muda
 | Protecao DevTools e apenas heuristica | Baixa | Pode gerar falsa sensacao de seguranca se tratada como DRM | Baixa | Manter como aviso/blur discreto e reforcar seguranca no backend |
 | Fingerprint forense depende de segredo novo | Alta operacional | Download pode falhar se `FORENSIC_WATERMARK_SECRET` nao estiver configurado | Baixa | Configurar env em Vercel antes de ativar producao e monitorar `forensic_download_failed` |
 | Token de midia e barreira temporal, nao DRM | Baixa | Pode ser compartilhado durante janela curta | Baixa | Manter expiracao curta, no-store, watermark e rate limit de midia |
+| Segredo legado de worker ainda existe | Media temporaria | Se `ALLOW_LEGACY_WORKER_SECRET=true` ficar ativo, chamadas internas aceitam segredo estatico | Baixa | Migrar Apps Script para HMAC, validar producao e desligar fallback |
+| Clerk citado em planos externos, mas ausente no codigo | Baixa | Pode gerar expectativa de sessao/roles inexistentes | Baixa | Tratar Clerk apenas como ADR futuro |
 
 ## Código Morto e Arquivos Órfãos
 
@@ -74,16 +76,19 @@ Simplifica local e deploy, mas pode dificultar otimização por função isolada
 Pontos fortes:
 
 - HMAC no webhook.
+- HMAC com timestamp nas chamadas Apps Script -> backend.
 - Zod em endpoints críticos.
 - Rate limiting por classe.
-- Download com token assinado, hash salvo e fingerprint forense aplicado antes de consumir uso.
+- Download com token assinado, hash salvo, verificacao de pedido pago/item comprado e fingerprint forense aplicado antes de consumir uso.
 - Segredos para processamento/admin.
+- Validacao de valor/moeda Mercado Pago antes de liberar entrega.
 - Guard discreto de DevTools borra previas em producao sem bloquear fluxos legitimos.
 
 Pontos frágeis:
 
 - CSP com `unsafe-inline`.
 - Segredos compartilhados exigem rotação manual.
+- Fallback legado de worker deve ser removido apos rollout.
 - Dados pessoais em Sheets precisam política clara de retenção.
 - Conferir se WhatsApp deve ser criptografado conforme regra operacional original.
 - Guard de DevTools e bypassavel e nao deve ser considerado barreira de seguranca primaria.

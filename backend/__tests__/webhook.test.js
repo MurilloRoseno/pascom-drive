@@ -2,6 +2,7 @@ jest.mock('../lib/google-sheets', () => ({
   registrarWebhookSeNovo: jest.fn(),
   finalizarWebhook: jest.fn(),
   atualizarPedidoPagamento: jest.fn(),
+  marcarPedidoDivergente: jest.fn(),
   buscarPedidoByPreferenceOrPayment: jest.fn(),
   registrarEntrega: jest.fn(),
 }));
@@ -32,9 +33,15 @@ beforeEach(() => {
   jest.clearAllMocks();
   process.env.MP_WEBHOOK_SECRET = 'webhook-secret';
   mp.validarAssinaturaWebhook.mockReturnValue(true);
-  mp.consultarPagamento.mockResolvedValue({ id: 'PAY_1', status: 'approved', external_reference: 'PED_1' });
+  mp.consultarPagamento.mockResolvedValue({
+    id: 'PAY_1',
+    status: 'approved',
+    external_reference: 'PED_1',
+    transaction_amount: 12,
+    currency_id: 'BRL',
+  });
   sheets.registrarWebhookSeNovo.mockResolvedValue(true);
-  sheets.buscarPedidoByPreferenceOrPayment.mockResolvedValue({ id: 'PED_1' });
+  sheets.buscarPedidoByPreferenceOrPayment.mockResolvedValue({ id: 'PED_1', total: 12 });
   sheets.atualizarPedidoPagamento.mockResolvedValue({ id: 'PED_1', email: 'maria@example.com', whatsapp: '99982061089' });
   delivery.criarDownloadsDoPedido.mockResolvedValue([{ url: 'https://safe.test/download' }]);
   delivery.enviarEmailEntrega.mockResolvedValue({ status: 'enviado', error: '', attemptedAt: '2026-05-26T12:00:00.000Z' });
@@ -85,4 +92,42 @@ it('descarta evento ja processado sem duplicar entrega', async () => {
 it('recusa notificacao sem assinatura valida', async () => {
   mp.validarAssinaturaWebhook.mockReturnValueOnce(false);
   expect((await post()).status).toBe(401);
+});
+
+it('marca divergencia e nao libera downloads quando valor aprovado nao bate', async () => {
+  mp.consultarPagamento.mockResolvedValueOnce({
+    id: 'PAY_1',
+    status: 'approved',
+    external_reference: 'PED_1',
+    transaction_amount: 1,
+    currency_id: 'BRL',
+  });
+
+  const res = await post();
+
+  expect(res.status).toBe(202);
+  expect(res.body.divergent).toBe(true);
+  expect(sheets.marcarPedidoDivergente).toHaveBeenCalledWith(
+    'PED_1',
+    'Valor ou moeda divergente no Mercado Pago',
+    expect.objectContaining({ id: 'PAY_1' })
+  );
+  expect(delivery.criarDownloadsDoPedido).not.toHaveBeenCalled();
+  expect(sheets.finalizarWebhook).toHaveBeenCalledWith('REQ_1:PAY_1:payment.updated', 'PagamentoDivergente');
+});
+
+it('marca divergencia e nao libera downloads quando moeda nao e BRL', async () => {
+  mp.consultarPagamento.mockResolvedValueOnce({
+    id: 'PAY_1',
+    status: 'approved',
+    external_reference: 'PED_1',
+    transaction_amount: 12,
+    currency_id: 'USD',
+  });
+
+  const res = await post();
+
+  expect(res.status).toBe(202);
+  expect(delivery.criarDownloadsDoPedido).not.toHaveBeenCalled();
+  expect(sheets.marcarPedidoDivergente).toHaveBeenCalled();
 });

@@ -11,18 +11,39 @@ const {
 
 const schema = z.object({ token: z.string().min(10) });
 
+function logDownload(event, details = {}) {
+  console.log(JSON.stringify({
+    event,
+    severity: details.severity || 'info',
+    downloadId: details.downloadId || '',
+    pedidoId: details.pedidoId || '',
+    fotoId: details.fotoId || '',
+    reason: details.reason || '',
+    ts: new Date().toISOString(),
+  }));
+}
+
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
   const params = schema.safeParse(req.query);
-  if (!params.success) return res.status(400).json({ error: 'Parametros invalidos.' });
+  if (!params.success) {
+    logDownload('download_denied', { severity: 'warning', reason: 'invalid_params' });
+    return res.status(400).json({ error: 'Parametros invalidos.' });
+  }
   const secret = process.env.DOWNLOAD_JWT_SECRET;
   if (!secret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
   try {
     const payload = verifyToken(params.data.token, secret);
-    if (!payload.downloadId || payload.exp <= Date.now()) return res.status(401).json({ error: 'Link expirado.' });
+    if (!payload.downloadId || payload.exp <= Date.now()) {
+      logDownload('download_denied', { severity: 'warning', downloadId: payload.downloadId, reason: 'expired_token' });
+      return res.status(401).json({ error: 'Link expirado.' });
+    }
     const tokenHash = crypto.createHash('sha256').update(params.data.token).digest('hex');
     const authorized = await prepararDownload(payload.downloadId, tokenHash);
-    if (!authorized) return res.status(410).json({ error: 'Link expirado ou limite de uso atingido.' });
+    if (!authorized) {
+      logDownload('download_denied', { severity: 'warning', downloadId: payload.downloadId, reason: 'not_authorized_or_consumed' });
+      return res.status(410).json({ error: 'Link expirado ou limite de uso atingido.' });
+    }
     const forensicSecret = process.env.FORENSIC_WATERMARK_SECRET;
     if (!forensicSecret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
     const { buffer, mimeType } = await downloadFile(authorized.originalFileId);
@@ -37,7 +58,9 @@ module.exports = async function handler(req, res, next) {
     } catch (error) {
       console.error(JSON.stringify({
         event: 'forensic_download_failed',
+        severity: 'error',
         downloadId: authorized.downloadId,
+        pedidoId: authorized.pedidoId,
         fotoId: authorized.fotoId,
         message: error.message,
         ts: new Date().toISOString(),
@@ -56,9 +79,17 @@ module.exports = async function handler(req, res, next) {
     const extension = output.mimeType === 'image/png' ? 'png' : 'jpg';
     res.setHeader('Content-Disposition', `attachment; filename="foto-${authorized.fotoId}.${extension}"`);
     res.setHeader('X-Content-Protection', 'forensic-fingerprint');
+    logDownload('download_completed', {
+      downloadId: authorized.downloadId,
+      pedidoId: authorized.pedidoId,
+      fotoId: authorized.fotoId,
+    });
     return res.end(output.buffer);
   } catch (error) {
-    if (/assinatura|Token/i.test(error.message)) return res.status(401).json({ error: 'Link invalido.' });
+    if (/assinatura|Token/i.test(error.message)) {
+      logDownload('download_denied', { severity: 'warning', reason: 'invalid_signature' });
+      return res.status(401).json({ error: 'Link invalido.' });
+    }
     next(error);
   }
 };

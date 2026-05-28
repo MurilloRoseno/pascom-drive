@@ -14,9 +14,11 @@ Este diretório é a fonte canônica de documentação do Pascom Drive. O códig
 8. `mobile-experience.md` — arquitetura da experiência mobile dedicada.
 9. `technical-audit.md` — riscos, problemas e recomendações.
 10. `technical-roadmap.md` — evolução técnica sugerida.
-11. `conventions.md` — padrões obrigatórios.
-12. `documentation-policy.md` — cultura de documentação contínua.
-13. `technical-changelog.md` — histórico técnico contínuo.
+11. `security-hardening-plan.md` — plano de defesa e threat model.
+12. `security-incident-response.md` — playbooks de resposta a incidentes.
+13. `conventions.md` — padrões obrigatórios.
+14. `documentation-policy.md` — cultura de documentação contínua.
+15. `technical-changelog.md` — histórico técnico contínuo.
 
 ## Mapa de Documentos
 
@@ -33,6 +35,8 @@ Este diretório é a fonte canônica de documentação do Pascom Drive. O códig
 | `setup-environment.md` | Guia operacional de ambiente | Novos devs e deploy |
 | `technical-audit.md` | Lista dívidas, riscos e fragilidades | Tech lead |
 | `technical-roadmap.md` | Prioriza melhorias futuras | Planejamento técnico |
+| `security-hardening-plan.md` | Documenta ameaças, controles e política de hardening | Devs e segurança |
+| `security-incident-response.md` | Playbooks para incidentes de pagamento, Drive e segredos | Operação |
 | `conventions.md` | Define padrões de trabalho | Todos os devs |
 | `documentation-policy.md` | Define regra de documentação contínua | Todos |
 | `technical-changelog.md` | Registra mudanças técnicas relevantes | Todos |

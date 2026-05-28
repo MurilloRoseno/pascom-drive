@@ -8,10 +8,18 @@
 
 /* global copyFileToFolder, trashFileById, moveFileToFolderIfNeeded, getShareableLink, getOriginaisFolder, getAmostrasFolder, getThumbnailsFolder,
           registrarFoto, atualizarDerivadosFoto, listarFotosParaReprocessar, listarFotosComMiniatura, invalidarCacheSite,
-          UrlFetchApp, PropertiesService, MailApp, Logger */
+          criarHeadersBackendInterno, UrlFetchApp, PropertiesService, MailApp, Logger */
 
 var PRECO_PADRAO = 10;
 var _idCounter = 0;
+var _security = (function () {
+  if (typeof module !== 'undefined' && typeof require !== 'undefined') {
+    return require('./Security');
+  }
+  return {
+    criarHeadersBackendInterno: function () { return criarHeadersBackendInterno.apply(this, arguments); },
+  };
+}());
 
 // In Node/Jest context, pull helpers from their modules so jest.mock() intercepts them.
 var _helpers = (function () {
@@ -114,16 +122,21 @@ function notificarErroProcessamento(arquivo, erro) {
   }
 }
 
-function solicitarDerivado(fileId, capa, variant, backendUrl, headers, watermarkSeed) {
+function solicitarDerivado(fileId, capa, variant, backendUrl, legacySecret, watermarkSeed) {
+  var path = capa ? '/api/cover-preview' : '/api/watermark';
+  var payload = JSON.stringify({
+    fileId: fileId,
+    watermarkType: 'auto',
+    variant: variant,
+    watermarkSeed: watermarkSeed || fileId,
+  });
   var response = UrlFetchApp.fetch(backendUrl + (capa ? '/api/cover-preview' : '/api/watermark'), {
     method: 'POST',
-    headers: headers,
-    payload: JSON.stringify({
-      fileId: fileId,
-      watermarkType: 'auto',
-      variant: variant,
-      watermarkSeed: watermarkSeed || fileId,
+    headers: _security.criarHeadersBackendInterno(path, payload, {
+      legacyHeader: 'x-watermark-secret',
+      legacySecret: legacySecret,
     }),
+    payload: payload,
     muteHttpExceptions: true,
   });
   if (response.getResponseCode() !== 200) {
@@ -155,21 +168,21 @@ function processarFoto(arquivo, eventoId, counter) {
     // Props/URL/headers needed by both preprocess and watermark
     var props      = PropertiesService.getScriptProperties();
     var backendUrl = props.getProperty('BACKEND_URL');
-    var headers    = {
-      'Content-Type': 'application/json',
-      'x-watermark-secret': props.getProperty('WATERMARK_API_SECRET') || '',
-    };
+    var legacySecret = props.getProperty('WATERMARK_API_SECRET') || '';
 
     // 0. Copy TRUE original to ORIGINAIS before any modification (backup first)
     copiaOriginal = _helpers.copyFileToFolder(arquivo, _helpers.getOriginaisFolder(), id + '_' + nomeOriginal);
     var originalFileId = copiaOriginal.getId();
 
     // 1. Pre-process: convert format (HEIC→JPEG, etc.) + compress in-place on Drive
-    _preprocessarArquivo(arquivo, backendUrl, headers);
+    _preprocessarArquivo(arquivo, backendUrl, _security.criarHeadersBackendInterno('/api/preprocess', JSON.stringify({ fileId: arquivo.getId() }), {
+      legacyHeader: 'x-watermark-secret',
+      legacySecret: legacySecret,
+    }));
 
     // 2. Call backend to apply watermark — returns raw JPEG bytes
-    var previewBlob = solicitarDerivado(arquivo.getId(), capa, 'preview', backendUrl, headers, evento + ':' + id + ':preview');
-    var thumbnailBlob = solicitarDerivado(arquivo.getId(), capa, 'thumbnail', backendUrl, headers, evento + ':' + id + ':thumbnail');
+    var previewBlob = solicitarDerivado(arquivo.getId(), capa, 'preview', backendUrl, legacySecret, evento + ':' + id + ':preview');
+    var thumbnailBlob = solicitarDerivado(arquivo.getId(), capa, 'thumbnail', backendUrl, legacySecret, evento + ':' + id + ':thumbnail');
 
     // 3. Save the returned JPEG blob to AMOSTRAS folder as the authenticated user
     //    (service account has no Drive quota, but Apps Script runs as the user who does)
@@ -220,17 +233,14 @@ function reprocessarMiniaturasEmLote() {
   var limite = parseInt(props.getProperty('THUMBNAIL_BATCH_SIZE'), 10) || 5;
   var fotos = _helpers.listarFotosParaReprocessar(limite);
   var backendUrl = props.getProperty('BACKEND_URL');
-  var headers = {
-    'Content-Type': 'application/json',
-    'x-watermark-secret': props.getProperty('WATERMARK_API_SECRET') || '',
-  };
+  var legacySecret = props.getProperty('WATERMARK_API_SECRET') || '';
   var eventosAtualizados = {};
 
   fotos.forEach(function(foto) {
     // The current preview already contains the watermark for sale photos.
     // Resizing it avoids reopening originals or applying a second watermark layer.
-    var previewBlob = solicitarDerivado(foto.PreviewFileID, true, 'preview', backendUrl, headers);
-    var thumbnailBlob = solicitarDerivado(foto.PreviewFileID, true, 'thumbnail', backendUrl, headers);
+    var previewBlob = solicitarDerivado(foto.PreviewFileID, true, 'preview', backendUrl, legacySecret);
+    var thumbnailBlob = solicitarDerivado(foto.PreviewFileID, true, 'thumbnail', backendUrl, legacySecret);
     var previewFile = salvarDerivado(previewBlob, '[PREVIEW-OTIMIZADA]' + foto.FotoID + '.jpg', _helpers.getAmostrasFolder());
     var thumbnailFile = salvarDerivado(thumbnailBlob, '[THUMB]' + foto.FotoID + '.jpg', _helpers.getThumbnailsFolder());
     var atualizado = _helpers.atualizarDerivadosFoto(foto.FotoID, previewFile.getId(), thumbnailFile.getId());

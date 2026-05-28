@@ -77,6 +77,8 @@ Arquivo local sugerido: `backend/.env`.
 | `DOWNLOAD_JWT_SECRET` | Sim | Links de download |
 | `FORENSIC_WATERMARK_SECRET` | Sim producao | HMAC do fingerprint forense por pedido/download |
 | `MEDIA_TOKEN_SECRET` | Opcional | Assinatura dedicada de tokens temporarios de preview; se ausente usa segredo de galeria/download |
+| `APPS_SCRIPT_HMAC_SECRET` | Sim produção | Assinatura HMAC das chamadas internas do Apps Script |
+| `ALLOW_LEGACY_WORKER_SECRET` | Temporário | Permite fallback legado por `WATERMARK_API_SECRET`/`CACHE_INVALIDATION_SECRET` durante migração |
 | `WATERMARK_API_SECRET` | Sim | Endpoints de processamento |
 | `CACHE_INVALIDATION_SECRET` | Sim | Invalidação de cache |
 | `SMTP_HOST` | Opcional | Entrega por e-mail |
@@ -99,6 +101,7 @@ Configure em Script Properties:
 | `THUMBNAILS_FOLDER_ID` | Pasta de thumbnails |
 | `SPREADSHEET_ID` | Planilha operacional |
 | `BACKEND_URL` | URL pública do backend |
+| `APPS_SCRIPT_HMAC_SECRET` | Mesmo segredo HMAC configurado no backend |
 | `WATERMARK_API_SECRET` | Segredo compartilhado com backend |
 | `CACHE_INVALIDATION_SECRET` | Segredo para limpar cache |
 | `ADMIN_EMAIL` | Alertas operacionais |
@@ -149,10 +152,11 @@ O backend não tem etapa de build; Vercel empacota `backend/api/index.js` com `@
 1. Configure variáveis no painel Vercel.
 2. Configure Google service account e compartilhe a planilha.
 3. Configure webhook Mercado Pago apontando para `/api/webhook/mercado-pago`.
-4. Configure propriedades Apps Script.
-5. Faça deploy Vercel.
-6. Publique Apps Script.
-7. Teste fluxo sandbox completo.
+4. Configure `APPS_SCRIPT_HMAC_SECRET` na Vercel e nas propriedades Apps Script antes de desabilitar fallback legado.
+5. Configure propriedades Apps Script.
+6. Faça deploy Vercel.
+7. Publique Apps Script.
+8. Teste fluxo sandbox completo.
 
 ## Docker
 
@@ -160,7 +164,9 @@ Não há Docker oficial no projeto atual. Não adicione Docker ao MVP sem justif
 
 ## CI/CD
 
-O CI/CD formal não está documentado como pipeline no repositório atual. O fluxo real é:
+O repositório possui GitHub Actions em `.github/workflows/ci.yml` para frontend, backend e Google Apps Script.
+
+O fluxo operacional recomendado é:
 
 ```text
 Alteração local
@@ -171,7 +177,7 @@ Alteração local
   -> clasp push separado para Apps Script
 ```
 
-Recomendação futura: adicionar GitHub Actions para `frontend npm test`, `backend npm test` e `google-apps-script npm test`.
+O CI roda testes/build e `npm audit --omit=dev || true` como sinal informativo de supply chain; achados de dependências críticas devem ser avaliados antes de upgrades.
 
 ## Segurança de Ambiente
 
@@ -179,6 +185,8 @@ Recomendação futura: adicionar GitHub Actions para `frontend npm test`, `backe
 - Ao imprimir `.env`, masque valores.
 - Use credenciais sandbox para testes.
 - Rotacione segredos se aparecerem em logs.
+- Rotacione trimestralmente `APPS_SCRIPT_HMAC_SECRET`, `MP_WEBHOOK_SECRET`, `DOWNLOAD_JWT_SECRET`, `FORENSIC_WATERMARK_SECRET`, `MEDIA_TOKEN_SECRET`, `WATERMARK_API_SECRET` e `CACHE_INVALIDATION_SECRET`.
+- Depois que Apps Script e Vercel estiverem com HMAC validado, mantenha `ALLOW_LEGACY_WORKER_SECRET=false`.
 
 ## Checklist de Setup
 

@@ -46,6 +46,7 @@ global.PropertiesService = {
         BACKEND_URL:           'https://pascom-drive.vercel.app',
         ADMIN_EMAIL:           'admin@example.com',
         WATERMARK_API_SECRET:  'test-watermark-secret',
+        APPS_SCRIPT_HMAC_SECRET: 'apps-script-hmac-test',
         THUMBNAILS_FOLDER_ID:   'thumbnail-folder-id',
       };
       return props[key] || null;
@@ -167,7 +168,8 @@ describe('processarFoto', () => {
     );
     const fetchCall = UrlFetchApp.fetch.mock.calls[1];
     const fetchOptions = fetchCall[1];
-    expect(fetchOptions.headers['x-watermark-secret']).toBeDefined();
+    expect(fetchOptions.headers['x-pascom-timestamp']).toBeDefined();
+    expect(fetchOptions.headers['x-pascom-signature']).toMatch(/^[a-f0-9]{64}$/);
     expect(fetchOptions.payload).toContain('"variant":"preview"');
     expect(UrlFetchApp.fetch.mock.calls[2][1].payload).toContain('"variant":"thumbnail"');
   });

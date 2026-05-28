@@ -1,4 +1,4 @@
-const { getSheet, registrarFoto, inicializarEstrutura } = require('../Sheet');
+const { getSheet, registrarFoto, inicializarEstrutura, invalidarCacheSite } = require('../Sheet');
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -40,5 +40,32 @@ it('remove validacoes antigas antes de reaplicar as listas administrativas', () 
   } finally {
     delete __mockRange__.clearDataValidations;
     delete __mockSheet__.getMaxRows;
+  }
+});
+
+it('assina invalidacao de cache com HMAC do Apps Script', () => {
+  global.UrlFetchApp = {
+    fetch: jest.fn().mockReturnValue({
+      getResponseCode: jest.fn().mockReturnValue(204),
+      getContentText: jest.fn().mockReturnValue(''),
+    }),
+  };
+  const original = PropertiesService.getScriptProperties().getProperty;
+  PropertiesService.getScriptProperties().getProperty.mockImplementation((key) => ({
+    SPREADSHEET_ID: 'spreadsheet-id-test',
+    BACKEND_URL: 'https://pascom-drive.vercel.app',
+    CACHE_INVALIDATION_SECRET: 'cache-legacy',
+    APPS_SCRIPT_HMAC_SECRET: 'apps-secret',
+  }[key] || null));
+
+  try {
+    expect(invalidarCacheSite('EV1')).toBe(true);
+    const options = UrlFetchApp.fetch.mock.calls[0][1];
+    expect(options.headers['x-pascom-timestamp']).toBeDefined();
+    expect(options.headers['x-pascom-signature']).toMatch(/^[a-f0-9]{64}$/);
+    expect(options.headers['x-cache-invalidation-secret']).toBeUndefined();
+  } finally {
+    PropertiesService.getScriptProperties().getProperty = original;
+    delete global.UrlFetchApp;
   }
 });

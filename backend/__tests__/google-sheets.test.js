@@ -16,17 +16,44 @@ const photoRows = [
   row({ FotoID: 'F3', EventoID: 'EV1', PreviewFileID: 'PREVIEW_LEGACY', OriginalFileID: 'PRIVATE_LEGACY', StatusProcessamento: 'Processada', PrecoUnitario: '10' }),
 ];
 const pedidoRow = row({ PedidoID: 'PED_1', Status: 'Pagamento Confirmado', Email: 'maria@example.com' });
+const itemRows = [row({ PedidoID: 'PED_1', FotoID: 'F1', EventoID: 'EV1' })];
+const downloadRows = [
+  row({
+    DownloadID: 'DL_1',
+    PedidoID: 'PED_1',
+    FotoID: 'F1',
+    OriginalFileID: 'PRIVATE_1',
+    TokenHash: 'hash-ok',
+    ExpiraEm: new Date(Date.now() + 60000).toISOString(),
+    UsosMaximos: '1',
+    Usos: '0',
+  }),
+  row({
+    DownloadID: 'DL_NOT_BOUGHT',
+    PedidoID: 'PED_1',
+    FotoID: 'F999',
+    OriginalFileID: 'PRIVATE_999',
+    TokenHash: 'hash-ok',
+    ExpiraEm: new Date(Date.now() + 60000).toISOString(),
+    UsosMaximos: '1',
+    Usos: '0',
+  }),
+];
+const webhookRows = [row({ ChaveEvento: 'REQ_1:PAY_1:payment.updated', Status: 'Processado' })];
 const sheets = {
   Eventos: { getRows: jest.fn().mockResolvedValue(eventRows) },
   Fotos: { getRows: jest.fn().mockResolvedValue(photoRows) },
   Pedidos: { addRow: jest.fn().mockResolvedValue(), getRows: jest.fn().mockResolvedValue([pedidoRow]) },
-  ItensPedido: { addRow: jest.fn().mockResolvedValue() },
+  ItensPedido: { addRow: jest.fn().mockResolvedValue(), getRows: jest.fn().mockResolvedValue(itemRows) },
+  Downloads: { getRows: jest.fn().mockResolvedValue(downloadRows) },
+  Webhooks: { getRows: jest.fn().mockResolvedValue(webhookRows) },
 };
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 GoogleSpreadsheet.mockImplementation(() => ({ loadInfo: jest.fn().mockResolvedValue(), sheetsByTitle: sheets }));
 
 const {
   driveUrlToThumbnail, listarEventosPublicados, listarFotosEvento, registrarPedido, registrarEntrega,
+  prepararDownload, auditarConsistenciaComercial,
 } = require('../lib/google-sheets');
 
 it('lista apenas evento publicado e remove configuracao secreta', async () => {
@@ -78,4 +105,37 @@ it('persiste status e falha do envio de e-mail preservando WhatsApp assistido', 
 
 it('gera apenas thumbnail de preview com limite de tamanho', () => {
   expect(driveUrlToThumbnail('https://drive.google.com/file/d/abc123/view')).toContain('sz=w1280');
+});
+
+it('autoriza download somente quando pedido esta pago e item foi comprado', async () => {
+  await expect(prepararDownload('DL_1', 'hash-ok')).resolves.toEqual(expect.objectContaining({
+    pedidoId: 'PED_1',
+    fotoId: 'F1',
+    originalFileId: 'PRIVATE_1',
+  }));
+  await expect(prepararDownload('DL_NOT_BOUGHT', 'hash-ok')).resolves.toBeNull();
+});
+
+it('audita inconsistencias comerciais em pedidos, downloads e webhooks', async () => {
+  downloadRows.push(row({
+    DownloadID: 'DL_BAD',
+    PedidoID: 'PED_1',
+    FotoID: 'F999',
+    OriginalFileID: 'PRIVATE_BAD',
+    TokenHash: 'hash-ok',
+    ExpiraEm: new Date(Date.now() + 60000).toISOString(),
+    UsosMaximos: '1',
+    Usos: '0',
+  }));
+  try {
+    await expect(auditarConsistenciaComercial()).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: 'download_without_purchased_item',
+        downloadId: 'DL_BAD',
+        severity: 'critical',
+      }),
+    ]));
+  } finally {
+    downloadRows.pop();
+  }
 });

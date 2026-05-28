@@ -27,6 +27,8 @@ const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
 const PORT = process.env.PORT || 3001;
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+const PUBLIC_APP_URL = process.env.PUBLIC_APP_URL || 'https://pascom-drive.vercel.app';
+const allowedOrigins = new Set([FRONTEND_URL, PUBLIC_APP_URL].filter(Boolean));
 
 // Security headers — prevent iframe embedding, MIME-sniffing, clickjacking
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'same-origin' } }));
@@ -42,7 +44,13 @@ app.use(express.json({
 }));
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', FRONTEND_URL);
+  const origin = req.headers.origin;
+  res.setHeader('Vary', 'Origin');
+  if (origin && allowedOrigins.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (origin) {
+    return res.status(403).json({ error: 'Origem nao autorizada.' });
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Gallery-Token');
   if (req.method === 'OPTIONS') return res.sendStatus(204);

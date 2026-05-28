@@ -67,6 +67,15 @@ var COL = {
   PRECO: 13, EVENTO_ID: 14,
 };
 
+var _security = (function () {
+  if (typeof module !== 'undefined' && typeof require !== 'undefined') {
+    return require('./Security');
+  }
+  return {
+    criarHeadersBackendInterno: function () { return criarHeadersBackendInterno.apply(this, arguments); },
+  };
+}());
+
 function getConfig(key) {
   return PropertiesService.getScriptProperties().getProperty(key);
 }
@@ -144,11 +153,15 @@ function invalidarCacheSite(eventoId, scopes) {
     return false;
   }
   try {
+    var payload = JSON.stringify({ eventoId: eventoId, scopes: scopes || ['catalogo', 'evento', 'media'] });
     var response = UrlFetchApp.fetch(backendUrl + '/api/admin/cache/invalidate', {
       method: 'post',
       contentType: 'application/json',
-      headers: { 'x-cache-invalidation-secret': secret },
-      payload: JSON.stringify({ eventoId: eventoId, scopes: scopes || ['catalogo', 'evento', 'media'] }),
+      headers: _security.criarHeadersBackendInterno('/api/admin/cache/invalidate', payload, {
+        legacyHeader: 'x-cache-invalidation-secret',
+        legacySecret: secret,
+      }),
+      payload: payload,
       muteHttpExceptions: true,
     });
     var ok = response.getResponseCode() === 204;

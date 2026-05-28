@@ -268,8 +268,9 @@ Recebe notificações do Mercado Pago.
 4. Garante idempotência em `Webhooks`.
 5. Consulta pagamento no Mercado Pago.
 6. Localiza pedido por metadata/preference/payment.
-7. Atualiza pedido.
-8. Se aprovado, cria downloads e tenta entrega.
+7. Se aprovado, valida `transaction_amount`, `currency_id=BRL` e total salvo no pedido.
+8. Atualiza pedido.
+9. Se aprovado e consistente, cria downloads e tenta entrega.
 
 **Resposta 200**
 
@@ -287,6 +288,10 @@ Recebe notificações do Mercado Pago.
 { "ok": true, "unmatched": true }
 ```
 
+```json
+{ "ok": true, "divergent": true }
+```
+
 **Erros**
 
 - `401`: assinatura inválida.
@@ -298,7 +303,9 @@ Gera imagem com marca d'água a partir de arquivo no Drive.
 
 **Autenticação**
 
-- `x-watermark-secret: WATERMARK_API_SECRET`
+- `x-pascom-timestamp`: epoch em milissegundos.
+- `x-pascom-signature`: HMAC-SHA256 de `${timestamp}.${METHOD}.${PATH}.${rawBody}` com `APPS_SCRIPT_HMAC_SECRET`.
+- Fallback legado temporário: `x-watermark-secret: WATERMARK_API_SECRET`, somente se `ALLOW_LEGACY_WORKER_SECRET=true`.
 
 **Payload**
 
@@ -306,7 +313,7 @@ Gera imagem com marca d'água a partir de arquivo no Drive.
 {
   "fileId": "drive-file-id",
   "variant": "preview",
-  "watermark": "color",
+  "watermarkType": "color",
   "watermarkSeed": "evento:fotografia:preview"
 }
 ```
@@ -327,7 +334,8 @@ Redimensiona/converte imagens originais grandes antes do restante do fluxo.
 
 **Autenticação**
 
-- `x-watermark-secret: WATERMARK_API_SECRET`
+- `x-pascom-timestamp` e `x-pascom-signature` com `APPS_SCRIPT_HMAC_SECRET`.
+- Fallback legado temporário por `x-watermark-secret` somente se `ALLOW_LEGACY_WORKER_SECRET=true`.
 
 **Payload**
 
@@ -358,7 +366,8 @@ Gera derivado de capa de evento.
 
 **Autenticação**
 
-- `x-watermark-secret: WATERMARK_API_SECRET`
+- `x-pascom-timestamp` e `x-pascom-signature` com `APPS_SCRIPT_HMAC_SECRET`.
+- Fallback legado temporário por `x-watermark-secret` somente se `ALLOW_LEGACY_WORKER_SECRET=true`.
 
 **Payload**
 
@@ -386,7 +395,7 @@ Baixa uma copia full-res comprada, preparada no servidor com fingerprint forense
 
 **Resposta**
 
-Arquivo JPEG/PNG preparado com `X-Content-Protection: forensic-fingerprint`, `Cache-Control: private, no-store` e sem marca dagua visivel.
+Arquivo JPEG/PNG preparado com `X-Content-Protection: forensic-fingerprint`, `Cache-Control: private, no-store` e sem marca dagua visivel. O backend tambem exige que o `DownloadID` aponte para pedido confirmado e item efetivamente comprado.
 
 **Erros**
 
@@ -402,15 +411,15 @@ Invalida tags de cache.
 
 **Autenticação**
 
-- Segredo de cache por header/body conforme handler.
-- Comparação timing-safe contra `CACHE_INVALIDATION_SECRET`.
+- `x-pascom-timestamp` e `x-pascom-signature` com `APPS_SCRIPT_HMAC_SECRET`.
+- Fallback legado temporário por `x-cache-invalidation-secret: CACHE_INVALIDATION_SECRET` somente se `ALLOW_LEGACY_WORKER_SECRET=true`.
 
 **Payload**
 
 ```json
 {
-  "scope": "event",
-  "eventoId": "missa-2026-05"
+  "eventoId": "missa-2026-05",
+  "scopes": ["catalogo", "evento", "media"]
 }
 ```
 

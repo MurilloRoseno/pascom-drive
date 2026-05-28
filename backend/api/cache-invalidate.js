@@ -1,22 +1,18 @@
-const crypto = require('crypto');
 const { z } = require('zod');
 const { invalidateCacheTags } = require('../lib/runtime-cache');
+const { authorizeWorker } = require('../lib/worker-auth');
 
 const schema = z.object({
   eventoId: z.string().regex(/^[A-Za-z0-9_-]+$/).optional(),
   scopes: z.array(z.enum(['catalogo', 'evento', 'media'])).min(1).default(['catalogo']),
 });
 
-function authorized(requestSecret, expectedSecret) {
-  if (!requestSecret || !expectedSecret) return false;
-  const supplied = Buffer.from(String(requestSecret));
-  const expected = Buffer.from(String(expectedSecret));
-  return supplied.length === expected.length && crypto.timingSafeEqual(supplied, expected);
-}
-
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-  if (!authorized(req.headers['x-cache-invalidation-secret'], process.env.CACHE_INVALIDATION_SECRET)) {
+  if (!authorizeWorker(req, {
+    legacyHeader: 'x-cache-invalidation-secret',
+    legacySecret: process.env.CACHE_INVALIDATION_SECRET,
+  })) {
     return res.status(401).json({ error: 'Nao autorizado.' });
   }
 
