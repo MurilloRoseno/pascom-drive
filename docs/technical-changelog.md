@@ -8,6 +8,7 @@
 - **Impacto:** contratos publicos de checkout, galeria e download permanecem estaveis; producao deve configurar `APPS_SCRIPT_HMAC_SECRET` e manter fallback legado somente durante migracao.
 - **Breaking changes:** nenhum imediato enquanto `ALLOW_LEGACY_WORKER_SECRET=true`; apos desligar fallback, Apps Script sem HMAC sera rejeitado.
 - **Migracoes necessarias:** configurar `APPS_SCRIPT_HMAC_SECRET` na Vercel e nas propriedades Apps Script; revisar `ALLOW_LEGACY_WORKER_SECRET`.
+- **CI/CD:** workflow inicial usa `npm install` porque os `package-lock.json` locais nao sao versionados neste MVP.
 - **Responsavel:** Codex.
 - **Documentos afetados:** `docs/security-hardening-plan.md`, `docs/security-incident-response.md`, `docs/apis.md`, `docs/setup-environment.md`, `docs/system-flows.md`, `docs/technical-audit.md`, `docs/technical-roadmap.md`, `docs/technical-changelog.md`.
 
