@@ -20,7 +20,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 ## `MobileApp`
 
 - **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
-- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper e perfil/Pascom.
+- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
 - **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
 - **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx` e CSS `reference-*`.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop e substituir placeholders do standalone quando houver backend real.

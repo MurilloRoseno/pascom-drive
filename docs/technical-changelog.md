@@ -1,5 +1,16 @@
 # Changelog Técnico
 
+## 2026-05-28 - Modo escuro mobile fiel ao standalone
+
+- **Tipo:** frontend, mobile e documentacao.
+- **Alteracao:** bloco `.app.dark` mobile atualizado com tokens e overrides visuais extraidos de `C:\Users\muril\Downloads\Pascom Drive _standalone_ (2).html`.
+- **Motivo:** alinhar o tema escuro mobile ao layout pesquisado e planejado no HTML standalone, sem depender de adaptacao manual roxa anterior.
+- **Impacto:** somente usuarios mobile/tablet ao acionar o botao de tema veem o novo modo escuro; desktop, APIs, checkout, backend e banco permanecem intactos.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+
+
 ## 2026-05-28 - Protecao discreta contra DevTools nas galerias
 
 - **Tipo:** `feat/security`

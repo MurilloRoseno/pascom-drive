@@ -39,18 +39,44 @@ a { color: inherit; text-decoration: none; }
 }
 
 .app.dark {
-  --surface: #1f1325;
-  --surface-2: #271830;
-  --surface-3: #2e1c38;
-  --ink: #f6efe2;
-  --ink-2: rgba(246,239,226,0.78);
-  --ink-3: rgba(246,239,226,0.55);
-  --ink-4: rgba(246,239,226,0.30);
-  --line: rgba(247,200,72,0.12);
-  --line-2: rgba(247,200,72,0.25);
-  --brand: #b97cc4;
-  --brand-d: #8b4f97;
+  --surface: #14131a;
+  --surface-2: #1d1c26;
+  --surface-3: #272631;
+  --ink: #ffffff;
+  --ink-2: rgba(255,255,255,0.78);
+  --ink-3: rgba(255,255,255,0.55);
+  --ink-4: rgba(255,255,255,0.28);
+  --line: rgba(255,255,255,0.10);
+  --line-2: rgba(247,200,72,0.30);
+  --brand: #ffffff;
+  --brand-d: #d6cce1;
 }
+
+.app.dark .h2,
+.app.dark .h3 { color: #ffffff; }
+.app.dark .eyebrow { color: var(--accent); }
+.app.dark .input-with-icon .icon { color: rgba(255,255,255,0.55) !important; }
+.app.dark .input-with-icon input { color: #ffffff; }
+.app.dark .appbar { background: var(--surface); }
+.app.dark .appbar-icon-btn { color: #ffffff; }
+.app.dark .appbar-icon-btn:active { background: rgba(255,255,255,0.08); }
+.app.dark .appbar-back { color: #ffffff; }
+.app.dark .botnav { background: var(--surface); }
+.app.dark .botnav-item.active { color: var(--accent); }
+.app.dark .card { background: var(--surface-2); border-color: var(--line); }
+.app.dark .pill-mute { background: rgba(255,255,255,0.10); color: #ffffff; }
+.app.dark .tag { background: rgba(255,255,255,0.10); color: #ffffff; }
+.app.dark .tag-yellow { background: rgba(247,200,72,0.18); color: var(--accent); }
+.app.dark .btn-secondary { background: rgba(255,255,255,0.10); color: #ffffff; }
+.app.dark .btn-outline { color: #ffffff; border-color: rgba(255,255,255,0.40); }
+.app.dark .btn-ghost { background: rgba(255,255,255,0.08); color: #ffffff; }
+.app.dark .input { background: var(--surface-2); color: #ffffff; border-color: rgba(255,255,255,0.14); }
+.app.dark .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(247,200,72,0.20); }
+.app.dark .input::placeholder { color: rgba(255,255,255,0.32); }
+.app.dark .field label { color: #ffffff; }
+.app.dark .scripture { color: var(--accent); }
+.app.dark .cart-badge { border-color: var(--surface); }
+.app.dark .hero-search input { color: var(--parish-ink) !important; }
 
 /* ----- App-wide top bar / bottom bar ----- */
 .appbar {
