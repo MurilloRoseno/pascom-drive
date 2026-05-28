@@ -1,16 +1,16 @@
 # Graph Report - Drive  (2026-05-28)
 
 ## Corpus Check
-- 119 files · ~941,825 words
+- 119 files · ~942,006 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 597 nodes · 928 edges · 110 communities (105 shown, 5 thin omitted)
+- 597 nodes · 928 edges · 109 communities (105 shown, 4 thin omitted)
 - Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 111 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ed9d4696`
+- Built from commit: `a5f1a618`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -33,12 +33,12 @@
 - [[_COMMUNITY_Community 15|Community 15]]
 - [[_COMMUNITY_Community 16|Community 16]]
 - [[_COMMUNITY_Community 17|Community 17]]
+- [[_COMMUNITY_Community 18|Community 18]]
 - [[_COMMUNITY_Community 20|Community 20]]
 - [[_COMMUNITY_Community 21|Community 21]]
 - [[_COMMUNITY_Community 22|Community 22]]
-- [[_COMMUNITY_Community 24|Community 24]]
-- [[_COMMUNITY_Community 26|Community 26]]
-- [[_COMMUNITY_Community 28|Community 28]]
+- [[_COMMUNITY_Community 25|Community 25]]
+- [[_COMMUNITY_Community 27|Community 27]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useCarrinho()` - 23 edges
@@ -64,7 +64,7 @@
 - `buscarPreviewFoto()` --calls--> `readThrough()`  [INFERRED]
   backend/lib/google-sheets.catalog.js → backend/lib/runtime-cache.js
 
-## Communities (110 total, 5 thin omitted)
+## Communities (109 total, 4 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.06
@@ -96,7 +96,7 @@ Nodes (20): CartSummary(), fmt(), money(), PhotoCard(), useCarrinhoContext(), us
 
 ### Community 7 - "Community 7"
 Cohesion: 0.1
-Nodes (11): MobileHome(), MobileRoutes(), MobileSearch(), routeNameFromLocation(), useEventos(), useEventosCatalog(), shadeColor(), galleryToken() (+3 more)
+Nodes (13): EventRoute(), MobileHome(), MobileRoutes(), MobileSearch(), routeNameFromLocation(), useEventGallery(), useEventos(), useEventosCatalog() (+5 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.12
@@ -111,30 +111,34 @@ Cohesion: 0.23
 Nodes (10): getSecret(), hashCode(), issueGalleryToken(), tokenAllowsEvent(), verifyCode(), base64urlDecode(), base64urlEncode(), signToken() (+2 more)
 
 ### Community 11 - "Community 11"
-Cohesion: 0.22
-Nodes (8): categoryLabel(), dateLabel(), scheduleLabel(), EventCard(), MobileEvent(), EventCard(), SearchCard(), SearchPage()
-
-### Community 12 - "Community 12"
 Cohesion: 0.44
 Nodes (10): a(), B(), c(), D(), g(), i(), k(), o() (+2 more)
 
+### Community 12 - "Community 12"
+Cohesion: 0.2
+Nodes (4): dateLabel(), scheduleLabel(), EventCard(), EventCard()
+
 ### Community 13 - "Community 13"
+Cohesion: 0.24
+Nodes (6): EventPage(), eventToken(), hasDevtoolsLikeViewportGap(), nextGuardCounters(), useDevtoolsGuard(), GuardProbe()
+
+### Community 14 - "Community 14"
 Cohesion: 0.29
 Nodes (9): cotarCheckout(), criarPagamento(), listarEventos(), listarFotos(), listarFotosEvento(), obterEvento(), request(), statusPagamento() (+1 more)
 
-### Community 14 - "Community 14"
-Cohesion: 0.31
-Nodes (4): client(), consultarPagamento(), criarPreferencia(), paymentMethods()
-
 ### Community 15 - "Community 15"
 Cohesion: 0.31
-Nodes (6): EventRoute(), useEventGallery(), hasDevtoolsLikeViewportGap(), nextGuardCounters(), useDevtoolsGuard(), GuardProbe()
+Nodes (4): client(), consultarPagamento(), criarPreferencia(), paymentMethods()
 
 ### Community 16 - "Community 16"
 Cohesion: 0.5
 Nodes (7): createAuth(), downloadFile(), downloadFileAsJpeg(), getAccessToken(), parsePrivateKey(), updateFile(), uploadFile()
 
 ### Community 17 - "Community 17"
+Cohesion: 0.32
+Nodes (4): categoryLabel(), MobileEvent(), SearchCard(), SearchPage()
+
+### Community 18 - "Community 18"
 Cohesion: 0.52
 Nodes (6): buildSpacedTile(), buildWatermarkTile(), compositeWatermark(), detectWatermarkType(), deterministicOffset(), structuralOverlay()
 
@@ -143,7 +147,7 @@ Cohesion: 0.73
 Nodes (4): goToNext(), goToPrevious(), makeCurrent(), toggleClass()
 
 ## Knowledge Gaps
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

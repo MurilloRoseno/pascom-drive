@@ -23,6 +23,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
 - **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
 - **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx` e CSS `reference-*`.
+- **Modo escuro:** `className="app dark"` troca tokens e classes auxiliares corrigem contraste de estilos inline herdados do standalone, incluindo buscas, chips de sacramento, agenda, cart bar e atalhos Pascom.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop, preservar URLs `mt` retornadas pela API e substituir placeholders do standalone quando houver backend real.
 
 ## `useDevtoolsGuard`

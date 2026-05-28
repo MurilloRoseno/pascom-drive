@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-28 - Correcoes de contraste no modo escuro mobile
+
+- **Tipo:** `fix/frontend`
+- **Responsavel:** Codex
+- **Alteracao:** ajustes no CSS mobile para corrigir contraste no modo escuro em buscas, chips de sacramento, `section-purple`, tiles de agenda, cart bar, atalhos Pascom e aviso LGPD do checkout.
+- **Motivo:** alguns elementos portados do HTML standalone usavam estilos inline com `var(--brand)`; no modo escuro esse token vira branco, causando estados branco-sobre-branco.
+- **Impacto:** experiencia mobile escura fica mais legivel sem alterar desktop, rotas, APIs, checkout, banco ou comportamento do toggle.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Documentos afetados:** `docs/mobile-experience.md`, `docs/components.md`, `docs/technical-changelog.md`.
+
 ## 2026-05-28 - Modo escuro mobile fiel ao standalone
 
 - **Tipo:** frontend, mobile e documentacao.
