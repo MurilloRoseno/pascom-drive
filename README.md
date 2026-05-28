@@ -9,7 +9,7 @@ O Pascom Drive automatiza o ciclo completo de fotos de eventos: entrada no Googl
 | Camada | Tecnologia | Responsabilidade |
 | --- | --- | --- |
 | Frontend | React 18, Vite, Tailwind CSS, React Router | Galeria pública, busca, carrinho e checkout |
-| Backend | Node.js, Express, Vercel Functions | APIs, pagamentos, webhooks, download seguro, processamento de imagem |
+| Backend | Node.js, Express, Vercel Functions | APIs, pagamentos, webhooks, download seguro com fingerprint forense, processamento de imagem |
 | Automação | Google Apps Script | Monitoramento do Drive, registro em Sheets, processamento assíncrono |
 | Banco | Google Sheets | Catálogo, pedidos, itens, webhooks, downloads e regras de pagamento |
 | Pagamento | Mercado Pago | Pix/cartão, checkout externo e webhook HMAC |
@@ -39,7 +39,7 @@ Backend local: `http://localhost:3001/api/health`
 Consulte `docs/setup-environment.md` para a lista completa. As variáveis críticas são:
 
 - Frontend: `VITE_API_BASE_URL`
-- Backend: `SPREADSHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` ou `GOOGLE_PRIVATE_KEY_B64`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`, `DOWNLOAD_JWT_SECRET`, `WATERMARK_API_SECRET`
+- Backend: `SPREADSHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` ou `GOOGLE_PRIVATE_KEY_B64`, `MP_ACCESS_TOKEN`, `MP_WEBHOOK_SECRET`, `DOWNLOAD_JWT_SECRET`, `FORENSIC_WATERMARK_SECRET`, `WATERMARK_API_SECRET`
 - Apps Script: `SOURCE_FOLDER_ID`, `ORIGINAIS_FOLDER_ID`, `AMOSTRAS_FOLDER_ID`, `SPREADSHEET_ID`, `BACKEND_URL`
 
 Nunca commite `.env`, `.env.local`, credenciais ou chaves privadas.
@@ -100,7 +100,7 @@ Documentação antiga fica em `docs/archive/` e não deve ser usada como fonte d
 - API não responde: valide `backend/.env`, `PORT`, `FRONTEND_URL` e `GET /api/health`.
 - Galeria vazia: confira abas `Eventos` e `Fotos`, `Publicacao=publicado`, `VendaAutorizada=SIM` e fotos `StatusProcessamento=Processada`.
 - Pagamento não confirma: verifique `MP_WEBHOOK_SECRET`, logs de `/api/webhook/mercado-pago` e aba `Webhooks`.
-- Download expira: confira `DOWNLOAD_JWT_SECRET`, aba `Downloads`, `ExpiraEm`, `Usos` e `UsosMaximos`.
+- Download expira ou falha: confira `DOWNLOAD_JWT_SECRET`, `FORENSIC_WATERMARK_SECRET`, aba `Downloads`, `ExpiraEm`, `Usos`, `UsosMaximos` e campos `Fingerprint*`.
 - Imagem não processa: confira `WATERMARK_API_SECRET`, permissões do Drive e logs de `/api/watermark` ou `/api/preprocess`.
 
 ## FAQ

@@ -1,4 +1,25 @@
-# Changelog Técnico
+# Changelog Tecnico
+
+## 2026-05-28 - Modo escuro mobile fiel ao standalone
+
+- **Tipo:** frontend, mobile e documentacao.
+- **Alteracao:** bloco `.app.dark` mobile atualizado com tokens e overrides visuais extraidos de `C:\Users\muril\Downloads\Pascom Drive _standalone_ (2).html`.
+- **Motivo:** alinhar o tema escuro mobile ao layout pesquisado e planejado no HTML standalone, sem depender de adaptacao manual roxa anterior.
+- **Impacto:** somente usuarios mobile/tablet ao acionar o botao de tema veem o novo modo escuro; desktop, APIs, checkout, backend e banco permanecem intactos.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+
+## 2026-05-28 - Protecao em camadas para fotos
+
+- **Tipo:** seguranca, privacidade, backend, frontend, Apps Script e documentacao.
+- **Alteracao:** previews passam a receber `mt` temporario assinado, middleware de abuso de midia bloqueia padroes massivos, watermark de amostras ganha grade/texto/seed deterministico e downloads pagos passam a gerar copia full-res com fingerprint forense por pedido/download.
+- **Motivo:** reduzir captura/coleta casual, preservar originais privados e permitir rastreabilidade proporcional de vazamentos sem tecnicas destrutivas de anti-debug.
+- **Impacto:** `GET /api/download` mantem o mesmo contrato de entrada, mas entrega copia fingerprinted; planilha `Downloads` ganha colunas forenses; producao exige `FORENSIC_WATERMARK_SECRET`.
+- **Breaking changes:** nenhum contrato publico de checkout/pagamento; operadores devem atualizar env e inicializar estrutura da planilha para novas colunas.
+- **Migracoes necessarias:** configurar `FORENSIC_WATERMARK_SECRET`, opcionalmente `MEDIA_TOKEN_SECRET`, e executar `inicializarEstrutura()` no Apps Script para adicionar colunas em `Downloads`.
+- **Responsavel:** Codex.
+
 
 ## 2026-05-28 - Protecao discreta contra DevTools nas galerias
 

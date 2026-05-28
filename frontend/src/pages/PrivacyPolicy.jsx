@@ -33,11 +33,13 @@ const legalBases = [
   ['Galerias protegidas por código', 'Legítimo interesse, segurança e proteção de imagem'],
   ['Comunicação por e-mail/WhatsApp', 'Execução de serviço, consentimento e legítimo interesse'],
   ['Logs técnicos e segurança', 'Legítimo interesse e Marco Civil da Internet'],
+  ['Fingerprint forense de downloads', 'Legítimo interesse, prevenção a fraude e proteção de direitos'],
 ];
 
 const retention = [
   ['Pedidos e itens comprados', 'Pelo período necessário para entrega, suporte, auditoria e obrigações legais'],
   ['Links de download', 'Prazo técnico limitado, conforme configuração de segurança do backend'],
+  ['Fingerprint forense', 'Enquanto necessário para auditoria antifraude, suporte e proteção de direitos'],
   ['Tokens/códigos de galeria', 'Enquanto necessários para acesso seguro à galeria'],
   ['Logs técnicos', 'Pelo tempo necessário para segurança, diagnóstico e obrigações legais'],
   ['Contatos por e-mail/WhatsApp', 'Enquanto houver necessidade de atendimento ou histórico pastoral legítimo'],
@@ -160,6 +162,7 @@ export default function PrivacyPolicy({ mobile = false }) {
                 <Li>Endereço IP, data/hora de acesso, navegador, tipo de dispositivo e registros técnicos de segurança.</Li>
                 <Li>Páginas acessadas, eventos consultados e erros técnicos necessários para diagnóstico e proteção da plataforma.</Li>
                 <Li>Dados mínimos em `sessionStorage` para manter tokens de galeria protegida durante a navegação.</Li>
+                <Li>Identificador forense não sensível vinculado ao pedido/download, usado para rastrear vazamento de arquivo comprado sem embutir nome, e-mail ou WhatsApp na imagem.</Li>
               </ul>
             </SubSection>
           </Section>
@@ -183,6 +186,7 @@ export default function PrivacyPolicy({ mobile = false }) {
               <Li>Processar seleção de fotos, cotação, checkout e confirmação de pagamento.</Li>
               <Li>Enviar links de entrega por e-mail e apoiar atendimento por WhatsApp quando necessário.</Li>
               <Li>Prevenir fraudes, diagnosticar falhas, manter auditoria e proteger a integridade do sistema.</Li>
+              <Li>Aplicar fingerprint forense proporcional em fotos entregues após pagamento para desestimular redistribuição indevida.</Li>
               <Li>Cumprir obrigações legais, contábeis, fiscais, pastorais e de segurança aplicáveis.</Li>
             </ul>
             <div className="privacy-warning">
@@ -219,6 +223,7 @@ export default function PrivacyPolicy({ mobile = false }) {
               <Li>Segredos e credenciais mantidos em variáveis de ambiente, não no código público.</Li>
               <Li>Webhooks de pagamento com validação e registros de auditoria.</Li>
               <Li>Rate limiting em rotas sensíveis e cache controlado para catálogo e mídia.</Li>
+              <Li>Downloads pagos podem receber fingerprint forense invisível, vinculado apenas ao pedido/download, para auditoria antifraude.</Li>
               <Li>Acesso operacional restrito a pessoas autorizadas pela paróquia.</Li>
             </ul>
           </Section>
@@ -248,6 +253,7 @@ export default function PrivacyPolicy({ mobile = false }) {
               <Li><strong>Session storage:</strong> guarda temporariamente tokens de galerias protegidas no navegador.</Li>
               <Li><strong>Cookies/headers técnicos:</strong> podem ser usados pela infraestrutura para segurança, cache e entrega do site.</Li>
               <Li><strong>Sem publicidade comportamental:</strong> não há cookies de anúncios ou rastreamento comercial de terceiros planejados no MVP atual.</Li>
+              <Li><strong>Tokens de mídia:</strong> links de preview podem conter assinatura temporária para impedir coleta em massa e expiram automaticamente.</Li>
             </ul>
           </Section>
 
@@ -255,6 +261,7 @@ export default function PrivacyPolicy({ mobile = false }) {
             <p>
               O Pascom Drive não realiza decisões automatizadas para negar acesso a serviços, avaliar pessoas, influenciar comportamento religioso ou criar perfis comerciais. Também não utiliza publicidade direcionada baseada em comportamento.
             </p>
+            <p>O fingerprint forense de downloads não é usado para perfilamento, publicidade ou tomada de decisão automatizada; sua finalidade é exclusivamente antifraude e proteção de direitos sobre arquivos pagos.</p>
             <p>Se recursos de automação ou IA forem adicionados futuramente, esta política deverá ser atualizada com regras claras, limites proporcionais, transparência e possibilidade de contestação.</p>
           </Section>
 

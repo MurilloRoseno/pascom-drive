@@ -113,10 +113,12 @@ export function categoryLabel(category) {
 
 export function Photo({ photo, aspect = '1/1', selected = false, showBadge = true, onClick, children, ornaments = true }) {
   const bg = photo.src ? null : `linear-gradient(135deg, oklch(0.46 0.13 ${photo.hue || 30}) 0%, oklch(0.32 0.10 ${(photo.hue || 30) + 18}) 60%, oklch(0.22 0.06 ${(photo.hue || 30) + 30}) 100%)`;
-  const interactiveProps = onClick ? { role: 'button', tabIndex: 0, onClick, onKeyDown: (event) => (event.key === 'Enter' || event.key === ' ') && onClick(event) } : {};
+  const interactiveProps = onClick
+    ? { role: 'button', tabIndex: 0, onClick, onContextMenu: (event) => event.preventDefault(), onKeyDown: (event) => (event.key === 'Enter' || event.key === ' ') && onClick(event) }
+    : { onContextMenu: (event) => event.preventDefault() };
   return (
     <div className={`wm${selected ? ' selected' : ''}`} style={{ aspectRatio: aspect, background: bg || undefined, cursor: onClick ? 'pointer' : 'default', border: 0, padding: 0, width: '100%', display: 'block' }} {...interactiveProps}>
-      {photo.src && <img className="photo-blur-target" src={photo.src} alt={photo.caption || ''} loading="lazy" />}
+      {photo.src && <img className="photo-blur-target" src={photo.src} alt={photo.caption || ''} loading="lazy" draggable="false" />}
       {!photo.src && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', padding: 12, fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: 13, color: 'rgba(255,255,255,0.85)', textAlign: 'left', textShadow: '0 1px 3px rgba(0,0,0,0.4)', zIndex: 0 }}>{photo.caption}</div>}
       {ornaments && <div className="wm-pattern" />}
       {showBadge && <div className="wm-badges"><span className="pill">Prévia</span></div>}

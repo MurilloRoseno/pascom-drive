@@ -6,6 +6,7 @@
 - Garantir testes verdes em `frontend`, `backend` e `google-apps-script`.
 - Adicionar GitHub Actions com testes por pacote.
 - Criar teste de contrato para headers do Google Sheets.
+- Configurar `FORENSIC_WATERMARK_SECRET` em producao e validar download fingerprinted em smoke real.
 - Formalizar checklist Mercado Pago sandbox antes de produção.
 - Padronizar timestamps e timezone.
 
@@ -15,7 +16,7 @@
 - Extrair `useCheckoutPricing` ou serviço de checkout.
 - Criar adapter local para Runtime Cache.
 - Melhorar tratamento do cliente HTTP para respostas não JSON.
-- Adicionar logs estruturados para webhook, entrega e download.
+- Adicionar logs estruturados para webhook, entrega, download e bloqueios de midia.
 - Criar rotina de reconciliação de pedidos pagos sem entrega.
 
 ## Prioridade Baixa
@@ -67,7 +68,7 @@ Fase 3 — Profissionalização:
 
 ## Estratégia de Testes
 
-- Unitários para regras puras: pricing, tokens, validação.
+- Unitarios para regras puras: pricing, tokens, fingerprint e validacao.
 - Integração para APIs com mocks de Sheets/Drive/MP.
 - Componentes para carrinho, checkout, galeria.
 - Apps Script com mocks de DriveApp/SpreadsheetApp.

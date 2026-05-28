@@ -7,6 +7,10 @@ jest.mock('../lib/gallery-access', () => ({
   verifyCode: jest.fn(),
   issueGalleryToken: jest.fn(() => 'SESSION_TOKEN'),
 }));
+jest.mock('../lib/media-token', () => ({
+  issueMediaToken: jest.fn(({ variant }) => `${variant}-MEDIA_TOKEN`),
+  appendMediaToken: jest.fn((url, token) => `${url}${url.includes('?') ? '&' : '?'}mt=${token}`),
+}));
 
 const request = require('supertest');
 const express = require('express');
@@ -51,5 +55,5 @@ it('devolve previews sem informacao secreta apos acesso permitido', async () => 
   expect(res.status).toBe(200);
   expect(res.body.event).not.toHaveProperty('codeHash');
   expect(res.body.photos).toHaveLength(1);
-  expect(res.body.photos[0].previewUrl).toBe('/preview?token=SESSION_TOKEN');
+  expect(res.body.photos[0].previewUrl).toBe('/preview?mt=preview-MEDIA_TOKEN');
 });

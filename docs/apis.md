@@ -86,8 +86,8 @@ Lista fotos processadas de um evento.
     {
       "id": "foto-abc",
       "eventoId": "missa-2026-05",
-      "previewUrl": "/api/eventos/missa-2026-05/previews/foto-abc",
-      "thumbnailUrl": "/api/eventos/missa-2026-05/previews/foto-abc?variant=thumbnail",
+      "previewUrl": "/api/eventos/missa-2026-05/previews/foto-abc?mt=jwt-midia",
+      "thumbnailUrl": "/api/eventos/missa-2026-05/previews/foto-abc?variant=thumbnail&mt=jwt-midia",
       "price": 10,
       "availableForSale": true,
       "status": "Processada"
@@ -108,10 +108,12 @@ Entrega preview ou thumbnail autorizado.
 **Query**
 
 - `variant=preview|thumbnail`
+- `mt`: token temporario de midia, assinado por evento, foto e variante, com expiracao curta de 10 minutos.
+- `token`: fallback legado de galeria protegida, mantido temporariamente para compatibilidade.
 
 **Headers**
 
-- `X-Gallery-Token` quando evento é protegido.
+- `X-Gallery-Token` nao e usado nesta rota; a autorizacao vem de `mt` ou do fallback `token`.
 
 **Resposta**
 
@@ -120,7 +122,8 @@ Arquivo JPEG/WebP baixado do Drive.
 **Erros**
 
 - `401`: acesso não autorizado.
-- `404`: foto ou derivado não encontrado.
+- `404`: foto ou derivado nao encontrado.
+- `429`: padrao massivo de requisicoes de midia detectado.
 
 ## `POST /api/eventos/:eventoId/acesso`
 
@@ -295,7 +298,7 @@ Gera imagem com marca d'água a partir de arquivo no Drive.
 
 **Autenticação**
 
-- `Authorization: Bearer WATERMARK_API_SECRET`
+- `x-watermark-secret: WATERMARK_API_SECRET`
 
 **Payload**
 
@@ -303,7 +306,8 @@ Gera imagem com marca d'água a partir de arquivo no Drive.
 {
   "fileId": "drive-file-id",
   "variant": "preview",
-  "watermark": "color"
+  "watermark": "color",
+  "watermarkSeed": "evento:fotografia:preview"
 }
 ```
 
@@ -323,7 +327,7 @@ Redimensiona/converte imagens originais grandes antes do restante do fluxo.
 
 **Autenticação**
 
-- `Authorization: Bearer WATERMARK_API_SECRET`
+- `x-watermark-secret: WATERMARK_API_SECRET`
 
 **Payload**
 
@@ -354,7 +358,7 @@ Gera derivado de capa de evento.
 
 **Autenticação**
 
-- `Authorization: Bearer WATERMARK_API_SECRET`
+- `x-watermark-secret: WATERMARK_API_SECRET`
 
 **Payload**
 
@@ -374,7 +378,7 @@ Imagem processada.
 
 ## `GET /api/download`
 
-Baixa foto original comprada.
+Baixa uma copia full-res comprada, preparada no servidor com fingerprint forense invisivel vinculado ao pedido/download. O original privado do Drive nao e entregue byte-a-byte.
 
 **Query**
 
@@ -382,7 +386,7 @@ Baixa foto original comprada.
 
 **Resposta**
 
-Arquivo original do Drive.
+Arquivo JPEG/PNG preparado com `X-Content-Protection: forensic-fingerprint`, `Cache-Control: private, no-store` e sem marca dagua visivel.
 
 **Erros**
 
@@ -390,6 +394,7 @@ Arquivo original do Drive.
 - `401`: link inválido/expirado.
 - `410`: link expirado ou limite de uso atingido.
 - `500`: segredo ausente.
+- `503`: falha temporaria ao preparar fingerprint; o uso do token nao e consumido.
 
 ## `POST /api/admin/cache/invalidate`
 
@@ -435,6 +440,7 @@ As classes de limite estão em `backend/middleware/rate-limit.js`:
 - cotação;
 - fotos;
 - mídia de galeria;
+- abuso leve de mídia por IP/evento/variante em `backend/middleware/media-abuse.js`;
 - consulta de status;
 - processamento;
 - acesso de galeria;

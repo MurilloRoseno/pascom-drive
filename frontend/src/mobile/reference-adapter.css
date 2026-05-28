@@ -52,3 +52,17 @@
   filter: blur(20px);
   transition: filter 0.3s ease;
 }
+
+.wm::after,
+.protected-preview-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  pointer-events: none;
+}
+
+.protected-preview-frame {
+  position: relative;
+}

@@ -24,6 +24,8 @@ O projeto está funcionalmente estruturado, mas carrega dívida documental, muda
 | Falta CI formal | Média | Regressões chegam ao deploy | Média | GitHub Actions por pacote |
 | Sem licença | Baixa | Risco jurídico para distribuição | Baixa | Adicionar `LICENSE` |
 | Protecao DevTools e apenas heuristica | Baixa | Pode gerar falsa sensacao de seguranca se tratada como DRM | Baixa | Manter como aviso/blur discreto e reforcar seguranca no backend |
+| Fingerprint forense depende de segredo novo | Alta operacional | Download pode falhar se `FORENSIC_WATERMARK_SECRET` nao estiver configurado | Baixa | Configurar env em Vercel antes de ativar producao e monitorar `forensic_download_failed` |
+| Token de midia e barreira temporal, nao DRM | Baixa | Pode ser compartilhado durante janela curta | Baixa | Manter expiracao curta, no-store, watermark e rate limit de midia |
 
 ## Código Morto e Arquivos Órfãos
 
@@ -74,7 +76,7 @@ Pontos fortes:
 - HMAC no webhook.
 - Zod em endpoints críticos.
 - Rate limiting por classe.
-- Download com token assinado e hash salvo.
+- Download com token assinado, hash salvo e fingerprint forense aplicado antes de consumir uso.
 - Segredos para processamento/admin.
 - Guard discreto de DevTools borra previas em producao sem bloquear fluxos legitimos.
 
@@ -85,6 +87,7 @@ Pontos frágeis:
 - Dados pessoais em Sheets precisam política clara de retenção.
 - Conferir se WhatsApp deve ser criptografado conforme regra operacional original.
 - Guard de DevTools e bypassavel e nao deve ser considerado barreira de seguranca primaria.
+- Fingerprint forense ajuda auditoria de vazamento, mas nao impede fotografia de tela ou recompressao extrema.
 
 ## Performance
 

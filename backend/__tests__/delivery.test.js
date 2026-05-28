@@ -5,7 +5,8 @@ jest.mock('../lib/google-sheets', () => ({
 }));
 
 const nodemailer = require('nodemailer');
-const { enviarEmailEntrega } = require('../lib/delivery');
+const { criarDownloadsDoPedido, enviarEmailEntrega } = require('../lib/delivery');
+const sheets = require('../lib/google-sheets');
 
 const pedido = { email: 'cliente@example.com' };
 const downloads = [{ url: 'https://safe.test/download-1' }];
@@ -19,6 +20,9 @@ beforeEach(() => {
   process.env.SMTP_APP_PASSWORD = 'abcd efgh ijkl mnop';
   process.env.SMTP_FROM_NAME = 'Paroquia Sao Rafael - Fotos';
   process.env.SMTP_REPLY_TO = 'murillo.roseno.lima@gmail.com';
+  process.env.DOWNLOAD_JWT_SECRET = 'download-secret';
+  process.env.FORENSIC_WATERMARK_SECRET = 'forensic-secret';
+  process.env.PUBLIC_APP_URL = 'https://pascom-drive.test';
 });
 
 afterEach(() => {
@@ -29,6 +33,28 @@ afterEach(() => {
   delete process.env.SMTP_APP_PASSWORD;
   delete process.env.SMTP_FROM_NAME;
   delete process.env.SMTP_REPLY_TO;
+  delete process.env.DOWNLOAD_JWT_SECRET;
+  delete process.env.FORENSIC_WATERMARK_SECRET;
+  delete process.env.PUBLIC_APP_URL;
+});
+
+it('gera downloads com fingerprint forense por pedido e foto', async () => {
+  sheets.buscarOriginaisPedido.mockResolvedValue([{ fotoId: 'F1', originalFileId: 'ORIGINAL_1' }]);
+
+  const result = await criarDownloadsDoPedido({ id: 'PED_1' });
+
+  expect(result[0]).toEqual(expect.objectContaining({
+    fotoId: 'F1',
+    originalFileId: 'ORIGINAL_1',
+    fingerprintId: expect.any(String),
+    fingerprintHash: expect.any(String),
+    fingerprintVersion: 'pascom-v1',
+    url: expect.stringContaining('https://pascom-drive.test/api/download?token='),
+  }));
+  expect(sheets.criarAutorizacoesDownload).toHaveBeenCalledWith('PED_1', [expect.objectContaining({
+    fingerprintId: result[0].fingerprintId,
+    fingerprintHash: result[0].fingerprintHash,
+  })]);
 });
 
 it('envia links temporarios por Gmail SMTP com senha de app sanitizada', async () => {

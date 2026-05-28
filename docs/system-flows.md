@@ -74,6 +74,15 @@ Detalhes operacionais:
 8. Frontend salva token em `sessionStorage`.
 9. Próximas chamadas usam `X-Gallery-Token`.
 
+## Fluxo de Tokens Temporarios de Midia
+
+1. Frontend chama `GET /api/eventos/:eventoId/fotos` com permissao de galeria ja validada.
+2. Backend retorna `previewUrl` e `thumbnailUrl` com `mt` assinado por evento, foto e variante.
+3. O token de midia expira em 10 minutos e nao substitui o token de galeria ou o pagamento.
+4. `GET /api/eventos/:eventoId/previews/:fotoId` valida `mt`; o fallback `token` de galeria segue temporariamente aceito.
+5. Capas editoriais continuam publicas/cacheaveis; fotos vendaveis continuam `private, no-store`.
+6. `mediaAbuseGuard` bloqueia padroes massivos por IP/evento/variante com `429`, sem afetar checkout/pagamento.
+
 ## Fluxo de Protecao Discreta contra DevTools
 
 1. Em producao, paginas de evento/galeria/lightbox ativam `useDevtoolsGuard`.
@@ -125,24 +134,27 @@ Pontos críticos:
 
 ## Fluxo de Download
 
-1. Após pagamento aprovado, backend cria registros na aba `Downloads`.
-2. Cada registro recebe `DownloadID`, `TokenHash`, expiração e limite de uso.
-3. Link contém JWT assinado com `downloadId` e `exp`.
+1. Apos pagamento aprovado, backend cria registros na aba `Downloads`.
+2. Cada registro recebe `DownloadID`, `TokenHash`, expiracao, limite de uso e `FingerprintID` por pedido/foto/download.
+3. Link contem JWT assinado com `downloadId` e `exp`.
 4. Cliente acessa `GET /api/download?token=...`.
-5. Backend valida assinatura e expiração do JWT.
-6. Backend compara hash do token com Sheets.
-7. Backend incrementa uso.
-8. Backend baixa original do Drive e entrega ao cliente.
+5. Backend valida assinatura e expiracao do JWT.
+6. Backend compara hash do token com Sheets sem consumir uso ainda.
+7. Backend baixa original privado do Drive.
+8. Backend gera copia full-res com fingerprint forense invisivel e metadados tecnicos.
+9. Somente apos a copia ser gerada, incrementa `Usos` e registra status/versao/aplicacao do fingerprint.
+10. Se a geracao falhar, retorna `503` e nao consome o token.
 
 ## Fluxo de Processamento de Imagem
 
 1. Apps Script recebe arquivo do Drive.
 2. Chama `/api/preprocess` para reduzir/converter quando necessário.
 3. Chama `/api/watermark` para foto comum ou `/api/cover-preview` para capa.
-4. Backend usa Google Drive API para baixar arquivo.
-5. Backend usa Sharp para resize/composição.
-6. Apps Script salva derivado no Drive.
-7. Apps Script atualiza `PreviewFileID`, `ThumbnailFileID` e status no Sheets.
+4. Watermark de fotos vendaveis usa logo/grade/texto `AMOSTRA`, seed deterministico e metadados de restricao.
+5. Backend usa Google Drive API para baixar arquivo.
+6. Backend usa Sharp para resize/composicao.
+7. Apps Script salva derivado no Drive.
+8. Apps Script atualiza `PreviewFileID`, `ThumbnailFileID` e status no Sheets.
 
 ## Fluxos de Erro
 

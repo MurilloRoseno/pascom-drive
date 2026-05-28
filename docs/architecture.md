@@ -134,7 +134,7 @@ Backend:
 - Rotas públicas de catálogo e checkout em `/api`.
 - Rotas protegidas por segredo para processamento e cache.
 - Webhook Mercado Pago com HMAC.
-- Download por token assinado.
+- Download por token assinado com copia full-res fingerprinted antes de consumir uso.
 
 ## Estratégia de APIs
 
@@ -142,7 +142,7 @@ Backend:
 - Métodos explicitamente limitados por handler.
 - Validação Zod nos endpoints de payload/consulta críticos.
 - Erros retornam `{ error: string }`.
-- Rate limits aplicados por classe de rota em `backend/middleware/rate-limit.js`.
+- Rate limits aplicados por classe de rota em `backend/middleware/rate-limit.js` e abuso leve de midia em `media-abuse.js`.
 - Alias legado `POST /api/criar-pagamento` aponta para `checkout-preference`.
 
 ## Estratégia de Autenticação e Autorização
@@ -161,7 +161,7 @@ Mecanismos atuais:
 
 - `backend/lib/runtime-cache.js` usa Vercel Runtime Cache.
 - Catálogo publicado usa cache read-through.
-- Previews podem ser cacheados por chave e tag.
+- Capas editoriais podem ser cacheadas publicamente; previews vendaveis usam `private, no-store` e cache interno apos autorizacao.
 - Invalidação ocorre via `POST /api/admin/cache/invalidate`.
 - Apps Script chama invalidação quando fotos/eventos mudam.
 - Risco atual: ambiente local depende de disponibilidade/comportamento de `@vercel/functions`.

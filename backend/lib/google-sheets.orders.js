@@ -130,6 +130,11 @@ async function criarAutorizacoesDownload(pedidoId, tokenRecords) {
     FotoID: record.fotoId,
     OriginalFileID: record.originalFileId,
     TokenHash: record.tokenHash,
+    FingerprintID: record.fingerprintId,
+    FingerprintHash: record.fingerprintHash,
+    FingerprintVersao: record.fingerprintVersion,
+    FingerprintStatus: 'Pendente',
+    FingerprintAplicadoEm: '',
     ExpiraEm: new Date(record.exp).toISOString(),
     UsosMaximos: record.maxUses,
     Usos: 0,
@@ -137,7 +142,7 @@ async function criarAutorizacoesDownload(pedidoId, tokenRecords) {
   })));
 }
 
-async function consumirDownload(downloadId, tokenHash) {
+async function prepararDownload(downloadId, tokenHash) {
   const downloadRows = await rows('Downloads');
   const row = downloadRows.find((item) => item.get('DownloadID') === downloadId);
   if (!row || row.get('TokenHash') !== tokenHash) return null;
@@ -145,10 +150,47 @@ async function consumirDownload(downloadId, tokenHash) {
   const uses = Number(row.get('Usos') || 0);
   const maxUses = Number(row.get('UsosMaximos') || 1);
   if (uses >= maxUses) return null;
+  return {
+    row,
+    downloadId: row.get('DownloadID'),
+    pedidoId: row.get('PedidoID'),
+    originalFileId: row.get('OriginalFileID'),
+    fotoId: row.get('FotoID'),
+    fingerprintId: row.get('FingerprintID') || '',
+    fingerprintHash: row.get('FingerprintHash') || '',
+    fingerprintVersion: row.get('FingerprintVersao') || '',
+  };
+}
+
+function safeSet(row, field, value) {
+  try {
+    row.set(field, value);
+  } catch (_error) {
+    // Older spreadsheets may not have received the new forensic columns yet.
+  }
+}
+
+async function registrarUsoDownload(downloadId, tokenHash, fingerprint = {}) {
+  const downloadRows = await rows('Downloads');
+  const row = downloadRows.find((item) => item.get('DownloadID') === downloadId);
+  if (!row || row.get('TokenHash') !== tokenHash) return false;
+  const uses = Number(row.get('Usos') || 0);
   row.set('Usos', uses + 1);
   row.set('UltimoUsoEm', new Date().toISOString());
+  safeSet(row, 'FingerprintID', fingerprint.fingerprintId || row.get('FingerprintID') || '');
+  safeSet(row, 'FingerprintHash', fingerprint.fingerprintHash || row.get('FingerprintHash') || '');
+  safeSet(row, 'FingerprintVersao', fingerprint.fingerprintVersion || row.get('FingerprintVersao') || '');
+  safeSet(row, 'FingerprintStatus', fingerprint.status || 'Aplicado');
+  safeSet(row, 'FingerprintAplicadoEm', fingerprint.appliedAt || new Date().toISOString());
   await row.save();
-  return { originalFileId: row.get('OriginalFileID'), fotoId: row.get('FotoID') };
+  return true;
+}
+
+async function consumirDownload(downloadId, tokenHash) {
+  const authorized = await prepararDownload(downloadId, tokenHash);
+  if (!authorized) return null;
+  await registrarUsoDownload(downloadId, tokenHash);
+  return { originalFileId: authorized.originalFileId, fotoId: authorized.fotoId };
 }
 
 function novoPedidoId() {
@@ -166,6 +208,8 @@ module.exports = {
   listarItensPedido,
   buscarOriginaisPedido,
   criarAutorizacoesDownload,
+  prepararDownload,
+  registrarUsoDownload,
   consumirDownload,
   novoPedidoId,
 };

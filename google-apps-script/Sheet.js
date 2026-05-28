@@ -29,7 +29,8 @@ var ITENS_HEADERS = ['PedidoID', 'FotoID', 'EventoID', 'PrecoUnitario'];
 var WEBHOOK_HEADERS = ['ChaveEvento', 'PaymentID', 'Tipo', 'RecebidoEm', 'ProcessadoEm', 'Status'];
 var DOWNLOAD_HEADERS = [
   'DownloadID', 'PedidoID', 'FotoID', 'OriginalFileID', 'TokenHash',
-  'ExpiraEm', 'UsosMaximos', 'Usos', 'CriadoEm', 'UltimoUsoEm',
+  'FingerprintID', 'FingerprintHash', 'FingerprintVersao', 'FingerprintStatus',
+  'FingerprintAplicadoEm', 'ExpiraEm', 'UsosMaximos', 'Usos', 'CriadoEm', 'UltimoUsoEm',
 ];
 var REGRAS_HEADERS = ['MeioPagamento', 'PercentualEstimado', 'ValorFixo', 'Vigencia', 'Ativo'];
 

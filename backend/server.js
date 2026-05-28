@@ -5,6 +5,7 @@ const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
   processamento, acessoGaleria, download, webhook, administracao,
 } = require('./middleware/rate-limit');
+const { mediaAbuseGuard } = require('./middleware/media-abuse');
 const errorHandler = require('./middleware/error-handler');
 
 const healthHandler = require('./api/health.js');
@@ -63,7 +64,7 @@ app.get('/api/download', download, downloadHandler);
 app.get('/api/eventos', fotos, eventosHandler);
 app.get('/api/eventos/:eventoId', fotos, eventosHandler);
 app.get('/api/eventos/:eventoId/fotos', fotos, fotosEventoHandler);
-app.get('/api/eventos/:eventoId/previews/:fotoId', midiaGaleria, previewEventoHandler);
+app.get('/api/eventos/:eventoId/previews/:fotoId', midiaGaleria, mediaAbuseGuard, previewEventoHandler);
 app.post('/api/eventos/:eventoId/acesso', acessoGaleria, galeriaAcessoHandler);
 app.post('/api/admin/cache/invalidate', administracao, cacheInvalidateHandler);
 

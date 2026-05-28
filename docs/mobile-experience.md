@@ -19,6 +19,12 @@ A referência visual ativa é o HTML standalone:
 C:\Users\muril\Downloads\Pascom Drive _standalone_ (1).html
 ```
 
+O modo escuro mobile usa como referência visual específica o bloco `.app.dark` do HTML:
+
+```text
+C:\Users\muril\Downloads\Pascom Drive _standalone_ (2).html
+```
+
 Elementos preservados da referência:
 
 - tokens de cor, tipografia, espaçamento e superfícies;
@@ -26,6 +32,7 @@ Elementos preservados da referência:
 - linguagem visual paroquial com roxo, dourado, ornamentos e textura institucional;
 - fluxo de home, galerias, calendário completo, evento, galeria de fotos, lightbox, carrinho, checkout, retorno de pagamento e perfil/Pascom;
 - comportamento app-like com bottom navigation e bottom sheet.
+- modo escuro acionado pelo botão de tema no appbar, com fundo grafite, superfícies elevadas, texto branco, acentos dourados e overrides próprios para cards, botões, inputs, tags, appbar e botnav.
 - a moldura de iPhone e o painel `Tweaks` do protótipo não são exibidos no site público.
 
 ## Estratégia de Detecção

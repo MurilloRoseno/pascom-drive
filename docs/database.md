@@ -130,6 +130,11 @@ RegrasPagamento
 | `FotoID` | Foto entregue |
 | `OriginalFileID` | Arquivo original no Drive |
 | `TokenHash` | Hash do token enviado |
+| `FingerprintID` | Identificador forense nao sensivel do download |
+| `FingerprintHash` | Hash do identificador forense para auditoria |
+| `FingerprintVersao` | Versao do algoritmo aplicado |
+| `FingerprintStatus` | `Pendente` ou `Aplicado` |
+| `FingerprintAplicadoEm` | Quando a copia fingerprinted foi gerada |
 | `ExpiraEm` | Expiração |
 | `UsosMaximos` | Limite de uso |
 | `Usos` | Usos atuais |
@@ -152,7 +157,7 @@ RegrasPagamento
 - Compra: busca por IDs selecionados em `Fotos`, mapeia eventos por `EventoID`.
 - Pedido: busca linear por `PedidoID`, `PreferenceID` ou `PaymentID`.
 - Webhook: busca linear por `ChaveEvento`.
-- Download: busca linear por `DownloadID`.
+- Download: busca linear por `DownloadID`, valida `TokenHash` e registra uso/fingerprint somente apos gerar a copia protegida.
 
 ## Gargalos
 

@@ -75,6 +75,8 @@ Arquivo local sugerido: `backend/.env`.
 | `GALLERY_SESSION_SECRET` | Sim | Tokens de galeria |
 | `GALLERY_CODE_SALT` | Sim | Hash de código |
 | `DOWNLOAD_JWT_SECRET` | Sim | Links de download |
+| `FORENSIC_WATERMARK_SECRET` | Sim producao | HMAC do fingerprint forense por pedido/download |
+| `MEDIA_TOKEN_SECRET` | Opcional | Assinatura dedicada de tokens temporarios de preview; se ausente usa segredo de galeria/download |
 | `WATERMARK_API_SECRET` | Sim | Endpoints de processamento |
 | `CACHE_INVALIDATION_SECRET` | Sim | Invalidação de cache |
 | `SMTP_HOST` | Opcional | Entrega por e-mail |

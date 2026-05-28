@@ -5,6 +5,9 @@ jest.mock('../lib/google-sheets', () => ({
 jest.mock('../lib/gallery-access', () => ({
   tokenAllowsEvent: jest.fn(),
 }));
+jest.mock('../lib/media-token', () => ({
+  mediaTokenAllows: jest.fn(),
+}));
 jest.mock('../lib/google-drive', () => ({
   downloadFile: jest.fn(),
 }));
@@ -17,6 +20,7 @@ const express = require('express');
 const handler = require('../api/preview-evento');
 const sheets = require('../lib/google-sheets');
 const access = require('../lib/gallery-access');
+const mediaToken = require('../lib/media-token');
 const drive = require('../lib/google-drive');
 
 const app = express();
@@ -27,6 +31,7 @@ beforeEach(() => {
   sheets.buscarEvento.mockResolvedValue({ eventoId: 'EV1', publication: 'publicado', visibility: 'protegida' });
   sheets.buscarPreviewFoto.mockResolvedValue({ derivativeFileId: 'PREVIEW_PRIVATE_ID', variant: 'preview' });
   access.tokenAllowsEvent.mockReturnValue(false);
+  mediaToken.mediaTokenAllows.mockReturnValue(false);
   drive.downloadFile.mockResolvedValue({ buffer: Buffer.from('preview-bytes'), mimeType: 'image/jpeg' });
 });
 
@@ -37,11 +42,18 @@ it('bloqueia preview de galeria protegida sem sessao', async () => {
 });
 
 it('transmite somente a amostra do Drive apos acesso autorizado', async () => {
-  access.tokenAllowsEvent.mockReturnValueOnce(true);
-  const response = await request(app).get('/api/eventos/EV1/previews/F1?token=SESSION_TOKEN');
+  mediaToken.mediaTokenAllows.mockReturnValueOnce(true);
+  const response = await request(app).get('/api/eventos/EV1/previews/F1?mt=MEDIA_TOKEN');
   expect(response.status).toBe(200);
   expect(response.headers['content-type']).toContain('image/jpeg');
   expect(response.headers['cache-control']).toContain('no-store');
+  expect(drive.downloadFile).toHaveBeenCalledWith('PREVIEW_PRIVATE_ID');
+});
+
+it('mantem fallback temporario para token legado de galeria', async () => {
+  access.tokenAllowsEvent.mockReturnValueOnce(true);
+  const response = await request(app).get('/api/eventos/EV1/previews/F1?token=SESSION_TOKEN');
+  expect(response.status).toBe(200);
   expect(drive.downloadFile).toHaveBeenCalledWith('PREVIEW_PRIVATE_ID');
 });
 

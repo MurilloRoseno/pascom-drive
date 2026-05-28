@@ -114,7 +114,7 @@ function notificarErroProcessamento(arquivo, erro) {
   }
 }
 
-function solicitarDerivado(fileId, capa, variant, backendUrl, headers) {
+function solicitarDerivado(fileId, capa, variant, backendUrl, headers, watermarkSeed) {
   var response = UrlFetchApp.fetch(backendUrl + (capa ? '/api/cover-preview' : '/api/watermark'), {
     method: 'POST',
     headers: headers,
@@ -122,6 +122,7 @@ function solicitarDerivado(fileId, capa, variant, backendUrl, headers) {
       fileId: fileId,
       watermarkType: 'auto',
       variant: variant,
+      watermarkSeed: watermarkSeed || fileId,
     }),
     muteHttpExceptions: true,
   });
@@ -167,8 +168,8 @@ function processarFoto(arquivo, eventoId, counter) {
     _preprocessarArquivo(arquivo, backendUrl, headers);
 
     // 2. Call backend to apply watermark — returns raw JPEG bytes
-    var previewBlob = solicitarDerivado(arquivo.getId(), capa, 'preview', backendUrl, headers);
-    var thumbnailBlob = solicitarDerivado(arquivo.getId(), capa, 'thumbnail', backendUrl, headers);
+    var previewBlob = solicitarDerivado(arquivo.getId(), capa, 'preview', backendUrl, headers, evento + ':' + id + ':preview');
+    var thumbnailBlob = solicitarDerivado(arquivo.getId(), capa, 'thumbnail', backendUrl, headers, evento + ':' + id + ':thumbnail');
 
     // 3. Save the returned JPEG blob to AMOSTRAS folder as the authenticated user
     //    (service account has no Drive quota, but Apps Script runs as the user who does)

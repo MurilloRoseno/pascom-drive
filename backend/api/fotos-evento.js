@@ -1,5 +1,6 @@
 const { buscarEvento, listarFotosEvento } = require('../lib/google-sheets');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
+const { appendMediaToken, issueMediaToken } = require('../lib/media-token');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
@@ -18,7 +19,6 @@ module.exports = async function handler(req, res, next) {
     delete safeEvent.codeHash;
     delete safeEvent.codeVersion;
     const photos = await listarFotosEvento(event.eventoId);
-    const tokenQuery = event.visibility === 'protegida' ? `?token=${encodeURIComponent(token)}` : '';
     if (event.visibility === 'publica') {
       res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
       res.setHeader('Vercel-Cache-Tag', `evento-${event.eventoId},media-${event.eventoId}`);
@@ -27,11 +27,15 @@ module.exports = async function handler(req, res, next) {
     }
     return res.json({
       event: safeEvent,
-      photos: photos.map((photo) => ({
-        ...photo,
-        previewUrl: `${photo.previewUrl}${tokenQuery}`,
-        thumbnailUrl: `${photo.thumbnailUrl || photo.previewUrl}${tokenQuery}`,
-      })),
+      photos: photos.map((photo) => {
+        const previewToken = issueMediaToken({ eventoId: event.eventoId, fotoId: photo.id, variant: 'preview' });
+        const thumbnailToken = issueMediaToken({ eventoId: event.eventoId, fotoId: photo.id, variant: 'thumbnail' });
+        return {
+          ...photo,
+          previewUrl: appendMediaToken(photo.previewUrl, previewToken),
+          thumbnailUrl: appendMediaToken(photo.thumbnailUrl || photo.previewUrl, thumbnailToken),
+        };
+      }),
     });
   } catch (error) {
     next(error);

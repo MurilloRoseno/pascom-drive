@@ -547,6 +547,20 @@ a {
 .sales-photo button:disabled { cursor: not-allowed; opacity: .88; }
 .sales-photo.is-selected button { border-color: var(--photo-accent-dark); }
 .sales-photo img { display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; user-select: none; pointer-events: none; }
+.sales-photo button::after,
+.photo-button::after,
+.lightbox-image-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  pointer-events: none;
+}
+.photo-button,
+.lightbox-image-wrap {
+  position: relative;
+}
 .watermark-badge {
   position: absolute;
   top: 12px;

@@ -52,17 +52,17 @@ describe('POST /api/watermark', () => {
 
   it('uses automatic watermark selection by default', async () => {
     await request(app).post('/api/watermark').set('x-watermark-secret', 'test-watermark-secret').send(VALID_BODY);
-    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'auto', 'preview');
+    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'auto', 'preview', { seed: 'file-abc-123' });
   });
 
   it('accepts watermarkType bw', async () => {
     await request(app).post('/api/watermark').set('x-watermark-secret', 'test-watermark-secret').send({ ...VALID_BODY, watermarkType: 'bw' });
-    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'bw', 'preview');
+    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'bw', 'preview', { seed: 'file-abc-123' });
   });
 
   it('gera miniatura otimizada quando solicitada', async () => {
     await request(app).post('/api/watermark').set('x-watermark-secret', 'test-watermark-secret').send({ ...VALID_BODY, variant: 'thumbnail' });
-    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'auto', 'thumbnail');
+    expect(compositeWatermark).toHaveBeenCalledWith(expect.any(Buffer), 'auto', 'thumbnail', { seed: 'file-abc-123' });
   });
 
   it('returns 400 when fileId is missing', async () => {
