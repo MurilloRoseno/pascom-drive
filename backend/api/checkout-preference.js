@@ -3,7 +3,7 @@ const {
   buscarFotosParaCompra, listarRegrasPagamento, registrarPedido, novoPedidoId,
 } = require('../lib/google-sheets');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
-const { calculatePricing } = require('../lib/pricing');
+const { calcularComercial } = require('../lib/commercial-rules');
 const { criarPreferencia } = require('../lib/mercado-pago');
 
 module.exports = async function handler(req, res, next) {
@@ -24,7 +24,13 @@ module.exports = async function handler(req, res, next) {
     );
     if (blocked) return res.status(401).json({ error: 'Acesso expirado para uma galeria protegida.' });
 
-    const pricing = calculatePricing(items.length, input.paymentMethod, await listarRegrasPagamento());
+    const pricing = await calcularComercial({
+      items,
+      paymentMethod: input.paymentMethod,
+      paymentRules: await listarRegrasPagamento(),
+      couponCode: input.couponCode,
+      packageId: input.packageId,
+    });
     const id = novoPedidoId();
     const preference = await criarPreferencia({
       pedidoId: id,
@@ -40,11 +46,13 @@ module.exports = async function handler(req, res, next) {
       email: input.email,
       whatsapp: input.whatsapp,
       paymentMethod: input.paymentMethod,
+      couponCode: pricing.couponApplied?.code || '',
+      packageId: pricing.packageApplied?.id || '',
       pricing,
     }, items);
     return res.status(201).json({ pedidoId: id, checkoutUrl: preference.checkoutUrl, pricing });
   } catch (error) {
-    if (/Pagamento indisponivel/.test(error.message)) return res.status(409).json({ error: error.message });
+    if (/Pagamento indisponivel|Cupom invalido|Pacote invalido/.test(error.message)) return res.status(409).json({ error: error.message });
     next(error);
   }
 };

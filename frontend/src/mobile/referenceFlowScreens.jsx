@@ -4,7 +4,7 @@ import { I } from './referenceIcons.jsx';
 import { brl, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, getCoverPhoto, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
 import { checkoutSchema } from '../lib/validation.js';
 
-export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols, isDevtoolsOpen = false }) {
+export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols, offers = { coupons: [], packages: [] }, selectPackage, favoriteIds = new Set(), favoriteCount = 0, addFavorites, toggleFavorite, shareEvent, isDevtoolsOpen = false }) {
   if (!ev) return null;
   const cover = getCoverPhoto(ev);
   return (
@@ -25,14 +25,15 @@ export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, se
           <MetaItem icon="Clock">{ev.hora || 'Horário paroquial'}</MetaItem>
           <MetaItem icon="MapPin">{ev.local}</MetaItem>
         </div>
+        <button className="btn btn-secondary btn-sm" style={{ marginTop: 12 }} onClick={() => shareEvent?.()}><I.Share className="icon icon-sm" /> Compartilhar evento</button>
       </section>
       <section className="mobile-protected-section"><FlowProtectedPreviewCard /></section>
-      {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} isDevtoolsOpen={isDevtoolsOpen} />}
+      {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} offers={offers} selectPackage={selectPackage} favoriteIds={favoriteIds} favoriteCount={favoriteCount} addFavorites={addFavorites} toggleFavorite={toggleFavorite} isDevtoolsOpen={isDevtoolsOpen} />}
     </div>
   );
 }
 
-function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true, isDevtoolsOpen = false }) {
+function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true, offers = { coupons: [], packages: [] }, selectPackage, favoriteIds = new Set(), favoriteCount = 0, addFavorites, toggleFavorite, isDevtoolsOpen = false }) {
   const selectedIds = new Set(cart.map((item) => item.photoId));
   return (
     <section className="section mobile-gallery-section" style={{ paddingTop: 12, paddingBottom: sticky && cart.length > 0 ? 92 : undefined }}>
@@ -40,10 +41,11 @@ function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, g
         <strong>{photos.length || ev.totalFotos} fotos</strong>
         <DensityToggle value={gridCols} onChange={setGridCols} />
       </div>
+      {(offers.packages?.length > 0 || offers.coupons?.length > 0 || favoriteCount > 0) && <div className="mobile-offers-card card" style={{ padding: 12, marginTop: 10 }}><div className="eyebrow">Compra pastoral</div><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>{offers.packages?.map((pkg) => <button key={pkg.id} className="tag tag-yellow" onClick={() => selectPackage?.(pkg)}>{pkg.description || 'Aplicar pacote'}</button>)}{offers.coupons?.map((coupon) => <span key={coupon.code} className="tag">Cupom {coupon.code}</span>)}{favoriteCount > 0 && <button className="tag" onClick={addFavorites}>Adicionar favoritos</button>}</div></div>}
       {isDevtoolsOpen && <DevtoolsGalleryNotice />}
       {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid" style={{ gridTemplateColumns: `repeat(${gridCols}, 1fr)` }}>{photos.map((photo, index) => {
         const selected = selectedIds.has(photo.photoId);
-        return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}><button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
+        return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}>{toggleFavorite && <button className={`photo-fav ${favoriteIds.has(photo.photoId) ? 'active' : ''}`} onClick={(event) => { event.stopPropagation(); toggleFavorite(photo); }}>♡</button>}<button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
       })}</div>}
       <FlowPriceHelpCard />
     </section>
@@ -83,7 +85,7 @@ export function CartBar({ cart, onClick }) {
   return <button className="cart-bar" onClick={onClick} style={{ width: '100%', cursor: 'pointer', textAlign: 'left' }}><div style={{ display: 'inline-flex', alignItems: 'center', gap: 12, flex: 1 }}><span className="cart-bar-icon" style={{ width: 42, height: 42, borderRadius: 10, background: 'var(--brand)', color: 'var(--accent)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}><I.Bag className="icon" /><span className="mobile-count-badge" style={{ position: 'absolute', top: -4, right: -4, minWidth: 18, height: 18, padding: '0 4px', borderRadius: 999, background: 'var(--accent)', color: 'var(--brand-d)', fontSize: 10, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '2px solid var(--surface)' }}>{cart.length}</span></span><div className="cart-bar-info"><div className="count">{cart.length} {cart.length === 1 ? 'foto' : 'fotos'}</div><div className="sub">Subtotal {brl(subtotal)}</div></div></div><span className="btn btn-primary btn-sm" style={{ minHeight: 36 }}>Finalizar <I.ChevronRight className="icon icon-sm" /></span></button>;
 }
 
-export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMethod, error, loading, removeFromCart, go, pay }) {
+export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMethod, couponCode = '', setCouponCode, error, loading, removeFromCart, go, pay }) {
   const [step, setStep] = useState(1);
   const [resumoOpen, setResumoOpen] = useState(false);
   const subtotal = cart.reduce((sum, item) => sum + Number(item.price || PRECO_FOTO), 0);
@@ -93,12 +95,48 @@ export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMeth
     <div className="scroll" style={{ paddingBottom: 100 }}>
       <section style={{ background: 'linear-gradient(160deg, var(--brand-d) 0%, var(--brand) 100%)', color: '#fff', padding: '58px 18px 22px', position: 'relative', overflow: 'hidden' }}>
         <button onClick={() => go({ name: 'galerias' })} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, marginBottom: 10 }}><I.ChevronLeft className="icon icon-sm" /> Voltar</button>
-        <div className="eyebrow eyebrow-light">Compra segura</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Finalizar compra</h1><p className="body" style={{ color: 'rgba(255,255,255,0.75)', marginTop: 4, fontSize: 13 }}>Pagamento processado no ambiente do Mercado Pago.</p>
-        <div style={{ display: 'flex', gap: 6, marginTop: 16, alignItems: 'center' }}><Step n={1} label="Identificação" active={step === 1} done={step > 1} /><span style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.20)' }} /><Step n={2} label="Pagamento" active={step === 2} done={step > 2} /></div>
+        <div className="eyebrow eyebrow-light">Compra segura</div>
+        <h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Finalizar compra</h1>
+        <p className="body" style={{ color: 'rgba(255,255,255,0.75)', marginTop: 4, fontSize: 13 }}>Pagamento processado no ambiente do Mercado Pago.</p>
+        <div style={{ display: 'flex', gap: 6, marginTop: 16, alignItems: 'center' }}><Step n={1} label="Identifica??o" active={step === 1} done={step > 1} /><span style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.20)' }} /><Step n={2} label="Pagamento" active={step === 2} done={step > 2} /></div>
       </section>
-      <button onClick={() => setResumoOpen(!resumoOpen)} style={{ width: '100%', padding: '14px 18px', background: 'var(--surface-2)', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left' }}><div><div className="eyebrow">Resumo</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--brand)', marginTop: 2 }}>{cart.length} {cart.length === 1 ? 'foto' : 'fotos'} · {brl(total)}</div></div><I.ChevronDown className="icon" style={{ transition: 'transform 200ms', transform: resumoOpen ? 'rotate(180deg)' : 'rotate(0)', color: 'var(--brand)' }} /></button>
+      <button onClick={() => setResumoOpen(!resumoOpen)} style={{ width: '100%', padding: '14px 18px', background: 'var(--surface-2)', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left' }}>
+        <div><div className="eyebrow">Resumo</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--brand)', marginTop: 2 }}>{cart.length} {cart.length === 1 ? 'foto' : 'fotos'} ? {brl(total)}</div></div>
+        <I.ChevronDown className="icon" style={{ transition: 'transform 200ms', transform: resumoOpen ? 'rotate(180deg)' : 'rotate(0)', color: 'var(--brand)' }} />
+      </button>
       {resumoOpen && <CartSummary cart={cart} subtotal={subtotal} total={total} removeFromCart={removeFromCart} />}
-      {step === 1 ? <section className="section"><h2 className="h3">1. Identificação e entrega</h2><p className="body-sm" style={{ marginTop: 6 }}>As fotos em alta resolução serão enviadas pelos canais abaixo.</p><div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 16 }}><Field label="Nome completo" value={buyer.name} onChange={(value) => setBuyer({ ...buyer, name: value })} placeholder="Ex.: Maria Aparecida Souza" /><Field label="E-mail" value={buyer.email} onChange={(value) => setBuyer({ ...buyer, email: value })} placeholder="seu@email.com" type="email" hint="O e-mail recebe os links automaticamente." /><Field label="WhatsApp" value={buyer.whatsapp} onChange={(value) => setBuyer({ ...buyer, whatsapp: value.replace(/\D/g, '') })} placeholder="(99) 99982-0610" hint="Usado pela secretaria para envio assistido, se necessário." /></div><div className="checkout-privacy-note" style={{ marginTop: 16, padding: 12, background: 'rgba(109,32,119,0.06)', border: '1px solid var(--line)', borderRadius: 10, display: 'flex', gap: 8, alignItems: 'flex-start' }}><I.Lock className="icon icon-sm" style={{ color: 'var(--brand)', flexShrink: 0, marginTop: 2 }} /><p className="caption" style={{ color: 'var(--ink-2)' }}>Seus dados são protegidos conforme a <strong>LGPD</strong> e usados apenas para entrega das fotos.</p></div>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 10 }}>{error}</p>}<button className="btn btn-primary btn-block" style={{ marginTop: 18 }} disabled={!canAdvance} onClick={() => canAdvance && setStep(2)}>Continuar para pagamento <I.ChevronRight className="icon" /></button></section> : <section className="section"><h2 className="h3">2. Forma de pagamento</h2><p className="body-sm" style={{ marginTop: 6 }}>Pague de forma segura. Após confirmação, a fila de processamento entrega suas fotos.</p><div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}><PayOption id="pix" value={method} onChange={setMethod} icon={I.Pix} title="Pix" hint="Confirmação rápida · sem taxas" tag="Recomendado" /><PayOption id="caixa" value={method} onChange={() => {}} icon={I.Bank} title="Débito virtual CAIXA" hint="Visual do protótipo · funcionalidade futura" disabled /><PayOption id="credit_card" value={method} onChange={setMethod} icon={I.CreditCard} title="Cartão de crédito" hint="Crédito em 1x · Mercado Pago" /></div><div style={{ marginTop: 16, padding: 12, background: 'var(--surface-2)', borderRadius: 10 }}><div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--ink-3)' }}>Total a pagar</span><strong style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--brand)' }}>{brl(total)}</strong></div></div>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 10 }}>{error}</p>}<button className="btn btn-primary btn-block" style={{ marginTop: 18 }} disabled={loading || !pricing} onClick={pay}>{loading ? 'Abrindo Mercado Pago...' : 'Pagar no Mercado Pago'}</button><button className="btn btn-ghost btn-block btn-sm" style={{ marginTop: 8 }} onClick={() => setStep(1)}>Voltar à identificação</button></section>}
+      {step === 1 ? (
+        <section className="section">
+          <h2 className="h3">1. Identifica??o e entrega</h2>
+          <p className="body-sm" style={{ marginTop: 6 }}>As fotos em alta resolu??o ser?o enviadas pelos canais abaixo.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 16 }}>
+            <Field label="Nome completo" value={buyer.name} onChange={(value) => setBuyer({ ...buyer, name: value })} placeholder="Ex.: Maria Aparecida Souza" />
+            <Field label="E-mail" value={buyer.email} onChange={(value) => setBuyer({ ...buyer, email: value })} placeholder="seu@email.com" type="email" hint="O e-mail recebe os links automaticamente." />
+            <Field label="WhatsApp" value={buyer.whatsapp} onChange={(value) => setBuyer({ ...buyer, whatsapp: value.replace(/\D/g, '') })} placeholder="(99) 99982-0610" hint="Usado pela secretaria para envio assistido, se necess?rio." />
+          </div>
+          <div className="checkout-privacy-note" style={{ marginTop: 16, padding: 12, background: 'rgba(109,32,119,0.06)', border: '1px solid var(--line)', borderRadius: 10, display: 'flex', gap: 8, alignItems: 'flex-start' }}><I.Lock className="icon icon-sm" style={{ color: 'var(--brand)', flexShrink: 0, marginTop: 2 }} /><p className="caption" style={{ color: 'var(--ink-2)' }}>Seus dados s?o protegidos conforme a <strong>LGPD</strong> e usados apenas para entrega das fotos.</p></div>
+          {error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 10 }}>{error}</p>}
+          <button className="btn btn-primary btn-block" style={{ marginTop: 18 }} disabled={!canAdvance} onClick={() => canAdvance && setStep(2)}>Continuar para pagamento <I.ChevronRight className="icon" /></button>
+        </section>
+      ) : (
+        <section className="section">
+          <h2 className="h3">2. Forma de pagamento</h2>
+          <p className="body-sm" style={{ marginTop: 6 }}>Pague de forma segura. Ap?s confirma??o, a fila de processamento entrega suas fotos.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 16 }}>
+            <PayOption id="pix" value={method} onChange={setMethod} icon={I.Pix} title="Pix" hint="Confirma??o r?pida ? sem taxas" tag="Recomendado" />
+            <PayOption id="caixa" value={method} onChange={() => {}} icon={I.Bank} title="D?bito virtual CAIXA" hint="Visual do prot?tipo ? funcionalidade futura" disabled />
+            <PayOption id="credit_card" value={method} onChange={setMethod} icon={I.CreditCard} title="Cart?o de cr?dito" hint="Cr?dito em 1x ? Mercado Pago" />
+          </div>
+          {setCouponCode && <Field label="Cupom pastoral" value={couponCode} onChange={(value) => setCouponCode(value.toUpperCase())} placeholder="PASTORAL10" hint="Validado pela par?quia antes do pagamento." />}
+          <div style={{ marginTop: 16, padding: 12, background: 'var(--surface-2)', borderRadius: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}><span style={{ color: 'var(--ink-3)' }}>Total a pagar</span><strong style={{ fontFamily: 'var(--font-display)', fontSize: 20, color: 'var(--brand)' }}>{brl(total)}</strong></div>
+            {pricing?.discountTotal > 0 && <div className="caption" style={{ marginTop: 6, color: 'var(--parish-green)' }}>Desconto aplicado: {brl(pricing.discountTotal)}</div>}
+          </div>
+          {error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 10 }}>{error}</p>}
+          <button className="btn btn-primary btn-block" style={{ marginTop: 18 }} disabled={loading || !pricing} onClick={pay}>{loading ? 'Abrindo Mercado Pago...' : 'Pagar no Mercado Pago'}</button>
+          <button className="btn btn-ghost btn-block btn-sm" style={{ marginTop: 8 }} onClick={() => setStep(1)}>Voltar ? identifica??o</button>
+        </section>
+      )}
     </div>
   );
 }

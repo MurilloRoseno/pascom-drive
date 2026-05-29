@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import './privacy-policy.css';
 
-const lastUpdate = '28 de maio de 2026';
+const lastUpdate = '29 de maio de 2026';
 const controllerName = 'Paróquia São Rafael';
 const controllerAddress = 'Av. Contorno, Qd 59 Lt 09, Jardim de Alah, Açailândia - MA, CEP 65930-000';
 const controllerEmail = 'paroquiasaorafael@hotmail.com';
@@ -153,6 +153,7 @@ export default function PrivacyPolicy({ mobile = false }) {
               <ul className="privacy-list">
                 <Li><strong>Identificação e contato:</strong> nome, e-mail e WhatsApp informados no checkout ou no atendimento.</Li>
                 <Li><strong>Pedido:</strong> fotos selecionadas, evento relacionado, meio de pagamento, status do pedido e histórico de entrega.</Li>
+                <Li><strong>Recuperação de pedido:</strong> e-mail e código/pedido informados para localizar compras sem login.</Li>
                 <Li><strong>Acesso à galeria:</strong> código de acesso quando a galeria for protegida e token temporário de sessão.</Li>
                 <Li><strong>Comunicações:</strong> mensagens enviadas por e-mail, WhatsApp ou contato com a secretaria.</Li>
               </ul>
@@ -162,6 +163,7 @@ export default function PrivacyPolicy({ mobile = false }) {
                 <Li>Endereço IP, data/hora de acesso, navegador, tipo de dispositivo e registros técnicos de segurança.</Li>
                 <Li>Páginas acessadas, eventos consultados e erros técnicos necessários para diagnóstico e proteção da plataforma.</Li>
                 <Li>Dados mínimos em `sessionStorage` para manter tokens de galeria protegida durante a navegação.</Li>
+                <Li>Dados locais em `localStorage` para favoritos antes da compra, contendo apenas IDs de evento/foto neste dispositivo.</Li>
                 <Li>Identificador forense não sensível vinculado ao pedido/download, usado para rastrear vazamento de arquivo comprado sem embutir nome, e-mail ou WhatsApp na imagem.</Li>
               </ul>
             </SubSection>
@@ -185,6 +187,8 @@ export default function PrivacyPolicy({ mobile = false }) {
               <Li>Controlar acesso a galerias protegidas e reduzir exposição indevida de imagens.</Li>
               <Li>Processar seleção de fotos, cotação, checkout e confirmação de pagamento.</Li>
               <Li>Enviar links de entrega por e-mail e apoiar atendimento por WhatsApp quando necessário.</Li>
+              <Li>Permitir recuperação de pedido por e-mail e código, sem criar conta de usuário.</Li>
+              <Li>Aplicar cupons pastorais e pacotes promocionais de forma auditável e proporcional.</Li>
               <Li>Prevenir fraudes, diagnosticar falhas, manter auditoria e proteger a integridade do sistema.</Li>
               <Li>Aplicar fingerprint forense proporcional em fotos entregues após pagamento para desestimular redistribuição indevida.</Li>
               <Li>Cumprir obrigações legais, contábeis, fiscais, pastorais e de segurança aplicáveis.</Li>
@@ -251,6 +255,7 @@ export default function PrivacyPolicy({ mobile = false }) {
             <p>O Pascom Drive usa armazenamento técnico mínimo para funcionamento da experiência:</p>
             <ul className="privacy-list">
               <Li><strong>Session storage:</strong> guarda temporariamente tokens de galerias protegidas no navegador.</Li>
+              <Li><strong>Local storage:</strong> guarda favoritos locais por dispositivo antes da compra; esses favoritos não são enviados ao backend no MVP atual.</Li>
               <Li><strong>Cookies/headers técnicos:</strong> podem ser usados pela infraestrutura para segurança, cache e entrega do site.</Li>
               <Li><strong>Sem publicidade comportamental:</strong> não há cookies de anúncios ou rastreamento comercial de terceiros planejados no MVP atual.</Li>
               <Li><strong>Tokens de mídia:</strong> links de preview podem conter assinatura temporária para impedir coleta em massa e expiram automaticamente.</Li>

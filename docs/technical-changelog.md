@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-29 - Funcionalidades comerciais desktop/mobile
+
+- **Tipo:** produto, backend, frontend, Apps Script e documentacao.
+- **Alteracao:** adicionados recuperar pedido por e-mail/codigo, cupons pastorais, pacotes promocionais, favoritos locais, compartilhamento controlado e alias publico `/e/:slug`.
+- **Motivo:** melhorar conversao e suporte sem login, mantendo regras comerciais centralizadas no backend e experiencia equivalente em desktop/mobile.
+- **Impacto:** checkout passa a aceitar `couponCode` e `packageId`; pedido registra `TotalAntesDesconto`, `CupomCodigo`, `DescontoTotal` e `PacoteID`; Apps Script cria/migra `Cupons`, `Pacotes` e `SlugPublico`.
+- **Breaking changes:** nenhum contrato publico removido; descontos nao sao empilhados e o backend aplica a melhor condicao valida.
+- **Migracoes necessarias:** executar `inicializarEstrutura()` no Apps Script para criar `Cupons`, `Pacotes` e novas colunas comerciais.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/apis.md`, `docs/database.md`, `docs/system-flows.md`, `docs/components.md`, `docs/mobile-experience.md`, `docs/technical-changelog.md` e `frontend/src/pages/PrivacyPolicy.jsx`.
+
 ## 2026-05-28 - Hardening de seguranca multicamadas
 
 - **Tipo:** seguranca, backend, Apps Script, CI e documentacao.

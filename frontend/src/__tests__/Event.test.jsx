@@ -6,10 +6,11 @@ import EventPage from '../pages/Event';
 jest.mock('../lib/api', () => ({
   obterEvento: jest.fn(),
   listarFotosEvento: jest.fn(),
+  listarOfertasEvento: jest.fn(),
   validarAcessoGaleria: jest.fn(),
 }));
 
-const { obterEvento, listarFotosEvento } = require('../lib/api');
+const { obterEvento, listarFotosEvento, listarOfertasEvento } = require('../lib/api');
 
 it('mantem no grid a indicacao da foto selecionada para compra', async () => {
   obterEvento.mockResolvedValue({
@@ -27,6 +28,7 @@ it('mantem no grid a indicacao da foto selecionada para compra', async () => {
   listarFotosEvento.mockResolvedValue({
     photos: [{ id: 'F1', previewUrl: '/foto.jpg', thumbnailUrl: '/foto.jpg', price: 10, availableForSale: true }],
   });
+  listarOfertasEvento.mockResolvedValue({ offers: { coupons: [], packages: [] } });
 
   render(
     <MemoryRouter initialEntries={['/evento/EV1']}>

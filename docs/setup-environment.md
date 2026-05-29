@@ -154,9 +154,10 @@ O backend não tem etapa de build; Vercel empacota `backend/api/index.js` com `@
 3. Configure webhook Mercado Pago apontando para `/api/webhook/mercado-pago`.
 4. Configure `APPS_SCRIPT_HMAC_SECRET` na Vercel e nas propriedades Apps Script antes de desabilitar fallback legado.
 5. Configure propriedades Apps Script.
-6. Faça deploy Vercel.
-7. Publique Apps Script.
-8. Teste fluxo sandbox completo.
+6. Execute `inicializarEstrutura()` no Apps Script para criar/migrar `Cupons`, `Pacotes`, `SlugPublico` e colunas comerciais de `Pedidos`.
+7. Faça deploy Vercel.
+8. Publique Apps Script.
+9. Teste fluxo sandbox completo, incluindo cupom/pacote e recuperacao de pedido.
 
 ## Docker
 

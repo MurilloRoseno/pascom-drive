@@ -7,6 +7,7 @@
 - Manter GitHub Actions com testes por pacote e auditoria npm informativa.
 - Configurar `APPS_SCRIPT_HMAC_SECRET` em Vercel e Apps Script; depois desligar `ALLOW_LEGACY_WORKER_SECRET`.
 - Criar teste de contrato para headers do Google Sheets.
+- Validar `Cupons`, `Pacotes`, `SlugPublico` e colunas comerciais de `Pedidos` em ambiente real apos executar `inicializarEstrutura()`.
 - Configurar `FORENSIC_WATERMARK_SECRET` em producao e validar download fingerprinted em smoke real.
 - Formalizar checklist Mercado Pago sandbox antes de produção.
 - Padronizar timestamps e timezone.
@@ -20,12 +21,15 @@
 - Adicionar logs estruturados para webhook, entrega, download e bloqueios de midia.
 - Criar rotina de reconciliação de pedidos pagos sem entrega.
 - Executar auditoria comercial periodica para detectar pedidos pagos sem downloads, downloads sem item comprado e webhooks duplicados.
+- Criar rotina de auditoria comercial para cupom acima do limite, pacote aplicado sem quantidade minima e divergencia entre quote/preference.
+- Extrair regras de ofertas para banco transacional quando volume ou concorrencia aumentarem.
 
 ## Prioridade Baixa
 
 - Remover alias `/api/criar-pagamento` após janela de depreciação.
 - Reduzir `unsafe-inline` na CSP.
 - Avaliar persistência de carrinho em `sessionStorage`.
+- Avaliar sincronizacao opcional de favoritos somente se houver autenticacao e consentimento claro.
 - Avaliar TypeScript apenas após V1 estável.
 - Criar licença formal.
 

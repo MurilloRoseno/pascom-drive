@@ -10,6 +10,8 @@ import EventPage from '../pages/Event.jsx';
 import CheckoutPage from '../pages/Checkout.jsx';
 import PaymentReturnPage from '../pages/PaymentReturn.jsx';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
+import RecoverOrderPage from '../pages/RecoverOrder.jsx';
+import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import '../index.css';
 import '../reference-pages.css';
 import '../home-reference.css';
@@ -29,8 +31,10 @@ export default function DesktopApp() {
           <Route path="/" element={<HomePage />} />
           <Route path="/buscar" element={<SearchPage />} />
           <Route path="/categoria" element={<LegacyCategoryRedirect />} />
+          <Route path="/e/:slug" element={<EventSlugRedirect />} />
           <Route path="/privacidade" element={<PrivacyPolicy />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
+          <Route path="/recuperar-pedido" element={<RecoverOrderPage />} />
           <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
         </Routes>
         <CarrinhoProvider>

@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { rows, sheet, fotoFromRow } = require('./google-sheets.shared');
+const { incrementarUsoCupom } = require('./commercial-rules');
 
 async function registrarPedido(pedido, itens) {
   const pedidos = await sheet('Pedidos');
@@ -18,6 +19,10 @@ async function registrarPedido(pedido, itens) {
     TaxaServico: pedido.pricing.serviceFee,
     TaxaComodidade: pedido.pricing.convenienceFee,
     CustoPagamentoEstimado: pedido.pricing.paymentCost,
+    TotalAntesDesconto: pedido.pricing.totalBeforeDiscount,
+    CupomCodigo: pedido.couponCode || '',
+    DescontoTotal: pedido.pricing.discountTotal || 0,
+    PacoteID: pedido.packageId || '',
     Total: pedido.pricing.total,
     TarifaReal: '',
     DataCriacao: new Date().toISOString(),
@@ -28,6 +33,7 @@ async function registrarPedido(pedido, itens) {
     EventoID: item.foto.eventoId,
     PrecoUnitario: item.foto.price,
   })));
+  if (pedido.couponCode) await incrementarUsoCupom(pedido.couponCode);
 }
 
 async function buscarPedidoById(pedidoId) {
@@ -42,6 +48,12 @@ async function buscarPedidoById(pedidoId) {
     email: match.get('Email'),
     whatsapp: match.get('WhatsApp'),
     total: Number(match.get('Total') || 0),
+    createdAt: match.get('DataCriacao') || '',
+    paidAt: match.get('DataPagamento') || '',
+    totalBeforeDiscount: Number(match.get('TotalAntesDesconto') || match.get('Total') || 0),
+    discountTotal: Number(match.get('DescontoTotal') || 0),
+    couponCode: match.get('CupomCodigo') || '',
+    packageId: match.get('PacoteID') || '',
   };
 }
 

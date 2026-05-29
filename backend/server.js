@@ -3,7 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  processamento, acessoGaleria, download, webhook, administracao,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao,
 } = require('./middleware/rate-limit');
 const { mediaAbuseGuard } = require('./middleware/media-abuse');
 const errorHandler = require('./middleware/error-handler');
@@ -18,10 +18,13 @@ const preprocessHandler = require('./api/preprocess');
 const coverPreviewHandler = require('./api/cover-preview');
 const downloadHandler = require('./api/download');
 const eventosHandler = require('./api/eventos');
+const eventoSlugHandler = require('./api/evento-slug');
 const fotosEventoHandler = require('./api/fotos-evento');
+const ofertasEventoHandler = require('./api/ofertas-evento');
 const galeriaAcessoHandler = require('./api/galeria-acesso');
 const previewEventoHandler = require('./api/preview-evento');
 const cacheInvalidateHandler = require('./api/cache-invalidate');
+const pedidoRecuperarHandler = require('./api/pedido-recuperar');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -63,6 +66,7 @@ app.get('/api/health', healthHandler);
 app.post('/api/checkout/preference', pagamento, checkoutPreferenceHandler);
 app.post('/api/checkout/quote', cotacao, checkoutQuoteHandler);
 app.post('/api/criar-pagamento', pagamento, checkoutPreferenceHandler);
+app.post('/api/pedidos/recuperar', recuperacaoPedido, pedidoRecuperarHandler);
 app.get('/api/status-pagamento', statusConsulta, statusPagamentoHandler);
 app.post('/api/webhook/mercado-pago', webhook, webhookHandler);
 app.post('/api/watermark', processamento, watermarkHandler);
@@ -70,7 +74,9 @@ app.post('/api/preprocess', processamento, preprocessHandler);
 app.post('/api/cover-preview', processamento, coverPreviewHandler);
 app.get('/api/download', download, downloadHandler);
 app.get('/api/eventos', fotos, eventosHandler);
+app.get('/api/e/:slug', fotos, eventoSlugHandler);
 app.get('/api/eventos/:eventoId', fotos, eventosHandler);
+app.get('/api/eventos/:eventoId/ofertas', fotos, ofertasEventoHandler);
 app.get('/api/eventos/:eventoId/fotos', fotos, fotosEventoHandler);
 app.get('/api/eventos/:eventoId/previews/:fotoId', midiaGaleria, mediaAbuseGuard, previewEventoHandler);
 app.post('/api/eventos/:eventoId/acesso', acessoGaleria, galeriaAcessoHandler);

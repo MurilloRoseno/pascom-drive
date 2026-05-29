@@ -18,9 +18,17 @@ export function obterEvento(eventoId) {
   return request(`/api/eventos/${encodeURIComponent(eventoId)}`);
 }
 
+export function obterEventoPorSlug(slug) {
+  return request(`/api/e/${encodeURIComponent(slug)}`);
+}
+
 export function listarFotosEvento(eventoId, token = '') {
   const headers = token ? { 'x-gallery-token': token } : undefined;
   return request(`/api/eventos/${encodeURIComponent(eventoId)}/fotos`, { headers });
+}
+
+export function listarOfertasEvento(eventoId) {
+  return request(`/api/eventos/${encodeURIComponent(eventoId)}/ofertas`);
 }
 
 export function validarAcessoGaleria(eventoId, code) {
@@ -49,4 +57,12 @@ export function criarPagamento(payload) {
 
 export function statusPagamento(pedidoId) {
   return request(`/api/status-pagamento?pedidoId=${encodeURIComponent(pedidoId)}`);
+}
+
+export function recuperarPedido(payload) {
+  return request('/api/pedidos/recuperar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 }

@@ -55,6 +55,11 @@ async function buscarEvento(eventoId) {
   return (await listarEventos()).find((event) => event.eventoId === eventoId) || null;
 }
 
+async function buscarEventoPorSlug(slug) {
+  const normalized = String(slug || '').trim().toLowerCase();
+  return (await listarEventos()).find((event) => String(event.slug || '').toLowerCase() === normalized) || null;
+}
+
 async function listarFotosEvento(eventoId) {
   const { value: photos } = await readThrough(`fotos-evento:${eventoId}:v2`, async () => (
     (await rows('Fotos')).map(fotoFromRow)
@@ -112,6 +117,7 @@ module.exports = {
   catalogoPublicado,
   listarEventosPublicados,
   buscarEvento,
+  buscarEventoPorSlug,
   listarFotosEvento,
   buscarPreviewFoto,
   buscarFotosParaCompra,

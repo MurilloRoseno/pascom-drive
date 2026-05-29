@@ -7,7 +7,7 @@ var EVENTOS_HEADERS = [
   'ProtecaoMenores', 'CodigoHash', 'CodigoVersao', 'CodigoGeradoEm',
   'CodigoRevogadoEm', 'TotalFotos', 'FotosProcessadas', 'FotosEntregues',
   'DataCriacao', 'DataInicio', 'DataConclusao', 'DataPublicacao', 'Erros',
-  'PastaRemovida',
+  'PastaRemovida', 'SlugPublico',
 ];
 
 var FOTOS_HEADERS = [
@@ -20,7 +20,8 @@ var FOTOS_HEADERS = [
 var PEDIDOS_HEADERS = [
   'PedidoID', 'PreferenceID', 'PaymentID', 'Status', 'Nome', 'Email',
   'WhatsApp', 'MeioPagamento', 'Subtotal', 'TaxaServico', 'TaxaComodidade',
-  'CustoPagamentoEstimado', 'Total', 'TarifaReal', 'DataCriacao',
+  'CustoPagamentoEstimado', 'TotalAntesDesconto', 'CupomCodigo', 'DescontoTotal',
+  'PacoteID', 'Total', 'TarifaReal', 'DataCriacao',
   'DataPagamento', 'EmailEnviadoEm', 'EmailStatus', 'EmailErro',
   'EmailUltimaTentativaEm', 'WhatsAppLink',
 ];
@@ -33,6 +34,8 @@ var DOWNLOAD_HEADERS = [
   'FingerprintAplicadoEm', 'ExpiraEm', 'UsosMaximos', 'Usos', 'CriadoEm', 'UltimoUsoEm',
 ];
 var REGRAS_HEADERS = ['MeioPagamento', 'PercentualEstimado', 'ValorFixo', 'Vigencia', 'Ativo'];
+var CUPONS_HEADERS = ['Codigo', 'EventoID', 'TipoDesconto', 'Valor', 'Ativo', 'ValidoDe', 'ValidoAte', 'UsoMaximo', 'Usos', 'Descricao'];
+var PACOTES_HEADERS = ['PacoteID', 'EventoID', 'Tipo', 'QuantidadeMinima', 'PrecoPacote', 'PercentualDesconto', 'Ativo', 'Descricao'];
 
 var EVENTO_OPCOES = {
   Categoria: [
@@ -50,6 +53,16 @@ var REGRA_PAGAMENTO_OPCOES = {
   Ativo: ['SIM', 'NAO'],
 };
 
+var CUPOM_OPCOES = {
+  TipoDesconto: ['percentual', 'valor_fixo'],
+  Ativo: ['SIM', 'NAO'],
+};
+
+var PACOTE_OPCOES = {
+  Tipo: ['all_event_photos', 'quantity_bundle', 'family_combo'],
+  Ativo: ['SIM', 'NAO'],
+};
+
 var ABAS_COMERCIAIS = [
   ['Eventos', EVENTOS_HEADERS],
   ['Fotos', FOTOS_HEADERS],
@@ -58,6 +71,8 @@ var ABAS_COMERCIAIS = [
   ['Webhooks', WEBHOOK_HEADERS],
   ['Downloads', DOWNLOAD_HEADERS],
   ['RegrasPagamento', REGRAS_HEADERS],
+  ['Cupons', CUPONS_HEADERS],
+  ['Pacotes', PACOTES_HEADERS],
 ];
 
 var COL = {
@@ -244,6 +259,14 @@ function aplicarValidacoesAdministrativas() {
   var regras = ensureSheet('RegrasPagamento', REGRAS_HEADERS);
   Object.keys(REGRA_PAGAMENTO_OPCOES).forEach(function(field) {
     aplicarValidacaoLista(regras, field, REGRA_PAGAMENTO_OPCOES[field]);
+  });
+  var cupons = ensureSheet('Cupons', CUPONS_HEADERS);
+  Object.keys(CUPOM_OPCOES).forEach(function(field) {
+    aplicarValidacaoLista(cupons, field, CUPOM_OPCOES[field]);
+  });
+  var pacotes = ensureSheet('Pacotes', PACOTES_HEADERS);
+  Object.keys(PACOTE_OPCOES).forEach(function(field) {
+    aplicarValidacaoLista(pacotes, field, PACOTE_OPCOES[field]);
   });
 }
 

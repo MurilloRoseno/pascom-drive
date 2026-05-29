@@ -20,7 +20,7 @@ Cliente
 
 Em smartphones e tablets, a jornada usa a interface dedicada mobile portada do HTML standalone, com navegação inferior, calendário completo, perfil/Pascom, carrinho em bottom sheet, checkout em duas etapas e lightbox fullscreen.
 
-Funcionalidades que existem apenas como desenho no standalone permanecem como placeholders inativos até receberem backend real: favoritos, recuperação de pedidos por e-mail, débito virtual CAIXA, upload Pascom, relatórios e moderação.
+Favoritos locais, recuperação de pedidos por e-mail/código, cupons, pacotes e compartilhamento controlado já possuem integração real. Funcionalidades que ainda permanecem como placeholders inativos: débito virtual CAIXA, upload Pascom, relatórios e moderação.
 
 ## Fluxo de Política de Privacidade
 
@@ -62,6 +62,16 @@ Detalhes operacionais:
 5. Backend retorna fotos `Processada`, não capa e disponíveis conforme regra.
 6. Usuário adiciona fotos ao carrinho.
 
+## Fluxo de Favoritos Locais
+
+1. Usuário toca no botão de favorito em uma foto da galeria desktop ou mobile.
+2. Frontend grava apenas `eventoId` e `fotoId` em `localStorage`, sem enviar esse dado ao backend.
+3. Ao reabrir a galeria, os IDs favoritos são reconciliados com as fotos retornadas pela API.
+4. Fotos removidas, expiradas ou indisponíveis deixam de aparecer como compráveis e podem ser retiradas pelo usuário.
+5. Usuário pode adicionar favoritos válidos ao carrinho em lote.
+
+Favoritos são conveniência local por dispositivo, não histórico pastoral centralizado.
+
 ## Fluxo de Galeria Protegida
 
 1. Frontend tenta carregar fotos sem token.
@@ -98,16 +108,49 @@ Esta protecao e antifraude leve contra captura casual, nao DRM. A seguranca real
 
 1. Carrinho possui uma ou mais fotos.
 2. `CheckoutPage` coleta tokens por evento protegido.
-3. Frontend chama `POST /api/checkout/quote`.
-4. Backend valida payload e permissões.
-5. Backend lê fotos e regras de pagamento no Sheets.
-6. Backend calcula preço com `calculatePricing`.
-7. Usuário preenche nome, e-mail e WhatsApp.
-8. Frontend valida com Zod.
-9. Frontend chama `POST /api/checkout/preference`.
-10. Backend registra `Pedidos` e `ItensPedido`.
-11. Backend cria preferência no Mercado Pago.
-12. Frontend redireciona para `checkoutUrl`.
+3. Frontend envia `couponCode` e/ou `packageId` quando o usuario escolhe oferta.
+4. Frontend chama `POST /api/checkout/quote`.
+5. Backend valida payload e permissoes.
+6. Backend le fotos, regras de pagamento, cupons e pacotes no Sheets.
+7. Backend recalcula preco, nao empilha descontos e aplica a melhor condicao valida.
+8. Usuario preenche nome, e-mail e WhatsApp.
+9. Frontend valida com Zod.
+10. Frontend chama `POST /api/checkout/preference` com os mesmos dados comerciais.
+11. Backend registra `Pedidos`, `ItensPedido`, `CupomCodigo`, `DescontoTotal`, `PacoteID` e `TotalAntesDesconto`.
+12. Backend cria preferencia no Mercado Pago.
+13. Frontend redireciona para `checkoutUrl`.
+
+## Fluxo de Cupons e Pacotes
+
+1. Galeria chama `GET /api/eventos/:eventoId/ofertas`.
+2. Backend filtra `Cupons` e `Pacotes` ativos, vigentes e aplicaveis ao evento.
+3. Frontend mostra sugestoes como `Levar todas`, `Combo familia`, `3 fotos com desconto` e chips de cupom.
+4. Usuario seleciona pacote ou digita cupom no checkout.
+5. Backend valida evento, quantidade minima, vigencia, uso maximo e disponibilidade das fotos.
+6. Se cupom e pacote forem aplicaveis ao mesmo tempo, o backend compara condicoes e aplica apenas uma.
+7. Pedido salva o desconto aplicado para auditoria financeira e reconciliacao do webhook.
+
+## Fluxo de Recuperacao de Pedido
+
+1. Usuario abre `Recuperar pedido` no desktop ou a area publica de `/perfil` no mobile.
+2. Informa e-mail e `pedidoId`/codigo do pedido.
+3. Frontend chama `POST /api/pedidos/recuperar`.
+4. Backend aplica rate limit, valida payload e busca pedido por ID.
+5. E-mail informado deve bater com o e-mail salvo no pedido.
+6. Se o pedido estiver aprovado, backend regenera/retorna links seguros de download e mensagem assistida de WhatsApp.
+7. Se estiver pendente ou consultavel, a UI mostra status e orienta acompanhamento.
+
+## Fluxo de Compartilhamento Controlado
+
+1. Usuario toca em `Compartilhar evento`.
+2. Mobile usa Web Share API quando disponivel; desktop copia link para a area de transferencia.
+3. Link preferencial e `/evento/:eventoId`; quando `SlugPublico` existir, `/e/:slug` resolve para o mesmo evento.
+4. Evento protegido continua exigindo codigo de galeria; o link bonito nao libera fotos nem downloads.
+5. Metadados de compartilhamento devem usar titulo, capa editorial/thumbnail e descricao segura, sem expor originais.
+
+## Nota de Compatibilidade do Checkout
+
+O fluxo anterior sem cupons/pacotes foi substituido pelo fluxo acima. O alias legado `POST /api/criar-pagamento` continua apontando para `POST /api/checkout/preference`, mas usa as mesmas regras comerciais centralizadas.
 
 ## Fluxo Mercado Pago
 

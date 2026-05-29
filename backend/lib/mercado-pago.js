@@ -17,15 +17,25 @@ function paymentMethods(method) {
 async function criarPreferencia({ pedidoId, buyer, items, pricing, paymentMethod }) {
   const preference = new Preference(client());
   const publicUrl = process.env.PUBLIC_APP_URL || 'https://pascom-drive.vercel.app';
+  const hasDiscount = Number(pricing.discountTotal || 0) > 0;
+  const commercialItems = hasDiscount
+    ? [{
+      id: 'fotos-selecionadas',
+      title: `${items.length} foto${items.length === 1 ? '' : 's'} selecionada${items.length === 1 ? '' : 's'}`,
+      quantity: 1,
+      unit_price: pricing.discountedSubtotal,
+      currency_id: 'BRL',
+    }]
+    : items.map((item) => ({
+      id: item.foto.id,
+      title: `Foto - ${item.evento.title}`,
+      quantity: 1,
+      unit_price: item.foto.price,
+      currency_id: 'BRL',
+    }));
   const body = {
     items: [
-      ...items.map((item) => ({
-        id: item.foto.id,
-        title: `Foto - ${item.evento.title}`,
-        quantity: 1,
-        unit_price: item.foto.price,
-        currency_id: 'BRL',
-      })),
+      ...commercialItems,
       { id: 'taxa-servico', title: 'Taxa de servico', quantity: 1, unit_price: pricing.serviceFee, currency_id: 'BRL' },
       { id: 'taxa-comodidade', title: 'Taxa de comodidade', quantity: 1, unit_price: pricing.convenienceFee, currency_id: 'BRL' },
       { id: 'custo-pagamento', title: 'Custo estimado do pagamento', quantity: 1, unit_price: pricing.paymentCost, currency_id: 'BRL' },

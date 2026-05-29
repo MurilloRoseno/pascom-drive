@@ -48,6 +48,14 @@ const statusConsulta = rateLimit({
   message: { error: 'Muitas consultas de status. Aguarde 1 minuto.' },
 });
 
+const recuperacaoPedido = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas tentativas de recuperacao. Aguarde alguns minutos.' },
+});
+
 const processamento = rateLimit({
   windowMs: 60 * 1000,
   max: 240,
@@ -90,5 +98,5 @@ const administracao = rateLimit({
 
 module.exports = {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  processamento, acessoGaleria, download, webhook, administracao,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao,
 };

@@ -32,6 +32,26 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
 }
 
+.photo-fav {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 5;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.35);
+  background: rgba(0,0,0,.34);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.photo-fav.active {
+  background: var(--accent);
+  color: var(--brand-d);
+}
+
 .input-with-icon input {
   width: 100%;
   background: transparent;

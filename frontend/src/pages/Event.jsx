@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCarrinho } from '../hooks/useCarrinho.js';
-import { listarFotosEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
+import { listarFotosEvento, listarOfertasEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
 import { categoryLabel } from '../data/categories.js';
 import { dateLabel } from '../lib/event-format.js';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
+import { useFavoritePhotos } from '../shared/favorites.js';
 
 function eventToken(eventoId) {
   return sessionStorage.getItem(`gallery:${eventoId}`) || '';
@@ -24,11 +25,14 @@ export default function EventPage() {
   const [params, setParams] = useSearchParams();
   const [event, setEvent] = useState(null);
   const [photos, setPhotos] = useState([]);
+  const [offers, setOffers] = useState({ coupons: [], packages: [] });
+  const [shareStatus, setShareStatus] = useState('');
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const closeRef = useRef(null);
-  const { addFoto, removeFoto, isSelected } = useCarrinho();
+  const { addFoto, addFotos, removeFoto, isSelected, setPackageId } = useCarrinho();
+  const { favoriteIds, favoriteCount, favoritePhotos, toggleFavorite } = useFavoritePhotos(eventoId);
   const locked = event?.visibility === 'protegida' && !eventToken(eventoId);
   const { isDevtoolsOpen } = useDevtoolsGuard({ enabled: Boolean(event && !locked) });
 
@@ -51,6 +55,9 @@ export default function EventPage() {
     obterEvento(eventoId)
       .then(({ event: found }) => {
         setEvent(found);
+        listarOfertasEvento(eventoId)
+          .then(({ offers: foundOffers }) => setOffers(foundOffers))
+          .catch(() => setOffers({ coupons: [], packages: [] }));
         return loadPhotos(found);
       })
       .catch(() => {
@@ -108,6 +115,31 @@ export default function EventPage() {
     }
   }
 
+  function cartPhoto(photo) {
+    return { ...photo, event: event.title, eventoId: event.eventoId, url: photo.previewUrl };
+  }
+
+  function selectPackage(pkg) {
+    setPackageId(pkg.id);
+    if (pkg.type === 'all_event_photos') {
+      addFotos(photos.filter((photo) => event.salesAuthorized && photo.availableForSale === true).map(cartPhoto));
+    }
+  }
+
+  async function shareEvent() {
+    const url = event.slug ? `${window.location.origin}/e/${event.slug}` : window.location.href.split('?')[0];
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: event.title, text: 'Veja esta galeria da Paróquia São Rafael.', url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShareStatus('Link copiado.');
+      }
+    } catch (_error) {
+      setShareStatus('Não foi possível compartilhar agora.');
+    }
+  }
+
   if (!event && loading) return <main><div className="main-content"><div className="empty-state"><p>Carregando galeria...</p></div></div></main>;
   if (!event) {
     return (
@@ -132,6 +164,10 @@ export default function EventPage() {
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg><span>{event.time || 'Horário a confirmar'}</span></li>
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg><span>{event.location || 'Paróquia São Rafael'}</span></li>
             </ul>
+            <div className="event-actions">
+              <button className="ghost-button" type="button" onClick={shareEvent}>Compartilhar evento</button>
+              {shareStatus && <small>{shareStatus}</small>}
+            </div>
           </div>
           <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Capa de ${event.title}`} decoding="async" draggable="false" /></div>
         </div>
@@ -154,8 +190,18 @@ export default function EventPage() {
           <>
             <div className="gallery-header">
               <div><h2 className="gallery-title">Fotos do evento</h2><p className="gallery-note">{event.visibility === 'protegida' ? 'Prévia protegida com marca d água.' : 'Galeria institucional aberta.'}</p></div>
-              <span className="gallery-count">{photos.length} foto{photos.length === 1 ? '' : 's'}</span>
+              <div className="gallery-header-actions">
+                <span className="gallery-count">{photos.length} foto{photos.length === 1 ? '' : 's'}</span>
+                {favoriteCount > 0 && <button className="ghost-button" type="button" onClick={() => addFotos(favoritePhotos(photos).map(cartPhoto))}>Adicionar {favoriteCount} favorito{favoriteCount === 1 ? '' : 's'}</button>}
+              </div>
             </div>
+            {(offers.packages.length > 0 || offers.coupons.length > 0) && (
+              <div className="commercial-offers">
+                <div><strong>Ofertas pastorais</strong><span>Pacotes e cupons são aplicados no checkout.</span></div>
+                {offers.packages.map((pkg) => <button key={pkg.id} type="button" onClick={() => selectPackage(pkg)}>{pkg.description || 'Aplicar pacote'}</button>)}
+                {offers.coupons.map((coupon) => <span className="coupon-chip" key={coupon.code}>Cupom {coupon.code}</span>)}
+              </div>
+            )}
             {loading && <div className="empty-state"><p>Carregando fotos...</p></div>}
             {!loading && photos.length === 0 && <div className="empty-state"><p>Ainda não há fotos disponíveis neste evento.</p></div>}
             <div className="photo-grid">
@@ -168,6 +214,9 @@ export default function EventPage() {
                       <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" decoding="async" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
                       <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
                       {selected && <span className="selected-chip">Selecionada</span>}
+                    </button>
+                    <button className={`favorite-button${favoriteIds.has(photo.id) ? ' active' : ''}`} type="button" onClick={() => toggleFavorite(photo)}>
+                      {favoriteIds.has(photo.id) ? 'Favorita' : 'Favoritar'}
                     </button>
                     {selectable && (
                       <button className={`photo-select${selected ? ' selected' : ''}`} type="button" onClick={() => togglePurchase(photo)}>
@@ -206,6 +255,9 @@ export default function EventPage() {
                     {isSelected(activePhoto.id) ? 'Remover do carrinho' : 'Selecionar por R$ 10,00'}
                   </button>
                 )}
+                <button className="ghost-button" type="button" onClick={() => toggleFavorite(activePhoto)}>
+                  {favoriteIds.has(activePhoto.id) ? 'Remover dos favoritos' : 'Salvar favorita'}
+                </button>
               </div>
             </div>
           </div>

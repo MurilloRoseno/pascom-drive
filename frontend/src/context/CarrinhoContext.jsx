@@ -8,17 +8,26 @@ function carrinhoReducer(state, action) {
     case 'ADD_FOTO':
       if (state.fotos.find(f => f.id === action.foto.id)) return state;
       return { ...state, fotos: [...state.fotos, action.foto] };
+    case 'ADD_FOTOS': {
+      const existing = new Set(state.fotos.map((foto) => foto.id));
+      const novas = action.fotos.filter((foto) => !existing.has(foto.id));
+      return { ...state, fotos: [...state.fotos, ...novas] };
+    }
     case 'REMOVE_FOTO':
       return { ...state, fotos: state.fotos.filter(f => f.id !== action.id) };
+    case 'SET_COUPON':
+      return { ...state, couponCode: action.couponCode };
+    case 'SET_PACKAGE':
+      return { ...state, packageId: action.packageId };
     case 'CLEAR':
-      return { fotos: [] };
+      return { fotos: [], couponCode: '', packageId: '' };
     default:
       return state;
   }
 }
 
 export function CarrinhoProvider({ children, initialFotos = [] }) {
-  const [state, dispatch] = useReducer(carrinhoReducer, { fotos: initialFotos });
+  const [state, dispatch] = useReducer(carrinhoReducer, { fotos: initialFotos, couponCode: '', packageId: '' });
   return (
     <CarrinhoContext.Provider value={{ state, dispatch }}>
       {children}

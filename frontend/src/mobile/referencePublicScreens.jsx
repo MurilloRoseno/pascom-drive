@@ -108,7 +108,7 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
   );
 }
 
-export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, photos: loadedPhotos = [], loading = false, locked = false, isDevtoolsOpen = false }) {
+export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, photos: loadedPhotos = [], loading = false, locked = false, offers = { coupons: [], packages: [] }, selectPackage, favoriteIds = new Set(), toggleFavorite, shareEvent, isDevtoolsOpen = false }) {
   if (!ev) return <EmptyCard text="Evento não encontrado." />;
   const cover = getCoverPhoto(ev);
   const photos = (loadedPhotos.length ? loadedPhotos : resolveEventPhotos(ev)).slice(0, 9);
@@ -131,9 +131,11 @@ export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromC
           <MetaItem icon="Clock">{ev.hora || 'Horário paroquial'}</MetaItem>
           <MetaItem icon="MapPin">{ev.local}</MetaItem>
         </div>
+        <button className="btn btn-secondary btn-sm" style={{ marginTop: 12 }} onClick={() => shareEvent?.()}><I.Share className="icon icon-sm" /> Compartilhar evento</button>
       </section>
       <section className="mobile-protected-section">
         <ProtectedPreviewCard />
+        {(offers.packages?.length > 0 || offers.coupons?.length > 0) && <MobileOffers offers={offers} selectPackage={selectPackage} />}
         {tweaks.role === 'pascom' && <div style={{ marginTop: 14 }} className="card"><div style={{ padding: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><div><div className="eyebrow">Status Pascom</div><span className="tag tag-green">Publicado</span></div><PascomStat label="Receita" v={brl((cart.length || 9) * PRECO_FOTO)} /></div></div>}
       </section>
       <section className="mobile-event-preview-section">
@@ -142,7 +144,7 @@ export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromC
         {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid mobile-gallery-grid-preview">{photos.map((photo, index) => {
           const selected = selectedIds.has(photo.photoId);
           const openPhoto = () => locked ? go({ name: 'galeria', eventoId: ev.id }) : go({ name: 'foto', eventoId: ev.id, photoIdx: index });
-          return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={openPhoto}>{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;
+          return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={openPhoto}>{toggleFavorite && <button className={`photo-fav ${favoriteIds.has(photo.photoId) ? 'active' : ''}`} onClick={(event) => { event.stopPropagation(); toggleFavorite(photo); }}>♡</button>}{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;
         })}</div>}
         <PriceHelpCard />
       </section>
@@ -237,17 +239,41 @@ function PriceHelpCard() {
   );
 }
 
-export function PerfilScreen({ setRole, go, role = 'publico', eventos = [] }) {
-  if (role === 'pascom') return <PascomScreen go={go} setRole={setRole} eventos={eventos} />;
-  return <PublicoScreen go={go} setRole={setRole} />;
+function MobileOffers({ offers, selectPackage }) {
+  return (
+    <div className="card mobile-offers-card" style={{ marginTop: 12, padding: 14 }}>
+      <div className="eyebrow">Ofertas pastorais</div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+        {offers.packages?.map((pkg) => <button key={pkg.id} className="tag tag-yellow" onClick={() => selectPackage?.(pkg)}>{pkg.description || 'Aplicar pacote'}</button>)}
+        {offers.coupons?.map((coupon) => <span key={coupon.code} className="tag">Cupom {coupon.code}</span>)}
+      </div>
+    </div>
+  );
 }
 
-function PublicoScreen({ go, setRole }) {
+export function PerfilScreen({ setRole, go, role = 'publico', eventos = [], recuperarPedido }) {
+  if (role === 'pascom') return <PascomScreen go={go} setRole={setRole} eventos={eventos} />;
+  return <PublicoScreen go={go} setRole={setRole} recuperarPedido={recuperarPedido} />;
+}
+
+function PublicoScreen({ go, setRole, recuperarPedido }) {
+  const [form, setForm] = useState({ email: '', pedidoId: '' });
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+  const submit = async () => {
+    setError('');
+    setResult(null);
+    try {
+      setResult(await recuperarPedido(form));
+    } catch (cause) {
+      setError(cause.message);
+    }
+  };
   return (
     <div className="scroll">
       <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos, salve galerias favoritas e fale com a secretaria.</p></section>
       <section className="section">
-        <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra para receber novamente os links das suas fotos.</p><input className="input" placeholder="seu@email.com" style={{ marginTop: 14 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} disabled title="Funcionalidade futura">Recuperar fotos</button></div>
+        <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra e o código do pedido.</p><input className="input" placeholder="seu@email.com" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} style={{ marginTop: 14 }} /><input className="input" placeholder="PED_..." value={form.pedidoId} onChange={(event) => setForm({ ...form, pedidoId: event.target.value.toUpperCase() })} style={{ marginTop: 10 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} onClick={submit}>Recuperar fotos</button>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}{result && <div className="caption" style={{ textAlign: 'left', marginTop: 12 }}><strong>{result.status}</strong><br />{result.deliveryReady ? `${result.downloads.length} link(s) liberado(s) por 24h.` : 'Pedido ainda não confirmado.'}{result.downloads?.map((item, index) => <a key={item.url} href={item.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>Baixar foto {index + 1}</a>)}</div>}</div>
         <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Heart" label="Galerias favoritas" disabled /><MenuRow icon="Whatsapp" label="Falar com a secretaria" href="https://wa.me/5599991646063" /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
         <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para gerenciar uploads, ver vendas e moderar fotos.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div>
       </section>

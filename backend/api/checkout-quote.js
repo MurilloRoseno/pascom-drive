@@ -1,7 +1,7 @@
 const { cotacaoSchema } = require('../lib/validation');
 const { buscarFotosParaCompra, listarRegrasPagamento } = require('../lib/google-sheets');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
-const { calculatePricing } = require('../lib/pricing');
+const { calcularComercial } = require('../lib/commercial-rules');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -17,9 +17,17 @@ module.exports = async function handler(req, res, next) {
     if (items.some(({ evento }) =>
       evento.visibility === 'protegida' && !tokenAllowsEvent(input.galleryTokens[evento.eventoId], evento)
     )) return res.status(401).json({ error: 'Acesso expirado para galeria protegida.' });
-    return res.json({ pricing: calculatePricing(items.length, input.paymentMethod, await listarRegrasPagamento()) });
+    return res.json({
+      pricing: await calcularComercial({
+        items,
+        paymentMethod: input.paymentMethod,
+        paymentRules: await listarRegrasPagamento(),
+        couponCode: input.couponCode,
+        packageId: input.packageId,
+      }),
+    });
   } catch (error) {
-    if (/Pagamento indisponivel/.test(error.message)) return res.status(409).json({ error: error.message });
+    if (/Pagamento indisponivel|Cupom invalido|Pacote invalido/.test(error.message)) return res.status(409).json({ error: error.message });
     next(error);
   }
 };

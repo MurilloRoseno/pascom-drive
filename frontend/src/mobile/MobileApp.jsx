@@ -3,11 +3,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { CarrinhoProvider } from '../context/CarrinhoContext.jsx';
 import { useCarrinho } from '../hooks/useCarrinho.js';
-import { cotarCheckout, criarPagamento, listarEventos, listarFotosEvento, obterEvento, statusPagamento, validarAcessoGaleria } from '../lib/api.js';
+import { cotarCheckout, criarPagamento, listarEventos, listarFotosEvento, listarOfertasEvento, obterEvento, recuperarPedido, statusPagamento, validarAcessoGaleria } from '../lib/api.js';
 import { checkoutSchema } from '../lib/validation.js';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
+import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import { galleryToken, saveGalleryToken } from '../shared/gallery.js';
+import { useFavoritePhotos } from '../shared/favorites.js';
 import { I } from './referenceIcons.jsx';
 import { shadeColor, toReferenceEvent, toReferencePhoto } from './referenceUtils.jsx';
 import { CalendarioScreen, EmptyCard, EventoScreen, GaleriasScreen, HomeScreen, PerfilScreen } from './referencePublicScreens.jsx';
@@ -66,7 +68,7 @@ function MobileRoutes() {
   const routeName = routeNameFromLocation(location);
   const shouldLoadCatalog = ['home', 'galerias', 'calendario', 'evento', 'galeria', 'foto'].includes(routeName);
   const catalog = useEventosCatalog(shouldLoadCatalog);
-  const { fotos, addFoto, removeFoto, clearCarrinho } = useCarrinho();
+  const { fotos, couponCode, packageId, addFoto, addFotos, removeFoto, clearCarrinho, setCouponCode, setPackageId } = useCarrinho();
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -98,12 +100,13 @@ function MobileRoutes() {
         <Route path="/" element={<HomeScreen go={go} eventos={catalog.eventos} loading={catalog.loading} tweaks={tweaks} />} />
         <Route path="/buscar" element={<GaleriasRoute go={go} catalog={catalog} />} />
         <Route path="/categoria" element={<Navigate replace to={`/buscar${location.search}`} />} />
+        <Route path="/e/:slug" element={<EventSlugRedirect />} />
         <Route path="/calendario" element={<CalendarioScreen eventos={catalog.eventos} go={go} />} />
-        <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} role={tweaks.role} eventos={catalog.eventos} />} />
+        <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} role={tweaks.role} eventos={catalog.eventos} recuperarPedido={recuperarPedido} />} />
         <Route path="/privacidade" element={<PrivacyPolicy mobile />} />
         <Route path="/politica-de-privacidade" element={<PrivacyPolicy mobile />} />
-        <Route path="/evento/:eventoId" element={<EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} removeFoto={removeFoto} gridCols={tweaks.gridCols} setGridCols={(value) => setTweak('gridCols', value)} tweaks={tweaks} />} />
-        <Route path="/checkout" element={<CheckoutRoute cart={cart} removeFoto={removeFoto} go={go} clearCarrinho={clearCarrinho} />} />
+        <Route path="/evento/:eventoId" element={<EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} addFotos={addFotos} removeFoto={removeFoto} setPackageId={setPackageId} gridCols={tweaks.gridCols} setGridCols={(value) => setTweak('gridCols', value)} tweaks={tweaks} />} />
+        <Route path="/checkout" element={<CheckoutRoute cart={cart} couponCode={couponCode} packageId={packageId} setCouponCode={setCouponCode} removeFoto={removeFoto} go={go} clearCarrinho={clearCarrinho} />} />
         <Route path="/pagamento/:resultado" element={<PaymentRoute go={go} />} />
       </Routes>
       {showCartBar && <CartBar cart={cart} onClick={() => setCartOpen(true)} />}
@@ -122,17 +125,33 @@ function GaleriasRoute({ go, catalog }) {
   return <GaleriasScreen go={go} eventos={catalog.eventos} loading={catalog.loading} initialSacramento={params.get('categoria') || 'todos'} />;
 }
 
-function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, setGridCols, tweaks }) {
+function EventRoute({ go, catalog, cart, addFoto, addFotos, removeFoto, setPackageId, gridCols, setGridCols, tweaks }) {
   const { eventoId } = useParams();
   const [params] = useSearchParams();
   const catalogEvent = catalog.eventos.find((event) => event.id === eventoId);
   const gallery = useEventGallery(eventoId, catalogEvent);
+  const [offers, setOffers] = useState({ coupons: [], packages: [] });
   const [accessCode, setAccessCode] = useState('');
   const [accessError, setAccessError] = useState('');
   const { isDevtoolsOpen } = useDevtoolsGuard({ enabled: Boolean(gallery.event && !gallery.locked) });
+  const { favoriteIds, favoriteCount, favoritePhotos, toggleFavorite } = useFavoritePhotos(eventoId);
   const view = params.get('view');
   const idx = Number(params.get('idx') || 0);
   const addToCart = (photo) => addFoto({ ...photo, id: photo.photoId, url: photo.src, event: photo.eventoTitulo, eventoId: gallery.event?.id });
+  const addManyToCart = (photos) => addFotos(photos.map((photo) => ({ ...photo, id: photo.photoId, url: photo.src, event: photo.eventoTitulo, eventoId: gallery.event?.id })));
+  const selectPackage = (pkg) => {
+    setPackageId(pkg.id);
+    if (pkg.type === 'all_event_photos') addManyToCart(gallery.photos);
+  };
+  const shareEvent = async () => {
+    const url = `${window.location.origin}/evento/${encodeURIComponent(eventoId)}`;
+    if (navigator.share) return navigator.share({ title: gallery.event?.titulo || 'Galeria Pascom Drive', url });
+    await navigator.clipboard.writeText(url);
+    return null;
+  };
+  useEffect(() => {
+    listarOfertasEvento(eventoId).then(({ offers: found }) => setOffers(found)).catch(() => setOffers({ coupons: [], packages: [] }));
+  }, [eventoId]);
   const unlock = async (event) => {
     event.preventDefault();
     try {
@@ -147,11 +166,11 @@ function EventRoute({ go, catalog, cart, addFoto, removeFoto, gridCols, setGridC
 
   if (gallery.error && !gallery.event) return <EmptyCard text={gallery.error} />;
   if (view === 'foto') return <FotoLightboxScreen ev={gallery.event} photos={gallery.photos} idx={idx} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
-  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} isDevtoolsOpen={isDevtoolsOpen} />;
-  return <EventoScreen ev={gallery.event || catalogEvent} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
+  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} offers={offers} selectPackage={selectPackage} favoriteIds={favoriteIds} favoriteCount={favoriteCount} addFavorites={() => addManyToCart(favoritePhotos(gallery.photos))} toggleFavorite={toggleFavorite} shareEvent={shareEvent} isDevtoolsOpen={isDevtoolsOpen} />;
+  return <EventoScreen ev={gallery.event || catalogEvent} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} offers={offers} selectPackage={selectPackage} favoriteIds={favoriteIds} toggleFavorite={toggleFavorite} shareEvent={shareEvent} isDevtoolsOpen={isDevtoolsOpen} />;
 }
 
-function CheckoutRoute({ cart, removeFoto, go, clearCarrinho }) {
+function CheckoutRoute({ cart, couponCode, packageId, setCouponCode, removeFoto, go, clearCarrinho }) {
   const [buyer, setBuyer] = useState({ name: '', email: '', whatsapp: '' });
   const [method, setMethod] = useState('pix');
   const [pricing, setPricing] = useState(null);
@@ -161,17 +180,17 @@ function CheckoutRoute({ cart, removeFoto, go, clearCarrinho }) {
 
   useEffect(() => {
     if (!cart.length) return;
-    cotarCheckout({ fotoIds: cart.map((photo) => photo.photoId), paymentMethod: method, galleryTokens })
+    cotarCheckout({ fotoIds: cart.map((photo) => photo.photoId), paymentMethod: method, galleryTokens, couponCode, packageId })
       .then(({ pricing }) => { setPricing(pricing); setError(''); })
       .catch((error) => setError(error.message));
-  }, [cart, method, galleryTokens]);
+  }, [cart, method, galleryTokens, couponCode, packageId]);
 
   async function pay() {
     const valid = checkoutSchema.safeParse(buyer);
     if (!valid.success) { setError(valid.error.errors[0].message); return; }
     setLoading(true);
     try {
-      const response = await criarPagamento({ ...buyer, fotoIds: cart.map((photo) => photo.photoId), paymentMethod: method, galleryTokens });
+      const response = await criarPagamento({ ...buyer, fotoIds: cart.map((photo) => photo.photoId), paymentMethod: method, galleryTokens, couponCode, packageId });
       clearCarrinho();
       window.location.assign(response.checkoutUrl);
     } catch (error) {
@@ -181,7 +200,7 @@ function CheckoutRoute({ cart, removeFoto, go, clearCarrinho }) {
   }
 
   if (!cart.length) return <EmptyCard text="Seu carrinho está vazio." />;
-  return <CheckoutScreen cart={cart} pricing={pricing} buyer={buyer} setBuyer={setBuyer} method={method} setMethod={setMethod} error={error} loading={loading} removeFromCart={removeFoto} go={go} pay={pay} />;
+  return <CheckoutScreen cart={cart} pricing={pricing} buyer={buyer} setBuyer={setBuyer} method={method} setMethod={setMethod} couponCode={couponCode} setCouponCode={setCouponCode} error={error} loading={loading} removeFromCart={removeFoto} go={go} pay={pay} />;
 }
 
 function PaymentRoute({ go }) {

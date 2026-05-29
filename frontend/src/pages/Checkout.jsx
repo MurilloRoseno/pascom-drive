@@ -21,7 +21,7 @@ function PaymentIcon({ method }) {
 PaymentIcon.propTypes = { method: PropTypes.string.isRequired };
 
 export default function CheckoutPage() {
-  const { fotos, removeFoto } = useCarrinho();
+  const { fotos, couponCode, packageId, removeFoto, setCouponCode } = useCarrinho();
   const [buyer, setBuyer] = useState({ name: '', email: '', whatsapp: '' });
   const [method, setMethod] = useState('pix');
   const [pricing, setPricing] = useState(null);
@@ -38,10 +38,10 @@ export default function CheckoutPage() {
     setPricing(null);
     setQuoteError('');
     if (!fotos.length) return;
-    cotarCheckout({ fotoIds: fotos.map((photo) => photo.id), paymentMethod: method, galleryTokens: galleryTokens() })
+    cotarCheckout({ fotoIds: fotos.map((photo) => photo.id), paymentMethod: method, galleryTokens: galleryTokens(), couponCode, packageId })
       .then(({ pricing: found }) => setPricing(found))
       .catch((error) => setQuoteError(error.message));
-  }, [method, fotos, galleryTokens]);
+  }, [method, fotos, galleryTokens, couponCode, packageId]);
 
   function change(field, value) {
     setBuyer((state) => ({ ...state, [field]: value }));
@@ -62,6 +62,8 @@ export default function CheckoutPage() {
         fotoIds: fotos.map((photo) => photo.id),
         paymentMethod: method,
         galleryTokens: galleryTokens(),
+        couponCode,
+        packageId,
       });
       window.location.assign(response.checkoutUrl);
     } catch (error) {
@@ -118,11 +120,17 @@ export default function CheckoutPage() {
                 </label>
               ))}
             </div>
+            <h2>4. Cupom pastoral</h2>
+            <label>Cupom de desconto<input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Ex.: PASTORAL10" /></label>
+            <p className="delivery-note">Cupons e pacotes são validados pelo sistema da paróquia antes do pagamento.</p>
           </section>
           <aside className="order-summary">
             <p className="hero-kicker">Resumo</p>
             <h2>{fotos.length} foto{fotos.length !== 1 ? 's' : ''}</h2>
             <div className="total-row"><span>Subtotal</span><strong>{pricing ? money(pricing.subtotal) : '--'}</strong></div>
+            {pricing?.discountTotal > 0 && <div className="total-row discount"><span>Desconto aplicado</span><strong>-{money(pricing.discountTotal)}</strong></div>}
+            {pricing?.couponApplied && <div className="total-row muted"><span>Cupom</span><strong>{pricing.couponApplied.code}</strong></div>}
+            {pricing?.packageApplied && <div className="total-row muted"><span>Pacote</span><strong>{pricing.packageApplied.description || pricing.packageApplied.id}</strong></div>}
             <div className="total-row"><span>Taxa de servico</span><strong>{pricing ? money(pricing.serviceFee) : '--'}</strong></div>
             <div className="total-row"><span>Taxa de comodidade</span><strong>{pricing ? money(pricing.convenienceFee) : '--'}</strong></div>
             <div className="total-row muted"><span>Custo estimado do pagamento</span><strong>{pricing ? money(pricing.paymentCost) : '--'}</strong></div>

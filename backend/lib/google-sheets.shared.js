@@ -93,6 +93,7 @@ function eventoFromRow(row) {
     totalFotos: Number(row.get('TotalFotos') || 0),
     fotosProcessadas: Number(row.get('FotosProcessadas') || 0),
     dataCriacao: row.get('DataCriacao') || '',
+    slug: row.get('SlugPublico') || '',
   };
 }
 

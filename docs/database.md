@@ -10,6 +10,8 @@ Não há chaves estrangeiras, índices ou transações ACID. A integridade depen
 
 ```text
 Eventos (EventoID)
+  1 -- N Cupons (EventoID opcional)
+  1 -- N Pacotes (EventoID)
   1 ── N Fotos (EventoID)
   1 ── N ItensPedido (EventoID)
 
@@ -26,6 +28,9 @@ Webhooks
 
 RegrasPagamento
   usadas por MeioPagamento no checkout
+
+Cupons/Pacotes
+  usados pelo checkout para descontos sem empilhamento
 ```
 
 ## `Eventos`
@@ -36,6 +41,7 @@ RegrasPagamento
 | `NomePasta` | Nome original da pasta no Drive |
 | `FolderID` | ID da pasta do evento |
 | `Titulo` | Título exibido ao usuário |
+| `SlugPublico` | Alias publico amigavel para `/e/:slug` |
 | `Categoria` | Categoria de evento |
 | `DataEvento` | Data do evento |
 | `HorarioEvento` | Horário exibido |
@@ -88,6 +94,10 @@ RegrasPagamento
 | `WhatsApp` | WhatsApp informado |
 | `MeioPagamento` | `pix` ou `credit_card` no backend atual |
 | `Subtotal` | Soma das fotos |
+| `TotalAntesDesconto` | Total original antes de cupom/pacote |
+| `CupomCodigo` | Codigo do cupom aplicado, se houver |
+| `DescontoTotal` | Valor total abatido |
+| `PacoteID` | Pacote comercial aplicado, se houver |
 | `TaxaServico` | Taxa de serviço |
 | `TaxaComodidade` | Taxa de comodidade |
 | `CustoPagamentoEstimado` | Custo estimado do meio |
@@ -151,10 +161,39 @@ RegrasPagamento
 | `Vigencia` | Vigência informativa |
 | `Ativo` | `SIM`/`NAO` |
 
+## `Cupons`
+
+| Coluna | Significado |
+| --- | --- |
+| `Codigo` | Codigo digitado no checkout |
+| `EventoID` | Evento permitido; vazio significa cupom global |
+| `TipoDesconto` | `percentual` ou `valor_fixo` |
+| `Valor` | Percentual ou valor em reais |
+| `Ativo` | `SIM`/`NAO` |
+| `ValidoDe` | Inicio da vigencia |
+| `ValidoAte` | Fim da vigencia |
+| `UsoMaximo` | Limite maximo de usos, quando preenchido |
+| `Usos` | Contador operacional incrementado apos pedido criado |
+| `Descricao` | Texto publico/operacional da oferta |
+
+## `Pacotes`
+
+| Coluna | Significado |
+| --- | --- |
+| `PacoteID` | Identificador do pacote |
+| `EventoID` | Evento dono da oferta |
+| `Tipo` | `all_event_photos`, `quantity_bundle` ou `family_combo` |
+| `QuantidadeMinima` | Minimo de fotos exigido para pacote por quantidade |
+| `PrecoPacote` | Preco fechado do pacote, quando aplicavel |
+| `PercentualDesconto` | Desconto percentual alternativo |
+| `Ativo` | `SIM`/`NAO` |
+| `Descricao` | Texto mostrado em desktop/mobile |
+
 ## Estratégias de Consulta
 
 - Catálogo: leitura de `Eventos` e `Fotos`, filtrando eventos publicados.
 - Compra: busca por IDs selecionados em `Fotos`, mapeia eventos por `EventoID`.
+- Ofertas: leitura linear de `Cupons` e `Pacotes`, filtrando por evento, vigência, uso e `Ativo=SIM`.
 - Pedido: busca linear por `PedidoID`, `PreferenceID` ou `PaymentID`.
 - Webhook: busca linear por `ChaveEvento`.
 - Download: busca linear por `DownloadID`, valida `TokenHash` e registra uso/fingerprint somente apos gerar a copia protegida.
@@ -166,6 +205,7 @@ RegrasPagamento
 - Escritas concorrentes podem competir em pedidos/webhooks/downloads.
 - Não há índices reais.
 - Não há transação entre `Pedidos` e `ItensPedido`.
+- Contador `Usos` de cupom em Sheets pode sofrer corrida sob compras simultâneas até migrar para banco transacional.
 
 ## Melhorias Possíveis
 

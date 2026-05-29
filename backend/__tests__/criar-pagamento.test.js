@@ -10,6 +10,12 @@ jest.mock('../lib/google-sheets', () => ({
 jest.mock('../lib/mercado-pago', () => ({
   criarPreferencia: jest.fn().mockResolvedValue({ id: 'PREF_1', checkoutUrl: 'https://mp.test/checkout' }),
 }));
+jest.mock('../lib/commercial-rules', () => ({
+  calcularComercial: jest.fn(async ({ items, paymentMethod, paymentRules }) => {
+    const { calculatePricing } = jest.requireActual('../lib/pricing');
+    return calculatePricing(items.length, paymentMethod, paymentRules);
+  }),
+}));
 
 const request = require('supertest');
 const express = require('express');

@@ -28,6 +28,9 @@ O projeto está funcionalmente estruturado, mas carrega dívida documental, muda
 | Token de midia e barreira temporal, nao DRM | Baixa | Pode ser compartilhado durante janela curta | Baixa | Manter expiracao curta, no-store, watermark e rate limit de midia |
 | Segredo legado de worker ainda existe | Media temporaria | Se `ALLOW_LEGACY_WORKER_SECRET=true` ficar ativo, chamadas internas aceitam segredo estatico | Baixa | Migrar Apps Script para HMAC, validar producao e desligar fallback |
 | Clerk citado em planos externos, mas ausente no codigo | Baixa | Pode gerar expectativa de sessao/roles inexistentes | Baixa | Tratar Clerk apenas como ADR futuro |
+| Cupons/pacotes em Sheets | Media | Contador de uso e regras comerciais podem sofrer corrida em compras simultaneas | Media | Migrar regras transacionais para banco ou adicionar lock/auditoria antes de volume alto |
+| Recuperacao de pedido sem login | Media | Tentativas de enumeracao por codigo/e-mail | Baixa | Manter rate limit especifico, mensagens genericas e logs de abuso |
+| Favoritos em `localStorage` | Baixa | Nao sincroniza entre dispositivos e pode ficar obsoleto | Baixa | Reconciliar com backend ao abrir galeria e documentar como conveniencia local |
 
 ## Código Morto e Arquivos Órfãos
 
@@ -47,6 +50,7 @@ Recomendação:
 - Pouca observabilidade estruturada.
 - Componentes de página grandes.
 - Mobile dedicado aumenta necessidade de testes de paridade.
+- Regras comerciais agora aparecem em desktop e mobile; qualquer nova oferta deve ser testada nas duas experiencias.
 - Fluxos financeiros dependem de integração externa e precisam smoke test sandbox recorrente.
 - Documentação anterior estava espalhada entre raiz e `docs/`.
 

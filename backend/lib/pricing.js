@@ -7,12 +7,14 @@ function roundMoney(value) {
   return Math.round(Number(value) * 100) / 100;
 }
 
-function calculatePricing(quantity, method, rules) {
+function calculatePricing(quantity, method, rules, commercial = {}) {
   if (!PAYMENT_METHODS.includes(method)) throw new Error('Meio de pagamento invalido.');
   const rule = rules.find((item) => item.method === method);
   if (!rule) throw new Error('Pagamento indisponivel ate cadastrar a taxa estimada deste meio.');
   const subtotal = roundMoney(quantity * PHOTO_PRICE);
-  const feeBase = subtotal + SERVICE_FEE + CONVENIENCE_FEE;
+  const discountTotal = Math.min(subtotal, roundMoney(commercial.discountTotal || 0));
+  const discountedSubtotal = roundMoney(subtotal - discountTotal);
+  const feeBase = discountedSubtotal + SERVICE_FEE + CONVENIENCE_FEE;
   const percentage = Number(rule.percentage || 0) / 100;
   if (percentage < 0 || percentage >= 1) throw new Error('Taxa administrativa invalida.');
   // The Mercado Pago tariff applies to the amount charged, including the
@@ -22,6 +24,12 @@ function calculatePricing(quantity, method, rules) {
   return {
     unitPrice: PHOTO_PRICE,
     subtotal,
+    discountedSubtotal,
+    totalBeforeDiscount: roundMoney(subtotal + SERVICE_FEE + CONVENIENCE_FEE),
+    discountTotal,
+    discounts: commercial.discounts || { coupon: 0, package: 0, total: discountTotal },
+    couponApplied: commercial.couponApplied || null,
+    packageApplied: commercial.packageApplied || null,
     serviceFee: SERVICE_FEE,
     convenienceFee: CONVENIENCE_FEE,
     paymentCost,

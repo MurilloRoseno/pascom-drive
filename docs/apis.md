@@ -64,6 +64,26 @@ Busca um evento publicado por ID.
 
 - `404`: evento não encontrado.
 
+## `GET /api/e/:slug`
+
+Resolve um link bonito de evento para o identificador canonico. O slug vem da coluna `SlugPublico` da aba `Eventos`.
+
+**Resposta 200**
+
+```json
+{
+  "event": {
+    "eventoId": "missa-2026-05",
+    "slug": "missa-maio-2026",
+    "title": "Missa de Maio"
+  }
+}
+```
+
+**Erros**
+
+- `404`: slug nao encontrado ou evento nao publicado.
+
 ## `GET /api/eventos/:eventoId/fotos`
 
 Lista fotos processadas de um evento.
@@ -147,6 +167,42 @@ Valida código de galeria protegida.
 - `401`: código incorreto.
 - `404`: galeria protegida não encontrada.
 
+## `GET /api/eventos/:eventoId/ofertas`
+
+Lista ofertas comerciais publicas e ativas aplicaveis ao evento. Nao expoe regras internas sensiveis nem contadores completos de uso.
+
+**Resposta 200**
+
+```json
+{
+  "eventId": "missa-2026-05",
+  "offers": {
+    "coupons": [
+      {
+        "code": "PASTORAL10",
+        "type": "percentual",
+        "value": 10,
+        "description": "Cupom pastoral do evento"
+      }
+    ],
+    "packages": [
+      {
+        "id": "PKG_3_FOTOS",
+        "type": "quantity_bundle",
+        "minimumQuantity": 3,
+        "packagePrice": 25,
+        "discountPercent": 0,
+        "description": "3 fotos com desconto"
+      }
+    ]
+  }
+}
+```
+
+**Erros**
+
+- `404`: evento nao encontrado.
+
 ## `POST /api/checkout/quote`
 
 Cota preço do carrinho sem criar pagamento.
@@ -157,6 +213,8 @@ Cota preço do carrinho sem criar pagamento.
 {
   "fotoIds": ["foto-abc", "foto-def"],
   "paymentMethod": "pix",
+  "couponCode": "PASTORAL10",
+  "packageId": "PKG_3_FOTOS",
   "galleryTokens": {
     "evento-protegido": "jwt-assinado"
   }
@@ -171,10 +229,16 @@ Cota preço do carrinho sem criar pagamento.
     "quantity": 2,
     "photoPrice": 10,
     "subtotal": 20,
+    "totalBeforeDiscount": 20.93,
+    "discountedSubtotal": 18,
+    "discountTotal": 2,
+    "discounts": [{ "type": "coupon", "label": "PASTORAL10", "amount": 2 }],
+    "couponApplied": { "code": "PASTORAL10", "type": "percentual", "value": 10 },
+    "packageApplied": null,
     "serviceFee": 0,
     "convenienceFee": 0,
     "paymentCost": 0.93,
-    "total": 20.93
+    "total": 18.84
   }
 }
 ```
@@ -183,7 +247,9 @@ Cota preço do carrinho sem criar pagamento.
 
 - `400`: carrinho inválido.
 - `401`: acesso expirado para galeria protegida.
-- `409`: foto indisponível ou regra de pagamento ausente.
+- `409`: foto indisponível, regra de pagamento ausente, cupom inválido ou pacote inválido.
+
+Cupom e pacote nao empilham livremente: o backend recalcula tudo no servidor e aplica a melhor condicao valida entre as regras recebidas.
 
 ## `POST /api/checkout/preference`
 
@@ -198,6 +264,8 @@ Cria pedido e preferência Mercado Pago.
   "whatsapp": "5511999999999",
   "fotoIds": ["foto-abc"],
   "paymentMethod": "pix",
+  "couponCode": "PASTORAL10",
+  "packageId": "",
   "galleryTokens": {}
 }
 ```
@@ -211,8 +279,12 @@ Cria pedido e preferência Mercado Pago.
   "pricing": {
     "quantity": 1,
     "subtotal": 10,
+    "totalBeforeDiscount": 10.3,
+    "discountTotal": 1,
     "paymentCost": 0.3,
-    "total": 10.3
+    "total": 9.27,
+    "couponApplied": { "code": "PASTORAL10" },
+    "packageApplied": null
   }
 }
 ```
@@ -221,11 +293,52 @@ Cria pedido e preferência Mercado Pago.
 
 - `400`: payload inválido.
 - `401`: acesso expirado.
-- `409`: foto indisponível ou pagamento indisponível.
+- `409`: foto indisponível, pagamento indisponível, cupom inválido ou pacote inválido.
 
 ## `POST /api/criar-pagamento`
 
 Alias legado para `POST /api/checkout/preference`. Deve ser mantido apenas por compatibilidade.
+
+## `POST /api/pedidos/recuperar`
+
+Recupera um pedido sem login usando e-mail e codigo/pedido. A rota tem rate limit especifico para reduzir enumeracao.
+
+**Payload**
+
+```json
+{
+  "email": "maria@example.com",
+  "pedidoId": "PED_20260529_ABC123"
+}
+```
+
+**Resposta 200**
+
+```json
+{
+  "pedidoId": "PED_20260529_ABC123",
+  "status": "Pagamento Confirmado",
+  "total": 27.9,
+  "createdAt": "2026-05-29T10:00:00.000Z",
+  "paidAt": "2026-05-29T10:04:00.000Z",
+  "itemCount": 3,
+  "deliveryReady": true,
+  "downloads": [
+    {
+      "fotoId": "foto-abc",
+      "url": "https://pascom-drive.vercel.app/api/download?token=jwt-assinado",
+      "expiresAt": "2026-06-05T10:04:00.000Z"
+    }
+  ],
+  "whatsappMessage": "Mensagem assistida para suporte"
+}
+```
+
+**Erros**
+
+- `400`: payload invalido.
+- `404`: pedido nao encontrado ou e-mail nao confere.
+- `429`: muitas tentativas de recuperacao.
 
 ## `GET /api/status-pagamento`
 

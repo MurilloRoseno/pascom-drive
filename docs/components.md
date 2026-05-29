@@ -20,13 +20,14 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 ## `MobileApp`
 
 - **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
-- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
-- **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
+- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom, recuperacao de pedido, favoritos locais, ofertas comerciais e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
+- **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `useFavoritePhotos`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
 - **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx`, CSS `reference-*` e `reference-gallery-calendar.css`.
 - **Modo escuro:** `className="app dark"` troca tokens e classes auxiliares corrigem contraste de estilos inline herdados do standalone, incluindo buscas, chips de sacramento, agenda, cart bar e atalhos Pascom.
 - **Cards mobile:** `EventCard`, `formatMobileCardTitle` e `formatMobileCardDate` em `referencePublicScreens.jsx` renderizam os cards da home e de `/buscar` no padrão do standalone `(2)`: capa grande, badges superiores, data em caixa alta, título serifado, local e rodapé `Ver fotos ->`; a troca ` e ` -> ` & ` é display-only e não altera `ev.titulo`.
 - **Evento/galeria mobile:** `EventoScreen`, `GaleriaFotosScreen` e `FotoLightboxScreen` usam `reference-gallery-calendar.css` para reproduzir a tela completa do standalone `(2)`: hero roxo, capa, metadados, bloco de previa protegida, grid com seletor `2x/3x/4x`, card de preco/WhatsApp e lightbox fullscreen escuro com contador e selecao.
 - **Calendario mobile:** `CalendarioScreen` em `referencePublicScreens.jsx` implementa navegacao mensal, dias marcados por eventos reais e lista de destaques, mantendo a aba de calendario funcional no padrao visual do standalone.
+- **Comercial mobile:** `EventoScreen`, `GaleriaFotosScreen`, `CheckoutScreen` e `PerfilScreen` exibem pacotes/cupons, favoritos antes da compra, compartilhamento com Web Share API e recuperacao de pedido por e-mail/codigo.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop, preservar URLs `mt` retornadas pela API e substituir placeholders do standalone quando houver backend real.
 
 ## `useDevtoolsGuard`
@@ -58,12 +59,12 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 ## `CarrinhoProvider` e `useCarrinhoContext`
 
 - **Arquivo:** `frontend/src/context/CarrinhoContext.jsx`
-- **Responsabilidade:** manter fotos selecionadas no carrinho.
+- **Responsabilidade:** manter fotos selecionadas no carrinho e metadados comerciais escolhidos no checkout.
 - **Props:** `children`, `initialFotos`.
 - **Dependências:** `createContext`, `useContext`, `useReducer`, `PropTypes`.
-- **Estado interno:** array `fotos`.
+- **Estado interno:** `fotos`, `couponCode` e `packageId`.
 - **Hooks:** `useReducer`, `useContext`.
-- **Fluxo:** reducer trata `add` e `remove`; provider expõe `fotos`, `addFoto`, `removeFoto`, `isSelected`.
+- **Fluxo:** reducer trata `add`, `addFotos`, `remove`, `clear`, `setCoupon` e `setPackage`; provider expõe seleção e metadados comerciais.
 - **Problemas:** carrinho não persiste ao recarregar página.
 - **Melhoria:** persistir em `sessionStorage` com versionamento simples.
 - **Risco futuro:** objetos de foto podem ficar obsoletos se disponibilidade mudar no backend.
@@ -145,6 +146,18 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Melhoria:** normalizar foto em camada de API ou função de mapeamento.
 - **Risco futuro:** regras de disponibilidade podem crescer e deixar o componente acoplado ao domínio.
 
+## `useFavoritePhotos`
+
+- **Arquivo:** `frontend/src/shared/favorites.js`
+- **Responsabilidade:** armazenar favoritos locais por evento antes da compra.
+- **Props:** `eventoId`.
+- **Dependencias:** `localStorage`, `useEffect`, `useMemo`, `useState`.
+- **Estado interno:** mapa local `{ [eventoId]: [fotoId] }`.
+- **Fluxo:** alterna favoritos, reconcilia IDs com fotos carregadas e permite adicionar favoritos validos ao carrinho em lote.
+- **Problemas:** favorito nao sincroniza entre dispositivos e pode ficar indisponivel quando a foto sai de venda.
+- **Melhoria:** manter localStorage como escolha MVP; se houver login futuro, migrar para backend com consentimento e politica atualizada.
+- **Risco futuro:** nao usar favoritos locais como indicador pastoral ou perfilamento.
+
 ## `HomePage`
 
 - **Arquivo:** `frontend/src/pages/Home.jsx`
@@ -176,10 +189,10 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Arquivo:** `frontend/src/pages/Event.jsx`
 - **Responsabilidade:** mostrar galeria de um evento e controlar acesso protegido.
 - **Props:** nenhuma.
-- **Dependências:** `obterEvento`, `listarFotosEvento`, `validarAcessoGaleria`, `useDevtoolsGuard`, carrinho.
-- **Estado interno:** `event`, `photos`, `code`, `error`, `loading`, controle de foto atual.
+- **Dependências:** `obterEvento`, `listarFotosEvento`, `listarOfertasEvento`, `validarAcessoGaleria`, `useDevtoolsGuard`, `useFavoritePhotos`, carrinho.
+- **Estado interno:** `event`, `photos`, `offers`, `code`, `error`, `loading`, `shareStatus`, controle de foto atual.
 - **Hooks:** `useState`, `useEffect`, `useCallback`, `useRef`, `useParams`, `useSearchParams`.
-- **Fluxo:** carrega evento, tenta fotos com token, exibe formulário de código se protegido e renderiza fotos compráveis.
+- **Fluxo:** carrega evento, ofertas e fotos com token, exibe formulario de codigo se protegido, renderiza fotos compraveis, favoritos, pacotes e compartilhamento controlado.
 - **Problemas:** lida com busca, autorização, navegação de foto e compra no mesmo componente.
 - **Melhoria:** extrair hook `useEventGallery` e componente de bloqueio protegido.
 - **Risco futuro:** qualquer mudança em regras de acesso pode gerar regressão ampla.
@@ -189,10 +202,10 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Arquivo:** `frontend/src/pages/Checkout.jsx`
 - **Responsabilidade:** coletar comprador, cotar carrinho e iniciar Mercado Pago.
 - **Props:** nenhuma.
-- **Dependências:** `checkoutSchema`, `cotarCheckout`, `criarPagamento`, carrinho.
+- **Dependências:** `checkoutSchema`, `cotarCheckout`, `criarPagamento`, carrinho com `couponCode`/`packageId`.
 - **Estado interno:** comprador, método, pricing, erros e loading.
 - **Hooks:** `useState`, `useEffect`, `useCallback`.
-- **Fluxo:** monta tokens por evento, cota ao alterar carrinho/método, valida formulário e redireciona para `checkoutUrl`.
+- **Fluxo:** monta tokens por evento, cota ao alterar carrinho/metodo/cupom/pacote, mostra descontos aplicados, valida formulario e redireciona para `checkoutUrl`.
 - **Problemas:** depende de `sessionStorage` para tokens de galeria.
 - **Melhoria:** abstrair coleta de tokens em util testado.
 - **Risco futuro:** inconsistência entre validação frontend e backend se schemas divergirem.
@@ -210,6 +223,19 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Melhoria:** oferecer busca por e-mail/pedido em operação futura.
 - **Risco futuro:** Mercado Pago pode retornar parâmetros diferentes por fluxo.
 
+## `RecoverOrderPage`
+
+- **Arquivo:** `frontend/src/pages/RecoverOrder.jsx`
+- **Responsabilidade:** permitir recuperacao publica de pedido por e-mail e codigo/pedido.
+- **Props:** nenhuma.
+- **Dependencias:** `recuperarPedido`, `Link`.
+- **Estado interno:** formulario, loading, erro e resultado.
+- **Hooks:** `useState`.
+- **Fluxo:** envia `POST /api/pedidos/recuperar`, mostra status, quantidade, links ativos quando permitido e orientacao de entrega.
+- **Problemas:** sem login, depende de e-mail + codigo e rate limit para reduzir enumeracao.
+- **Melhoria:** adicionar verificacao assistida/OTP se volume ou risco operacional aumentar.
+- **Risco futuro:** nunca mostrar se um e-mail existe isoladamente; mensagens devem permanecer genericas.
+
 ## `PrivacyPolicy`
 
 - **Arquivo:** `frontend/src/pages/PrivacyPolicy.jsx`
@@ -225,7 +251,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 
 ## Componentes Reutilizáveis
 
-- `Header`, `Footer`, `ScrollToTop`, `CartSummary`, `PhotoCard`, `PrivacyPolicy`.
+- `Header`, `Footer`, `ScrollToTop`, `CartSummary`, `PhotoCard`, `PrivacyPolicy`, `useFavoritePhotos`, `RecoverOrderPage`.
 - Subcomponentes internos de `HomePage` e `SearchPage` são candidatos a reutilização, mas ainda não justificam extração agressiva.
 
 ## Componentes Acoplados
