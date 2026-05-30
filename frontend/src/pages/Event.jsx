@@ -147,6 +147,7 @@ export default function EventPage() {
 
   const canBuy = event.salesAuthorized;
   const canBuyActivePhoto = canBuy && activePhoto?.availableForSale === true;
+  const activePhotoPrice = Number(activePhoto?.price || 10).toFixed(2).replace('.', ',');
 
   return (
     <main className="event-detail-page">
@@ -207,16 +208,18 @@ export default function EventPage() {
                 const selectable = canBuy && photo.availableForSale === true;
                 return (
                   <article className={`photo-tile${selected ? ' is-selected' : ''}`} key={photo.id}>
-                    <button className="photo-button" type="button" onClick={() => setParams({ foto: photo.id })} onContextMenu={(mouseEvent) => mouseEvent.preventDefault()}>
-                      <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" decoding="async" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
-                      <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
-                      {selected && <span className="selected-chip">Selecionada</span>}
-                    </button>
-                    {selectable && (
-                      <button className={`photo-select${selected ? ' selected' : ''}`} type="button" onClick={() => togglePurchase(photo)}>
-                        {selected ? 'Remover seleção' : `Selecionar foto - R$ ${Number(photo.price || 10).toFixed(2).replace('.', ',')}`}
+                    <div className="photo-frame">
+                      <button className="photo-button" type="button" onClick={() => setParams({ foto: photo.id })} onContextMenu={(mouseEvent) => mouseEvent.preventDefault()}>
+                        <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" decoding="async" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
+                        <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
+                        {selected && <span className="selected-chip">Selecionada</span>}
                       </button>
-                    )}
+                      {selectable && (
+                        <button className={`desktop-photo-add${selected ? ' selected' : ''}`} type="button" aria-label={selected ? 'Remover foto do carrinho' : 'Selecionar foto'} onClick={() => togglePurchase(photo)}>
+                          <span aria-hidden="true">{selected ? '✓' : '+'}</span>
+                        </button>
+                      )}
+                    </div>
                   </article>
                 );
               })}
@@ -245,8 +248,8 @@ export default function EventPage() {
                   <button className="ghost-button" type="button" onClick={() => changePhoto(1)}>Próxima</button>
                 </div>
                 {canBuyActivePhoto && (
-                  <button className="purchase-button" type="button" onClick={() => togglePurchase(activePhoto)}>
-                    {isSelected(activePhoto.id) ? 'Remover do carrinho' : 'Selecionar por R$ 10,00'}
+                  <button className="purchase-button" type="button" aria-label={isSelected(activePhoto.id) ? 'Remover foto do carrinho' : 'Selecionar foto'} onClick={() => togglePurchase(activePhoto)}>
+                    {isSelected(activePhoto.id) ? `✓ Foto selecionada · R$ ${activePhotoPrice}` : `+ Selecionar por R$ ${activePhotoPrice}`}
                   </button>
                 )}
               </div>

@@ -1,16 +1,16 @@
 # Graph Report - Drive  (2026-05-29)
 
 ## Corpus Check
-- 145 files · ~953,781 words
+- 145 files · ~953,917 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 714 nodes · 1114 edges · 132 communities (127 shown, 5 thin omitted)
+- 714 nodes · 1114 edges · 132 communities (129 shown, 3 thin omitted)
 - Extraction: 88% EXTRACTED · 12% INFERRED · 0% AMBIGUOUS · INFERRED: 134 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `f0742813`
+- Built from commit: `c34f7cbd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -40,14 +40,13 @@
 - [[_COMMUNITY_Community 22|Community 22]]
 - [[_COMMUNITY_Community 23|Community 23]]
 - [[_COMMUNITY_Community 24|Community 24]]
-- [[_COMMUNITY_Community 26|Community 26]]
+- [[_COMMUNITY_Community 25|Community 25]]
 - [[_COMMUNITY_Community 27|Community 27]]
 - [[_COMMUNITY_Community 28|Community 28]]
 - [[_COMMUNITY_Community 29|Community 29]]
 - [[_COMMUNITY_Community 31|Community 31]]
 - [[_COMMUNITY_Community 34|Community 34]]
 - [[_COMMUNITY_Community 35|Community 35]]
-- [[_COMMUNITY_Community 36|Community 36]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useCarrinho()` - 23 edges
@@ -73,7 +72,7 @@
 - `listarPedidosPascom()` --calls--> `rows()`  [INFERRED]
   backend/lib/google-sheets.pascom.js → backend/lib/google-sheets.shared.js
 
-## Communities (132 total, 5 thin omitted)
+## Communities (132 total, 3 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.08
@@ -101,19 +100,19 @@ Nodes (27): entregarFotos(), processarEventos(), processarFotosNovas(), verifica
 
 ### Community 6 - "Community 6"
 Cohesion: 0.09
-Nodes (14): MobileHome(), MobileRoutes(), MobileSearch(), routeNameFromLocation(), useEventos(), useEventosCatalog(), CalendarioScreen(), EmptyCard() (+6 more)
+Nodes (14): MobileHome(), MobileRoutes(), MobileSearch(), routeNameFromLocation(), useEventos(), useEventosCatalog(), CalendarioScreen(), GaleriasScreen() (+6 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.09
-Nodes (6): EventCard(), formatMobileCardDate(), formatMobileCardTitle(), GaleriasScreen(), HomeScreen(), formatMobileDisplayDate()
+Nodes (6): EmptyCard(), EventCard(), formatMobileCardDate(), formatMobileCardTitle(), PerfilScreen(), formatMobileDisplayDate()
 
 ### Community 8 - "Community 8"
-Cohesion: 0.2
-Nodes (15): bearer(), cotarCheckout(), criarPagamento(), listarFotos(), listarFotosEvento(), listarOfertasEvento(), obterEvento(), pascomDashboard() (+7 more)
-
-### Community 9 - "Community 9"
 Cohesion: 0.13
 Nodes (9): categoryLabel(), listarEventos(), dateLabel(), scheduleLabel(), EventCard(), MobileEvent(), EventCard(), SearchCard() (+1 more)
+
+### Community 9 - "Community 9"
+Cohesion: 0.2
+Nodes (15): bearer(), cotarCheckout(), criarPagamento(), listarFotosEvento(), listarOfertasEvento(), obterEvento(), pascomDashboard(), pascomMe() (+7 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.13
@@ -172,10 +171,14 @@ Cohesion: 0.52
 Nodes (6): buildSpacedTile(), buildWatermarkTile(), compositeWatermark(), detectWatermarkType(), deterministicOffset(), structuralOverlay()
 
 ### Community 24 - "Community 24"
+Cohesion: 0.33
+Nodes (3): Gallery(), useFotos(), listarFotos()
+
+### Community 25 - "Community 25"
 Cohesion: 0.29
 Nodes (3): workerHeaders(), authorizedPost(), authorizedPost()
 
-### Community 26 - "Community 26"
+### Community 27 - "Community 27"
 Cohesion: 0.73
 Nodes (4): goToNext(), goToPrevious(), makeCurrent(), toggleClass()
 
@@ -188,7 +191,7 @@ Cohesion: 0.83
 Nodes (3): bytesToHex(), criarHeadersBackendInterno(), hmacSha256Hex()
 
 ## Knowledge Gaps
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

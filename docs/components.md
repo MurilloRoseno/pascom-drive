@@ -180,7 +180,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Dependências:** `obterEvento`, `listarFotosEvento`, `listarOfertasEvento`, `validarAcessoGaleria`, `useDevtoolsGuard`, carrinho.
 - **Estado interno:** `event`, `photos`, `offers`, `code`, `error`, `loading`, `shareStatus`, controle de foto atual.
 - **Hooks:** `useState`, `useEffect`, `useCallback`, `useRef`, `useParams`, `useSearchParams`.
-- **Fluxo:** carrega evento, ofertas e fotos com token, exibe formulario de codigo se protegido, renderiza fotos compraveis, pacotes e compartilhamento controlado.
+- **Fluxo:** carrega evento, ofertas e fotos com token, exibe formulario de codigo se protegido, renderiza fotos compraveis, pacotes e compartilhamento controlado; no desktop, a selecao de compra usa botao circular sobreposto `+`/`✓`, mantendo clique na imagem para abrir o lightbox.
 - **Problemas:** lida com busca, autorização, navegação de foto e compra no mesmo componente.
 - **Melhoria:** extrair hook `useEventGallery` e componente de bloqueio protegido.
 - **Risco futuro:** qualquer mudança em regras de acesso pode gerar regressão ampla.

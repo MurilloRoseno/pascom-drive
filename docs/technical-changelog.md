@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-29 - Selecao desktop alinhada ao mobile
+
+- **Tipo:** frontend desktop e documentacao.
+- **Alteracao:** a galeria desktop passou a selecionar/remover fotos por botao circular sobreposto `+`/`✓`, mantendo clique na imagem para abrir o lightbox e usando texto de lightbox alinhado ao mobile.
+- **Motivo:** deixar a interacao de selecao da foto consistente entre desktop e mobile.
+- **Impacto:** somente apresentacao/interacao desktop; carrinho, checkout, APIs, mobile, pagamentos, downloads e banco permanecem inalterados.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/components.md` e `docs/technical-changelog.md`.
+
 ## 2026-05-29 - Remocao do recurso local de salvar fotos
 
 - **Tipo:** frontend e documentacao.

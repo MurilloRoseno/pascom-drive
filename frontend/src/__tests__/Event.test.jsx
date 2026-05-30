@@ -38,8 +38,8 @@ it('mantem no grid a indicacao da foto selecionada para compra', async () => {
     </MemoryRouter>
   );
 
-  const select = await screen.findByRole('button', { name: /selecionar foto/i });
+  const select = await screen.findByRole('button', { name: /^selecionar foto$/i });
   fireEvent.click(select);
   expect(screen.getByText('Selecionada')).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /remover sele/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /remover foto do carrinho/i })).toBeInTheDocument();
 });
