@@ -372,8 +372,8 @@
     "hash": "354dd0996792b441f97dba360b8a3f40"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\mobile\\MobileApp.jsx": {
-    "mtime": 1780099338.2651052,
-    "hash": "f6c3ddd6cab325784fdf75a11f19c57c"
+    "mtime": 1780101622.450461,
+    "hash": "31c8d019bb8f56f78dd63900d3fa46f8"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\mobile\\referenceFlowScreens.jsx": {
     "mtime": 1780099363.371309,
@@ -396,8 +396,8 @@
     "hash": "d9ef9d440825b2bf9080c2d2629822ad"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\pages\\Event.jsx": {
-    "mtime": 1780100264.8434727,
-    "hash": "cb62d9fc5e680110b818d06778a4f12c"
+    "mtime": 1780101611.2062724,
+    "hash": "d64d646954723bba1e84c2dcc94f9ff7"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\pages\\Home.jsx": {
     "mtime": 1779908016.6086166,
@@ -431,6 +431,10 @@
     "mtime": 1779987757.7482486,
     "hash": "daf7f12f89a7ca45975224cea7773c02"
   },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\shared\\eventShare.js": {
+    "mtime": 1780101896.069486,
+    "hash": "ec99a3fb7c8f2a7cff9b6c4485d344ac"
+  },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\shared\\EventSlugRedirect.jsx": {
     "mtime": 1780062679.0874026,
     "hash": "be0ba8cd45497d6bd28ca0b07805072c"
@@ -440,8 +444,8 @@
     "hash": "a72806132ffb82fcf0f0df93d829b414"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\shared\\PascomPanel.jsx": {
-    "mtime": 1780072811.3532567,
-    "hash": "83f81fccddc369ec5d9a70f73bbf76ed"
+    "mtime": 1780102035.76619,
+    "hash": "51c0bba69258bc8342c5f23a516a9115"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\shared\\platform.js": {
     "mtime": 1779912785.8032901,
@@ -472,8 +476,12 @@
     "hash": "a3ac717e869f95fb6c897ed2eeb32520"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\Event.test.jsx": {
-    "mtime": 1780100287.6428564,
-    "hash": "322ef6ef0538d42344fa3731ee32715e"
+    "mtime": 1780101656.0581875,
+    "hash": "655dfbd5d5d773d6d934e54d737e135e"
+  },
+  "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\eventShare.test.js": {
+    "mtime": 1780101643.0912714,
+    "hash": "4df7f9473edab21007ac227252caf271"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\frontend\\src\\__tests__\\Header.test.jsx": {
     "mtime": 1779756649.4446983,
@@ -648,8 +656,8 @@
     "hash": "ec5786c011aac962e3ddf102b1cee461"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\components.md": {
-    "mtime": 1780100312.3438258,
-    "hash": "3a3d25c21d53a3ea025cbacae7607dc7"
+    "mtime": 1780102104.4533262,
+    "hash": "d34e1c6113b05badf5dae326316bd52f"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\conventions.md": {
     "mtime": 1779911134.3403134,
@@ -668,8 +676,8 @@
     "hash": "22949fc92217768c377fd9c0a243d153"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\mobile-experience.md": {
-    "mtime": 1780099458.6459923,
-    "hash": "f8ae1e84abb17f1aa84723dd13a88ba9"
+    "mtime": 1780101704.4518287,
+    "hash": "b49befa8a4d25be70efd6dd1579deaf9"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\project-overview.md": {
     "mtime": 1779911134.3339336,
@@ -692,16 +700,16 @@
     "hash": "10cb12dc0efbd9aa0afab326bd83b954"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\system-flows.md": {
-    "mtime": 1780099467.0447748,
-    "hash": "f109bfbb9586d39455cdf5b2c7dd1f5f"
+    "mtime": 1780101699.4273918,
+    "hash": "dc646a9b41b65dc06189745a4f8204d8"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-audit.md": {
     "mtime": 1780099478.4013288,
     "hash": "f81ecc5c82ded9fce49932174a32f9ba"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-changelog.md": {
-    "mtime": 1780100312.3438258,
-    "hash": "ee09253a136ccc5edc0fd20ae0c34cee"
+    "mtime": 1780102115.484341,
+    "hash": "a4573ca1845787b249128705b3c333fc"
   },
   "C:\\Users\\muril\\OneDrive\\Documentos\\claude\\Pessoal\\Pascom\\Drive\\docs\\technical-roadmap.md": {
     "mtime": 1780099478.40245,

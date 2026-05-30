@@ -5,6 +5,7 @@ import { listarFotosEvento, listarOfertasEvento, obterEvento, validarAcessoGaler
 import { categoryLabel } from '../data/categories.js';
 import { dateLabel } from '../lib/event-format.js';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
+import { buildEventSharePayload } from '../shared/eventShare.js';
 
 function eventToken(eventoId) {
   return sessionStorage.getItem(`gallery:${eventoId}`) || '';
@@ -25,7 +26,6 @@ export default function EventPage() {
   const [event, setEvent] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [offers, setOffers] = useState({ coupons: [], packages: [] });
-  const [shareStatus, setShareStatus] = useState('');
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -124,20 +124,6 @@ export default function EventPage() {
     }
   }
 
-  async function shareEvent() {
-    const url = event.slug ? `${window.location.origin}/e/${event.slug}` : window.location.href.split('?')[0];
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: event.title, text: 'Veja esta galeria da Paróquia São Rafael.', url });
-      } else {
-        await navigator.clipboard.writeText(url);
-        setShareStatus('Link copiado.');
-      }
-    } catch (_error) {
-      setShareStatus('Não foi possível compartilhar agora.');
-    }
-  }
-
   if (!event && loading) return <main><div className="main-content"><div className="empty-state"><p>Carregando galeria...</p></div></div></main>;
   if (!event) {
     return (
@@ -148,6 +134,7 @@ export default function EventPage() {
   const canBuy = event.salesAuthorized;
   const canBuyActivePhoto = canBuy && activePhoto?.availableForSale === true;
   const activePhotoPrice = Number(activePhoto?.price || 10).toFixed(2).replace('.', ',');
+  const sharePayload = buildEventSharePayload(event, window.location.origin);
 
   return (
     <main className="event-detail-page">
@@ -164,8 +151,7 @@ export default function EventPage() {
               <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg><span>{event.location || 'Paróquia São Rafael'}</span></li>
             </ul>
             <div className="event-actions">
-              <button className="ghost-button" type="button" onClick={shareEvent}>Compartilhar evento</button>
-              {shareStatus && <small>{shareStatus}</small>}
+              <a className="ghost-button" href={sharePayload.whatsappWebUrl} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar evento pelo WhatsApp Web">Compartilhar evento</a>
             </div>
           </div>
           <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Capa de ${event.title}`} decoding="async" draggable="false" /></div>

@@ -7,6 +7,37 @@ import '../pages/pascom.css';
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
+const pascomClerkAppearance = {
+  variables: {
+    colorPrimary: '#5a176e',
+    colorText: '#281332',
+    colorTextSecondary: '#71647a',
+    colorBackground: '#ffffff',
+    colorInputBackground: '#ffffff',
+    colorInputText: '#281332',
+    borderRadius: '16px',
+  },
+  elements: {
+    rootBox: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+    },
+    cardBox: {
+      width: '100%',
+      maxWidth: '430px',
+      borderRadius: '24px',
+      boxShadow: '0 24px 70px rgba(58, 19, 75, 0.14)',
+    },
+    footerPages: {
+      display: 'none',
+    },
+    footerPageLink: {
+      display: 'none',
+    },
+  },
+};
+
 export default function PascomPanel({ mobile = false, onBackPublic }) {
   if (!clerkConfigured) {
     return (
@@ -32,14 +63,9 @@ function PascomAuthGate({ mobile, onBackPublic }) {
   if (!isLoaded) return <div className="pascom-card pascom-auth-card"><p>Carregando autenticação...</p></div>;
   if (!isSignedIn) {
     return (
-      <div className="pascom-auth-layout">
-        <div className="pascom-auth-copy">
-          <span className="pascom-eyebrow">Painel operacional</span>
-          <h1>Entrar como Pascom</h1>
-          <p>Use o e-mail da equipe cadastrado na aba `EquipePascom`. SMS/celular pode ser habilitado no Clerk Dashboard quando disponível.</p>
-          {onBackPublic && <button className="pascom-secondary" onClick={onBackPublic}>Voltar para área pública</button>}
-        </div>
-        <SignIn routing="hash" afterSignInUrl={mobile ? '/perfil' : '/pascom'} signUpUrl={mobile ? '/perfil' : '/pascom'} />
+      <div className="pascom-auth-layout pascom-auth-layout-centered">
+        <SignIn routing="hash" afterSignInUrl={mobile ? '/perfil' : '/pascom'} signUpUrl={mobile ? '/perfil' : '/pascom'} appearance={pascomClerkAppearance} />
+        {onBackPublic && <button className="pascom-secondary pascom-auth-back" onClick={onBackPublic}>Voltar para área pública</button>}
       </div>
     );
   }

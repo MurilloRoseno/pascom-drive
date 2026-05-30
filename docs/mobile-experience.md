@@ -129,7 +129,7 @@ Usuário acessa site por celular/tablet
 - **Pacotes:** ofertas retornadas pelo backend podem selecionar todas as fotos do evento ou aplicar pacote por quantidade no carrinho atual.
 - **Cupons:** o campo de cupom no checkout mobile altera a cotacao via backend; frontend nunca decide desconto.
 - **Recuperar pedido:** a tela `/perfil` publica chama `POST /api/pedidos/recuperar` com e-mail e codigo/pedido.
-- **Compartilhar evento:** usa Web Share API quando disponivel; fallback copia o link publico do evento.
+- **Compartilhar evento:** usa o helper compartilhado `eventShare`, prioriza `/e/:slug` quando existir, abre a folha nativa via Web Share API e copia o link publico como fallback.
 
 
 ## Protecao Discreta de Previas

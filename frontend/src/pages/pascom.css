@@ -18,6 +18,24 @@
   justify-content: center;
 }
 
+.pascom-auth-layout-centered {
+  min-height: min(680px, calc(100vh - 180px));
+  grid-template-columns: minmax(280px, 430px);
+  justify-items: center;
+}
+
+.pascom-auth-layout-centered .cl-rootBox {
+  width: 100%;
+}
+
+.pascom-auth-layout-centered .cl-footerPages {
+  display: none !important;
+}
+
+.pascom-auth-back {
+  width: min(100%, 430px);
+}
+
 .pascom-auth-copy,
 .pascom-card,
 .pascom-stat {

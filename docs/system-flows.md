@@ -133,10 +133,11 @@ Esta protecao e antifraude leve contra captura casual, nao DRM. A seguranca real
 ## Fluxo de Compartilhamento Controlado
 
 1. Usuario toca em `Compartilhar evento`.
-2. Mobile usa Web Share API quando disponivel; desktop copia link para a area de transferencia.
-3. Link preferencial e `/evento/:eventoId`; quando `SlugPublico` existir, `/e/:slug` resolve para o mesmo evento.
-4. Evento protegido continua exigindo codigo de galeria; o link bonito nao libera fotos nem downloads.
-5. Metadados de compartilhamento devem usar titulo, capa editorial/thumbnail e descricao segura, sem expor originais.
+2. O helper `eventShare` monta a URL publica preferindo `/e/:slug`; se nao houver slug, usa `/evento/:eventoId`.
+3. Desktop abre `https://web.whatsapp.com/send?text=...` em nova aba, com a mensagem `Veja esta galeria da Paroquia Sao Rafael: {titulo} {url}` ja preenchida.
+4. Mobile/tablet usa `navigator.share({ title, text, url })` para abrir a folha nativa de compartilhamento; se a API estiver indisponivel ou falhar, copia o link publico para a area de transferencia.
+5. Evento protegido continua exigindo codigo de galeria; o link bonito nao libera fotos nem downloads.
+6. Metadados de compartilhamento devem usar titulo, capa editorial/thumbnail e descricao segura, sem expor originais.
 
 ## Nota de Compatibilidade do Checkout
 

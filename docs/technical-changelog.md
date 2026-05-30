@@ -1,5 +1,27 @@
 # Changelog Tecnico
 
+## 2026-05-30 - Login Pascom centralizado
+
+- **Tipo:** frontend, autenticacao visual e documentacao.
+- **Alteracao:** tela deslogada da area `/pascom` removeu o card informativo lateral, centralizou o componente `SignIn` do Clerk e aplicou `appearance` para ocultar o rodape/branding de desenvolvimento do componente na area Pascom.
+- **Motivo:** deixar a entrada operacional mais limpa e com foco no login da equipe.
+- **Impacto:** somente apresentacao do login Pascom; fluxo Clerk, allowlist `EquipePascom`, APIs protegidas, compradores, checkout e downloads permanecem inalterados.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/components.md` e `docs/technical-changelog.md`.
+
+## 2026-05-30 - Compartilhamento por plataforma
+
+- **Tipo:** frontend compartilhado, desktop/mobile e documentacao.
+- **Alteracao:** criado helper `eventShare` para montar URL publica, texto e link de WhatsApp Web; desktop agora abre WhatsApp Web em nova aba e mobile/tablet usa Web Share API com fallback para copiar o link.
+- **Motivo:** alinhar o botao `Compartilhar evento` ao comportamento esperado por plataforma, evitando divergencia entre desktop e mobile.
+- **Impacto:** somente interface de compartilhamento; eventos protegidos continuam exigindo codigo e nenhum contrato de API, checkout, pagamento, download ou banco foi alterado.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/system-flows.md`, `docs/mobile-experience.md`, `docs/components.md` e `docs/technical-changelog.md`.
+
 ## 2026-05-29 - Selecao desktop alinhada ao mobile
 
 - **Tipo:** frontend desktop e documentacao.

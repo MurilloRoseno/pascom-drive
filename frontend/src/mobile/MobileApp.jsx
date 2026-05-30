@@ -7,6 +7,7 @@ import { cotarCheckout, criarPagamento, listarEventos, listarFotosEvento, listar
 import { checkoutSchema } from '../lib/validation.js';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
+import { buildEventSharePayload, shareEventNatively } from '../shared/eventShare.js';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import { galleryToken, saveGalleryToken } from '../shared/gallery.js';
 import { I } from './referenceIcons.jsx';
@@ -142,10 +143,8 @@ function EventRoute({ go, catalog, cart, addFoto, addFotos, removeFoto, setPacka
     if (pkg.type === 'all_event_photos') addManyToCart(gallery.photos);
   };
   const shareEvent = async () => {
-    const url = `${window.location.origin}/evento/${encodeURIComponent(eventoId)}`;
-    if (navigator.share) return navigator.share({ title: gallery.event?.titulo || 'Galeria Pascom Drive', url });
-    await navigator.clipboard.writeText(url);
-    return null;
+    const payload = buildEventSharePayload(gallery.event || catalogEvent || { id: eventoId }, window.location.origin);
+    await shareEventNatively(payload, navigator);
   };
   useEffect(() => {
     listarOfertasEvento(eventoId).then(({ offers: found }) => setOffers(found)).catch(() => setOffers({ coupons: [], packages: [] }));
