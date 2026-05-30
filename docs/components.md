@@ -260,6 +260,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Responsabilidade:** interface compartilhada desktop/mobile para login Clerk, validação de permissão via backend, dashboard, lista/detalhe de pedidos e ação de regenerar downloads.
 - **Dependências:** `@clerk/react`, `frontend/src/lib/api.js`, CSS `frontend/src/pages/pascom.css`.
 - **Estados internos:** `me`, `dashboard`, `pedidos`, `selectedId`, `detail`, `filters`, `loading`, `error`, `action`.
-- **Fluxo:** renderiza aviso se Clerk não estiver configurado, `SignIn` centralizado quando deslogado, estado sem permissão quando fora da `EquipePascom` e painel operacional quando autorizado.
-- **Aparência Clerk:** aplica `appearance` próprio no `SignIn` para cores paroquiais, card centralizado e ocultação do rodapé/branding de desenvolvimento do componente na área Pascom.
+- **Fluxo:** renderiza aviso se Clerk não estiver configurado, formulário customizado de e-mail OTP quando deslogado, estado sem permissão quando fora da `EquipePascom` e painel operacional quando autorizado.
+- **Login customizado:** usa `useSignIn()` para enviar código por e-mail e confirmar `email_code`, com textos em português e sem links públicos de cadastro, recuperação de conta ou rodapé/branding do Clerk.
+- **Aparência:** desktop usa card grande com formulário à esquerda e arte paroquial roxa/dourada em CSS à direita; mobile usa o mesmo fluxo em coluna, com painel visual reduzido e suporte ao modo escuro.
 - **Riscos:** `EquipePascom` vazia bloqueia todos os membros; regeneração de downloads depende dos segredos de download/fingerprint já configurados no backend.

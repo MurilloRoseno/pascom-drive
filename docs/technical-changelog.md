@@ -1,5 +1,16 @@
 # Changelog Tecnico
 
+## 2026-05-30 - Login Pascom customizado com e-mail OTP
+
+- **Tipo:** frontend, autenticacao visual e documentacao.
+- **Alteracao:** a area Pascom deixou de renderizar o componente pronto `SignIn` do Clerk e passou a usar formulario customizado com `useSignIn()`, e-mail OTP, textos em portugues, card desktop com arte paroquial e layout mobile em coluna.
+- **Motivo:** remover links/rodape do Clerk visiveis ao usuario e deixar o acesso da equipe com identidade visual propria.
+- **Impacto:** somente tela deslogada Pascom; sessao Clerk, allowlist `EquipePascom`, APIs protegidas, compradores, checkout e downloads permanecem inalterados.
+- **Breaking changes:** nenhum.
+- **Migracoes necessarias:** nenhuma; e-mail OTP precisa permanecer habilitado no Clerk Dashboard.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/components.md`, `docs/system-flows.md`, `docs/mobile-experience.md` e `docs/technical-changelog.md`.
+
 ## 2026-05-30 - Login Pascom centralizado
 
 - **Tipo:** frontend, autenticacao visual e documentacao.

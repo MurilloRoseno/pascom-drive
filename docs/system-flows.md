@@ -225,9 +225,11 @@ Pontos críticos:
 ## Área Pascom Autenticada
 
 1. Membro da equipe acessa `/pascom` no desktop ou toca em "Entrar como Pascom" em `/perfil` no mobile.
-2. Frontend renderiza Clerk SignIn; e-mail OTP é o canal recomendado e SMS/celular pode ser ativado no Clerk Dashboard.
-3. Após login, frontend envia token Clerk em `Authorization: Bearer`.
-4. Backend aplica `clerkMiddleware`, obtém `userId`, carrega e-mails/telefones do usuário no Clerk e consulta `EquipePascom`.
-5. Se o identificador ativo existir, backend atualiza `UltimoAcessoEm` e libera `/api/pascom/me`, dashboard, pedidos e detalhes.
-6. O painel permite regenerar downloads somente para pedido com `Pagamento Confirmado`.
-7. Compradores, galerias, checkout, Mercado Pago e download público continuam sem login.
+2. Frontend renderiza login customizado em português usando Clerk por baixo, sem links de cadastro público, recuperação de conta ou rodapé do componente pronto.
+3. Membro informa e-mail cadastrado; `useSignIn()` cria a tentativa e prepara `email_code`.
+4. Membro informa o código recebido; frontend confirma o primeiro fator e ativa a sessão Clerk.
+5. Após login, frontend envia token Clerk em `Authorization: Bearer`.
+6. Backend aplica `clerkMiddleware`, obtém `userId`, carrega e-mails/telefones do usuário no Clerk e consulta `EquipePascom`.
+7. Se o identificador ativo existir, backend atualiza `UltimoAcessoEm` e libera `/api/pascom/me`, dashboard, pedidos e detalhes.
+8. O painel permite regenerar downloads somente para pedido com `Pagamento Confirmado`.
+9. Compradores, galerias, checkout, Mercado Pago e download público continuam sem login.
