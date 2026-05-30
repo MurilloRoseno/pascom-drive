@@ -96,7 +96,15 @@ const administracao = rateLimit({
   message: { error: 'Muitas atualizacoes administrativas. Aguarde 1 minuto.' },
 });
 
+const pascom = rateLimit({
+  windowMs: 60 * 1000,
+  max: 80,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitas consultas na area Pascom. Aguarde 1 minuto.' },
+});
+
 module.exports = {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
 };

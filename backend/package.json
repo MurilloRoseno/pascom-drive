@@ -9,6 +9,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@clerk/express": "^2.1.22",
     "@vercel/functions": "^3.6.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",

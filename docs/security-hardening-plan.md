@@ -2,13 +2,13 @@
 
 ## Objetivo
 
-Este documento registra o hardening ativo do Pascom Drive. A arquitetura real atual e Vercel/Express, Mercado Pago, Google Sheets/Drive e Google Apps Script. Clerk nao esta instalado no projeto; qualquer adocao futura exige ADR, modelo de roles e testes de autorizacao antes de entrar no codigo.
+Este documento registra o hardening ativo do Pascom Drive. A arquitetura real atual e Vercel/Express, Mercado Pago, Google Sheets/Drive, Google Apps Script e Clerk apenas para equipe Pascom. Compradores continuam sem login.
 
 ## Superficies de Ataque
 
 | Camada | Riscos principais | Controles atuais/planejados |
 | --- | --- | --- |
-| Frontend | Exposicao de segredos, XSS, captura casual de preview | Sem segredos no bundle, tokens temporarios, anti-DevTools leve, CSP a endurecer |
+| Frontend | Exposicao de segredos, XSS, captura casual de preview, uso indevido da area Pascom | Sem segredos no bundle, Clerk publishable key apenas, tokens temporarios, anti-DevTools leve, CSP a endurecer |
 | Backend | Rotas internas expostas, spoofing de webhook, IDOR de download | HMAC worker, HMAC Mercado Pago, JWT de download, verificacao pedido/item, rate limit |
 | Apps Script | URL/trigger abusado, segredo estatico vazado, quota abuse | Assinatura HMAC com timestamp, fallback legado temporario, lotes pequenos |
 | Mercado Pago | Webhook falso, valor divergente, status atrasado | Assinatura MP, consulta sincronica, idempotencia, validacao de valor/moeda |
@@ -26,7 +26,7 @@ Este documento registra o hardening ativo do Pascom Drive. A arquitetura real at
 | Repudiation | Pagamento/download sem trilha | Aba `Webhooks`, `Downloads`, logs `download_completed` e `payment_amount_mismatch` |
 | Information disclosure | FileId/link do Drive no cliente | Backend proxy, nenhuma resposta publica com `webViewLink`/`webContentLink` |
 | Denial of service | Abuso de galeria, worker ou webhook | Rate limits por rota, janela curta de HMAC, lotes controlados no Apps Script |
-| Elevation of privilege | Download de foto nao comprada | `prepararDownload` exige pedido pago e item comprado |
+| Elevation of privilege | Download de foto nao comprada ou login Pascom sem allowlist | `prepararDownload` exige pedido pago e item comprado; `/api/pascom/*` exige Clerk + `EquipePascom` ativa |
 
 ## Matriz LINDDUN Simplificada
 
@@ -49,7 +49,7 @@ Este documento registra o hardening ativo do Pascom Drive. A arquitetura real at
 - Fallback legado por `WATERMARK_API_SECRET` e `CACHE_INVALIDATION_SECRET` so pode ficar ativo com `ALLOW_LEGACY_WORKER_SECRET=true`.
 - Webhook Mercado Pago so libera entrega se assinatura, consulta sincronica, status, moeda e valor baterem com o pedido.
 - Downloads nunca podem entregar original bruto nem URL do Drive; sempre passam pelo backend.
-- Clerk permanece fora do MVP. Se adotado, deve validar JWT por SDK oficial, `authorizedParties`, roles e ownership por recurso.
+- Clerk protege somente `/api/pascom/*`; toda permissao operacional exige allowlist ativa na aba `EquipePascom`, evitando que qualquer conta Clerk autenticada vire admin automaticamente.
 
 ## Operacao Segura
 

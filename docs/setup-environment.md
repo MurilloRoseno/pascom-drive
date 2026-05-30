@@ -55,6 +55,7 @@ Arquivo local sugerido: `frontend/.env.local`.
 | Variável | Obrigatória | Uso |
 | --- | --- | --- |
 | `VITE_API_BASE_URL` | Opcional em produção integrada | Base da API; em local normalmente `http://localhost:3001` |
+| `VITE_CLERK_PUBLISHABLE_KEY` | Sim para área Pascom | Chave pública Clerk; não é segredo e habilita login da equipe |
 
 ## Variáveis Backend
 
@@ -65,6 +66,8 @@ Arquivo local sugerido: `backend/.env`.
 | `PORT` | Não | Porta local, padrão `3001` |
 | `FRONTEND_URL` | Sim local/CORS | Origem permitida |
 | `PUBLIC_APP_URL` | Sim produção | URLs de retorno/download |
+| `CLERK_SECRET_KEY` | Sim para área Pascom | Segredo backend Clerk usado em `/api/pascom/*` |
+| `CLERK_AUTHORIZED_PARTIES` | Recomendado | Origens autorizadas para tokens Clerk, separadas por vírgula |
 | `SPREADSHEET_ID` | Sim | Google Spreadsheet |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Sim | Service account |
 | `GOOGLE_PRIVATE_KEY` | Sim se sem B64 | Chave privada multiline |
@@ -154,7 +157,7 @@ O backend não tem etapa de build; Vercel empacota `backend/api/index.js` com `@
 3. Configure webhook Mercado Pago apontando para `/api/webhook/mercado-pago`.
 4. Configure `APPS_SCRIPT_HMAC_SECRET` na Vercel e nas propriedades Apps Script antes de desabilitar fallback legado.
 5. Configure propriedades Apps Script.
-6. Execute `inicializarEstrutura()` no Apps Script para criar/migrar `Cupons`, `Pacotes`, `SlugPublico` e colunas comerciais de `Pedidos`.
+6. Execute `inicializarEstrutura()` no Apps Script para criar/migrar `Cupons`, `Pacotes`, `EquipePascom`, `SlugPublico` e colunas comerciais de `Pedidos`.
 7. Faça deploy Vercel.
 8. Publique Apps Script.
 9. Teste fluxo sandbox completo, incluindo cupom/pacote e recuperacao de pedido.

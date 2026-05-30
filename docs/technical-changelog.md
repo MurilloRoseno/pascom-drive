@@ -1,9 +1,31 @@
 # Changelog Tecnico
 
+## 2026-05-29 - Remocao do recurso local de salvar fotos
+
+- **Tipo:** frontend e documentacao.
+- **Alteracao:** removida a conveniencia local de salvar fotos antes da compra em desktop e mobile, incluindo botoes, estado em navegador, entradas de perfil e textos de politica/documentacao.
+- **Motivo:** simplificar a experiencia e eliminar uma funcionalidade que nao deve mais existir no produto.
+- **Impacto:** usuarios continuam selecionando fotos diretamente para o carrinho; dados antigos eventualmente presentes no navegador ficam inacessiveis e nao sao migrados.
+- **Breaking changes:** nenhum contrato de API, pagamento, download, galeria protegida ou banco foi alterado.
+- **Migracoes necessarias:** nenhuma.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/components.md`, `docs/mobile-experience.md`, `docs/system-flows.md`, `docs/technical-audit.md`, `docs/technical-roadmap.md`, `docs/technical-changelog.md` e `frontend/src/pages/PrivacyPolicy.jsx`.
+
+## 2026-05-29 - Area Pascom autenticada com Clerk
+
+- **Tipo:** autenticacao, backend, frontend, Apps Script e documentacao.
+- **Alteracao:** criada area operacional `/pascom` no desktop e entrada Pascom em `/perfil` mobile, protegidas por Clerk e allowlist `EquipePascom` no Google Sheets.
+- **Motivo:** permitir que a equipe Pascom consulte pedidos, downloads, suporte e metricas basicas sem expor administracao ao fluxo publico de compradores.
+- **Impacto:** novas APIs protegidas em `/api/pascom/*`; compradores continuam sem login; producao exige `VITE_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` e allowlist ativa na aba `EquipePascom`.
+- **Breaking changes:** nenhum contrato publico de compra, galeria, checkout, Mercado Pago ou download foi removido.
+- **Migracoes necessarias:** executar `inicializarEstrutura()` no Apps Script para criar/migrar `EquipePascom`; configurar Clerk com e-mail OTP e, opcionalmente, SMS.
+- **Responsavel:** Codex.
+- **Documentos afetados:** `docs/apis.md`, `docs/database.md`, `docs/components.md`, `docs/system-flows.md`, `docs/setup-environment.md`, `docs/security-hardening-plan.md`, `docs/mobile-experience.md`, `docs/technical-changelog.md` e `frontend/src/pages/PrivacyPolicy.jsx`.
+
 ## 2026-05-29 - Funcionalidades comerciais desktop/mobile
 
 - **Tipo:** produto, backend, frontend, Apps Script e documentacao.
-- **Alteracao:** adicionados recuperar pedido por e-mail/codigo, cupons pastorais, pacotes promocionais, favoritos locais, compartilhamento controlado e alias publico `/e/:slug`.
+- **Alteracao:** adicionados recuperar pedido por e-mail/codigo, cupons pastorais, pacotes promocionais, compartilhamento controlado e alias publico `/e/:slug`.
 - **Motivo:** melhorar conversao e suporte sem login, mantendo regras comerciais centralizadas no backend e experiencia equivalente em desktop/mobile.
 - **Impacto:** checkout passa a aceitar `couponCode` e `packageId`; pedido registra `TotalAntesDesconto`, `CupomCodigo`, `DescontoTotal` e `PacoteID`; Apps Script cria/migra `Cupons`, `Pacotes` e `SlugPublico`.
 - **Breaking changes:** nenhum contrato publico removido; descontos nao sao empilhados e o backend aplica a melhor condicao valida.

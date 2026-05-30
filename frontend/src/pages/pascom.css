@@ -1,0 +1,319 @@
+.pascom-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 48px 24px 72px;
+}
+
+.pascom-mobile-shell {
+  min-height: 100%;
+  padding: 18px;
+  background: var(--surface);
+}
+
+.pascom-auth-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+}
+
+.pascom-auth-copy,
+.pascom-card,
+.pascom-stat {
+  border: 1px solid rgba(90, 27, 105, 0.12);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 18px 50px rgba(58, 19, 75, 0.08);
+}
+
+.app.dark .pascom-auth-copy,
+.app.dark .pascom-card,
+.app.dark .pascom-stat {
+  background: var(--surface-2);
+  border-color: var(--line);
+}
+
+.pascom-auth-copy,
+.pascom-card {
+  padding: 24px;
+}
+
+.pascom-auth-copy h1,
+.pascom-card h1,
+.pascom-hero h1 {
+  margin: 8px 0 10px;
+  color: var(--roxo-profundo, var(--brand));
+  font-family: var(--fonte-display, var(--font-display));
+}
+
+.app.dark .pascom-auth-copy h1,
+.app.dark .pascom-card h1,
+.app.dark .pascom-hero h1,
+.app.dark .pascom-card h2,
+.app.dark .pascom-card h3 {
+  color: var(--ink);
+}
+
+.pascom-auth-copy p,
+.pascom-card p,
+.pascom-hero p,
+.pascom-empty {
+  color: #71647a;
+  line-height: 1.6;
+}
+
+.app.dark .pascom-auth-copy p,
+.app.dark .pascom-card p,
+.app.dark .pascom-hero p,
+.app.dark .pascom-empty {
+  color: var(--ink-2);
+}
+
+.pascom-eyebrow {
+  color: #b58716;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.pascom-console {
+  display: grid;
+  gap: 22px;
+}
+
+.pascom-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 30px;
+  border-radius: 26px;
+  color: #fff;
+  background: linear-gradient(135deg, #210c38, #671b72);
+}
+
+.pascom-hero h1,
+.pascom-hero p {
+  color: #fff;
+}
+
+.pascom-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pascom-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.pascom-stat {
+  padding: 18px;
+}
+
+.pascom-stat span {
+  color: #8c8092;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.pascom-stat strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--roxo-profundo, var(--brand));
+  font-size: 1.35rem;
+}
+
+.pascom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  gap: 18px;
+}
+
+.pascom-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.pascom-filters {
+  display: grid;
+  grid-template-columns: 1fr 190px;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.pascom-filters input,
+.pascom-filters select {
+  min-height: 42px;
+  border: 1px solid rgba(90, 27, 105, 0.16);
+  border-radius: 12px;
+  padding: 0 12px;
+  background: #fff;
+  color: #281332;
+}
+
+.app.dark .pascom-filters input,
+.app.dark .pascom-filters select {
+  background: var(--surface-3);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.pascom-order-list {
+  display: grid;
+  gap: 8px;
+  max-height: 520px;
+  overflow: auto;
+}
+
+.pascom-order-list button {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid rgba(90, 27, 105, 0.1);
+  border-radius: 14px;
+  background: #faf7f0;
+  color: #281332;
+  text-align: left;
+}
+
+.app.dark .pascom-order-list button {
+  background: var(--surface-3);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.pascom-order-list button.active {
+  border-color: #f2bf35;
+  box-shadow: inset 4px 0 0 #f2bf35;
+}
+
+.pascom-order-list span,
+.pascom-order-list small {
+  color: #746879;
+}
+
+.pascom-definition {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.pascom-definition div {
+  padding: 12px;
+  border-radius: 12px;
+  background: #faf7f0;
+}
+
+.app.dark .pascom-definition div {
+  background: var(--surface-3);
+}
+
+.pascom-definition dt {
+  color: #8c8092;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pascom-definition dd {
+  margin: 5px 0 0;
+  color: #281332;
+  font-weight: 800;
+}
+
+.app.dark .pascom-definition dd {
+  color: var(--ink);
+}
+
+.pascom-lines {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 18px;
+}
+
+.pascom-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(90, 27, 105, 0.08);
+}
+
+.pascom-primary,
+.pascom-secondary {
+  min-height: 42px;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-weight: 900;
+}
+
+.pascom-primary {
+  background: #5a176e;
+  color: #fff;
+}
+
+.pascom-secondary {
+  border: 1px solid rgba(90, 27, 105, 0.18);
+  background: #fff;
+  color: #5a176e;
+}
+
+.app.dark .pascom-secondary {
+  background: var(--surface-3);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.pascom-primary:disabled,
+.pascom-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pascom-alert {
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #842029;
+  background: #f8d7da;
+}
+
+.pascom-alert.success {
+  color: #0f5132;
+  background: #d1e7dd;
+}
+
+.pascom-auth-card {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .pascom-auth-layout,
+  .pascom-grid,
+  .pascom-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pascom-page {
+    padding: 28px 18px 58px;
+  }
+
+  .pascom-hero {
+    padding: 22px;
+    flex-direction: column;
+  }
+
+  .pascom-filters,
+  .pascom-definition {
+    grid-template-columns: 1fr;
+  }
+}

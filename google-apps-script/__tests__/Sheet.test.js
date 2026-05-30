@@ -27,6 +27,7 @@ it('registra preview e identificador privado sem link publico do original', () =
 
 it('inicializa a estrutura em script independente sem exigir interface da planilha', () => {
   expect(() => inicializarEstrutura()).not.toThrow();
+  expect(__mockSpreadsheet__.getSheetByName).toHaveBeenCalledWith('EquipePascom');
   expect(Logger.log).toHaveBeenCalledWith(expect.stringContaining('Estrutura preparada'));
 });
 

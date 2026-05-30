@@ -92,12 +92,11 @@ O projeto `pascom-drive-mobile` era um protótipo com dados globais/mockados. No
 - `statusPagamento` para retorno de pagamento;
 - `listarOfertasEvento` para pacotes/cupons da galeria;
 - `recuperarPedido` para consulta por e-mail/código no perfil público;
-- `useFavoritePhotos` para favoritos locais por dispositivo;
 - `CarrinhoProvider` e `useCarrinho` para estado compartilhado.
 
 A tradução entre backend e layout fica em `frontend/src/mobile/referenceUtils.jsx`, que converte eventos/fotos reais para o formato visual esperado pela referência.
 
-Funcionalidades existentes no HTML de design que agora possuem integração real: favoritos locais, recuperação de pedidos, pacotes/cupons, compartilhamento de evento e checkout com desconto validado no backend. Permanecem como placeholders inativos até haver backend real: débito virtual CAIXA, upload Pascom, relatórios, moderação e configurações administrativas.
+Funcionalidades existentes no HTML de design que agora possuem integração real: recuperação de pedidos, pacotes/cupons, compartilhamento de evento e checkout com desconto validado no backend. Permanecem como placeholders inativos até haver backend real: débito virtual CAIXA, upload Pascom, relatórios, moderação e configurações administrativas.
 
 ## Fluxo Mobile
 
@@ -112,7 +111,6 @@ Usuário acessa site por celular/tablet
   -> Galeria protegida solicita código quando necessário
   -> Galeria mostra grade 2x/3x/4x, card de preco/WhatsApp e selecao por foto
   -> Fotos abrem em lightbox fullscreen escuro com contador, setas, aviso protegido e botao de selecao
-  -> Usuario pode favoritar fotos localmente e adicionar favoritos ao carrinho
   -> Galeria exibe pacotes/cupons retornados por /api/eventos/:eventoId/ofertas
   -> Carrinho abre como bottom sheet
   -> Checkout usa stepper Identificação/Pagamento e aceita cupom pastoral
@@ -128,7 +126,6 @@ Usuário acessa site por celular/tablet
 
 ## Funcionalidades Comerciais Mobile
 
-- **Favoritos:** ficam em `localStorage` por evento/foto e sao reconciliados com a galeria real ao abrir o evento.
 - **Pacotes:** ofertas retornadas pelo backend podem selecionar todas as fotos do evento ou aplicar pacote por quantidade no carrinho atual.
 - **Cupons:** o campo de cupom no checkout mobile altera a cotacao via backend; frontend nunca decide desconto.
 - **Recuperar pedido:** a tela `/perfil` publica chama `POST /api/pedidos/recuperar` com e-mail e codigo/pedido.
@@ -166,3 +163,6 @@ Toda mudança futura no mobile deve responder:
 2. A regra de negócio continua centralizada em `lib/`, `context/` ou `shared/`?
 3. A documentação e o changelog técnico foram atualizados?
 4. O fluxo foi validado em viewport mobile real ou emulação equivalente?
+## Área Pascom no Mobile
+
+O botão "Entrar como Pascom" em `/perfil` abre o fluxo Clerk. Usuários autorizados na aba `EquipePascom` veem dashboard, pedidos, downloads e suporte real dentro do layout mobile; usuários fora da allowlist veem estado "sem permissão". A compra pública permanece sem login.

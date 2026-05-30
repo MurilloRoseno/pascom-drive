@@ -9,7 +9,6 @@ import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import { galleryToken, saveGalleryToken } from '../shared/gallery.js';
-import { useFavoritePhotos } from '../shared/favorites.js';
 import { I } from './referenceIcons.jsx';
 import { shadeColor, toReferenceEvent, toReferencePhoto } from './referenceUtils.jsx';
 import { CalendarioScreen, EmptyCard, EventoScreen, GaleriasScreen, HomeScreen, PerfilScreen } from './referencePublicScreens.jsx';
@@ -134,7 +133,6 @@ function EventRoute({ go, catalog, cart, addFoto, addFotos, removeFoto, setPacka
   const [accessCode, setAccessCode] = useState('');
   const [accessError, setAccessError] = useState('');
   const { isDevtoolsOpen } = useDevtoolsGuard({ enabled: Boolean(gallery.event && !gallery.locked) });
-  const { favoriteIds, favoriteCount, favoritePhotos, toggleFavorite } = useFavoritePhotos(eventoId);
   const view = params.get('view');
   const idx = Number(params.get('idx') || 0);
   const addToCart = (photo) => addFoto({ ...photo, id: photo.photoId, url: photo.src, event: photo.eventoTitulo, eventoId: gallery.event?.id });
@@ -166,8 +164,8 @@ function EventRoute({ go, catalog, cart, addFoto, addFotos, removeFoto, setPacka
 
   if (gallery.error && !gallery.event) return <EmptyCard text={gallery.error} />;
   if (view === 'foto') return <FotoLightboxScreen ev={gallery.event} photos={gallery.photos} idx={idx} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} isDevtoolsOpen={isDevtoolsOpen} />;
-  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} offers={offers} selectPackage={selectPackage} favoriteIds={favoriteIds} favoriteCount={favoriteCount} addFavorites={() => addManyToCart(favoritePhotos(gallery.photos))} toggleFavorite={toggleFavorite} shareEvent={shareEvent} isDevtoolsOpen={isDevtoolsOpen} />;
-  return <EventoScreen ev={gallery.event || catalogEvent} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} offers={offers} selectPackage={selectPackage} favoriteIds={favoriteIds} toggleFavorite={toggleFavorite} shareEvent={shareEvent} isDevtoolsOpen={isDevtoolsOpen} />;
+  if (view === 'galeria') return <GaleriaFotosScreen ev={gallery.event} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} accessCode={accessCode} setAccessCode={setAccessCode} accessError={accessError || gallery.error} unlock={unlock} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} gridCols={gridCols} setGridCols={setGridCols} offers={offers} selectPackage={selectPackage} shareEvent={shareEvent} isDevtoolsOpen={isDevtoolsOpen} />;
+  return <EventoScreen ev={gallery.event || catalogEvent} photos={gallery.photos} loading={gallery.loading} locked={gallery.locked} go={go} tweaks={tweaks} cart={cart} addToCart={addToCart} removeFromCart={removeFoto} offers={offers} selectPackage={selectPackage} shareEvent={shareEvent} isDevtoolsOpen={isDevtoolsOpen} />;
 }
 
 function CheckoutRoute({ cart, couponCode, packageId, setCouponCode, removeFoto, go, clearCarrinho }) {

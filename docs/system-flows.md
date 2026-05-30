@@ -20,7 +20,7 @@ Cliente
 
 Em smartphones e tablets, a jornada usa a interface dedicada mobile portada do HTML standalone, com navegação inferior, calendário completo, perfil/Pascom, carrinho em bottom sheet, checkout em duas etapas e lightbox fullscreen.
 
-Favoritos locais, recuperação de pedidos por e-mail/código, cupons, pacotes e compartilhamento controlado já possuem integração real. Funcionalidades que ainda permanecem como placeholders inativos: débito virtual CAIXA, upload Pascom, relatórios e moderação.
+Recuperação de pedidos por e-mail/código, cupons, pacotes e compartilhamento controlado já possuem integração real. Funcionalidades que ainda permanecem como placeholders inativos: débito virtual CAIXA, upload Pascom, relatórios e moderação.
 
 ## Fluxo de Política de Privacidade
 
@@ -61,16 +61,6 @@ Detalhes operacionais:
 4. Frontend chama `GET /api/eventos/:eventoId/fotos`.
 5. Backend retorna fotos `Processada`, não capa e disponíveis conforme regra.
 6. Usuário adiciona fotos ao carrinho.
-
-## Fluxo de Favoritos Locais
-
-1. Usuário toca no botão de favorito em uma foto da galeria desktop ou mobile.
-2. Frontend grava apenas `eventoId` e `fotoId` em `localStorage`, sem enviar esse dado ao backend.
-3. Ao reabrir a galeria, os IDs favoritos são reconciliados com as fotos retornadas pela API.
-4. Fotos removidas, expiradas ou indisponíveis deixam de aparecer como compráveis e podem ser retiradas pelo usuário.
-5. Usuário pode adicionar favoritos válidos ao carrinho em lote.
-
-Favoritos são conveniência local por dispositivo, não histórico pastoral centralizado.
 
 ## Fluxo de Galeria Protegida
 
@@ -231,3 +221,12 @@ Pontos críticos:
 - SMTP: e-mail de entrega.
 - WhatsApp: canal assistido por link `wa.me`.
 - Vercel: hospedagem e cache.
+## Área Pascom Autenticada
+
+1. Membro da equipe acessa `/pascom` no desktop ou toca em "Entrar como Pascom" em `/perfil` no mobile.
+2. Frontend renderiza Clerk SignIn; e-mail OTP é o canal recomendado e SMS/celular pode ser ativado no Clerk Dashboard.
+3. Após login, frontend envia token Clerk em `Authorization: Bearer`.
+4. Backend aplica `clerkMiddleware`, obtém `userId`, carrega e-mails/telefones do usuário no Clerk e consulta `EquipePascom`.
+5. Se o identificador ativo existir, backend atualiza `UltimoAcessoEm` e libera `/api/pascom/me`, dashboard, pedidos e detalhes.
+6. O painel permite regenerar downloads somente para pedido com `Pagamento Confirmado`.
+7. Compradores, galerias, checkout, Mercado Pago e download público continuam sem login.

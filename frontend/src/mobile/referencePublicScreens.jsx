@@ -1,5 +1,6 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable react/prop-types, no-unused-vars */
 import { useMemo, useState } from 'react';
+import PascomPanel from '../shared/PascomPanel.jsx';
 import { I } from './referenceIcons.jsx';
 import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, SACRAMENTOS } from './referenceUtils.jsx';
 
@@ -108,7 +109,7 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
   );
 }
 
-export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, photos: loadedPhotos = [], loading = false, locked = false, offers = { coupons: [], packages: [] }, selectPackage, favoriteIds = new Set(), toggleFavorite, shareEvent, isDevtoolsOpen = false }) {
+export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, photos: loadedPhotos = [], loading = false, locked = false, offers = { coupons: [], packages: [] }, selectPackage, shareEvent, isDevtoolsOpen = false }) {
   if (!ev) return <EmptyCard text="Evento não encontrado." />;
   const cover = getCoverPhoto(ev);
   const photos = (loadedPhotos.length ? loadedPhotos : resolveEventPhotos(ev)).slice(0, 9);
@@ -144,7 +145,7 @@ export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromC
         {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid mobile-gallery-grid-preview">{photos.map((photo, index) => {
           const selected = selectedIds.has(photo.photoId);
           const openPhoto = () => locked ? go({ name: 'galeria', eventoId: ev.id }) : go({ name: 'foto', eventoId: ev.id, photoIdx: index });
-          return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={openPhoto}>{toggleFavorite && <button className={`photo-fav ${favoriteIds.has(photo.photoId) ? 'active' : ''}`} onClick={(event) => { event.stopPropagation(); toggleFavorite(photo); }}>♡</button>}{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;
+          return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} showBadge={false} onClick={openPhoto}>{addToCart && <button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button>}</Photo>;
         })}</div>}
         <PriceHelpCard />
       </section>
@@ -252,7 +253,7 @@ function MobileOffers({ offers, selectPackage }) {
 }
 
 export function PerfilScreen({ setRole, go, role = 'publico', eventos = [], recuperarPedido }) {
-  if (role === 'pascom') return <PascomScreen go={go} setRole={setRole} eventos={eventos} />;
+  if (role === 'pascom') return <PascomPanel mobile onBackPublic={() => setRole('publico')} />;
   return <PublicoScreen go={go} setRole={setRole} recuperarPedido={recuperarPedido} />;
 }
 
@@ -271,17 +272,17 @@ function PublicoScreen({ go, setRole, recuperarPedido }) {
   };
   return (
     <div className="scroll">
-      <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos, salve galerias favoritas e fale com a secretaria.</p></section>
+      <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos e fale com a secretaria.</p></section>
       <section className="section">
         <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra e o código do pedido.</p><input className="input" placeholder="seu@email.com" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} style={{ marginTop: 14 }} /><input className="input" placeholder="PED_..." value={form.pedidoId} onChange={(event) => setForm({ ...form, pedidoId: event.target.value.toUpperCase() })} style={{ marginTop: 10 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} onClick={submit}>Recuperar fotos</button>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}{result && <div className="caption" style={{ textAlign: 'left', marginTop: 12 }}><strong>{result.status}</strong><br />{result.deliveryReady ? `${result.downloads.length} link(s) liberado(s) por 24h.` : 'Pedido ainda não confirmado.'}{result.downloads?.map((item, index) => <a key={item.url} href={item.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>Baixar foto {index + 1}</a>)}</div>}</div>
-        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Heart" label="Galerias favoritas" disabled /><MenuRow icon="Whatsapp" label="Falar com a secretaria" href="https://wa.me/5599991646063" /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
-        <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para gerenciar uploads, ver vendas e moderar fotos.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div>
+        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Whatsapp" label="Falar com a secretaria" href="https://wa.me/5599991646063" /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
+        <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para consultar pedidos, downloads, suporte e métricas.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div>
       </section>
     </div>
   );
 }
 
-function PascomScreen({ go, setRole, eventos }) {
+function LegacyPascomScreen({ go, setRole, eventos }) {
   return (
     <div className="scroll">
       <section style={{ background: 'linear-gradient(140deg, #1a0f1f 0%, var(--brand-d) 100%)', color: '#fff', padding: '20px 18px 24px', position: 'relative', overflow: 'hidden' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Painel Pascom</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Boa tarde, Equipe!</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Resumo de hoje · Quinta, 28 de maio de 2026.</p></section>

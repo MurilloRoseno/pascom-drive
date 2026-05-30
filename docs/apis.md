@@ -571,3 +571,14 @@ As classes de limite estão em `backend/middleware/rate-limit.js`:
 - administração.
 
 Documente qualquer alteração nesses limites em `technical-changelog.md`.
+## APIs Pascom Protegidas por Clerk
+
+Todas as rotas `/api/pascom/*` exigem `Authorization: Bearer <clerk-session-token>` e usuário ativo na aba `EquipePascom`.
+
+- `GET /api/pascom/me`: retorna identidade segura do membro autorizado (`id`, `name`, `role`, `email`, `phone`).
+- `GET /api/pascom/dashboard`: retorna pedidos/vendas do dia, pedidos/vendas do mês, downloads ativos, eventos publicados e pendências.
+- `GET /api/pascom/pedidos`: aceita filtros opcionais `q`, `status`, `dataInicio`, `dataFim` e `limit`.
+- `GET /api/pascom/pedidos/:pedidoId`: retorna pedido, itens comprados e downloads sem expor `TokenHash`, Drive `fileId`, `webViewLink` ou `webContentLink`.
+- `POST /api/pascom/pedidos/:pedidoId/regenerar-downloads`: regenera links somente para `Pagamento Confirmado`; pedidos pendentes retornam `409`.
+
+Erros esperados: `401` sem sessão Clerk, `403` fora da `EquipePascom` e `503` quando Clerk não estiver configurado.

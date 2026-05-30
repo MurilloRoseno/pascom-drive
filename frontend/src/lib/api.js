@@ -7,6 +7,10 @@ async function request(url, options) {
   return data;
 }
 
+function bearer(token) {
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export function listarEventos({ q = '', categoria = '' } = {}) {
   const params = new URLSearchParams();
   if (q) params.set('q', q);
@@ -64,5 +68,32 @@ export function recuperarPedido(payload) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
+  });
+}
+
+export function pascomMe(token) {
+  return request('/api/pascom/me', { headers: bearer(token) });
+}
+
+export function pascomDashboard(token) {
+  return request('/api/pascom/dashboard', { headers: bearer(token) });
+}
+
+export function pascomPedidos(token, filters = {}) {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+  });
+  return request(`/api/pascom/pedidos?${params.toString()}`, { headers: bearer(token) });
+}
+
+export function pascomPedidoDetalhe(token, pedidoId) {
+  return request(`/api/pascom/pedidos/${encodeURIComponent(pedidoId)}`, { headers: bearer(token) });
+}
+
+export function pascomRegenerarDownloads(token, pedidoId) {
+  return request(`/api/pascom/pedidos/${encodeURIComponent(pedidoId)}/regenerar-downloads`, {
+    method: 'POST',
+    headers: bearer(token),
   });
 }

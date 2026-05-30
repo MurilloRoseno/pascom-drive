@@ -16,6 +16,7 @@ export default function Header() {
             <li><a href="/#sacramentos">Sacramentos</a></li>
             <li><Link className={eventsActive ? 'ativo' : undefined} to="/buscar">Eventos</Link></li>
             <li><Link to="/recuperar-pedido">Recuperar pedido</Link></li>
+            <li><Link className={location.pathname === '/pascom' ? 'ativo' : undefined} to="/pascom">Pascom</Link></li>
             <li><a href="/#contato">Contato</a></li>
           </ul>
         </nav>

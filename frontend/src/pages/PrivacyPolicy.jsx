@@ -34,6 +34,7 @@ const legalBases = [
   ['Comunicação por e-mail/WhatsApp', 'Execução de serviço, consentimento e legítimo interesse'],
   ['Logs técnicos e segurança', 'Legítimo interesse e Marco Civil da Internet'],
   ['Fingerprint forense de downloads', 'Legítimo interesse, prevenção a fraude e proteção de direitos'],
+  ['Acesso administrativo da equipe Pascom', 'Legítimo interesse, segurança operacional e controle de acesso'],
 ];
 
 const retention = [
@@ -44,6 +45,7 @@ const retention = [
   ['Logs técnicos', 'Pelo tempo necessário para segurança, diagnóstico e obrigações legais'],
   ['Contatos por e-mail/WhatsApp', 'Enquanto houver necessidade de atendimento ou histórico pastoral legítimo'],
   ['Fotos e derivados no Drive', 'Conforme organização pastoral do evento e autorização de venda/publicação'],
+  ['Identificadores da Equipe Pascom', 'Enquanto a pessoa integrar a equipe ou até revogação do acesso operacional'],
 ];
 
 function Icon({ name }) {
@@ -163,8 +165,8 @@ export default function PrivacyPolicy({ mobile = false }) {
                 <Li>Endereço IP, data/hora de acesso, navegador, tipo de dispositivo e registros técnicos de segurança.</Li>
                 <Li>Páginas acessadas, eventos consultados e erros técnicos necessários para diagnóstico e proteção da plataforma.</Li>
                 <Li>Dados mínimos em `sessionStorage` para manter tokens de galeria protegida durante a navegação.</Li>
-                <Li>Dados locais em `localStorage` para favoritos antes da compra, contendo apenas IDs de evento/foto neste dispositivo.</Li>
                 <Li>Identificador forense não sensível vinculado ao pedido/download, usado para rastrear vazamento de arquivo comprado sem embutir nome, e-mail ou WhatsApp na imagem.</Li>
+                <Li>Na área Pascom, Clerk e Sheets tratam e-mail ou telefone da equipe, status de permissão e registros de último acesso para controle administrativo.</Li>
               </ul>
             </SubSection>
           </Section>
@@ -191,6 +193,7 @@ export default function PrivacyPolicy({ mobile = false }) {
               <Li>Aplicar cupons pastorais e pacotes promocionais de forma auditável e proporcional.</Li>
               <Li>Prevenir fraudes, diagnosticar falhas, manter auditoria e proteger a integridade do sistema.</Li>
               <Li>Aplicar fingerprint forense proporcional em fotos entregues após pagamento para desestimular redistribuição indevida.</Li>
+              <Li>Autenticar membros da equipe Pascom e limitar o painel operacional a pessoas ativas na allowlist da paróquia.</Li>
               <Li>Cumprir obrigações legais, contábeis, fiscais, pastorais e de segurança aplicáveis.</Li>
             </ul>
             <div className="privacy-warning">
@@ -209,6 +212,7 @@ export default function PrivacyPolicy({ mobile = false }) {
               <Li><strong>Mercado Pago:</strong> processamento do pagamento e retorno de status financeiro.</Li>
               <Li><strong>Google Sheets/Drive:</strong> organização operacional de eventos, fotos, pedidos e links de entrega.</Li>
               <Li><strong>Vercel:</strong> hospedagem da aplicação, APIs e registros técnicos de execução.</Li>
+              <Li><strong>Clerk:</strong> autenticação da equipe Pascom por e-mail OTP e, se habilitado, SMS/celular.</Li>
               <Li><strong>E-mail/SMTP e WhatsApp:</strong> entrega de links e atendimento ao comprador.</Li>
               <Li><strong>Autoridades públicas:</strong> quando houver obrigação legal, requisição válida ou ordem judicial.</Li>
             </ul>
@@ -255,7 +259,6 @@ export default function PrivacyPolicy({ mobile = false }) {
             <p>O Pascom Drive usa armazenamento técnico mínimo para funcionamento da experiência:</p>
             <ul className="privacy-list">
               <Li><strong>Session storage:</strong> guarda temporariamente tokens de galerias protegidas no navegador.</Li>
-              <Li><strong>Local storage:</strong> guarda favoritos locais por dispositivo antes da compra; esses favoritos não são enviados ao backend no MVP atual.</Li>
               <Li><strong>Cookies/headers técnicos:</strong> podem ser usados pela infraestrutura para segurança, cache e entrega do site.</Li>
               <Li><strong>Sem publicidade comportamental:</strong> não há cookies de anúncios ou rastreamento comercial de terceiros planejados no MVP atual.</Li>
               <Li><strong>Tokens de mídia:</strong> links de preview podem conter assinatura temporária para impedir coleta em massa e expiram automaticamente.</Li>

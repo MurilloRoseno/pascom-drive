@@ -5,7 +5,6 @@ import { listarFotosEvento, listarOfertasEvento, obterEvento, validarAcessoGaler
 import { categoryLabel } from '../data/categories.js';
 import { dateLabel } from '../lib/event-format.js';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
-import { useFavoritePhotos } from '../shared/favorites.js';
 
 function eventToken(eventoId) {
   return sessionStorage.getItem(`gallery:${eventoId}`) || '';
@@ -32,7 +31,6 @@ export default function EventPage() {
   const [loading, setLoading] = useState(true);
   const closeRef = useRef(null);
   const { addFoto, addFotos, removeFoto, isSelected, setPackageId } = useCarrinho();
-  const { favoriteIds, favoriteCount, favoritePhotos, toggleFavorite } = useFavoritePhotos(eventoId);
   const locked = event?.visibility === 'protegida' && !eventToken(eventoId);
   const { isDevtoolsOpen } = useDevtoolsGuard({ enabled: Boolean(event && !locked) });
 
@@ -192,7 +190,6 @@ export default function EventPage() {
               <div><h2 className="gallery-title">Fotos do evento</h2><p className="gallery-note">{event.visibility === 'protegida' ? 'Prévia protegida com marca d água.' : 'Galeria institucional aberta.'}</p></div>
               <div className="gallery-header-actions">
                 <span className="gallery-count">{photos.length} foto{photos.length === 1 ? '' : 's'}</span>
-                {favoriteCount > 0 && <button className="ghost-button" type="button" onClick={() => addFotos(favoritePhotos(photos).map(cartPhoto))}>Adicionar {favoriteCount} favorito{favoriteCount === 1 ? '' : 's'}</button>}
               </div>
             </div>
             {(offers.packages.length > 0 || offers.coupons.length > 0) && (
@@ -214,9 +211,6 @@ export default function EventPage() {
                       <img className={photo.watermarkedPreview ? 'photo-blur-target' : undefined} src={photo.thumbnailUrl} alt={photo.alt || photo.caption} loading="lazy" decoding="async" draggable="false" onContextMenu={(mouseEvent) => mouseEvent.preventDefault()} />
                       <span className={photo.watermarkedPreview ? 'preview-chip' : 'public-chip'}>{photo.watermarkedPreview ? 'Prévia protegida' : 'Galeria pública'}</span>
                       {selected && <span className="selected-chip">Selecionada</span>}
-                    </button>
-                    <button className={`favorite-button${favoriteIds.has(photo.id) ? ' active' : ''}`} type="button" onClick={() => toggleFavorite(photo)}>
-                      {favoriteIds.has(photo.id) ? 'Favorita' : 'Favoritar'}
                     </button>
                     {selectable && (
                       <button className={`photo-select${selected ? ' selected' : ''}`} type="button" onClick={() => togglePurchase(photo)}>
@@ -255,9 +249,6 @@ export default function EventPage() {
                     {isSelected(activePhoto.id) ? 'Remover do carrinho' : 'Selecionar por R$ 10,00'}
                   </button>
                 )}
-                <button className="ghost-button" type="button" onClick={() => toggleFavorite(activePhoto)}>
-                  {favoriteIds.has(activePhoto.id) ? 'Remover dos favoritos' : 'Salvar favorita'}
-                </button>
               </div>
             </div>
           </div>

@@ -3,9 +3,10 @@ const express = require('express');
 const helmet = require('helmet');
 const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
 } = require('./middleware/rate-limit');
 const { mediaAbuseGuard } = require('./middleware/media-abuse');
+const { authenticatePascom, pascomClerkMiddleware } = require('./lib/pascom-auth');
 const errorHandler = require('./middleware/error-handler');
 
 const healthHandler = require('./api/health.js');
@@ -25,6 +26,11 @@ const galeriaAcessoHandler = require('./api/galeria-acesso');
 const previewEventoHandler = require('./api/preview-evento');
 const cacheInvalidateHandler = require('./api/cache-invalidate');
 const pedidoRecuperarHandler = require('./api/pedido-recuperar');
+const pascomMeHandler = require('./api/pascom-me');
+const pascomDashboardHandler = require('./api/pascom-dashboard');
+const pascomPedidosHandler = require('./api/pascom-pedidos');
+const pascomPedidoDetalheHandler = require('./api/pascom-pedido-detalhe');
+const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-downloads');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -63,6 +69,12 @@ app.use((req, res, next) => {
 app.use(geral);
 
 app.get('/api/health', healthHandler);
+app.use('/api/pascom', pascom, pascomClerkMiddleware(), authenticatePascom);
+app.get('/api/pascom/me', pascomMeHandler);
+app.get('/api/pascom/dashboard', pascomDashboardHandler);
+app.get('/api/pascom/pedidos', pascomPedidosHandler);
+app.get('/api/pascom/pedidos/:pedidoId', pascomPedidoDetalheHandler);
+app.post('/api/pascom/pedidos/:pedidoId/regenerar-downloads', pascomRegenerarDownloadsHandler);
 app.post('/api/checkout/preference', pagamento, checkoutPreferenceHandler);
 app.post('/api/checkout/quote', cotacao, checkoutQuoteHandler);
 app.post('/api/criar-pagamento', pagamento, checkoutPreferenceHandler);

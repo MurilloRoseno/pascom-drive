@@ -4,7 +4,7 @@ import { I } from './referenceIcons.jsx';
 import { brl, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, getCoverPhoto, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
 import { checkoutSchema } from '../lib/validation.js';
 
-export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols, offers = { coupons: [], packages: [] }, selectPackage, favoriteIds = new Set(), favoriteCount = 0, addFavorites, toggleFavorite, shareEvent, isDevtoolsOpen = false }) {
+export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, setAccessCode, accessError, unlock, go, cart, addToCart, removeFromCart, gridCols, setGridCols, offers = { coupons: [], packages: [] }, selectPackage, shareEvent, isDevtoolsOpen = false }) {
   if (!ev) return null;
   const cover = getCoverPhoto(ev);
   return (
@@ -28,12 +28,12 @@ export function GaleriaFotosScreen({ ev, photos, loading, locked, accessCode, se
         <button className="btn btn-secondary btn-sm" style={{ marginTop: 12 }} onClick={() => shareEvent?.()}><I.Share className="icon icon-sm" /> Compartilhar evento</button>
       </section>
       <section className="mobile-protected-section"><FlowProtectedPreviewCard /></section>
-      {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} offers={offers} selectPackage={selectPackage} favoriteIds={favoriteIds} favoriteCount={favoriteCount} addFavorites={addFavorites} toggleFavorite={toggleFavorite} isDevtoolsOpen={isDevtoolsOpen} />}
+      {locked ? <AccessCard code={accessCode} setCode={setAccessCode} error={accessError} unlock={unlock} /> : <PhotoGrid ev={ev} photos={photos} loading={loading} go={go} cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} gridCols={gridCols} setGridCols={setGridCols} offers={offers} selectPackage={selectPackage} isDevtoolsOpen={isDevtoolsOpen} />}
     </div>
   );
 }
 
-function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true, offers = { coupons: [], packages: [] }, selectPackage, favoriteIds = new Set(), favoriteCount = 0, addFavorites, toggleFavorite, isDevtoolsOpen = false }) {
+function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, gridCols, setGridCols, sticky = true, offers = { coupons: [], packages: [] }, selectPackage, isDevtoolsOpen = false }) {
   const selectedIds = new Set(cart.map((item) => item.photoId));
   return (
     <section className="section mobile-gallery-section" style={{ paddingTop: 12, paddingBottom: sticky && cart.length > 0 ? 92 : undefined }}>
@@ -41,11 +41,11 @@ function PhotoGrid({ ev, photos, loading, go, cart, addToCart, removeFromCart, g
         <strong>{photos.length || ev.totalFotos} fotos</strong>
         <DensityToggle value={gridCols} onChange={setGridCols} />
       </div>
-      {(offers.packages?.length > 0 || offers.coupons?.length > 0 || favoriteCount > 0) && <div className="mobile-offers-card card" style={{ padding: 12, marginTop: 10 }}><div className="eyebrow">Compra pastoral</div><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>{offers.packages?.map((pkg) => <button key={pkg.id} className="tag tag-yellow" onClick={() => selectPackage?.(pkg)}>{pkg.description || 'Aplicar pacote'}</button>)}{offers.coupons?.map((coupon) => <span key={coupon.code} className="tag">Cupom {coupon.code}</span>)}{favoriteCount > 0 && <button className="tag" onClick={addFavorites}>Adicionar favoritos</button>}</div></div>}
+      {(offers.packages?.length > 0 || offers.coupons?.length > 0) && <div className="mobile-offers-card card" style={{ padding: 12, marginTop: 10 }}><div className="eyebrow">Compra pastoral</div><div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 8 }}>{offers.packages?.map((pkg) => <button key={pkg.id} className="tag tag-yellow" onClick={() => selectPackage?.(pkg)}>{pkg.description || 'Aplicar pacote'}</button>)}{offers.coupons?.map((coupon) => <span key={coupon.code} className="tag">Cupom {coupon.code}</span>)}</div></div>}
       {isDevtoolsOpen && <DevtoolsGalleryNotice />}
       {loading ? <div className="card" style={{ height: 220, background: 'var(--surface-2)' }} /> : <div className="mobile-gallery-grid" style={{ gridTemplateColumns: `repeat(${gridCols}, 1fr)` }}>{photos.map((photo, index) => {
         const selected = selectedIds.has(photo.photoId);
-        return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}>{toggleFavorite && <button className={`photo-fav ${favoriteIds.has(photo.photoId) ? 'active' : ''}`} onClick={(event) => { event.stopPropagation(); toggleFavorite(photo); }}>♡</button>}<button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
+        return <Photo key={photo.photoId} photo={photo} aspect="1/1" selected={selected} onClick={() => go({ name: 'foto', eventoId: ev.id, photoIdx: index })}><button className="photo-add" onClick={(event) => { event.stopPropagation(); selected ? removeFromCart(photo.photoId) : addToCart(photo); }}>{selected ? <I.Check className="icon icon-sm" /> : <I.Plus className="icon icon-sm" />}</button></Photo>;
       })}</div>}
       <FlowPriceHelpCard />
     </section>

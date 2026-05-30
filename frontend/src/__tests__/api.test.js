@@ -2,7 +2,7 @@
 global.fetch = jest.fn();
 process.env.VITE_API_BASE_URL = 'http://localhost:3001';
 
-const { cotarCheckout, criarPagamento, statusPagamento } = require('../lib/api');
+const { cotarCheckout, criarPagamento, pascomPedidos, pascomRegenerarDownloads, statusPagamento } = require('../lib/api');
 const BASE = 'http://localhost:3001';
 
 beforeEach(() => fetch.mockReset());
@@ -33,5 +33,21 @@ describe('api comercial', () => {
     mockOk({ id: 'PED_1', status: 'Pendente' });
     await statusPagamento('PED_1');
     expect(fetch).toHaveBeenCalledWith(`${BASE}/api/status-pagamento?pedidoId=PED_1`, undefined);
+  });
+
+  it('envia token Clerk nas APIs Pascom', async () => {
+    mockOk({ pedidos: [] });
+    await pascomPedidos('clerk-token', { q: 'PED_1', status: 'Pagamento Confirmado' });
+    expect(fetch).toHaveBeenCalledWith(
+      `${BASE}/api/pascom/pedidos?q=PED_1&status=Pagamento+Confirmado`,
+      { headers: { Authorization: 'Bearer clerk-token' } },
+    );
+
+    mockOk({ downloads: [] });
+    await pascomRegenerarDownloads('clerk-token', 'PED_1');
+    expect(fetch).toHaveBeenCalledWith(
+      `${BASE}/api/pascom/pedidos/PED_1/regenerar-downloads`,
+      { method: 'POST', headers: { Authorization: 'Bearer clerk-token' } },
+    );
   });
 });

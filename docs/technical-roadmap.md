@@ -29,7 +29,6 @@
 - Remover alias `/api/criar-pagamento` após janela de depreciação.
 - Reduzir `unsafe-inline` na CSP.
 - Avaliar persistência de carrinho em `sessionStorage`.
-- Avaliar sincronizacao opcional de favoritos somente se houver autenticacao e consentimento claro.
 - Avaliar TypeScript apenas após V1 estável.
 - Criar licença formal.
 

@@ -11,6 +11,7 @@ import CheckoutPage from '../pages/Checkout.jsx';
 import PaymentReturnPage from '../pages/PaymentReturn.jsx';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import RecoverOrderPage from '../pages/RecoverOrder.jsx';
+import PascomPage from '../pages/Pascom.jsx';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import '../index.css';
 import '../reference-pages.css';
@@ -35,6 +36,7 @@ export default function DesktopApp() {
           <Route path="/privacidade" element={<PrivacyPolicy />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/recuperar-pedido" element={<RecoverOrderPage />} />
+          <Route path="/pascom" element={<PascomPage />} />
           <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
         </Routes>
         <CarrinhoProvider>

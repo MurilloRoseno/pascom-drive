@@ -36,6 +36,7 @@ var DOWNLOAD_HEADERS = [
 var REGRAS_HEADERS = ['MeioPagamento', 'PercentualEstimado', 'ValorFixo', 'Vigencia', 'Ativo'];
 var CUPONS_HEADERS = ['Codigo', 'EventoID', 'TipoDesconto', 'Valor', 'Ativo', 'ValidoDe', 'ValidoAte', 'UsoMaximo', 'Usos', 'Descricao'];
 var PACOTES_HEADERS = ['PacoteID', 'EventoID', 'Tipo', 'QuantidadeMinima', 'PrecoPacote', 'PercentualDesconto', 'Ativo', 'Descricao'];
+var EQUIPE_PASCOM_HEADERS = ['Identificador', 'Tipo', 'Nome', 'Role', 'Ativo', 'CriadoEm', 'UltimoAcessoEm'];
 
 var EVENTO_OPCOES = {
   Categoria: [
@@ -63,6 +64,12 @@ var PACOTE_OPCOES = {
   Ativo: ['SIM', 'NAO'],
 };
 
+var EQUIPE_PASCOM_OPCOES = {
+  Tipo: ['email', 'phone'],
+  Role: ['admin'],
+  Ativo: ['SIM', 'NAO'],
+};
+
 var ABAS_COMERCIAIS = [
   ['Eventos', EVENTOS_HEADERS],
   ['Fotos', FOTOS_HEADERS],
@@ -73,6 +80,7 @@ var ABAS_COMERCIAIS = [
   ['RegrasPagamento', REGRAS_HEADERS],
   ['Cupons', CUPONS_HEADERS],
   ['Pacotes', PACOTES_HEADERS],
+  ['EquipePascom', EQUIPE_PASCOM_HEADERS],
 ];
 
 var COL = {
@@ -267,6 +275,10 @@ function aplicarValidacoesAdministrativas() {
   var pacotes = ensureSheet('Pacotes', PACOTES_HEADERS);
   Object.keys(PACOTE_OPCOES).forEach(function(field) {
     aplicarValidacaoLista(pacotes, field, PACOTE_OPCOES[field]);
+  });
+  var equipe = ensureSheet('EquipePascom', EQUIPE_PASCOM_HEADERS);
+  Object.keys(EQUIPE_PASCOM_OPCOES).forEach(function(field) {
+    aplicarValidacaoLista(equipe, field, EQUIPE_PASCOM_OPCOES[field]);
   });
 }
 

@@ -222,3 +222,18 @@ Cupons/Pacotes
 - Pedido criado parcialmente pode exigir rotina de reconciliação.
 - Catálogo grande aumenta tempo de resposta sem cache.
 - Operação manual no Sheets pode quebrar headers ou valores esperados.
+## `EquipePascom`
+
+Aba de autorização operacional da equipe Pascom. Clerk autentica a identidade; esta aba decide quem pode acessar o painel.
+
+| Campo | Descrição |
+| --- | --- |
+| `Identificador` | E-mail em minúsculas ou telefone normalizado com DDI/DDD |
+| `Tipo` | `email` ou `phone` |
+| `Nome` | Nome exibido no painel |
+| `Role` | `admin` no MVP |
+| `Ativo` | `SIM` ou `NAO` |
+| `CriadoEm` | Data de cadastro operacional |
+| `UltimoAcessoEm` | Atualizado pelo backend ao autorizar acesso |
+
+Risco: Sheets não é banco transacional; para V2, roles granulares e auditoria administrativa devem migrar para banco relacional.

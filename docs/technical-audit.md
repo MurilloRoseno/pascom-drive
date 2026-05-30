@@ -30,7 +30,6 @@ O projeto está funcionalmente estruturado, mas carrega dívida documental, muda
 | Clerk citado em planos externos, mas ausente no codigo | Baixa | Pode gerar expectativa de sessao/roles inexistentes | Baixa | Tratar Clerk apenas como ADR futuro |
 | Cupons/pacotes em Sheets | Media | Contador de uso e regras comerciais podem sofrer corrida em compras simultaneas | Media | Migrar regras transacionais para banco ou adicionar lock/auditoria antes de volume alto |
 | Recuperacao de pedido sem login | Media | Tentativas de enumeracao por codigo/e-mail | Baixa | Manter rate limit especifico, mensagens genericas e logs de abuso |
-| Favoritos em `localStorage` | Baixa | Nao sincroniza entre dispositivos e pode ficar obsoleto | Baixa | Reconciliar com backend ao abrir galeria e documentar como conveniencia local |
 
 ## Código Morto e Arquivos Órfãos
 

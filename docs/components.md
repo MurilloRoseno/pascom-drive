@@ -20,14 +20,14 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 ## `MobileApp`
 
 - **Arquivo:** `frontend/src/mobile/MobileApp.jsx`
-- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom, recuperacao de pedido, favoritos locais, ofertas comerciais e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
-- **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `useFavoritePhotos`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
+- **Responsabilidade:** orquestrar a experiencia mobile/tablet portada do HTML standalone `Pascom Drive _standalone_ (1).html`, com app bar, bottom nav, calendario completo, galeria touch-first, lightbox, carrinho sheet, checkout em stepper, perfil/Pascom, recuperacao de pedido, ofertas comerciais e modo escuro copiado do bloco `.app.dark` de `Pascom Drive _standalone_ (2).html`.
+- **Dependencias:** APIs compartilhadas, `CarrinhoProvider`, `useCarrinho`, `checkoutSchema`, helpers de galeria e `useDevtoolsGuard` nas telas de galeria.
 - **Componentes internos:** `referencePublicScreens.jsx`, `referenceFlowScreens.jsx`, `referenceUtils.jsx`, `referenceIcons.jsx`, CSS `reference-*` e `reference-gallery-calendar.css`.
 - **Modo escuro:** `className="app dark"` troca tokens e classes auxiliares corrigem contraste de estilos inline herdados do standalone, incluindo buscas, chips de sacramento, agenda, cart bar e atalhos Pascom.
 - **Cards mobile:** `EventCard`, `formatMobileCardTitle` e `formatMobileCardDate` em `referencePublicScreens.jsx` renderizam os cards da home e de `/buscar` no padrão do standalone `(2)`: capa grande, badges superiores, data em caixa alta, título serifado, local e rodapé `Ver fotos ->`; a troca ` e ` -> ` & ` é display-only e não altera `ev.titulo`.
 - **Evento/galeria mobile:** `EventoScreen`, `GaleriaFotosScreen` e `FotoLightboxScreen` usam `reference-gallery-calendar.css` para reproduzir a tela completa do standalone `(2)`: hero roxo, capa, metadados, bloco de previa protegida, grid com seletor `2x/3x/4x`, card de preco/WhatsApp e lightbox fullscreen escuro com contador e selecao.
 - **Calendario mobile:** `CalendarioScreen` em `referencePublicScreens.jsx` implementa navegacao mensal, dias marcados por eventos reais e lista de destaques, mantendo a aba de calendario funcional no padrao visual do standalone.
-- **Comercial mobile:** `EventoScreen`, `GaleriaFotosScreen`, `CheckoutScreen` e `PerfilScreen` exibem pacotes/cupons, favoritos antes da compra, compartilhamento com Web Share API e recuperacao de pedido por e-mail/codigo.
+- **Comercial mobile:** `EventoScreen`, `GaleriaFotosScreen`, `CheckoutScreen` e `PerfilScreen` exibem pacotes/cupons, compartilhamento com Web Share API e recuperacao de pedido por e-mail/codigo.
 - **Riscos:** precisa acompanhar novas rotas/regras implementadas no desktop, preservar URLs `mt` retornadas pela API e substituir placeholders do standalone quando houver backend real.
 
 ## `useDevtoolsGuard`
@@ -146,18 +146,6 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Melhoria:** normalizar foto em camada de API ou função de mapeamento.
 - **Risco futuro:** regras de disponibilidade podem crescer e deixar o componente acoplado ao domínio.
 
-## `useFavoritePhotos`
-
-- **Arquivo:** `frontend/src/shared/favorites.js`
-- **Responsabilidade:** armazenar favoritos locais por evento antes da compra.
-- **Props:** `eventoId`.
-- **Dependencias:** `localStorage`, `useEffect`, `useMemo`, `useState`.
-- **Estado interno:** mapa local `{ [eventoId]: [fotoId] }`.
-- **Fluxo:** alterna favoritos, reconcilia IDs com fotos carregadas e permite adicionar favoritos validos ao carrinho em lote.
-- **Problemas:** favorito nao sincroniza entre dispositivos e pode ficar indisponivel quando a foto sai de venda.
-- **Melhoria:** manter localStorage como escolha MVP; se houver login futuro, migrar para backend com consentimento e politica atualizada.
-- **Risco futuro:** nao usar favoritos locais como indicador pastoral ou perfilamento.
-
 ## `HomePage`
 
 - **Arquivo:** `frontend/src/pages/Home.jsx`
@@ -189,10 +177,10 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 - **Arquivo:** `frontend/src/pages/Event.jsx`
 - **Responsabilidade:** mostrar galeria de um evento e controlar acesso protegido.
 - **Props:** nenhuma.
-- **Dependências:** `obterEvento`, `listarFotosEvento`, `listarOfertasEvento`, `validarAcessoGaleria`, `useDevtoolsGuard`, `useFavoritePhotos`, carrinho.
+- **Dependências:** `obterEvento`, `listarFotosEvento`, `listarOfertasEvento`, `validarAcessoGaleria`, `useDevtoolsGuard`, carrinho.
 - **Estado interno:** `event`, `photos`, `offers`, `code`, `error`, `loading`, `shareStatus`, controle de foto atual.
 - **Hooks:** `useState`, `useEffect`, `useCallback`, `useRef`, `useParams`, `useSearchParams`.
-- **Fluxo:** carrega evento, ofertas e fotos com token, exibe formulario de codigo se protegido, renderiza fotos compraveis, favoritos, pacotes e compartilhamento controlado.
+- **Fluxo:** carrega evento, ofertas e fotos com token, exibe formulario de codigo se protegido, renderiza fotos compraveis, pacotes e compartilhamento controlado.
 - **Problemas:** lida com busca, autorização, navegação de foto e compra no mesmo componente.
 - **Melhoria:** extrair hook `useEventGallery` e componente de bloqueio protegido.
 - **Risco futuro:** qualquer mudança em regras de acesso pode gerar regressão ampla.
@@ -251,7 +239,7 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 
 ## Componentes Reutilizáveis
 
-- `Header`, `Footer`, `ScrollToTop`, `CartSummary`, `PhotoCard`, `PrivacyPolicy`, `useFavoritePhotos`, `RecoverOrderPage`.
+- `Header`, `Footer`, `ScrollToTop`, `CartSummary`, `PhotoCard`, `PrivacyPolicy`, `RecoverOrderPage`.
 - Subcomponentes internos de `HomePage` e `SearchPage` são candidatos a reutilização, mas ainda não justificam extração agressiva.
 
 ## Componentes Acoplados
@@ -266,3 +254,11 @@ O frontend atual é uma SPA React com duas experiências: desktop original e mob
 2. `CheckoutPage`: extrair hook de cotação/pagamento.
 3. `HomePage`: extrair cards e skeletons se crescer.
 4. Cliente API: tratar respostas sem JSON para evitar erro secundário em falhas HTML/proxy.
+## `PascomPanel`
+
+- **Arquivo:** `frontend/src/shared/PascomPanel.jsx`
+- **Responsabilidade:** interface compartilhada desktop/mobile para login Clerk, validação de permissão via backend, dashboard, lista/detalhe de pedidos e ação de regenerar downloads.
+- **Dependências:** `@clerk/react`, `frontend/src/lib/api.js`, CSS `frontend/src/pages/pascom.css`.
+- **Estados internos:** `me`, `dashboard`, `pedidos`, `selectedId`, `detail`, `filters`, `loading`, `error`, `action`.
+- **Fluxo:** renderiza aviso se Clerk não estiver configurado, `SignIn` quando deslogado, estado sem permissão quando fora da `EquipePascom` e painel operacional quando autorizado.
+- **Riscos:** `EquipePascom` vazia bloqueia todos os membros; regeneração de downloads depende dos segredos de download/fingerprint já configurados no backend.
