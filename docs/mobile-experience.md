@@ -165,4 +165,4 @@ Toda mudança futura no mobile deve responder:
 4. O fluxo foi validado em viewport mobile real ou emulação equivalente?
 ## Área Pascom no Mobile
 
-O botão "Entrar como Pascom" em `/perfil` abre login customizado em português com e-mail OTP do Clerk por baixo. A tela mobile usa layout em coluna, sem links de cadastro público, recuperação de conta ou rodapé do componente pronto. Usuários autorizados na aba `EquipePascom` veem dashboard, pedidos, downloads e suporte real dentro do layout mobile; usuários fora da allowlist veem estado "sem permissão". A compra pública permanece sem login.
+O botão "Entrar como Pascom" em `/perfil` abre o fluxo Clerk. Usuários autorizados na aba `EquipePascom` veem dashboard, pedidos, downloads e suporte real dentro do layout mobile; usuários fora da allowlist veem estado "sem permissão". A compra pública permanece sem login.

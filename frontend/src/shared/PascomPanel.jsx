@@ -1,11 +1,42 @@
 /* eslint-disable react/prop-types */
-import { UserButton, useAuth, useSignIn, useUser } from '@clerk/react';
+import { SignIn, UserButton, useAuth, useUser } from '@clerk/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { pascomDashboard, pascomMe, pascomPedidoDetalhe, pascomPedidos, pascomRegenerarDownloads } from '../lib/api.js';
 import { clerkConfigured } from './clerkConfig.js';
 import '../pages/pascom.css';
 
 const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+const pascomClerkAppearance = {
+  variables: {
+    colorPrimary: '#5a176e',
+    colorText: '#281332',
+    colorTextSecondary: '#71647a',
+    colorBackground: '#ffffff',
+    colorInputBackground: '#ffffff',
+    colorInputText: '#281332',
+    borderRadius: '16px',
+  },
+  elements: {
+    rootBox: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+    },
+    cardBox: {
+      width: '100%',
+      maxWidth: '430px',
+      borderRadius: '24px',
+      boxShadow: '0 24px 70px rgba(58, 19, 75, 0.14)',
+    },
+    footerPages: {
+      display: 'none',
+    },
+    footerPageLink: {
+      display: 'none',
+    },
+  },
+};
 
 export default function PascomPanel({ mobile = false, onBackPublic }) {
   if (!clerkConfigured) {
@@ -32,117 +63,13 @@ function PascomAuthGate({ mobile, onBackPublic }) {
   if (!isLoaded) return <div className="pascom-card pascom-auth-card"><p>Carregando autenticação...</p></div>;
   if (!isSignedIn) {
     return (
-      <PascomCustomSignIn mobile={mobile} onBackPublic={onBackPublic} />
+      <div className="pascom-auth-layout pascom-auth-layout-centered">
+        <SignIn routing="hash" afterSignInUrl={mobile ? '/perfil' : '/pascom'} signUpUrl={mobile ? '/perfil' : '/pascom'} appearance={pascomClerkAppearance} />
+        {onBackPublic && <button className="pascom-secondary pascom-auth-back" onClick={onBackPublic}>Voltar para área pública</button>}
+      </div>
     );
   }
   return <PascomAuthenticated onBackPublic={onBackPublic} />;
-}
-
-function clerkErrorMessage(error) {
-  const code = error?.errors?.[0]?.code || '';
-  if (code.includes('verification') || code.includes('code')) return 'Código inválido ou expirado. Confira o e-mail e tente novamente.';
-  if (code.includes('identifier') || code.includes('not_found')) return 'Não foi possível enviar o código. Verifique se este e-mail está cadastrado para a equipe Pascom.';
-  return 'Não foi possível concluir o acesso agora. Tente novamente em instantes.';
-}
-
-function PascomCustomSignIn({ mobile, onBackPublic }) {
-  const { isLoaded, signIn, setActive } = useSignIn();
-  const [step, setStep] = useState('email');
-  const [email, setEmail] = useState('');
-  const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const nextUrl = mobile ? '/perfil' : '/pascom';
-
-  async function sendCode(event) {
-    event.preventDefault();
-    if (!isLoaded || !signIn) return;
-    setLoading(true);
-    setError('');
-    try {
-      await signIn.create({ identifier: email.trim() });
-      await signIn.prepareFirstFactor({ strategy: 'email_code' });
-      setStep('code');
-    } catch (cause) {
-      setError(clerkErrorMessage(cause));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function verifyCode(event) {
-    event.preventDefault();
-    if (!isLoaded || !signIn) return;
-    setLoading(true);
-    setError('');
-    try {
-      const result = await signIn.attemptFirstFactor({ strategy: 'email_code', code: code.trim() });
-      if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId });
-        window.history.replaceState(null, '', nextUrl);
-        return;
-      }
-      setError('Confirmação pendente. Solicite um novo código e tente novamente.');
-    } catch (cause) {
-      setError(clerkErrorMessage(cause));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const resetEmail = () => {
-    setStep('email');
-    setCode('');
-    setError('');
-  };
-
-  return (
-    <div className="pascom-auth-experience">
-      <div className="pascom-login-card">
-        <section className="pascom-login-form" aria-label="Login da equipe Pascom">
-          <div className="pascom-login-brand">
-            <span className="pascom-login-dot" />
-            <span>Pascom São Rafael</span>
-          </div>
-          <span className="pascom-eyebrow">Painel operacional</span>
-          <h1>Olá, seja bem-vindo</h1>
-          <p>Acesse com o e-mail cadastrado na aba EquipePascom. Enviaremos um código de verificação para confirmar sua identidade.</p>
-
-          {step === 'email' ? (
-            <form className="pascom-login-fields" onSubmit={sendCode}>
-              <label htmlFor="pascom-email">E-mail da equipe</label>
-              <input id="pascom-email" type="email" value={email} onChange={(inputEvent) => setEmail(inputEvent.target.value)} placeholder="voce@paroquiasaorafael.com" autoComplete="email" required />
-              {error && <div className="pascom-login-error" role="alert">{error}</div>}
-              <button className="pascom-login-submit" type="submit" disabled={loading || !email.trim()}>{loading ? 'Enviando código...' : 'Receber código'}</button>
-            </form>
-          ) : (
-            <form className="pascom-login-fields" onSubmit={verifyCode}>
-              <label htmlFor="pascom-code">Código recebido por e-mail</label>
-              <input id="pascom-code" type="text" inputMode="numeric" value={code} onChange={(inputEvent) => setCode(inputEvent.target.value)} placeholder="Digite o código" autoComplete="one-time-code" required />
-              <p className="pascom-login-hint">Enviado para <strong>{email}</strong>.</p>
-              {error && <div className="pascom-login-error" role="alert">{error}</div>}
-              <button className="pascom-login-submit" type="submit" disabled={loading || !code.trim()}>{loading ? 'Verificando...' : 'Entrar no painel'}</button>
-              <button className="pascom-login-link" type="button" onClick={resetEmail}>Usar outro e-mail</button>
-            </form>
-          )}
-
-          {onBackPublic && <button className="pascom-login-back" type="button" onClick={onBackPublic}>Voltar para área pública</button>}
-        </section>
-        <aside className="pascom-login-visual" aria-hidden="true">
-          <div className="pascom-login-cloud cloud-one" />
-          <div className="pascom-login-cloud cloud-two" />
-          <div className="pascom-login-phone">
-            <span />
-            <strong>OTP</strong>
-            <small>código seguro</small>
-          </div>
-          <div className="pascom-login-check">✓</div>
-          <div className="pascom-login-lock" />
-          <div className="pascom-login-ornament">Pascom</div>
-        </aside>
-      </div>
-    </div>
-  );
 }
 
 function PascomAuthenticated({ onBackPublic }) {
