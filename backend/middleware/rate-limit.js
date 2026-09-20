@@ -104,7 +104,18 @@ const pascom = rateLimit({
   message: { error: 'Muitas consultas na area Pascom. Aguarde 1 minuto.' },
 });
 
+// Envio de fotos: limitado por membro autenticado da Pascom (roda depois do Clerk).
+const uploadsPascom = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.pascom?.userId || req.ip,
+  message: { error: 'Muitos lotes de envio em sequencia. Aguarde 1 minuto.' },
+});
+
 module.exports = {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
   recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
+  uploadsPascom,
 };

@@ -14,6 +14,7 @@ jest.mock('../lib/delivery', () => ({
   criarDownloadsDoPedido: jest.fn(),
   enviarEmailEntrega: jest.fn(),
   criarMensagemWhatsApp: jest.fn(() => 'Links seguros'),
+  criarLinkWhatsApp: jest.fn(() => 'https://wa.me/5599982061089?text=Links%20seguros'),
 }));
 
 process.env.MP_WEBHOOK_SECRET = 'webhook-secret';
@@ -130,4 +131,20 @@ it('marca divergencia e nao libera downloads quando moeda nao e BRL', async () =
   expect(res.status).toBe(202);
   expect(delivery.criarDownloadsDoPedido).not.toHaveBeenCalled();
   expect(sheets.marcarPedidoDivergente).toHaveBeenCalled();
+});
+
+it('deixa a entrega para a conciliacao quando ela falha depois do pagamento confirmado', async () => {
+  delivery.criarDownloadsDoPedido.mockRejectedValueOnce(new Error('Segredo de download nao configurado.'));
+
+  const res = await post();
+
+  expect(res.status).toBe(200);
+  expect(res.body.entregaPendente).toBe(true);
+  expect(sheets.atualizarPedidoPagamento).toHaveBeenCalled();
+  expect(sheets.registrarEntrega).toHaveBeenCalledWith('PED_1', expect.objectContaining({
+    emailResult: expect.objectContaining({ status: 'pendente' }),
+    tentativas: 0,
+    proximaEm: expect.any(String),
+  }));
+  expect(sheets.finalizarWebhook).toHaveBeenCalledWith('REQ_1:PAY_1:payment.updated', 'EntregaPendente');
 });

@@ -6,7 +6,7 @@ jest.mock('../lib/gallery-access', () => ({
   tokenAllowsEvent: jest.fn(),
 }));
 jest.mock('../lib/media-token', () => ({
-  mediaTokenAllows: jest.fn(),
+  mediaTokenAccess: jest.fn(),
 }));
 jest.mock('../lib/google-drive', () => ({
   downloadFile: jest.fn(),
@@ -31,7 +31,7 @@ beforeEach(() => {
   sheets.buscarEvento.mockResolvedValue({ eventoId: 'EV1', publication: 'publicado', visibility: 'protegida' });
   sheets.buscarPreviewFoto.mockResolvedValue({ derivativeFileId: 'PREVIEW_PRIVATE_ID', variant: 'preview' });
   access.tokenAllowsEvent.mockReturnValue(false);
-  mediaToken.mediaTokenAllows.mockReturnValue(false);
+  mediaToken.mediaTokenAccess.mockReturnValue({ allowed: false, admin: false });
   drive.downloadFile.mockResolvedValue({ buffer: Buffer.from('preview-bytes'), mimeType: 'image/jpeg' });
 });
 
@@ -42,7 +42,7 @@ it('bloqueia preview de galeria protegida sem sessao', async () => {
 });
 
 it('transmite somente a amostra do Drive apos acesso autorizado', async () => {
-  mediaToken.mediaTokenAllows.mockReturnValueOnce(true);
+  mediaToken.mediaTokenAccess.mockReturnValueOnce({ allowed: true, admin: false });
   const response = await request(app).get('/api/eventos/EV1/previews/F1?mt=MEDIA_TOKEN');
   expect(response.status).toBe(200);
   expect(response.headers['content-type']).toContain('image/jpeg');
@@ -71,4 +71,23 @@ it('transmite capa editorial publicada sem abrir as demais fotos protegidas', as
   expect(response.status).toBe(200);
   expect(response.headers['vercel-cdn-cache-control']).toContain('max-age=86400');
   expect(drive.downloadFile).toHaveBeenCalledWith('COVER_PRIVATE_ID');
+});
+
+it('esconde rascunho de quem nao e da Pascom, mesmo com token de midia comum', async () => {
+  sheets.buscarEvento.mockResolvedValue({ eventoId: 'EV1', publication: 'rascunho', visibility: 'publica' });
+  access.tokenAllowsEvent.mockReturnValue(true);
+  mediaToken.mediaTokenAccess.mockReturnValue({ allowed: true, admin: false });
+  const response = await request(app).get('/api/eventos/EV1/previews/F1?mt=COMUM&token=SESSION');
+  expect(response.status).toBe(404);
+  expect(drive.downloadFile).not.toHaveBeenCalled();
+});
+
+it('libera rascunho para revisao da equipe com token de administracao, sem cache publico', async () => {
+  sheets.buscarEvento.mockResolvedValue({ eventoId: 'EV1', publication: 'rascunho', visibility: 'protegida' });
+  sheets.buscarPreviewFoto.mockResolvedValueOnce({ derivativeFileId: 'COVER_PRIVATE_ID', type: 'capa', variant: 'thumbnail' });
+  mediaToken.mediaTokenAccess.mockReturnValue({ allowed: true, admin: true });
+  const response = await request(app).get('/api/eventos/EV1/previews/CAPA1?variant=thumbnail&mt=ADMIN');
+  expect(response.status).toBe(200);
+  expect(response.headers['cache-control']).toContain('no-store');
+  expect(response.headers['vercel-cdn-cache-control']).toBeUndefined();
 });

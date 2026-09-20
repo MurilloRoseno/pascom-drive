@@ -1,0 +1,120 @@
+/* Aba Pedidos: bloco "precisam de atencao" e acoes de entrega.
+   Carregado depois de pascom.css para poder ajustar a grade de numeros. */
+
+.pascom-stat-grid.is-seis {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .pascom-stat-grid.is-seis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Seis numeros em coluna unica empurrariam a lista de pedidos para fora da tela. */
+@media (max-width: 520px) {
+  .pascom-stat-grid.is-seis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pascom-stat-grid.is-seis .pascom-stat {
+    padding: 12px 14px;
+  }
+}
+
+/* Fica logo abaixo dos alertas e acima dos numeros. */
+.pascom-atencao {
+  margin: 0 0 16px;
+}
+
+.pascom-atencao-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pascom-atencao-list button {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pascom-atencao-list strong {
+  font-size: 0.95rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.pascom-atencao-list span,
+.pascom-atencao-list small {
+  font-size: 0.82rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.pascom-atencao-list li.is-erro button {
+  background: oklch(0.94 0.045 22);
+  border-color: oklch(0.86 0.08 22);
+  color: oklch(0.38 0.13 22);
+}
+
+.pascom-atencao-list li.is-aviso button {
+  background: oklch(0.96 0.05 82);
+  border-color: oklch(0.88 0.09 82);
+  color: oklch(0.4 0.1 62);
+}
+
+.app.dark .pascom-atencao-list li.is-erro button,
+.app.dark .pascom-atencao-list li.is-aviso button {
+  background: var(--surface-3);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.app.dark .pascom-atencao-list li.is-erro button {
+  box-shadow: inset 4px 0 0 oklch(0.62 0.16 22);
+}
+
+.app.dark .pascom-atencao-list li.is-aviso button {
+  box-shadow: inset 4px 0 0 oklch(0.72 0.13 82);
+}
+
+.pascom-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.pascom-order-actions button {
+  flex: 1 1 200px;
+  /* Alvo de toque confortavel no celular. */
+  min-height: 44px;
+}
+
+/* O rotulo inteiro e a area de toque do filtro. */
+.pascom-filters .pascom-check {
+  min-height: 44px;
+}
+
+.pascom-whatsapp-link {
+  margin: 0 0 14px;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.pascom-detail .pascom-lines small {
+  color: oklch(0.55 0.03 320);
+}
+
+.app.dark .pascom-detail .pascom-lines small {
+  color: var(--muted);
+}

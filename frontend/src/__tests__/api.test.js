@@ -50,4 +50,62 @@ describe('api comercial', () => {
       { method: 'POST', headers: { Authorization: 'Bearer clerk-token' } },
     );
   });
+
+  it('envia acoes de evento para a rota Pascom com o evento codificado', async () => {
+    const { pascomEventoAcao, pascomEventos } = require('../lib/api');
+    mockOk({ eventos: [] });
+    await pascomEventos('clerk-token');
+    expect(fetch).toHaveBeenCalledWith(`${BASE}/api/pascom/eventos`, { headers: { Authorization: 'Bearer clerk-token' } });
+
+    mockOk({ evento: {} });
+    await pascomEventoAcao('clerk-token', 'EV 1', { acao: 'publicar' });
+    expect(fetch).toHaveBeenCalledWith(`${BASE}/api/pascom/eventos/EV%201/acoes`, {
+      method: 'POST',
+      headers: { Authorization: 'Bearer clerk-token', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acao: 'publicar' }),
+    });
+  });
+});
+
+describe('api sistema Pascom', () => {
+  it('consulta o diagnostico e a estimativa de liberacao com token Clerk', async () => {
+    const { pascomEstimarLiberacao, pascomSistema } = require('../lib/api');
+    mockOk({ itens: [] });
+    await pascomSistema('clerk-token');
+    expect(fetch).toHaveBeenCalledWith(`${BASE}/api/pascom/sistema`, { headers: { Authorization: 'Bearer clerk-token' } });
+
+    mockOk({ arquivos: 0 });
+    await pascomEstimarLiberacao('clerk-token', 'EV 2');
+    expect(fetch).toHaveBeenCalledWith(`${BASE}/api/pascom/eventos/EV%202/liberacao`, { headers: { Authorization: 'Bearer clerk-token' } });
+  });
+});
+
+describe('api quarentena Pascom', () => {
+  it('reprocessa e corrige o nome de pastas em quarentena', async () => {
+    const { pascomCorrigirNomePasta, pascomReprocessarPasta } = require('../lib/api');
+    mockOk({});
+    await pascomReprocessarPasta('clerk-token', 'pasta 1');
+    expect(fetch).toHaveBeenCalledWith(`${BASE}/api/pascom/quarentena/pasta%201/reprocessar`, expect.objectContaining({ method: 'POST' }));
+    mockOk({});
+    await pascomCorrigirNomePasta('clerk-token', 'p1', { categoria: 'crisma', data: '2026-06-01', titulo: 'Turma', extra: 'x' });
+    expect(fetch).toHaveBeenLastCalledWith(`${BASE}/api/pascom/quarentena/p1/nome`, expect.objectContaining({
+      body: JSON.stringify({ categoria: 'crisma', data: '2026-06-01', titulo: 'Turma' }),
+    }));
+  });
+});
+
+describe('api entregas Pascom', () => {
+  it('reenvia a entrega e confere o pagamento no Mercado Pago', async () => {
+    const { pascomConferirMercadoPago, pascomReenviarEntrega } = require('../lib/api');
+    mockOk({ emailStatus: 'enviado' });
+    await pascomReenviarEntrega('clerk-token', 'PED 1');
+    expect(fetch).toHaveBeenLastCalledWith(`${BASE}/api/pascom/pedidos/PED%201/reenviar-entrega`, expect.objectContaining({
+      method: 'POST',
+      headers: { Authorization: 'Bearer clerk-token', 'Content-Type': 'application/json' },
+    }));
+
+    mockOk({ situacao: 'aguardando' });
+    await pascomConferirMercadoPago('clerk-token', 'PED_2');
+    expect(fetch).toHaveBeenLastCalledWith(`${BASE}/api/pascom/pedidos/PED_2/conferir-mp`, expect.objectContaining({ method: 'POST' }));
+  });
 });

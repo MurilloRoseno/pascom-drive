@@ -1,0 +1,455 @@
+/* Aba "Eventos" do Painel Pascom. Reaproveita cartoes, alertas e botoes de pascom.css / pascom-upload.css. */
+
+.pascom-tabpanel[hidden] { display: none; }
+
+.pascom-events {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.pascom-events-list,
+.pascom-event-detail {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.pascom-events-list h2,
+.pascom-event-detail h2 {
+  margin: 6px 0 0;
+  color: var(--roxo-profundo, var(--brand));
+  font-family: var(--fonte-display, var(--font-display));
+}
+
+.app.dark .pascom-events-list h2,
+.app.dark .pascom-event-detail h2 { color: var(--ink); }
+
+.pascom-event-detail {
+  position: sticky;
+  top: 16px;
+}
+
+.pascom-event-detail h3 {
+  margin: 0;
+  color: #281332;
+  font-size: 1rem;
+  font-weight: 900;
+}
+
+.app.dark .pascom-event-detail h3 { color: var(--ink); }
+
+/* Filtros */
+.pascom-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pascom-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(90, 27, 105, 0.16);
+  border-radius: 999px;
+  background: #fff;
+  color: #5d5163;
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.pascom-chips button span {
+  color: #8c8092;
+  font-variant-numeric: tabular-nums;
+}
+
+.pascom-chips button[aria-pressed="true"] {
+  border-color: #5a176e;
+  background: #5a176e;
+  color: #fff;
+}
+
+.pascom-chips button[aria-pressed="true"] span { color: #e9d9ef; }
+
+.app.dark .pascom-chips button { background: var(--surface-3); border-color: var(--line); color: var(--ink-2); }
+.app.dark .pascom-chips button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+
+/* Lista */
+.pascom-event-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pascom-event-list button {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid rgba(90, 27, 105, 0.1);
+  border-radius: 14px;
+  background: #faf7f0;
+  color: #281332;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.pascom-event-list button:hover { border-color: rgba(90, 27, 105, 0.3); }
+
+.pascom-event-list button.active {
+  border-color: #f2bf35;
+  box-shadow: 0 0 0 2px rgba(242, 191, 53, 0.45);
+}
+
+.app.dark .pascom-event-list button { background: var(--surface-3); border-color: var(--line); color: var(--ink); }
+
+.pascom-event-thumb {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #efe8dc;
+  color: #5a176e;
+  font-weight: 900;
+}
+
+.pascom-event-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.pascom-event-info {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pascom-event-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pascom-event-info small { color: #746879; }
+.app.dark .pascom-event-info small { color: var(--ink-2); }
+
+.pascom-event-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.pascom-event-sales {
+  color: #2f6b45;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Selos: sempre texto + cor */
+.pascom-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.pascom-badge.is-info { background: #ece4f3; color: #5a176e; }
+.pascom-badge.is-ok { background: #dcefe3; color: #1f5a36; }
+.pascom-badge.is-danger { background: #f8dcdd; color: #842029; }
+.pascom-badge.is-muted { background: #eeebe6; color: #5d5163; }
+.pascom-badge.is-lock { background: #fbf1d6; color: #6b4d05; }
+
+.pascom-events-empty {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding: 18px;
+  border: 2px dashed rgba(90, 27, 105, 0.2);
+  border-radius: 16px;
+}
+
+.pascom-events-empty p { margin: 0; }
+
+/* Detalhe */
+.pascom-event-back {
+  display: none;
+  justify-self: start;
+  min-height: 40px;
+  color: #5a176e;
+  font-weight: 800;
+}
+
+.pascom-event-steps {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: passo;
+}
+
+.pascom-event-steps li {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  color: #8c8092;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.pascom-event-steps li span {
+  height: 6px;
+  border-radius: 999px;
+  background: #efe8dc;
+}
+
+.pascom-event-steps li.is-done { color: #1f5a36; }
+.pascom-event-steps li.is-done span { background: #2f7d4f; }
+.pascom-event-steps li.is-current { color: #5a176e; }
+.pascom-event-steps li.is-current span { background: #f2bf35; }
+
+/* Mais especifico que .pascom-alert (pascom.css carrega depois). */
+.pascom-alert.pascom-alert-warn {
+  color: #5c4308;
+  background: #fbf1d6;
+}
+
+.pascom-event-section {
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(90, 27, 105, 0.1);
+}
+
+.app.dark .pascom-event-section { border-top-color: var(--line); }
+
+.pascom-event-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.pascom-event-action {
+  display: grid;
+  gap: 4px;
+  max-width: 280px;
+}
+
+.pascom-event-action small {
+  color: #8a5a00;
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.pascom-segmented {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+  border-radius: 12px;
+  background: #f3eee4;
+}
+
+.pascom-segmented button {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 9px;
+  color: #5d5163;
+  font-weight: 800;
+}
+
+.pascom-segmented button[aria-pressed="true"] {
+  background: #fff;
+  color: #5a176e;
+  box-shadow: 0 2px 8px rgba(58, 19, 75, 0.1);
+}
+
+.pascom-segmented button:disabled:not([aria-pressed="true"]) { opacity: 0.5; cursor: not-allowed; }
+
+.app.dark .pascom-segmented { background: var(--surface-3); }
+.app.dark .pascom-segmented button[aria-pressed="true"] { background: var(--surface-2); color: var(--ink); }
+
+.pascom-event-share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.pascom-event-share code {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f3eee4;
+  color: #5a176e;
+  font-size: 0.82rem;
+  word-break: break-all;
+}
+
+.app.dark .pascom-event-share code { background: var(--surface-3); color: var(--ink); }
+
+.pascom-review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pascom-review-grid a {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #efe8dc;
+}
+
+.pascom-review-grid img { width: 100%; height: 100%; object-fit: cover; }
+
+.pascom-review-grid a:focus-visible,
+.pascom-chips button:focus-visible,
+.pascom-event-list button:focus-visible,
+.pascom-segmented button:focus-visible {
+  outline: 3px solid #f2bf35;
+  outline-offset: 2px;
+}
+
+.pascom-event-form { grid-template-columns: 1fr 1fr; }
+
+.pascom-check {
+  display: flex !important;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem !important;
+}
+
+.pascom-check input { width: 20px; height: 20px; min-height: 0 !important; }
+
+.pascom-break { word-break: break-all; }
+
+.pascom-review-grid li { position: relative; }
+
+.pascom-review-cover {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: oklch(0.2 0.04 320 / 0.62);
+  color: oklch(0.93 0.1 88);
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.pascom-review-cover:hover { background: oklch(0.2 0.04 320 / 0.82); }
+.pascom-review-cover:active { transform: scale(0.94); }
+.pascom-review-cover:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.pascom-review-cover:focus-visible {
+  outline: 3px solid #f2bf35;
+  outline-offset: 2px;
+}
+
+.pascom-falhas-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pascom-falhas-list li {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f8dcdd;
+  color: #842029;
+  font-size: 0.86rem;
+  word-break: break-word;
+}
+
+.app.dark .pascom-falhas-list li { background: var(--surface-3); color: var(--ink); }
+
+/* Modal do codigo */
+.pascom-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(33, 12, 56, 0.55);
+}
+
+.pascom-dialog {
+  display: grid;
+  gap: 12px;
+  width: min(440px, 100%);
+  padding: 24px;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(33, 12, 56, 0.3);
+}
+
+.app.dark .pascom-dialog { background: var(--surface-2); }
+
+.pascom-dialog h2 { margin: 0; color: var(--roxo-profundo, var(--brand)); font-family: var(--fonte-display, var(--font-display)); }
+.pascom-dialog p { margin: 0; color: #71647a; line-height: 1.5; }
+
+.pascom-code-value {
+  padding: 16px;
+  border-radius: 14px;
+  background: #fbf1d6;
+  color: #281332 !important;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .pascom-events { grid-template-columns: 1fr; }
+  .pascom-event-detail { position: static; }
+  .pascom-events.has-selection .pascom-events-list { display: none; }
+  .pascom-events:not(.has-selection) .pascom-event-detail { display: none; }
+  .pascom-event-back { display: inline-flex; align-items: center; }
+}
+
+@media (max-width: 520px) {
+  .pascom-event-form { grid-template-columns: 1fr; }
+  .pascom-event-steps li { font-size: 0.64rem; }
+  .pascom-event-list button { grid-template-columns: 48px minmax(0, 1fr); }
+  .pascom-event-thumb { width: 48px; height: 48px; }
+  .pascom-event-sales { grid-column: 2; text-align: left; }
+  .pascom-event-action { max-width: none; width: 100%; }
+  .pascom-event-action .pascom-primary,
+  .pascom-event-action .pascom-secondary { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pascom-event-list button,
+  .pascom-review-cover { transition: none; }
+}

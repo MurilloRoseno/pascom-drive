@@ -1,7 +1,8 @@
 jest.mock('nodemailer', () => ({ createTransport: jest.fn() }));
 jest.mock('../lib/google-sheets', () => ({
   buscarOriginaisPedido: jest.fn(),
-  criarAutorizacoesDownload: jest.fn(),
+  listarDownloadsPedido: jest.fn(),
+  gravarAutorizacoesDownload: jest.fn(),
 }));
 
 const nodemailer = require('nodemailer');
@@ -13,6 +14,7 @@ const downloads = [{ url: 'https://safe.test/download-1' }];
 
 beforeEach(() => {
   jest.clearAllMocks();
+  sheets.listarDownloadsPedido.mockResolvedValue([]);
   process.env.SMTP_HOST = 'smtp.gmail.com';
   process.env.SMTP_PORT = '465';
   process.env.SMTP_SECURE = 'true';
@@ -51,10 +53,36 @@ it('gera downloads com fingerprint forense por pedido e foto', async () => {
     fingerprintVersion: 'pascom-v1',
     url: expect.stringContaining('https://pascom-drive.test/api/download?token='),
   }));
-  expect(sheets.criarAutorizacoesDownload).toHaveBeenCalledWith('PED_1', [expect.objectContaining({
+  expect(sheets.gravarAutorizacoesDownload).toHaveBeenCalledWith('PED_1', [expect.objectContaining({
     fingerprintId: result[0].fingerprintId,
     fingerprintHash: result[0].fingerprintHash,
   })]);
+});
+
+it('emite link de 7 dias e 5 usos e reaproveita o DownloadID que ja existe para a foto', async () => {
+  sheets.buscarOriginaisPedido.mockResolvedValue([{ fotoId: 'F1', originalFileId: 'ORIGINAL_1' }]);
+  sheets.listarDownloadsPedido.mockResolvedValue([{ fotoId: 'F1', downloadId: 'DL_ANTIGO', uses: 2, maxUses: 2 }]);
+
+  const [record] = await criarDownloadsDoPedido({ id: 'PED_1' });
+
+  expect(record.id).toBe('DL_ANTIGO');
+  expect(record.maxUses).toBe(5);
+  const dias = (record.exp - Date.now()) / (24 * 60 * 60 * 1000);
+  expect(dias).toBeGreaterThan(6.9);
+  expect(dias).toBeLessThan(7.1);
+  expect(record.expiresAt).toBe(new Date(record.exp).toISOString());
+});
+
+it('explica no e-mail a validade e como recuperar os links', async () => {
+  const sendMail = jest.fn().mockResolvedValue({ messageId: 'mail-1' });
+  nodemailer.createTransport.mockReturnValue({ sendMail });
+
+  await enviarEmailEntrega({ id: 'PED_9', email: 'cliente@example.com' }, downloads);
+
+  const { html } = sendMail.mock.calls[0][0];
+  expect(html).toContain('7 dias');
+  expect(html).toContain('/pedidos/recuperar');
+  expect(html).toContain('PED_9');
 });
 
 it('envia links temporarios por Gmail SMTP com senha de app sanitizada', async () => {

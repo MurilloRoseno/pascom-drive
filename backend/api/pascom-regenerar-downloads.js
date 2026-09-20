@@ -13,7 +13,7 @@ module.exports = async function pascomRegenerarDownloadsHandler(req, res, next) 
       downloads: downloads.map((item) => ({
         fotoId: item.fotoId,
         url: item.url,
-        expiresAt: item.expiresAt,
+        expiresAt: item.expiresAt || new Date(item.exp).toISOString(),
       })),
       whatsappMessage: criarMensagemWhatsApp(downloads),
     });

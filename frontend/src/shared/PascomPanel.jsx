@@ -1,11 +1,18 @@
 /* eslint-disable react/prop-types */
 import { SignIn, UserButton, useAuth, useUser } from '@clerk/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { pascomDashboard, pascomMe, pascomPedidoDetalhe, pascomPedidos, pascomRegenerarDownloads } from '../lib/api.js';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { pascomMe, pascomSistema } from '../lib/api.js';
 import { clerkConfigured } from './clerkConfig.js';
+import EventsTab from './pascom/EventsTab.jsx';
+import OrdersTab from './pascom/OrdersTab.jsx';
+import SistemaTab from './pascom/SistemaTab.jsx';
+import UploadTab from './pascom/UploadTab.jsx';
+import './pascom/pascom-upload.css';
+import './pascom/pascom-events.css';
+import './pascom/pascom-sistema.css';
 import '../pages/pascom.css';
-
-const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+// Depois de pascom.css: ajusta a grade de numeros da aba Pedidos.
+import './pascom/pascom-pedidos.css';
 
 const pascomClerkAppearance = {
   variables: {
@@ -72,90 +79,76 @@ function PascomAuthGate({ mobile, onBackPublic }) {
   return <PascomAuthenticated onBackPublic={onBackPublic} />;
 }
 
+const PANEL_TABS = [['eventos', 'Eventos'], ['envio', 'Enviar fotos'], ['pedidos', 'Pedidos'], ['sistema', 'Sistema']];
+
+// Uma verificacao ao abrir o painel (sem polling): alimenta o selo da aba Sistema.
+function useSistema(getToken) {
+  const [state, setState] = useState({ data: null, loading: true, error: '' });
+  const reload = useCallback(async () => {
+    setState((current) => ({ ...current, loading: true, error: '' }));
+    try {
+      const data = await pascomSistema(await getToken());
+      setState({ data, loading: false, error: '' });
+    } catch (cause) {
+      setState((current) => ({ ...current, loading: false, error: cause.message }));
+    }
+  }, [getToken]);
+  useEffect(() => { reload(); }, [reload]);
+  return { ...state, reload };
+}
+
+function rotuloAba(id, label, sistema) {
+  if (id !== 'sistema' || !sistema) return label;
+  if (sistema.resumo.erros) return `${label} · ${sistema.resumo.erros} ${sistema.resumo.erros === 1 ? 'erro' : 'erros'}`;
+  return label;
+}
+
 function PascomAuthenticated({ onBackPublic }) {
   const { getToken, signOut } = useAuth();
   const [me, setMe] = useState(null);
-  const [dashboard, setDashboard] = useState(null);
-  const [pedidos, setPedidos] = useState([]);
-  const [selectedId, setSelectedId] = useState('');
-  const [detail, setDetail] = useState(null);
-  const [filters, setFilters] = useState({ q: '', status: '' });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [action, setAction] = useState('');
-
-  const withToken = useCallback(async (fn) => {
-    const token = await getToken();
-    return fn(token);
-  }, [getToken]);
-
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const token = await getToken();
-      const [meResult, dashboardResult, pedidosResult] = await Promise.all([
-        pascomMe(token),
-        pascomDashboard(token),
-        pascomPedidos(token, filters),
-      ]);
-      setMe(meResult.user);
-      setDashboard(dashboardResult.dashboard);
-      setPedidos(pedidosResult.pedidos);
-      setSelectedId((current) => current || pedidosResult.pedidos[0]?.id || '');
-    } catch (cause) {
-      setError(cause.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters, getToken]);
-
-  useEffect(() => { load(); }, [load]);
+  const [meError, setMeError] = useState('');
+  const [tab, setTab] = useState('eventos');
+  const [focusNomePasta, setFocusNomePasta] = useState('');
+  const sistema = useSistema(getToken);
+  // Cada aba e montada na primeira visita e depois so escondida: trocar de aba
+  // nao interrompe um envio em andamento nem recarrega listas a toa.
+  const opened = useRef(new Set());
+  opened.current.add(tab);
 
   useEffect(() => {
     let alive = true;
-    if (!selectedId) {
-      setDetail(null);
-      return undefined;
-    }
-    withToken((token) => pascomPedidoDetalhe(token, selectedId))
-      .then((result) => alive && setDetail(result))
-      .catch((cause) => alive && setError(cause.message));
+    getToken()
+      .then((token) => pascomMe(token))
+      .then((result) => alive && setMe(result.user))
+      .catch((cause) => alive && setMeError(cause.message));
     return () => { alive = false; };
-  }, [selectedId, withToken]);
+  }, [getToken]);
 
-  const regenerate = async () => {
-    if (!selectedId) return;
-    setAction('Regenerando links...');
-    setError('');
-    try {
-      const result = await withToken((token) => pascomRegenerarDownloads(token, selectedId));
-      setAction(`${result.downloads.length} link(s) regenerado(s).`);
-      setDetail(await withToken((token) => pascomPedidoDetalhe(token, selectedId)));
-    } catch (cause) {
-      setError(cause.message);
-      setAction('');
-    }
-  };
+  const verEventos = useCallback((nomePasta) => {
+    setFocusNomePasta(nomePasta || '');
+    setTab('eventos');
+  }, []);
 
-  const stats = useMemo(() => [
-    ['Vendas hoje', currency.format(dashboard?.revenueToday || 0)],
-    ['Pedidos hoje', dashboard?.ordersToday ?? 0],
-    ['Mês atual', currency.format(dashboard?.revenueMonth || 0)],
-    ['Downloads ativos', dashboard?.activeDownloads ?? 0],
-  ], [dashboard]);
-
-  if (/sem permissao|permissao/i.test(error)) {
+  if (/sem permissao|permissao/i.test(meError)) {
     return <PermissionDenied signOut={signOut} onBackPublic={onBackPublic} />;
   }
+
+  const panes = {
+    eventos: () => <EventsTab getToken={getToken} focusNomePasta={focusNomePasta} onGoUpload={() => setTab('envio')} />,
+    envio: () => <UploadTab getToken={getToken} onVerEventos={verEventos} />,
+    pedidos: () => <OrdersTab getToken={getToken} />,
+    sistema: () => (
+      <SistemaTab getToken={getToken} sistema={sistema.data} loading={sistema.loading} error={sistema.error} onReload={sistema.reload} />
+    ),
+  };
 
   return (
     <div className="pascom-console">
       <header className="pascom-hero">
         <div>
           <span className="pascom-eyebrow">Painel Pascom</span>
-          <h1>{me?.name ? `Olá, ${me.name}` : 'Operação de pedidos'}</h1>
-          <p>Pedidos, downloads, suporte e métricas básicas da venda de fotos.</p>
+          <h1>{me?.name ? `Olá, ${me.name}` : 'Painel Pascom'}</h1>
+          <p>Eventos, envio de fotos, pedidos e downloads da venda de fotos.</p>
         </div>
         <div className="pascom-user-actions">
           <UserButton afterSignOutUrl={onBackPublic ? '/perfil' : '/pascom'} />
@@ -163,64 +156,19 @@ function PascomAuthenticated({ onBackPublic }) {
         </div>
       </header>
 
-      {error && <div className="pascom-alert">{error}</div>}
-      {action && <div className="pascom-alert success">{action}</div>}
+      {meError && <div className="pascom-alert">{meError}</div>}
 
-      <section className="pascom-stat-grid">
-        {stats.map(([label, value]) => <article className="pascom-stat" key={label}><span>{label}</span><strong>{value}</strong></article>)}
-      </section>
+      <nav className="pascom-tabs" role="tablist" aria-label="Áreas do painel">
+        {PANEL_TABS.map(([id, label]) => (
+          <button key={id} type="button" role="tab" aria-selected={tab === id} className={[tab === id ? 'active' : '', id === 'sistema' && sistema.data?.resumo.erros ? 'has-alert' : ''].filter(Boolean).join(' ')} onClick={() => setTab(id)}>
+            {rotuloAba(id, label, sistema.data)}
+          </button>
+        ))}
+      </nav>
 
-      <section className="pascom-grid">
-        <div className="pascom-card">
-          <div className="pascom-toolbar">
-            <div>
-              <span className="pascom-eyebrow">Pedidos</span>
-              <h2>Atendimento e suporte</h2>
-            </div>
-            <button className="pascom-secondary" onClick={load} disabled={loading}>{loading ? 'Carregando...' : 'Atualizar'}</button>
-          </div>
-          <div className="pascom-filters">
-            <input value={filters.q} onChange={(event) => setFilters({ ...filters, q: event.target.value })} placeholder="Buscar por pedido, e-mail ou WhatsApp" />
-            <select value={filters.status} onChange={(event) => setFilters({ ...filters, status: event.target.value })}>
-              <option value="">Todos os status</option>
-              <option value="Pagamento Confirmado">Pagamento Confirmado</option>
-              <option value="Pagamento Pendente">Pagamento Pendente</option>
-              <option value="PagamentoDivergente">PagamentoDivergente</option>
-            </select>
-          </div>
-          <div className="pascom-order-list">
-            {pedidos.map((pedido) => (
-              <button key={pedido.id} className={pedido.id === selectedId ? 'active' : ''} onClick={() => setSelectedId(pedido.id)}>
-                <strong>{pedido.id}</strong>
-                <span>{pedido.email || pedido.whatsapp || pedido.name}</span>
-                <small>{pedido.status} · {currency.format(pedido.total || 0)}</small>
-              </button>
-            ))}
-            {!loading && pedidos.length === 0 && <p className="pascom-empty">Nenhum pedido encontrado.</p>}
-          </div>
-        </div>
-
-        <div className="pascom-card pascom-detail">
-          <span className="pascom-eyebrow">Detalhe</span>
-          {!detail && <p className="pascom-empty">Selecione um pedido para ver itens, downloads e entrega.</p>}
-          {detail && (
-            <>
-              <h2>{detail.pedido.id}</h2>
-              <dl className="pascom-definition">
-                <div><dt>Status</dt><dd>{detail.pedido.status}</dd></div>
-                <div><dt>Comprador</dt><dd>{detail.pedido.name || detail.pedido.email}</dd></div>
-                <div><dt>Contato</dt><dd>{detail.pedido.email}<br />{detail.pedido.whatsapp}</dd></div>
-                <div><dt>Total</dt><dd>{currency.format(detail.pedido.total || 0)}</dd></div>
-              </dl>
-              <h3>Fotos compradas</h3>
-              <ul className="pascom-lines">{detail.itens.map((item) => <li key={`${item.fotoId}-${item.eventoId}`}><span>{item.eventTitle}</span><strong>{item.fotoId}</strong></li>)}</ul>
-              <h3>Downloads</h3>
-              <ul className="pascom-lines">{detail.downloads.map((download) => <li key={download.downloadId}><span>{download.fotoId}</span><strong>{download.uses}/{download.maxUses}</strong></li>)}</ul>
-              <button className="pascom-primary" onClick={regenerate} disabled={detail.pedido.status !== 'Pagamento Confirmado'}>Regenerar downloads</button>
-            </>
-          )}
-        </div>
-      </section>
+      {PANEL_TABS.filter(([id]) => opened.current.has(id)).map(([id]) => (
+        <div key={id} role="tabpanel" hidden={tab !== id} className="pascom-tabpanel">{panes[id]()}</div>
+      ))}
     </div>
   );
 }

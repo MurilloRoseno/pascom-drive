@@ -12,6 +12,10 @@ const runtimeFiles = [
   'Security.js',
   'Watermark.js',
   'WhatsApp.js',
+  'Upload.js',
+  'EventAdmin.js',
+  'Sistema.js',
+  'Processamento.js', 'Entregas.js',
 ];
 const forbiddenPatterns = [/jest/i, /__tests__/i, /coverage/i, /node_modules/i, /package(-lock)?\.json/i, /\.md$/i];
 

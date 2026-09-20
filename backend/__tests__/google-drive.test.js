@@ -169,3 +169,22 @@ describe('google-drive', () => {
     });
   });
 });
+
+describe('chave em base64', () => {
+  it('usa GOOGLE_PRIVATE_KEY_B64 quando definida, como a planilha', async () => {
+    const pem = '-----BEGIN PRIVATE KEY-----\nQkFTRTY0S0VZ\n-----END PRIVATE KEY-----\n';
+    const originalKey = process.env.GOOGLE_PRIVATE_KEY;
+    process.env.GOOGLE_PRIVATE_KEY = '';
+    process.env.GOOGLE_PRIVATE_KEY_B64 = Buffer.from(pem).toString('base64');
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce(tokenResponse())
+      .mockResolvedValueOnce(downloadResponse());
+    crypto.createPrivateKey.mockClear();
+    let drive;
+    jest.isolateModules(() => { drive = require('../lib/google-drive'); });
+    await drive.downloadFile('abc');
+    expect(crypto.createPrivateKey).toHaveBeenCalledWith(expect.stringContaining('QkFTRTY0S0VZ'));
+    delete process.env.GOOGLE_PRIVATE_KEY_B64;
+    process.env.GOOGLE_PRIVATE_KEY = originalKey;
+  });
+});

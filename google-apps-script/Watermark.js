@@ -208,6 +208,7 @@ function processarFoto(arquivo, eventoId, counter) {
       linkAmostra:  linkAmostra,
       tipoFoto:     capa ? 'capa' : 'foto',
       preco:        PRECO_PADRAO,
+      arquivoOrigemId: arquivo.getId(), // evita duplicar a foto se a execucao for interrompida
     });
     persistido = true;
 
@@ -283,6 +284,8 @@ if (typeof module !== 'undefined') {
     ehArquivoCapa: ehArquivoCapa,
     notificarErroProcessamento: notificarErroProcessamento,
     processarFoto: processarFoto,
+    solicitarDerivado: solicitarDerivado,
+    salvarDerivado: salvarDerivado,
     reprocessarMiniaturasEmLote: reprocessarMiniaturasEmLote,
     organizarMiniaturasEmPasta: organizarMiniaturasEmPasta,
   };

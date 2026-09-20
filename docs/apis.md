@@ -383,7 +383,8 @@ Recebe notificações do Mercado Pago.
 6. Localiza pedido por metadata/preference/payment.
 7. Se aprovado, valida `transaction_amount`, `currency_id=BRL` e total salvo no pedido.
 8. Atualiza pedido.
-9. Se aprovado e consistente, cria downloads e tenta entrega.
+9. Se aprovado e consistente, entrega por `entregarPedidoPago` (links + e-mail + link de WhatsApp).
+10. Se a entrega falhar com o pagamento ja confirmado, marca `EmailStatus=pendente`, fecha o webhook como `EntregaPendente` e deixa a conciliacao do gatilho terminar.
 
 **Resposta 200**
 
@@ -403,6 +404,10 @@ Recebe notificações do Mercado Pago.
 
 ```json
 { "ok": true, "divergent": true }
+```
+
+```json
+{ "ok": true, "entregaPendente": true }
 ```
 
 **Erros**
@@ -545,6 +550,48 @@ Invalida tags de cache.
 - `400`: escopo inválido ou `eventoId` ausente.
 - `401`: não autorizado.
 
+## `POST /api/automacao/entregas`
+
+Rota interna de conciliacao, chamada pelo gatilho de 5 minutos do Apps Script (`google-apps-script/Entregas.js`). Nao e publica.
+
+**Autenticacao**
+
+- Assinatura HMAC de worker (`x-pascom-timestamp` + `x-pascom-signature`, janela de 5 minutos), a mesma de `/api/admin/cache/invalidate`.
+- Fallback legado por `x-watermark-secret: WATERMARK_API_SECRET` somente se `ALLOW_LEGACY_WORKER_SECRET=true`.
+
+**Body**
+
+```json
+{ "limiteMs": 20000, "varredura": true }
+```
+
+- `limiteMs` (2000 a 25000): orcamento da varredura, para caber nos 30 s da funcao.
+- `varredura`: tambem procura no Mercado Pago pagamentos aprovados sem linha em `Pedidos` (o Apps Script pede isso uma vez por hora).
+- `auditoria: false` pula `auditarConsistenciaComercial()`.
+
+**O que faz, em ordem:** confere no Mercado Pago os pedidos pendentes criados entre 10 minutos e 72 horas atras; entrega os pedidos pagos sem nenhum link; tenta de novo o e-mail que falhou (ate 3 vezes, esperando 5, 20 e 60 minutos); roda a auditoria comercial.
+
+**Resposta 200**
+
+```json
+{
+  "verificados": 42,
+  "conciliados": 1,
+  "entregues": 2,
+  "reenviados": 1,
+  "parcial": false,
+  "problemas": [{ "tipo": "pago_sem_entrega", "severidade": "erro", "motivo": "...", "pedidoId": "PED_1" }],
+  "resumo": { "erros": 1, "avisos": 0 }
+}
+```
+
+`parcial: true` quando o orcamento ou o teto de 8 pedidos por ciclo foi atingido: o resto vai no proximo ciclo.
+
+**Erros**
+
+- `400`: parametros invalidos.
+- `401`: assinatura ausente, invalida ou fora da janela de tempo.
+
 ## Dependências Externas
 
 - Google Sheets: catálogo, pedidos e autorizações.
@@ -568,7 +615,8 @@ As classes de limite estão em `backend/middleware/rate-limit.js`:
 - acesso de galeria;
 - download;
 - webhook;
-- administração.
+- administração;
+- lotes de envio de fotos da Pascom (`uploadsPascom`, 60/min por membro autenticado).
 
 Documente qualquer alteração nesses limites em `technical-changelog.md`.
 ## APIs Pascom Protegidas por Clerk
@@ -582,3 +630,43 @@ Todas as rotas `/api/pascom/*` exigem `Authorization: Bearer <clerk-session-toke
 - `POST /api/pascom/pedidos/:pedidoId/regenerar-downloads`: regenera links somente para `Pagamento Confirmado`; pedidos pendentes retornam `409`.
 
 Erros esperados: `401` sem sessão Clerk, `403` fora da `EquipePascom` e `503` quando Clerk não estiver configurado.
+
+### Entregas e conciliacao de pagamentos
+
+- `POST /api/pascom/pedidos/:pedidoId/reenviar-entrega`: reemite os links do pedido e manda o e-mail de novo, zerando o contador de tentativas automaticas. Os links anteriores deixam de valer. So para `Pagamento Confirmado` (`409` caso contrario). Responde `{ emailStatus, emailError, whatsappLink, whatsappMessage, downloads: [{ fotoId, url, expiresAt }], pedido }`.
+- `POST /api/pascom/pedidos/:pedidoId/conferir-mp`: procura o pagamento no Mercado Pago por `external_reference`. Se estiver aprovado e o valor bater, confirma o pedido e entrega na hora. Responde `{ situacao: "entregue" | "aguardando" | "divergente", statusMp, paymentId, emailStatus, pedido }`.
+- `POST /api/pascom/pedidos/:pedidoId/regenerar-downloads`: apenas gera links novos, sem e-mail (tambem revoga os anteriores).
+- `GET /api/pascom/dashboard` ganhou `atencao` (ate 20 itens `{ tipo, severidade, motivo, detalhe, pedidoId, email, total }`) e `resumoAtencao`; `deliveryIssues` passou a contar as falhas de entrega de verdade. `GET /api/pascom/pedidos` aceita `atencao=true` e cada pedido expoe `emailStatus`, `emailError`, `emailAttemptedAt`, `deliveryAttempts` e `deliveryNextAt`.
+
+### Processamento, quarentena e troca de capa
+
+- Ações de evento (em `POST /api/pascom/eventos/:eventoId/acoes`): `{ acao: "reprocessar" }` devolve as fotos de `_FALHAS` para a fila com o mesmo `EventoID`; `{ acao: "descartarFalhas" }` manda as fotos com falha para a lixeira e conclui o evento; `{ acao: "trocarCapa", fotoId }` só **enfileira** a troca (aba `PedidosProcessamento`), executada pelo gatilho de 5 minutos. Com pedido na fila, novas ações respondem `409 regra_negocio`.
+- `POST /api/pascom/quarentena/:folderId/reprocessar`: pasta `_ERRO_` em `Fotos_Origem` volta para a fila, com as tentativas zeradas.
+- `POST /api/pascom/quarentena/:folderId/nome`: body `{ categoria, data, titulo }` (mesmas regras do envio). Renomeia a pasta para `categoria__AAAA-MM-DD__titulo` e a devolve para a fila; `409 evento_duplicado` se o nome já existir.
+- O evento em `GET /api/pascom/eventos*` ganhou `progresso` (fotos prontas), `restantes`, `falhas` (lista legível de `Erros`, aceita JSON ou texto), `pedidoPendente` (`{ tipo, desde, alvo }`) e `pedidoErro`. `diagnostico` passou a trazer, por pasta em quarentena, `folderId`, `eventoId`, `falhas` e `nomeValido`.
+
+### Saúde do sistema e espaço no Drive
+
+- `GET /api/pascom/sistema`: checklist de produção. Junta, em paralelo, a presença das variáveis da Vercel (nunca os valores), as abas da planilha e a ação `diagnostico` do Web App (gatilho de 5 minutos, última execução, propriedades do script, pastas do Drive, quarentena `_ERRO_`, envios abertos e espaço usado). Responde `{ resumo: { erros, avisos }, grupos, itens: [{ id, grupo, estado: "ok" | "aviso" | "erro", titulo, orientacao }], appsScriptDisponivel, armazenamento, quarentena, ultimaExecucao, arquivados, verificadoEm }`. Se o Apps Script não responder, isso vira um item de erro (não 500). Um Web App de versão antiga (`VERSAO_WEBAPP` diferente de `VERSAO_WEBAPP_ESPERADA` ou "Acao desconhecida") é apontado com a orientação de publicar uma nova versão.
+- `GET /api/pascom/eventos/:eventoId/liberacao`: estimativa, sem apagar nada, do que sai ao liberar espaço de um evento arquivado: `{ arquivos, bytesLiberados, originaisMantidos, bytesMantidos, pedidosPendentes, fotos, situacao }`. Evento não arquivado responde `409 regra_negocio`.
+- Ação `{ acao: "liberarEspaco" }` em `POST /api/pascom/eventos/:eventoId/acoes`: manda para a lixeira do Drive as prévias e miniaturas de todas as fotos e os originais das fotos não vendidas. A resposta inclui `liberacao: { situacao: "concluida" | "parcial", arquivos, bytesLiberados, bytesAcumulados, originaisMantidos }`; `parcial` significa que o tempo do Apps Script acabou e a ação pode ser repetida.
+
+### Gestão de eventos pelo painel
+
+Leituras vêm direto do Sheets; escritas passam pelo Web App do Apps Script (`EventAdmin.js`), que aplica as mesmas regras do menu da planilha e registra a aba `AuditoriaPascom`.
+
+- `GET /api/pascom/eventos`: eventos (inclusive rascunhos e arquivados) com `etapa` (`fila`, `processando`, `erro`, `revisar`, `publicado`, `avenda`, `arquivado`), fotos processadas, vendas confirmadas, receita, `acoes` (`{ ok, motivo }` por ação) e `avisos`. Envios finalizados que o trigger ainda não registrou aparecem com `fila: true`. Nunca expõe `CodigoHash` nem IDs de arquivos do Drive.
+- `GET /api/pascom/eventos/:eventoId`: evento e fotos processadas (capa primeiro) com `thumbnailUrl`/`previewUrl` assinados por token de mídia de administração (1 h), que também abrem prévias de eventos não publicados.
+- `POST /api/pascom/eventos/:eventoId/acoes`: body `{ acao }` com `publicar`, `despublicar`, `autorizarVenda`, `revogarVenda`, `gerarCodigo`, `revogarCodigo`, `arquivar`, `liberarEspaco`; `{ acao: "definirVisibilidade", visibilidade: "publica" | "protegida" }`; ou `{ acao: "editar", campos }` com apenas `Titulo`, `DataEvento`, `HorarioEvento`, `Categoria`, `SlugPublico` e `ProtecaoMenores`. Responde o detalhe atualizado; em `gerarCodigo` inclui `codigo` uma única vez. Regra violada responde `409 regra_negocio` com a mensagem do Apps Script.
+
+### Envio de fotos pelo painel
+
+As fotos nunca passam pela Vercel (limite de `4,5 MB por requisição). O backend só autentica o membro e repassa comandos assinados (HMAC no corpo) ao Web App do Apps Script (`google-apps-script/Upload.js`), que roda como dono do Drive. O navegador envia os bytes direto para a sessão de upload retomável do Google Drive.
+
+- `GET /api/pascom/uploads/armazenamento`: espaço usado, limite e livre do Drive da Pascom.
+- `POST /api/pascom/uploads/eventos`: body `{ categoria, data (AAAA-MM-DD), titulo, totalArquivos, bytesTotais }`. Cria `_ENVIANDO__categoria__data__titulo` em `Fotos_Origem` e responde `201 { uploadId, nomePasta, armazenamento }`.
+- `POST /api/pascom/uploads/sessoes`: body `{ uploadId, arquivos: [{ nome, mimeType, tamanho }] }` (1 a 20 por lote, JPG/PNG, até 40 MB). Responde `{ sessoes: [{ nome, sessionUrl }] }`; o navegador faz `PUT` em pedaços para `sessionUrl`.
+- `POST /api/pascom/uploads/eventos/:uploadId/finalizar`: body `{ esperados, capa? }`. Confere se todas as fotos chegaram, renomeia a capa para `capa.<ext>` e remove o prefixo `_ENVIANDO__`, liberando a pasta para o trigger de processamento.
+- `POST /api/pascom/uploads/eventos/:uploadId/cancelar`: move o envio aberto para a lixeira.
+
+Erros de negócio vêm como `{ error, codigo }`: `400 dados_invalidos`, `404 envio_nao_encontrado`, `409 evento_duplicado` ou `envio_incompleto`, `507 sem_espaco`, `502 drive_indisponivel` e `503 nao_configurado` (faltam `UPLOAD_WEBAPP_URL` ou `APPS_SCRIPT_HMAC_SECRET`).

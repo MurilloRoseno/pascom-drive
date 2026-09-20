@@ -3,7 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, uploadsPascom,
 } = require('./middleware/rate-limit');
 const { mediaAbuseGuard } = require('./middleware/media-abuse');
 const { authenticatePascom, pascomClerkMiddleware } = require('./lib/pascom-auth');
@@ -31,6 +31,11 @@ const pascomDashboardHandler = require('./api/pascom-dashboard');
 const pascomPedidosHandler = require('./api/pascom-pedidos');
 const pascomPedidoDetalheHandler = require('./api/pascom-pedido-detalhe');
 const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-downloads');
+const pascomEntregas = require('./api/pascom-entregas');
+const automacaoEntregasHandler = require('./api/automacao-entregas');
+const pascomUploads = require('./api/pascom-uploads');
+const pascomEventos = require('./api/pascom-eventos');
+const pascomSistema = require('./api/pascom-sistema');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -74,7 +79,21 @@ app.get('/api/pascom/me', pascomMeHandler);
 app.get('/api/pascom/dashboard', pascomDashboardHandler);
 app.get('/api/pascom/pedidos', pascomPedidosHandler);
 app.get('/api/pascom/pedidos/:pedidoId', pascomPedidoDetalheHandler);
-app.post('/api/pascom/pedidos/:pedidoId/regenerar-downloads', pascomRegenerarDownloadsHandler);
+app.post('/api/pascom/pedidos/:pedidoId/regenerar-downloads', uploadsPascom, pascomRegenerarDownloadsHandler);
+app.post('/api/pascom/pedidos/:pedidoId/reenviar-entrega', uploadsPascom, pascomEntregas.reenviar);
+app.post('/api/pascom/pedidos/:pedidoId/conferir-mp', uploadsPascom, pascomEntregas.conferir);
+app.get('/api/pascom/eventos', pascomEventos.listar);
+app.get('/api/pascom/eventos/:eventoId', pascomEventos.detalhar);
+app.get('/api/pascom/eventos/:eventoId/liberacao', pascomSistema.estimarLiberacao);
+app.get('/api/pascom/sistema', pascomSistema.diagnostico);
+app.post('/api/pascom/quarentena/:folderId/reprocessar', uploadsPascom, pascomSistema.reprocessarPasta);
+app.post('/api/pascom/quarentena/:folderId/nome', uploadsPascom, pascomSistema.corrigirNomePasta);
+app.post('/api/pascom/eventos/:eventoId/acoes', uploadsPascom, pascomEventos.executarAcao);
+app.get('/api/pascom/uploads/armazenamento', pascomUploads.armazenamento);
+app.post('/api/pascom/uploads/eventos', uploadsPascom, pascomUploads.criarEvento);
+app.post('/api/pascom/uploads/sessoes', uploadsPascom, pascomUploads.criarSessoes);
+app.post('/api/pascom/uploads/eventos/:uploadId/finalizar', uploadsPascom, pascomUploads.finalizar);
+app.post('/api/pascom/uploads/eventos/:uploadId/cancelar', uploadsPascom, pascomUploads.cancelar);
 app.post('/api/checkout/preference', pagamento, checkoutPreferenceHandler);
 app.post('/api/checkout/quote', cotacao, checkoutQuoteHandler);
 app.post('/api/criar-pagamento', pagamento, checkoutPreferenceHandler);
@@ -93,6 +112,7 @@ app.get('/api/eventos/:eventoId/fotos', fotos, fotosEventoHandler);
 app.get('/api/eventos/:eventoId/previews/:fotoId', midiaGaleria, mediaAbuseGuard, previewEventoHandler);
 app.post('/api/eventos/:eventoId/acesso', acessoGaleria, galeriaAcessoHandler);
 app.post('/api/admin/cache/invalidate', administracao, cacheInvalidateHandler);
+app.post('/api/automacao/entregas', administracao, automacaoEntregasHandler);
 
 app.use(errorHandler);
 

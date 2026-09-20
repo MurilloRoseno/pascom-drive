@@ -18,3 +18,15 @@ it('remove carimbo de quarentena do titulo ao reprocessar pasta', () => {
     titulo: 'Padre Paulo Na França',
   }));
 });
+
+it('ignora pastas de envio do Painel Pascom ainda em andamento', () => {
+  const { listarEventosNovos } = require('../EventQueue');
+  const pastas = [
+    { getId: () => 'f1', getName: () => '_ENVIANDO__casamento__2026-05-20__joao-e-maria' },
+    { getId: () => 'f2', getName: () => 'crisma__2026-06-01__turma' },
+  ];
+  let index = 0;
+  DriveApp.getFolderById.mockReturnValueOnce({ getFolders: () => ({ hasNext: () => index < pastas.length, next: () => pastas[index++] }) });
+  global.getStatusEventoByFolderId = jest.fn().mockReturnValue(null);
+  expect(listarEventosNovos()).toEqual([{ folderId: 'f2', nomePasta: 'crisma__2026-06-01__turma', retomada: false }]);
+});

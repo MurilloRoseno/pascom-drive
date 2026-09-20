@@ -45,8 +45,14 @@ async function buscarPedidoById(pedidoId) {
     preferenceId: match.get('PreferenceID'),
     paymentId: match.get('PaymentID') || '',
     status: match.get('Status'),
+    name: match.get('Nome') || '',
     email: match.get('Email'),
     whatsapp: match.get('WhatsApp'),
+    emailStatus: match.get('EmailStatus') || '',
+    emailError: match.get('EmailErro') || '',
+    emailSentAt: match.get('EmailEnviadoEm') || '',
+    deliveryAttempts: Number(match.get('EntregaTentativas') || 0),
+    deliveryNextAt: match.get('EntregaProximaEm') || '',
     total: Number(match.get('Total') || 0),
     createdAt: match.get('DataCriacao') || '',
     paidAt: match.get('DataPagamento') || '',
@@ -95,7 +101,7 @@ async function marcarPedidoDivergente(pedidoId, reason, payment = {}) {
   return { ...pedido, status: 'PagamentoDivergente' };
 }
 
-async function registrarEntrega(pedidoId, { emailResult, whatsappLink }) {
+async function registrarEntrega(pedidoId, { emailResult, whatsappLink, tentativas, proximaEm } = {}) {
   const pedido = await buscarPedidoById(pedidoId);
   if (!pedido) throw new Error('Pedido nao encontrado.');
   if (emailResult) {
@@ -105,6 +111,9 @@ async function registrarEntrega(pedidoId, { emailResult, whatsappLink }) {
     if (emailResult.status === 'enviado') pedido.row.set('EmailEnviadoEm', new Date().toISOString());
   }
   if (whatsappLink) pedido.row.set('WhatsAppLink', whatsappLink);
+  // Colunas novas (fase 5): planilha antiga continua funcionando sem elas.
+  if (tentativas !== undefined) safeSet(pedido.row, 'EntregaTentativas', tentativas);
+  if (proximaEm !== undefined) safeSet(pedido.row, 'EntregaProximaEm', proximaEm);
   await pedido.row.save();
 }
 
@@ -167,6 +176,54 @@ async function criarAutorizacoesDownload(pedidoId, tokenRecords) {
     Usos: 0,
     CriadoEm: new Date().toISOString(),
   })));
+}
+
+async function listarDownloadsPedido(pedidoId) {
+  return (await rows('Downloads'))
+    .filter((row) => row.get('PedidoID') === pedidoId)
+    .map((row) => ({
+      row,
+      downloadId: row.get('DownloadID'),
+      fotoId: row.get('FotoID'),
+      expiresAt: row.get('ExpiraEm') || '',
+      uses: Number(row.get('Usos') || 0),
+      maxUses: Number(row.get('UsosMaximos') || 0),
+    }));
+}
+
+/**
+ * Grava as autorizacoes do pedido: atualiza a linha que ja existe para a foto e cria
+ * apenas as que faltam. Substituir o TokenHash revoga o link anterior, entao reemitir
+ * nao acumula linhas nem deixa dois links validos para a mesma foto.
+ */
+async function gravarAutorizacoesDownload(pedidoId, tokenRecords) {
+  const target = await sheet('Downloads');
+  if (!target) throw new Error('Estrutura de downloads nao inicializada no Sheets.');
+  const existentes = new Map((await target.getRows())
+    .filter((row) => row.get('PedidoID') === pedidoId)
+    .map((row) => [row.get('FotoID'), row]));
+  const novos = [];
+  for (const record of tokenRecords) {
+    const row = existentes.get(record.fotoId);
+    if (!row) {
+      novos.push(record);
+      continue;
+    }
+    row.set('OriginalFileID', record.originalFileId);
+    row.set('TokenHash', record.tokenHash);
+    row.set('ExpiraEm', new Date(record.exp).toISOString());
+    row.set('UsosMaximos', record.maxUses);
+    row.set('Usos', 0);
+    row.set('CriadoEm', new Date().toISOString());
+    safeSet(row, 'FingerprintID', record.fingerprintId);
+    safeSet(row, 'FingerprintHash', record.fingerprintHash);
+    safeSet(row, 'FingerprintVersao', record.fingerprintVersion);
+    safeSet(row, 'FingerprintStatus', 'Pendente');
+    safeSet(row, 'FingerprintAplicadoEm', '');
+    safeSet(row, 'UltimoUsoEm', '');
+    await row.save();
+  }
+  if (novos.length) await criarAutorizacoesDownload(pedidoId, novos);
 }
 
 async function prepararDownload(downloadId, tokenHash) {
@@ -293,6 +350,8 @@ module.exports = {
   listarItensPedido,
   buscarOriginaisPedido,
   criarAutorizacoesDownload,
+  listarDownloadsPedido,
+  gravarAutorizacoesDownload,
   prepararDownload,
   registrarUsoDownload,
   consumirDownload,

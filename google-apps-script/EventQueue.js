@@ -110,13 +110,17 @@ function listarEventosNovos() {
     var nome  = pasta.getName();
     // Ignora pastas de quarentena
     if (nome.indexOf('_ERRO_') === 0 || nome.indexOf('_QUARANTINE_') === 0) continue;
+    // Ignora envios do Painel Pascom ainda em andamento (renomeados ao finalizar)
+    if (nome.indexOf('_ENVIANDO__') === 0) continue;
     // Verifica se já há um evento ativo/concluído com esse folder ID
     var ev = getStatusEventoByFolderId(pasta.getId());
-    if (!ev || ev.status === 'Erro') {
-      novos.push({ folderId: pasta.getId(), nomePasta: nome });
+    // Pendente/Processando: retomada de fatia (mesma linha e mesmo EventoID).
+    if (!ev || ev.status === 'Erro' || ev.status === 'Pendente' || ev.status === 'Processando') {
+      novos.push({ folderId: pasta.getId(), nomePasta: nome, retomada: Boolean(ev) });
     }
   }
-  return novos;
+  // Retomadas primeiro: um evento grande termina antes de outro comecar.
+  return novos.filter(function(e) { return e.retomada; }).concat(novos.filter(function(e) { return !e.retomada; }));
 }
 
 if (typeof module !== 'undefined') {

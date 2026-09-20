@@ -54,6 +54,60 @@ function processarFotosNovas() {
  * e remove a entrada quando originais privados e previews forem preservados.
  */
 function processarEventos() {
+  var inicioCiclo = Date.now();
+  var inicio = new Date(inicioCiclo).toISOString();
+  var resultado = { resultado: 'erro', evento: '', erro: '' };
+  try {
+    resultado = processarEventosRegistrado() || resultado;
+    executarPedidosDoPainel(inicioCiclo);
+    conciliarEntregasDoCiclo(inicioCiclo);
+  } catch (e) {
+    resultado = { resultado: 'erro', evento: '', erro: String(e && e.message || e).slice(0, 300) };
+    throw e;
+  } finally {
+    // Registro lido pela aba Sistema do Painel Pascom (sem dados sensiveis).
+    if (typeof registrarUltimaExecucao === 'function') {
+      registrarUltimaExecucao({
+        inicio: inicio, fim: new Date().toISOString(),
+        resultado: resultado.resultado, evento: resultado.evento || '', erro: resultado.erro || '',
+        restantes: resultado.restantes || 0,
+      });
+    }
+    try {
+      if (typeof verificarAlertaEspaco === 'function') verificarAlertaEspaco();
+    } catch (alertaErro) {
+      Logger.log('Falha ao verificar espaco do Drive: ' + alertaErro.message);
+    }
+  }
+}
+
+/** Pedidos lentos do Painel Pascom (ex.: trocar capa), com o tempo que sobrar do ciclo. */
+function executarPedidosDoPainel(inicioCiclo) {
+  if (typeof executarPedidosPendentes !== 'function') return;
+  if (!acquireLock('PEDIDOS_PAINEL')) return;
+  try {
+    executarPedidosPendentes(inicioCiclo);
+  } catch (e) {
+    Logger.log('Falha ao executar pedidos do painel: ' + e.message);
+  } finally {
+    releaseLock();
+  }
+}
+
+/**
+ * Conferencia dos pagamentos e das entregas, com o tempo que sobrou do ciclo.
+ * Uma falha aqui nunca derruba o processamento de fotos.
+ */
+function conciliarEntregasDoCiclo(inicioCiclo) {
+  if (typeof conciliarEntregasBackend !== 'function') return;
+  try {
+    conciliarEntregasBackend(inicioCiclo);
+  } catch (e) {
+    Logger.log('Falha ao conciliar entregas: ' + e.message);
+  }
+}
+
+function processarEventosRegistrado() {
   Logger.log('processarEventos: ' + new Date());
 
   // Propagate spreadsheet administration to sale flags before exposing photos.
@@ -62,76 +116,39 @@ function processarEventos() {
   // 1. Remove entradas cujas fotos ja foram preservadas em armazenamento privado.
   verificarEventosProntosParaRemover();
 
+  // 1b. Descarta envios do Painel Pascom abandonados ha mais de 48h.
+  try {
+    if (typeof limparEnviosAbandonados === 'function') limparEnviosAbandonados();
+  } catch (e) {
+    Logger.log('Falha ao limpar envios abandonados: ' + e.message);
+  }
+
   // 2. Descobre eventos novos (subpastas)
   var novos = listarEventosNovos();
   if (novos.length === 0) {
     Logger.log('Nenhum evento novo encontrado em Fotos_Origem');
-    return;
+    return { resultado: 'sem_eventos' };
   }
 
-  // 3. Processa um evento por vez (lock evita paralelismo)
-  var evento   = novos[0];
-  var metadados = interpretarNomePasta(evento.nomePasta);
-  var eventoId = gerarEventoId(metadados.nomeNormalizado || evento.nomePasta);
+  // 3. Uma fatia de um evento por vez (lock evita paralelismo). A fatia para antes do
+  //    limite de 6 min do Apps Script; o proximo gatilho continua com o mesmo EventoID.
+  var evento = novos[0];
+  var resolvido = resolverEventoDaPasta(evento);
 
-  if (!acquireLock(eventoId)) {
+  if (!acquireLock(resolvido.eventoId)) {
     var lock = getLockStatus();
     Logger.log('Lock ativo: ' + lock.eventoId +
       ' (iniciado há ' + Math.round((Date.now() - lock.ts) / 1000) + 's)');
-    return;
+    return { resultado: 'ocupado', evento: lock.eventoId };
   }
 
   try {
-    var arquivos = listarArquivosDoEvento(evento.folderId);
-    if (arquivos.length === 0) {
-      Logger.log('Pasta preservada sem processamento: o evento ainda nao recebeu fotos (' + evento.nomePasta + ').');
-      return;
-    }
-
-    // Registra apenas eventos com fotos, evitando duplicatas para eventos futuros.
-    registrarEvento({
-      eventoId:   eventoId,
-      nomePasta:  metadados.nomeNormalizado || evento.nomePasta,
-      folderId:   evento.folderId,
-      totalFotos: arquivos.length,
-      titulo: metadados.titulo,
-      categoria: metadados.categoria,
-      dataEvento: metadados.dataEvento,
-      erro: metadados.erro,
-    });
-
-    Logger.log('Iniciando: ' + eventoId + ' (' + arquivos.length + ' fotos)');
-    atualizarStatusEvento(eventoId, 'Processando', { dataInicio: new Date().toISOString() });
-
-    var erros = [];
-    for (var i = 0; i < arquivos.length; i++) {
-      try {
-        processarFoto(arquivos[i], eventoId, i + 1);
-        atualizarStatusEvento(eventoId, 'Processando', { fotosProcessadas: i + 1 });
-      } catch (e) {
-        erros.push('Foto ' + (i + 1) + ' (' + arquivos[i].getName() + '): ' + e.message);
-        Logger.log('Erro foto ' + arquivos[i].getName() + ': ' + e.message);
-      }
-    }
-
-    if (erros.length === 0) {
-      // Remove a subpasta vazia de Fotos_Origem imediatamente após processar todas as fotos
-      DriveApp.getFolderById(evento.folderId).setTrashed(true);
-      atualizarStatusEvento(eventoId, 'Processado', {
-        dataConclusao: new Date().toISOString(),
-        pastaRemovida: true,
-      });
-      Logger.log('Evento processado e pasta removida: ' + eventoId);
-    } else {
-      atualizarStatusEvento(eventoId, 'Erro', { erro: JSON.stringify(erros) });
-      moverParaQuarentena(evento.folderId, erros.join('; '));
-      Logger.log('Evento com erros em quarentena: ' + eventoId);
-    }
-
+    return processarFatia(evento, resolvido.eventoId, resolvido.existente);
   } catch (e) {
-    atualizarStatusEvento(eventoId, 'Erro', { erro: e.message });
+    atualizarStatusEvento(resolvido.eventoId, 'Erro', { erro: String(e.message) });
     moverParaQuarentena(evento.folderId, e.message);
-    Logger.log('ERRO CRÍTICO em ' + eventoId + ': ' + e.message);
+    Logger.log('ERRO CRÍTICO em ' + resolvido.eventoId + ': ' + e.message);
+    return { resultado: 'erro', evento: resolvido.eventoId, erro: String(e.message).slice(0, 300) };
   } finally {
     releaseLock();
   }
@@ -173,6 +190,6 @@ function entregarFotos() {
 if (typeof module !== 'undefined') {
   module.exports = {
     criarTriggers, onOpen, processarFotosNovas, processarEventos,
-    entregarFotos, verificarEventosProntosParaRemover,
+    entregarFotos, verificarEventosProntosParaRemover, conciliarEntregasDoCiclo,
   };
 }

@@ -1,6 +1,6 @@
 const { buscarEvento, buscarPreviewFoto } = require('../lib/google-sheets');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
-const { mediaTokenAllows } = require('../lib/media-token');
+const { mediaTokenAccess } = require('../lib/media-token');
 const { downloadFile } = require('../lib/google-drive');
 const { readThrough } = require('../lib/runtime-cache');
 
@@ -9,18 +9,18 @@ module.exports = async function handler(req, res, next) {
   try {
     const variant = req.query.variant === 'thumbnail' ? 'thumbnail' : 'preview';
     const event = await buscarEvento(req.params.eventoId);
-    if (!event || event.publication !== 'publicado') {
+    const media = event
+      ? mediaTokenAccess(String(req.query.mt || ''), { eventoId: event.eventoId, fotoId: req.params.fotoId, variant })
+      : { allowed: false, admin: false };
+    const published = event?.publication === 'publicado';
+    // Rascunhos e arquivados so aparecem para a equipe Pascom, com token de administracao.
+    if (!event || (!published && !media.admin)) {
       return res.status(404).json({ error: 'Evento nao encontrado.' });
     }
     const photo = await buscarPreviewFoto(event.eventoId, req.params.fotoId, variant);
     if (!photo) return res.status(404).json({ error: 'Previa nao encontrada.' });
-    const mediaAllowed = mediaTokenAllows(String(req.query.mt || ''), {
-      eventoId: event.eventoId,
-      fotoId: req.params.fotoId,
-      variant,
-    });
-    const legacyGalleryAllowed = tokenAllowsEvent(String(req.query.token || ''), event);
-    if (photo.type !== 'capa' && !mediaAllowed && !legacyGalleryAllowed) {
+    const legacyGalleryAllowed = published && tokenAllowsEvent(String(req.query.token || ''), event);
+    if (photo.type !== 'capa' && !media.allowed && !legacyGalleryAllowed) {
       return res.status(401).json({ error: 'Acesso a previa nao autorizado.' });
     }
 
@@ -47,7 +47,7 @@ module.exports = async function handler(req, res, next) {
       },
     );
     const buffer = Buffer.from(image.base64, 'base64');
-    if (photo.type === 'capa') {
+    if (photo.type === 'capa' && published) {
       res.setHeader('Cache-Control', 'public, max-age=300');
       res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
       res.setHeader('Vercel-Cache-Tag', `evento-${event.eventoId},media-${event.eventoId}`);

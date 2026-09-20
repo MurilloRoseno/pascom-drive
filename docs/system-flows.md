@@ -40,9 +40,62 @@ Detalhes operacionais:
 - O conteúdo descreve Google Sheets/Drive, Mercado Pago, Vercel, WhatsApp, SMTP/e-mail, galerias protegidas, downloads e logs técnicos.
 - Qualquer alteração futura em coleta, pagamento, entrega, fornecedores ou retenção deve atualizar a política e o changelog técnico.
 
+## Fluxo de Envio de Fotos pelo Painel Pascom
+
+1. Membro da Pascom abre a aba "Enviar fotos" em `/pascom` (no mobile, em `/perfil` → Pascom).
+2. Preenche categoria, data e título; o painel mostra o nome da pasta `categoria__AAAA-MM-DD__titulo`.
+3. Seleciona as fotos (JPG/PNG até 40 MB; HEIC é recusado com orientação) e toca numa foto para marcá-la como capa.
+4. O backend chama o Web App `criarEvento`, que cria `_ENVIANDO__<nome>` em `Fotos_Origem`. O prefixo faz `listarEventosNovos()` ignorar a pasta enquanto o envio está em andamento.
+5. Em lotes de 20, o Web App abre sessões de upload retomável como dono do Drive (`criarSessoes`).
+6. O navegador envia cada foto direto para o Drive em pedaços de 8 MB, 3 fotos por vez, retomando do último byte confirmado após falhas. O estado fica em `localStorage` para retomar depois de fechar a aba, selecionando as mesmas fotos.
+7. `finalizar` confere a contagem, renomeia a capa para `capa.<ext>` e remove o prefixo; o trigger de 5 minutos processa o evento normalmente.
+8. Envios abertos há mais de 48 h vão para a lixeira via `limparEnviosAbandonados()`. Cada etapa é registrada na aba `EnviosPascom`.
+
+## Fluxo de Gestão de Eventos pelo Painel Pascom
+
+1. A aba "Eventos" (padrão do painel) lista envios na fila, eventos em processamento, para revisar, publicados e arquivados. Enquanto houver fila ou processamento, a lista se atualiza a cada 30 segundos com a aba visível.
+2. Ao selecionar um evento, o painel mostra as etapas (Enviado → Processando → Revisar → Publicado → À venda), avisos e a grade de revisão com prévias com marca d’água, inclusive de rascunhos (token de mídia de administração).
+3. Cada botão vem com `acoes` calculadas por `backend/lib/event-rules.js`; indisponíveis mostram o motivo. Ações que mudam o que o público vê pedem confirmação.
+4. O backend repassa a ação assinada ao Web App; `EventAdmin.js` executa a mesma função do menu da planilha sob `LockService`, grava `AuditoriaPascom` e invalida o cache do site.
+5. "Gerar código" devolve o código em claro uma única vez, exibido num diálogo para a equipe anotar; a planilha guarda só o hash.
+6. O menu "Pascom Drive" da planilha continua disponível como alternativa.
+
+## Fluxo de Entrega Garantida (pagou, recebe)
+
+1. **Caminho normal:** o webhook do Mercado Pago confirma o pagamento e `entregarPedidoPago` (`backend/lib/order-fulfillment.js`) emite os links, manda o e-mail e grava o link assistido de WhatsApp.
+2. **Se a entrega quebrar depois do pagamento confirmado** (segredo ausente, Drive fora do ar), o pedido fica com `EmailStatus=pendente` e o webhook responde `EntregaPendente` em vez de perder o servico.
+3. **A cada 5 minutos**, o gatilho do Apps Script chama `POST /api/automacao/entregas` (assinada) com o tempo que sobrou do ciclo. A varredura:
+   - confere no Mercado Pago os pendentes de 10 minutos a 72 horas (`Payment.search` por `external_reference`) e entrega os que ja foram aprovados;
+   - entrega os pedidos pagos que ficaram sem nenhum link;
+   - tenta de novo o e-mail que falhou, ate 3 vezes, esperando 5, 20 e 60 minutos;
+   - uma vez por hora, procura pagamento aprovado sem linha em `Pedidos` (so reporta: sem a linha nao da para saber quais fotos foram compradas);
+   - roda `auditarConsistenciaComercial()`.
+4. **Aviso:** na terceira falha, o Apps Script manda e-mail para `ADMIN_EMAIL` pelo `MailApp` — canal independente do SMTP, que pode ser justamente o que quebrou — no maximo um por dia.
+5. **No painel**, a aba Pedidos abre com "Precisam de atencao" e dois botoes: **Reenviar entrega** (links novos + e-mail, revogando os anteriores) e **Conferir no Mercado Pago**.
+6. **Reenvio automatico so vale para pedido pago nas ultimas 72 horas** e para `EmailStatus` `falhou` ou `pendente`: em pedido antigo, ou quando o SMTP nunca foi configurado, reemitir revogaria um link que ja pode estar com o comprador, entao o painel apenas avisa.
+
+## Fluxo de Processamento em Fatias
+
+1. A cada 5 minutos, `processarEventos` escolhe uma pasta de `Fotos_Origem`, dando prioridade a eventos já em `Pendente`/`Processando` (retomadas).
+2. `resolverEventoDaPasta` reaproveita a linha de `Eventos` com o mesmo `FolderID`; só uma pasta nunca vista ganha `EventoID` novo. Isso vale também para pastas que voltam da quarentena.
+3. `processarFatia` processa fotos por até `4,5 minutos (limite de 6 min do Apps Script) e para. O progresso (`FotosProcessadas`) é gravado a cada 5 fotos; o próximo ciclo continua de onde parou. Fotos já registradas (`ArquivoOrigemID`) não são reprocessadas.
+4. Foto que falha é tentada de novo nos ciclos seguintes; na 3ª falha vai para `_FALHAS` e não prende o resto.
+5. Sem arquivos pendentes: sem falhas, o evento fica `Processado` e a pasta vai para a lixeira; com falhas, fica `Erro` e a pasta é renomeada `_ERRO_...`. As fotos boas já estão prontas e o evento pode ser publicado.
+6. No painel: "Tentar de novo" devolve `_FALHAS` para a fila; "Descartar as fotos com falha" conclui o evento; na aba Sistema, pastas com nome fora do padrão podem ser corrigidas por formulário.
+7. Troca de capa: o painel enfileira; no fim do ciclo, com tempo sobrando, o gatilho gera a nova capa sem marca a partir do original, transforma a capa antiga em foto à venda com marca d’água e manda os derivados antigos para a lixeira.
+
+## Fluxo de Saúde do Sistema e Espaço no Drive
+
+1. Ao abrir o Painel Pascom, uma verificação (sem polling) consulta `GET /api/pascom/sistema`. Se houver itens que impedem vendas, a aba "Sistema" mostra o selo "Sistema · N erros".
+2. A aba "Sistema" agrupa o checklist em Pagamentos, Planilha e Drive, Envio pelo painel, Automação, Entregas, Galerias e Site. Erros já vêm com a orientação aberta; itens em ordem ficam recolhidos.
+3. O processamento automático grava `ULTIMA_EXECUCAO` a cada ciclo e, acima de 85% de uso do Drive, envia um e-mail para `ADMIN_EMAIL` (no máximo um por dia). Envios abandonados também avisam por e-mail.
+4. Política de espaço: só eventos **arquivados** podem liberar espaço. Saem as prévias e miniaturas de todas as fotos e os originais das fotos sem pedido ativo. Originais de fotos em pedidos confirmados, pendentes ou divergentes ficam, porque o download pago lê `Fotos.OriginalFileID`. Pedido aguardando pagamento há menos de 48 horas bloqueia a liberação.
+5. O painel mostra a estimativa, exige digitar o nome do evento e chama `liberarEspaco`, que roda sob `LockService` e grava `AuditoriaPascom`. Os arquivos vão para a lixeira do Drive (30 dias); a cota só volta depois disso ou ao esvaziar a lixeira manualmente. Se o tempo do Apps Script acabar, o evento fica `parcial` e a ação continua de onde parou.
+6. Depois de liberado, o evento não pode ser publicado nem ter a venda liberada de novo.
+
 ## Fluxo de Publicação de Evento
 
-1. Operador cria pasta de evento em `SOURCE_FOLDER_ID`.
+1. Operador cria pasta de evento em `SOURCE_FOLDER_ID` (manualmente no Drive ou pelo envio do Painel Pascom).
 2. Apps Script `processarEventos()` roda por trigger.
 3. `listarEventosNovos()` identifica pasta ainda não registrada.
 4. `registrarEvento()` cria linha na aba `Eventos`.
@@ -50,7 +103,7 @@ Detalhes operacionais:
 6. Originais vão para pasta de originais.
 7. Previews/thumbnails são gerados via backend e salvos no Drive.
 8. Aba `Fotos` recebe IDs dos derivados.
-9. Operador revisa `Eventos` e marca publicação/venda.
+9. Operador revisa e publica/libera a venda pela aba "Eventos" do Painel Pascom (ou pelo menu da planilha).
 10. Apps Script invalida cache do site quando necessário.
 
 ## Fluxo de Galeria Pública

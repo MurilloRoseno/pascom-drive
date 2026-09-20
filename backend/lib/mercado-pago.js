@@ -68,6 +68,32 @@ async function consultarPagamento(paymentId) {
   return result;
 }
 
+/**
+ * Pagamentos de um pedido (external_reference = PedidoID). Usado pela conciliacao quando
+ * o webhook nao chegou. A busca nao traz fee_details: use consultarPagamento no aprovado.
+ */
+async function buscarPagamentosDoPedido(pedidoId, limit = 5) {
+  const result = await new Payment(client()).search({
+    options: { external_reference: String(pedidoId), sort: 'date_created', criteria: 'desc', limit },
+  });
+  return Array.isArray(result && result.results) ? result.results : [];
+}
+
+/** Pagamentos recentes da conta, para achar quem pagou sem deixar linha em Pedidos. */
+async function listarPagamentosRecentes({ desde, ate, limit = 50 }) {
+  const result = await new Payment(client()).search({
+    options: {
+      range: 'date_created',
+      begin_date: desde,
+      end_date: ate,
+      sort: 'date_created',
+      criteria: 'desc',
+      limit,
+    },
+  });
+  return Array.isArray(result && result.results) ? result.results : [];
+}
+
 function validarAssinaturaWebhook({ dataId, requestId, signature, secret }) {
   if (!dataId || !requestId || !signature || !secret) return false;
   const fields = Object.fromEntries(String(signature).split(',').map((part) => {
@@ -84,4 +110,11 @@ function validarAssinaturaWebhook({ dataId, requestId, signature, secret }) {
   }
 }
 
-module.exports = { criarPreferencia, consultarPagamento, validarAssinaturaWebhook, paymentMethods };
+module.exports = {
+  criarPreferencia,
+  consultarPagamento,
+  buscarPagamentosDoPedido,
+  listarPagamentosRecentes,
+  validarAssinaturaWebhook,
+  paymentMethods,
+};

@@ -63,7 +63,11 @@ async function getAccessToken() {
   if (_cachedToken && now < _tokenExpiry - 60) return _cachedToken;
 
   const email  = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-  const rawKey = parsePrivateKey(process.env.GOOGLE_PRIVATE_KEY);
+  // Mesma convencao da planilha (google-sheets.shared.js): a chave em base64 tem prioridade.
+  const encodedKey = process.env.GOOGLE_PRIVATE_KEY_B64;
+  const rawKey = parsePrivateKey(encodedKey
+    ? Buffer.from(encodedKey, 'base64').toString('utf8')
+    : process.env.GOOGLE_PRIVATE_KEY);
 
   // Build JWT: header + payload
   const header = Buffer.from(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).toString('base64url');

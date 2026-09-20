@@ -7,14 +7,14 @@ var EVENTOS_HEADERS = [
   'ProtecaoMenores', 'CodigoHash', 'CodigoVersao', 'CodigoGeradoEm',
   'CodigoRevogadoEm', 'TotalFotos', 'FotosProcessadas', 'FotosEntregues',
   'DataCriacao', 'DataInicio', 'DataConclusao', 'DataPublicacao', 'Erros',
-  'PastaRemovida', 'SlugPublico',
+  'PastaRemovida', 'SlugPublico', 'EspacoLiberacao', 'EspacoLiberadoEm', 'EspacoLiberadoBytes',
 ];
 
 var FOTOS_HEADERS = [
   'FotoID', 'EventoID', 'OriginalFileID', 'PreviewFileID',
   'ThumbnailFileID', 'ThumbnailStatus', 'ThumbnailGeradaEm',
   'TipoFoto', 'StatusProcessamento', 'DisponivelVenda', 'PrecoUnitario',
-  'DataProcessamento',
+  'DataProcessamento', 'ArquivosLiberados', 'ArquivoOrigemID',
 ];
 
 var PEDIDOS_HEADERS = [
@@ -23,7 +23,7 @@ var PEDIDOS_HEADERS = [
   'CustoPagamentoEstimado', 'TotalAntesDesconto', 'CupomCodigo', 'DescontoTotal',
   'PacoteID', 'Total', 'TarifaReal', 'DataCriacao',
   'DataPagamento', 'EmailEnviadoEm', 'EmailStatus', 'EmailErro',
-  'EmailUltimaTentativaEm', 'WhatsAppLink',
+  'EmailUltimaTentativaEm', 'WhatsAppLink', 'EntregaTentativas', 'EntregaProximaEm',
 ];
 
 var ITENS_HEADERS = ['PedidoID', 'FotoID', 'EventoID', 'PrecoUnitario'];
@@ -159,8 +159,17 @@ function rowToObject(headers, row) {
   return object;
 }
 
-function notificarAdministracao(message) {
+function notificarAdministracao(message, opcoes) {
   Logger.log(message);
+  // E-mail so quando pedido: o menu usa esta funcao para mostrar o codigo de acesso.
+  if (opcoes && opcoes.email) {
+    try {
+      var destino = getConfig('ADMIN_EMAIL');
+      if (destino) MailApp.sendEmail({ to: destino, subject: '[Pascom Drive] ' + (opcoes.assunto || 'Aviso do sistema'), body: message });
+    } catch (mailError) {
+      Logger.log('Falha ao enviar aviso por e-mail: ' + mailError.message);
+    }
+  }
   try {
     SpreadsheetApp.getUi().alert(message);
   } catch (error) {
@@ -328,7 +337,8 @@ function atualizarStatusEvento(eventoId, status, extra) {
     if (extra.fotosEntregues !== undefined) setField(found.sheet, found.rowNumber, 'FotosEntregues', extra.fotosEntregues);
     if (extra.dataInicio) setField(found.sheet, found.rowNumber, 'DataInicio', extra.dataInicio);
     if (extra.dataConclusao) setField(found.sheet, found.rowNumber, 'DataConclusao', extra.dataConclusao);
-    if (extra.erro) setField(found.sheet, found.rowNumber, 'Erros', extra.erro);
+    if (extra.erro !== undefined) setField(found.sheet, found.rowNumber, 'Erros', extra.erro);
+    if (extra.totalFotos !== undefined) setField(found.sheet, found.rowNumber, 'TotalFotos', extra.totalFotos);
     if (extra.pastaRemovida !== undefined) setField(found.sheet, found.rowNumber, 'PastaRemovida', extra.pastaRemovida);
   }
   return true;
@@ -378,6 +388,7 @@ function registrarFoto(dados) {
     DisponivelVenda: 'NAO',
     PrecoUnitario: dados.preco || 10,
     DataProcessamento: new Date().toISOString(),
+    ArquivoOrigemID: dados.arquivoOrigemId || '',
     // Legacy fields are intentionally left without a public original URL.
     ID: dados.id,
     Evento: dados.evento || '',
@@ -537,32 +548,81 @@ function getEventoSelecionado() {
   );
 }
 
-function publicarEventoSelecionado() {
-  var selected = getEventoSelecionado();
+// ─── Acoes administrativas por evento ────────────────────────────────────────
+// Cada acao recebe o registro { sheet, rowNumber, item } para servir tanto ao menu
+// da planilha (linha selecionada) quanto ao Painel Pascom (por EventoID, via Web App).
+// Erros com `codigo` sao devolvidos ao painel com mensagem legivel.
+
+function erroRegraEvento(mensagem, codigo) {
+  var error = new Error(mensagem);
+  error.codigo = codigo || 'regra_negocio';
+  return error;
+}
+
+function getEventoPorId(eventoId) {
+  var found = eventoId ? findEventoRow(eventoId) : null;
+  if (!found) throw erroRegraEvento('Evento nao encontrado.', 'evento_nao_encontrado');
+  return found;
+}
+
+function eventoEmProcessamento(item) {
+  var status = String(item.StatusProcessamento || '');
+  return status === 'Pendente' || status === 'Processando';
+}
+
+function exigirArquivosPresentes(selected) {
+  if (selected.item.EspacoLiberacao) {
+    throw erroRegraEvento('Os arquivos deste evento foram removidos para liberar espaco.');
+  }
+}
+
+function publicarRegistro(selected) {
+  exigirArquivosPresentes(selected);
   if (!selected.item.Categoria || !selected.item.DataEvento) {
-    throw new Error('Informe Categoria e DataEvento antes de publicar.');
+    throw erroRegraEvento('Informe Categoria e DataEvento antes de publicar.');
+  }
+  if (eventoEmProcessamento(selected.item)) {
+    throw erroRegraEvento('Aguarde o processamento das fotos terminar antes de publicar.');
   }
   setField(selected.sheet, selected.rowNumber, 'Publicacao', 'publicado');
   setField(selected.sheet, selected.rowNumber, 'DataPublicacao', new Date().toISOString());
   invalidarCacheSite(selected.item.EventoID);
 }
 
-function autorizarVendaSelecionada() {
-  var selected = getEventoSelecionado();
+function despublicarRegistro(selected) {
+  setField(selected.sheet, selected.rowNumber, 'Publicacao', 'rascunho');
+  setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
+  atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
+  invalidarCacheSite(selected.item.EventoID);
+}
+
+function autorizarVendaRegistro(selected) {
   if (selected.item.ProtecaoMenores === 'SIM' && selected.item.Visibilidade !== 'protegida') {
-    throw new Error('Evento com menores deve permanecer protegido.');
+    throw erroRegraEvento('Evento com menores deve permanecer protegido.');
   }
+  if (selected.item.Publicacao === 'arquivado') {
+    throw erroRegraEvento('Evento arquivado nao pode ter venda liberada.');
+  }
+  exigirArquivosPresentes(selected);
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'SIM');
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'SIM');
   invalidarCacheSite(selected.item.EventoID);
 }
 
-function revogarVendaSelecionada() {
-  var selected = getEventoSelecionado();
+function revogarVendaRegistro(selected) {
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
   invalidarCacheSite(selected.item.EventoID);
 }
+
+function publicarEventoSelecionado() { publicarRegistro(getEventoSelecionado()); }
+function autorizarVendaSelecionada() { autorizarVendaRegistro(getEventoSelecionado()); }
+function revogarVendaSelecionada() { revogarVendaRegistro(getEventoSelecionado()); }
+
+function publicarEvento(eventoId) { publicarRegistro(getEventoPorId(eventoId)); }
+function despublicarEvento(eventoId) { despublicarRegistro(getEventoPorId(eventoId)); }
+function autorizarVendaEvento(eventoId) { autorizarVendaRegistro(getEventoPorId(eventoId)); }
+function revogarVendaEvento(eventoId) { revogarVendaRegistro(getEventoPorId(eventoId)); }
 
 function sincronizarVendaSelecionada() {
   var selected = getEventoSelecionado();
@@ -603,15 +663,25 @@ function sincronizarConfiguracoesAdministrativas() {
   Logger.log('Disponibilidade de fotos sincronizada com as configuracoes dos eventos.');
 }
 
-function alternarVisibilidadeSelecionada() {
-  var selected = getEventoSelecionado();
-  var atual = selected.item.Visibilidade || 'protegida';
-  var nova = atual === 'publica' ? 'protegida' : 'publica';
+function definirVisibilidadeRegistro(selected, nova) {
+  if (EVENTO_OPCOES.Visibilidade.indexOf(nova) === -1) {
+    throw erroRegraEvento('Visibilidade invalida.', 'dados_invalidos');
+  }
   if (nova === 'publica' && selected.item.ProtecaoMenores === 'SIM') {
-    throw new Error('Evento com menores nao pode ser publico.');
+    throw erroRegraEvento('Evento com menores nao pode ser publico.');
   }
   setField(selected.sheet, selected.rowNumber, 'Visibilidade', nova);
   invalidarCacheSite(selected.item.EventoID);
+}
+
+function alternarVisibilidadeSelecionada() {
+  var selected = getEventoSelecionado();
+  var atual = selected.item.Visibilidade || 'protegida';
+  definirVisibilidadeRegistro(selected, atual === 'publica' ? 'protegida' : 'publica');
+}
+
+function definirVisibilidadeEvento(eventoId, visibilidade) {
+  definirVisibilidadeRegistro(getEventoPorId(eventoId), visibilidade);
 }
 
 function codigoHash(codigo) {
@@ -623,8 +693,8 @@ function codigoHash(codigo) {
   }).join('');
 }
 
-function gerarCodigoEventoSelecionado() {
-  var selected = getEventoSelecionado();
+/** Gera um novo codigo de acesso e devolve o valor em claro UMA unica vez; so o hash fica salvo. */
+function gerarCodigoRegistro(selected) {
   var codigo = Utilities.getUuid().replace(/-/g, '').slice(0, 8).toUpperCase();
   var versao = (parseInt(selected.item.CodigoVersao, 10) || 0) + 1;
   setField(selected.sheet, selected.rowNumber, 'Visibilidade', 'protegida');
@@ -633,24 +703,91 @@ function gerarCodigoEventoSelecionado() {
   setField(selected.sheet, selected.rowNumber, 'CodigoGeradoEm', new Date().toISOString());
   setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', '');
   invalidarCacheSite(selected.item.EventoID);
-  notificarAdministracao('Codigo de acesso (anote agora): ' + codigo);
+  return { codigo: codigo, versao: versao };
 }
 
-function revogarCodigoEventoSelecionado() {
-  var selected = getEventoSelecionado();
+function revogarCodigoRegistro(selected) {
   var versao = (parseInt(selected.item.CodigoVersao, 10) || 0) + 1;
   setField(selected.sheet, selected.rowNumber, 'CodigoHash', '');
   setField(selected.sheet, selected.rowNumber, 'CodigoVersao', versao);
   setField(selected.sheet, selected.rowNumber, 'CodigoRevogadoEm', new Date().toISOString());
   invalidarCacheSite(selected.item.EventoID);
+  return { versao: versao };
 }
 
-function arquivarEventoSelecionado() {
-  var selected = getEventoSelecionado();
+function arquivarRegistro(selected) {
   setField(selected.sheet, selected.rowNumber, 'Publicacao', 'arquivado');
   setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
   atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
   invalidarCacheSite(selected.item.EventoID);
+}
+
+function gerarCodigoEventoSelecionado() {
+  var gerado = gerarCodigoRegistro(getEventoSelecionado());
+  notificarAdministracao('Codigo de acesso (anote agora): ' + gerado.codigo);
+}
+
+function revogarCodigoEventoSelecionado() { revogarCodigoRegistro(getEventoSelecionado()); }
+function arquivarEventoSelecionado() { arquivarRegistro(getEventoSelecionado()); }
+
+function gerarCodigoEvento(eventoId) { return gerarCodigoRegistro(getEventoPorId(eventoId)); }
+function revogarCodigoEvento(eventoId) { return revogarCodigoRegistro(getEventoPorId(eventoId)); }
+function arquivarEvento(eventoId) { arquivarRegistro(getEventoPorId(eventoId)); }
+
+var CAMPOS_EDITAVEIS_EVENTO = ['Titulo', 'DataEvento', 'HorarioEvento', 'Categoria', 'SlugPublico', 'ProtecaoMenores'];
+
+function validarCampoEvento(campo, valor, selected) {
+  var texto = String(valor === undefined || valor === null ? '' : valor).trim();
+  if (campo === 'Titulo' && (texto.length < 3 || texto.length > 120)) {
+    throw erroRegraEvento('O titulo deve ter entre 3 e 120 caracteres.', 'dados_invalidos');
+  }
+  if (campo === 'DataEvento' && !(/^\d{4}-\d{2}-\d{2}$/.test(texto) && !isNaN(new Date(texto + 'T12:00:00').getTime()))) {
+    throw erroRegraEvento('Data do evento invalida.', 'dados_invalidos');
+  }
+  if (campo === 'HorarioEvento' && texto && !/^([01]\d|2[0-3]):[0-5]\d$/.test(texto)) {
+    throw erroRegraEvento('Horario invalido. Use HH:mm.', 'dados_invalidos');
+  }
+  if (campo === 'Categoria' && EVENTO_OPCOES.Categoria.indexOf(texto) === -1) {
+    throw erroRegraEvento('Categoria invalida.', 'dados_invalidos');
+  }
+  if (campo === 'ProtecaoMenores' && EVENTO_OPCOES.ProtecaoMenores.indexOf(texto) === -1) {
+    throw erroRegraEvento('ProtecaoMenores deve ser SIM ou NAO.', 'dados_invalidos');
+  }
+  if (campo === 'SlugPublico' && texto) {
+    if (texto.length > 80 || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(texto)) {
+      throw erroRegraEvento('Link publico invalido. Use letras minusculas, numeros e hifens.', 'dados_invalidos');
+    }
+    var values = selected.sheet.getDataRange().getValues();
+    var slugCol = (values[0] || []).indexOf('SlugPublico');
+    for (var i = 1; slugCol >= 0 && i < values.length; i++) {
+      if (i + 1 !== selected.rowNumber && String(values[i][slugCol]).toLowerCase() === texto) {
+        throw erroRegraEvento('Este link publico ja e usado por outro evento.');
+      }
+    }
+  }
+  return texto;
+}
+
+/** Edita somente campos seguros; ligar ProtecaoMenores fecha a galeria e pausa a venda se estava publica. */
+function editarEvento(eventoId, campos) {
+  var selected = getEventoPorId(eventoId);
+  var nomes = Object.keys(campos || {});
+  if (!nomes.length) throw erroRegraEvento('Nada para alterar.', 'dados_invalidos');
+  var valores = {};
+  nomes.forEach(function(campo) {
+    if (CAMPOS_EDITAVEIS_EVENTO.indexOf(campo) === -1) {
+      throw erroRegraEvento('Campo nao editavel: ' + campo, 'dados_invalidos');
+    }
+    valores[campo] = validarCampoEvento(campo, campos[campo], selected);
+  });
+  nomes.forEach(function(campo) { setField(selected.sheet, selected.rowNumber, campo, valores[campo]); });
+  if (valores.ProtecaoMenores === 'SIM' && selected.item.Visibilidade !== 'protegida') {
+    setField(selected.sheet, selected.rowNumber, 'Visibilidade', 'protegida');
+    setField(selected.sheet, selected.rowNumber, 'VendaAutorizada', 'NAO');
+    atualizarDisponibilidadeFotos(selected.item.EventoID, 'NAO');
+  }
+  invalidarCacheSite(selected.item.EventoID);
+  return { campos: nomes };
 }
 
 if (typeof module !== 'undefined') {
@@ -678,5 +815,12 @@ if (typeof module !== 'undefined') {
     cadastrarRegrasMercadoPagoD0: cadastrarRegrasMercadoPagoD0,
     normalizarMetadadosEventos: normalizarMetadadosEventos,
     codigoHash: codigoHash, COL: COL,
+    ensureSheet: ensureSheet, appendMappedRow: appendMappedRow,
+    getEventoPorId: getEventoPorId, publicarEvento: publicarEvento, despublicarEvento: despublicarEvento,
+    autorizarVendaEvento: autorizarVendaEvento, revogarVendaEvento: revogarVendaEvento,
+    definirVisibilidadeEvento: definirVisibilidadeEvento, gerarCodigoEvento: gerarCodigoEvento,
+    revogarCodigoEvento: revogarCodigoEvento, arquivarEvento: arquivarEvento, editarEvento: editarEvento,
+    notificarAdministracao: notificarAdministracao,
+    erroRegraEvento: erroRegraEvento, setField: setField,
   };
 }

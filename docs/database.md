@@ -63,6 +63,9 @@ Cupons/Pacotes
 | `DataPublicacao` | Publicação |
 | `Erros` | Último erro relevante |
 | `PastaRemovida` | Controle de limpeza do Drive |
+| `EspacoLiberacao` | Vazio, `parcial` ou `concluida`: arquivos do evento arquivado mandados para a lixeira pelo Painel Pascom. Preenchido bloqueia publicar e liberar venda. |
+| `EspacoLiberadoEm` | Última execução de "Liberar espaço" |
+| `EspacoLiberadoBytes` | Total de bytes mandados para a lixeira (acumulado entre execuções parciais) |
 
 ## `Fotos`
 
@@ -80,6 +83,8 @@ Cupons/Pacotes
 | `DisponivelVenda` | `SIM`/`NAO` |
 | `PrecoUnitario` | Preço individual |
 | `DataProcessamento` | Timestamp do processamento |
+| `ArquivoOrigemID` | ID do arquivo de entrada que gerou a foto. Na retomada de um processamento interrompido, evita registrar a mesma foto duas vezes. |
+| `ArquivosLiberados` | `SIM` quando prévia e miniatura (e o original, se a foto nunca foi vendida) foram para a lixeira. Os IDs continuam gravados para auditoria. |
 
 ## `Pedidos`
 
@@ -106,10 +111,12 @@ Cupons/Pacotes
 | `DataCriacao` | Criação do pedido |
 | `DataPagamento` | Confirmação de pagamento |
 | `EmailEnviadoEm` | Envio bem-sucedido |
-| `EmailStatus` | `enviado`, `falhou`, `nao_configurado` |
+| `EmailStatus` | `enviado`, `falhou`, `nao_configurado` ou `pendente` (pagamento confirmado com a entrega ainda por fazer) |
 | `EmailErro` | Erro de envio |
 | `EmailUltimaTentativaEm` | Última tentativa |
 | `WhatsAppLink` | Link assistido de entrega |
+| `EntregaTentativas` | Tentativas de e-mail ja feitas (volta a zero quando o e-mail sai) |
+| `EntregaProximaEm` | Quando a conciliacao pode tentar de novo (5, 20 e 60 minutos); vazio na terceira falha |
 
 ## `ItensPedido`
 
@@ -145,11 +152,13 @@ Cupons/Pacotes
 | `FingerprintVersao` | Versao do algoritmo aplicado |
 | `FingerprintStatus` | `Pendente` ou `Aplicado` |
 | `FingerprintAplicadoEm` | Quando a copia fingerprinted foi gerada |
-| `ExpiraEm` | Expiração |
-| `UsosMaximos` | Limite de uso |
+| `ExpiraEm` | Expiração (7 dias a partir da emissao) |
+| `UsosMaximos` | Limite de uso (5) |
 | `Usos` | Usos atuais |
 | `CriadoEm` | Criação |
 | `UltimoUsoEm` | Último download |
+
+Ha no maximo uma linha por `PedidoID` + `FotoID`: reemitir um link (reenvio de entrega, recuperacao pelo comprador ou "gerar links sem e-mail") substitui o `TokenHash` da mesma linha, o que revoga o link anterior e zera `Usos`.
 
 ## `RegrasPagamento`
 
@@ -222,6 +231,60 @@ Cupons/Pacotes
 - Pedido criado parcialmente pode exigir rotina de reconciliação.
 - Catálogo grande aumenta tempo de resposta sem cache.
 - Operação manual no Sheets pode quebrar headers ou valores esperados.
+## `PedidosProcessamento`
+
+Fila de operações lentas pedidas pelo Painel Pascom e executadas pelo gatilho de 5 minutos (hoje: `trocarCapa`). Criada automaticamente.
+
+| Campo | Descrição |
+| --- | --- |
+| `PedidoID` | Identificador (`PP_<timestamp>`) |
+| `Quando` / `Quem` | Data do pedido e membro da equipe |
+| `Tipo` | `trocarCapa` |
+| `EventoID` / `Alvo` | Evento e foto escolhida |
+| `Status` | `pendente`, `executando`, `concluido` ou `erro` |
+| `Detalhe` / `ConcluidoEm` | Resultado ou mensagem de erro, e quando terminou |
+
+Tentativas de processamento de cada foto ficam na descrição do próprio arquivo no Drive (`pascom:tentativas=N`). Na 3ª falha, o arquivo vai para a subpasta `_FALHAS` da pasta do evento.
+
+## Propriedades operacionais do Apps Script
+
+Além das configurações (IDs de pastas, segredos), o Apps Script grava estas propriedades de controle:
+
+| Propriedade | Descrição |
+| --- | --- |
+| `ULTIMA_EXECUCAO` | JSON `{ inicio, fim, resultado, evento, erro }` gravado ao fim de cada `processarEventos` (`ok`, `parcial`, `sem_eventos`, `ocupado` ou `erro`), com `restantes` quando a fatia parou antes do fim. Lido pela aba Sistema. |
+| `ALERTA_ESPACO_EM` | Timestamp do último e-mail de alerta de espaço (no máximo um por dia, acima de 85% de uso). |
+| `PROCESSING_LOCK` | Trava do evento em processamento (TTL de 10 minutos). |
+| `ULTIMA_CONCILIACAO` | JSON `{ quando, verificados, conciliados, entregues, reenviados, parcial, resumo, problemas }` da ultima conferencia de pagamentos (ou `{ quando, erro }`). Guarda no maximo 5 problemas, sem dados do comprador. Lido pela aba Sistema. |
+| `ALERTA_ENTREGA_EM` | Timestamp do último e-mail de aviso sobre pedidos pagos sem entrega (no máximo um por dia). |
+| `ULTIMA_VARREDURA_MP` | Timestamp da última busca por pagamentos aprovados sem pedido na planilha (no máximo uma por hora). |
+
+## `AuditoriaPascom`
+
+Trilha das ações de gestão de eventos feitas pelo Painel Pascom, gravada por `google-apps-script/EventAdmin.js`. A aba é criada automaticamente na primeira ação.
+
+| Campo | Descrição |
+| --- | --- |
+| `Quando` | Timestamp ISO |
+| `Quem` | E-mail ou telefone do membro autenticado |
+| `Acao` | `publicar`, `despublicar`, `autorizarVenda`, `revogarVenda`, `definirVisibilidade`, `gerarCodigo`, `revogarCodigo`, `arquivar`, `editar` ou `liberarEspaco` |
+| `EventoID` | Evento afetado |
+| `Detalhe` | Versão do código, visibilidade escolhida ou campos editados. O código de acesso em claro nunca é gravado. |
+
+## `EnviosPascom`
+
+Trilha de auditoria dos envios de fotos feitos pelo Painel Pascom, gravada pelo Web App (`google-apps-script/Upload.js`). A aba é criada automaticamente no primeiro envio.
+
+| Campo | Descrição |
+| --- | --- |
+| `Quando` | Timestamp ISO da etapa |
+| `Quem` | E-mail ou telefone do membro autenticado (vazio na limpeza automática) |
+| `UploadID` | ID da pasta de envio no Drive |
+| `NomePasta` | Nome final `categoria__AAAA-MM-DD__titulo` |
+| `Arquivos` | Fotos previstas (`enviando`) ou recebidas (`finalizado`) |
+| `Status` | `enviando`, `finalizado`, `cancelado` ou `abandonado` |
+| `Detalhe` | Informação complementar, como a capa escolhida |
+
 ## `EquipePascom`
 
 Aba de autorização operacional da equipe Pascom. Clerk autentica a identidade; esta aba decide quem pode acessar o painel.

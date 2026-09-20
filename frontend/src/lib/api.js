@@ -97,3 +97,70 @@ export function pascomRegenerarDownloads(token, pedidoId) {
     headers: bearer(token),
   });
 }
+
+function pascomPost(token, url, body) {
+  return request(url, {
+    method: 'POST',
+    headers: { ...bearer(token), 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {}),
+  });
+}
+
+export function pascomArmazenamento(token) {
+  return request('/api/pascom/uploads/armazenamento', { headers: bearer(token) });
+}
+
+export function pascomCriarEnvio(token, evento) {
+  return pascomPost(token, '/api/pascom/uploads/eventos', evento);
+}
+
+export function pascomSessoesEnvio(token, uploadId, arquivos) {
+  return pascomPost(token, '/api/pascom/uploads/sessoes', { uploadId, arquivos });
+}
+
+export function pascomFinalizarEnvio(token, uploadId, { esperados, capa }) {
+  return pascomPost(token, `/api/pascom/uploads/eventos/${encodeURIComponent(uploadId)}/finalizar`, {
+    esperados,
+    ...(capa ? { capa } : {}),
+  });
+}
+
+export function pascomCancelarEnvio(token, uploadId) {
+  return pascomPost(token, `/api/pascom/uploads/eventos/${encodeURIComponent(uploadId)}/cancelar`);
+}
+
+export function pascomEventos(token) {
+  return request('/api/pascom/eventos', { headers: bearer(token) });
+}
+
+export function pascomEvento(token, eventoId) {
+  return request(`/api/pascom/eventos/${encodeURIComponent(eventoId)}`, { headers: bearer(token) });
+}
+
+export function pascomEventoAcao(token, eventoId, acao) {
+  return pascomPost(token, `/api/pascom/eventos/${encodeURIComponent(eventoId)}/acoes`, acao);
+}
+
+export function pascomSistema(token) {
+  return request('/api/pascom/sistema', { headers: bearer(token) });
+}
+
+export function pascomEstimarLiberacao(token, eventoId) {
+  return request(`/api/pascom/eventos/${encodeURIComponent(eventoId)}/liberacao`, { headers: bearer(token) });
+}
+
+export function pascomReprocessarPasta(token, folderId) {
+  return pascomPost(token, `/api/pascom/quarentena/${encodeURIComponent(folderId)}/reprocessar`);
+}
+
+export function pascomCorrigirNomePasta(token, folderId, { categoria, data, titulo }) {
+  return pascomPost(token, `/api/pascom/quarentena/${encodeURIComponent(folderId)}/nome`, { categoria, data, titulo });
+}
+
+export function pascomReenviarEntrega(token, pedidoId) {
+  return pascomPost(token, `/api/pascom/pedidos/${encodeURIComponent(pedidoId)}/reenviar-entrega`);
+}
+
+export function pascomConferirMercadoPago(token, pedidoId) {
+  return pascomPost(token, `/api/pascom/pedidos/${encodeURIComponent(pedidoId)}/conferir-mp`);
+}

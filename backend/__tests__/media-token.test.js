@@ -25,3 +25,15 @@ it('emite token temporario escopado para evento, foto e variante', () => {
 it('anexa mt preservando query existente', () => {
   expect(appendMediaToken('/api/foto?variant=thumbnail', 'TOKEN')).toBe('/api/foto?variant=thumbnail&mt=TOKEN');
 });
+
+it('marca tokens de administracao e os aceita por mais tempo', () => {
+  process.env.MEDIA_TOKEN_SECRET = process.env.MEDIA_TOKEN_SECRET || 'segredo-midia-teste';
+  const { issueMediaToken: issue, mediaTokenAccess, ADMIN_MEDIA_TOKEN_TTL_MS } = require('../lib/media-token');
+  const now = Date.now();
+  const admin = issue({ eventoId: 'EV1', fotoId: 'F1', variant: 'thumbnail', admin: true, now });
+  const comum = issue({ eventoId: 'EV1', fotoId: 'F1', variant: 'thumbnail', now });
+  const opts = { eventoId: 'EV1', fotoId: 'F1', variant: 'thumbnail' };
+  expect(mediaTokenAccess(admin, { ...opts, now: now + ADMIN_MEDIA_TOKEN_TTL_MS - 1 })).toEqual({ allowed: true, admin: true });
+  expect(mediaTokenAccess(comum, { ...opts, now })).toEqual({ allowed: true, admin: false });
+  expect(mediaTokenAccess(admin, { ...opts, now: now + ADMIN_MEDIA_TOKEN_TTL_MS + 1 })).toEqual({ allowed: false, admin: false });
+});

@@ -71,7 +71,7 @@ Arquivo local sugerido: `backend/.env`.
 | `SPREADSHEET_ID` | Sim | Google Spreadsheet |
 | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Sim | Service account |
 | `GOOGLE_PRIVATE_KEY` | Sim se sem B64 | Chave privada multiline |
-| `GOOGLE_PRIVATE_KEY_B64` | Alternativa | Chave privada em Base64 |
+| `GOOGLE_PRIVATE_KEY_B64` | Alternativa | Chave privada em Base64 (tem prioridade; usada pela planilha e pelo Drive) |
 | `MP_ACCESS_TOKEN` | Sim | Mercado Pago |
 | `MP_WEBHOOK_SECRET` | Sim | HMAC webhook |
 | `MP_USE_SANDBOX` | Não | Indica ambiente sandbox |
@@ -81,6 +81,7 @@ Arquivo local sugerido: `backend/.env`.
 | `FORENSIC_WATERMARK_SECRET` | Sim producao | HMAC do fingerprint forense por pedido/download |
 | `MEDIA_TOKEN_SECRET` | Opcional | Assinatura dedicada de tokens temporarios de preview; se ausente usa segredo de galeria/download |
 | `APPS_SCRIPT_HMAC_SECRET` | Sim produção | Assinatura HMAC das chamadas internas do Apps Script |
+| `UPLOAD_WEBAPP_URL` | Para envio de fotos | URL `/exec` do Web App do Apps Script (implantação de `Upload.js`) usada pelo painel Pascom |
 | `ALLOW_LEGACY_WORKER_SECRET` | Temporário | Permite fallback legado por `WATERMARK_API_SECRET`/`CACHE_INVALIDATION_SECRET` durante migração |
 | `WATERMARK_API_SECRET` | Sim | Endpoints de processamento |
 | `CACHE_INVALIDATION_SECRET` | Sim | Invalidação de cache |
@@ -104,10 +105,10 @@ Configure em Script Properties:
 | `THUMBNAILS_FOLDER_ID` | Pasta de thumbnails |
 | `SPREADSHEET_ID` | Planilha operacional |
 | `BACKEND_URL` | URL pública do backend |
-| `APPS_SCRIPT_HMAC_SECRET` | Mesmo segredo HMAC configurado no backend |
+| `APPS_SCRIPT_HMAC_SECRET` | Mesmo segredo HMAC configurado no backend; também valida os comandos do Web App de envio de fotos |
 | `WATERMARK_API_SECRET` | Segredo compartilhado com backend |
 | `CACHE_INVALIDATION_SECRET` | Segredo para limpar cache |
-| `ADMIN_EMAIL` | Alertas operacionais |
+| `ADMIN_EMAIL` | Alertas operacionais: espaço no Drive acima de 85% e pedidos pagos sem entrega (no máximo um e-mail por dia de cada tipo). Sem ele, esses avisos ficam só no Logger. |
 
 ## Scripts Disponíveis
 

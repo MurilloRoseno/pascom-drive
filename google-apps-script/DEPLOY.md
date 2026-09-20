@@ -5,7 +5,7 @@ O erro `ReferenceError: jest is not defined` ocorre quando arquivos de teste sao
 ## Recuperacao imediata do projeto online
 
 1. No editor do Apps Script, exclua `jest-setup.gs`, `jest.config.gs` e qualquer arquivo de teste ou cobertura publicado.
-2. Confirme que restam apenas `appsscript.json`, `Code`, `Drive`, `EventQueue`, `Sheet`, `Watermark` e `WhatsApp`.
+2. Confirme que restam apenas `appsscript.json`, `Code`, `Drive`, `EventQueue`, `Sheet`, `Security`, `Upload`, `EventAdmin`, `Sistema`, `Processamento`, `Entregas`, `Watermark` e `WhatsApp`.
 3. Execute `inicializarEstrutura()` uma vez para preparar as abas seguras. Em projeto independente, a conclusao sera informada no `Registro de execucao`, sem alerta visual.
 4. Se ja existirem nomes com carimbo de erro como `_202605261456`, execute `normalizarMetadadosEventos()`.
 5. Execute `cadastrarRegrasMercadoPagoD0()` para habilitar Pix (`0,99%`) e credito em 1x (`4,98%`) nas taxas publicadas de Checkout online D0. O debito virtual e marcado como `NAO`, pois foi removido do checkout publico.
@@ -22,6 +22,18 @@ Se a base ainda contem somente dados de desenvolvimento e deve iniciar limpa, de
 Eventos usam `DataEvento=AAAA-MM-DD` e `HorarioEvento=HH:mm`; nao preencha `DataPublicacao` com horario da missa, pois ela registra apenas o momento em que a galeria foi publicada. Para uma capa publica sem marca d'agua e fora da venda, coloque `capa.jpg` dentro da pasta antes do primeiro processamento.
 
 Uma pasta futura que ainda esteja vazia permanece em `Fotos_Origem` e nao e registrada nem removida; adicione as fotos quando o evento acontecer e o trigger passara a processa-la normalmente. Para Pix real, habilite Pix/chave Pix na conta e use credenciais de producao: o Mercado Pago nao disponibiliza Pix em modo de teste.
+
+## Envio de fotos pelo Painel Pascom (Web App)
+
+O painel envia fotos direto ao Drive usando sessoes de upload abertas por `Upload.js`, que roda como a conta dona do Drive. Nao ha custo extra e a limitacao de cota de Service Account nao se aplica.
+
+1. Publique o codigo (`npm run push:production`) e, no editor, abra **Implantar > Nova implantacao > App da Web**.
+2. Use **Executar como: Eu** e **Quem pode acessar: Qualquer pessoa** (ja declarado em `appsscript.json`). O acesso e protegido pela assinatura HMAC com `APPS_SCRIPT_HMAC_SECRET`; requisicoes sem assinatura valida sao recusadas.
+3. Autorize as permissoes solicitadas e copie a URL terminada em `/exec`.
+4. Na Vercel, cadastre `UPLOAD_WEBAPP_URL` com essa URL e confirme que `APPS_SCRIPT_HMAC_SECRET` e identico nas duas pontas.
+5. Depois de cada `clasp push` que altere `Upload.js`, `EventAdmin.js`, `Sistema.js`, `Processamento.js`, `Entregas.js` ou `Sheet.js`, edite a implantacao existente e publique uma **nova versao**. A URL continua a mesma. Sem isso, o Web App continua executando o codigo antigo: a aba "Sistema" do painel aponta "Web App de versao antiga" e as abas "Eventos" e "Sistema" podem responder "Acao desconhecida". Ao mudar as acoes do Web App, incremente `VERSAO_WEBAPP` em `Upload.js` e `VERSAO_WEBAPP_ESPERADA` em `backend/lib/apps-script-client.js` (um teste confere que sao iguais).
+6. Configure `ADMIN_EMAIL` nas propriedades do script para receber os alertas de espaco no Drive (acima de 85%) e de envios abandonados.
+7. Teste de viabilidade antes do piloto: no painel, envie um evento de teste com 2 ou 3 fotos grandes (mais de 8 MB) e confirme que os arquivos aparecem em `Fotos_Origem/_ENVIANDO__...` com a conta da Pascom como proprietaria. Se o navegador acusar erro de CORS no `PUT` para `googleapis.com`, registre o erro do console antes de mudar a abordagem.
 
 ## Proximas publicacoes
 
