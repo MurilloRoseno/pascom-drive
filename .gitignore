@@ -42,3 +42,9 @@ token.json
 
 # Local assistant worktrees are separate Git checkouts, never project content.
 .claude/worktrees/
+
+# Adicionado pelo Vercel CLI ao ligar a pasta ao projeto.
+.vercel
+.env*
+!.env.example
+!**/.env.example
