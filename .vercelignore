@@ -1,0 +1,38 @@
+# Nada aqui entra no bundle enviado para a Vercel.
+# Sem este arquivo o CLI sobe a pasta inteira, inclusive .env locais e documentacao.
+
+# Segredos locais (nunca devem sair da maquina)
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Dependencias e artefatos de build (a Vercel reinstala e rebuilda)
+node_modules
+**/node_modules
+frontend/dist
+backend/coverage
+frontend/coverage
+coverage
+
+# Testes e ferramentas de desenvolvimento
+**/__tests__
+**/jest.config.js
+**/jest-setup.js
+**/babel.config.cjs
+.github
+.claude
+.codex
+.firecrawl
+.vercel
+
+# Nao faz parte do deploy: o Apps Script sobe pelo clasp
+google-apps-script
+
+# Documentacao e material de apoio
+docs
+entregaveis
+graphify-out
+marca-dagua
+*.md
+gerar-estrutura.ps1
