@@ -18,6 +18,10 @@ export function listarEventos({ q = '', categoria = '' } = {}) {
   return request(`/api/eventos?${params.toString()}`);
 }
 
+export function listarCategorias() {
+  return request('/api/categorias');
+}
+
 export function obterEvento(eventoId) {
   return request(`/api/eventos/${encodeURIComponent(eventoId)}`);
 }

@@ -6,6 +6,8 @@ import { PainelProvider } from './PainelContext.jsx';
 import PainelLayout from './PainelLayout.jsx';
 import { ToastProvider } from './ui.jsx';
 import VisaoGeral from './pages/VisaoGeral.jsx';
+import Eventos from './pages/Eventos.jsx';
+import Categorias from './pages/Categorias.jsx';
 import Seguranca from './pages/Seguranca.jsx';
 import Acessos from './pages/Acessos.jsx';
 
@@ -89,6 +91,8 @@ export default function PainelAutenticado({ obterToken, onSair, chamarSensivel }
         <Routes>
           <Route path="/" element={<PainelLayout onSair={onSair} />}>
             <Route index element={<VisaoGeral />} />
+            <Route path="eventos" element={<Eventos />} />
+            <Route path="categorias" element={<Categorias />} />
             <Route path="acessos" element={<Acessos />} />
             <Route path="seguranca" element={<Seguranca />} />
             <Route path="*" element={<Navigate to="/painel" replace />} />

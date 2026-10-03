@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import PascomPanel from '../shared/PascomPanel.jsx';
 import { I } from './referenceIcons.jsx';
-import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, SACRAMENTOS } from './referenceUtils.jsx';
+import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, } from './referenceUtils.jsx';
 
 export function HomeScreen({ go, eventos, loading, tweaks }) {
   const recentes = eventos.slice(0, 4);
@@ -97,7 +97,7 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
       <section className="section" style={{ paddingTop: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
           <div className="caption" style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent-d)' }}>
-            {sacramento === 'todos' ? 'Todas as celebrações' : SACRAMENTOS.find((item) => item.id === sacramento)?.label}
+            {sacramento === 'todos' ? 'Todas as celebrações' : categoryLabel(sacramento)}
           </div>
           <SortChip value={sort} onChange={setSort} />
         </div>

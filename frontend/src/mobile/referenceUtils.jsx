@@ -1,16 +1,6 @@
 ﻿/* eslint-disable react/prop-types */
 import { I } from './referenceIcons.jsx';
-
-export const SACRAMENTOS = [
-  { id: 'todos', label: 'Todos', iconKey: 'Grid' },
-  { id: 'batismo', label: 'Batismo', iconKey: 'Droplet' },
-  { id: 'eucaristia', label: 'Eucaristia', iconKey: 'Wheat' },
-  { id: 'crisma', label: 'Crisma', iconKey: 'Flame' },
-  { id: 'casamento', label: 'Casamento', iconKey: 'Rings' },
-  { id: 'uncao', label: 'Unção', iconKey: 'Dove' },
-  { id: 'ordem', label: 'Ordem', iconKey: 'Cross' },
-  { id: 'missa', label: 'Missa', iconKey: 'Cup' },
-];
+import { categoryLabel as rotuloDaCategoria, useCategorias } from '../shared/categorias.js';
 
 export const PROXIMAS = [
   { id: 'a1', dia: '01', mes: 'Jun', titulo: 'Festa de Corpus Christi', local: 'Paróquia São Rafael', hora: '17h00' },
@@ -126,8 +116,13 @@ export function resolveEventPhotos(event = {}) {
 }
 
 export function categoryLabel(category) {
-  return SACRAMENTOS.find((item) => item.id === category)?.label || 'Celebração';
+  return rotuloDaCategoria(category);
 }
+
+// Ícone de cada categoria conhecida; as criadas no painel usam o ícone genérico.
+const ICONE_DA_CATEGORIA = {
+  celebracoes: 'Cup', batismo: 'Droplet', eucaristia: 'Wheat', crisma: 'Flame', casamento: 'Rings', 'uncao-dos-enfermos': 'Dove', ordem: 'Cross',
+};
 
 export function Photo({ photo, aspect = '1/1', selected = false, showBadge = true, onClick, children, ornaments = true }) {
   const bg = photo.src ? null : `linear-gradient(135deg, oklch(0.46 0.13 ${photo.hue || 30}) 0%, oklch(0.32 0.10 ${(photo.hue || 30) + 18}) 60%, oklch(0.22 0.06 ${(photo.hue || 30) + 30}) 100%)`;
@@ -167,6 +162,8 @@ export function CornerOrnament({ at }) {
 }
 
 export function SacramentoChips({ value, onChange }) {
-  return <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '4px 18px 6px', scrollbarWidth: 'none' }}>{SACRAMENTOS.map((item) => { const Icon = I[item.iconKey] || I.Sparkle; const active = value === item.id; return <button key={item.id} className={`sacramento-chip${active ? ' active' : ''}`} onClick={() => onChange(item.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 999, background: active ? 'var(--brand)' : 'var(--surface-2)', color: active ? '#fff' : 'var(--ink-2)', border: `1px solid ${active ? 'var(--brand)' : 'var(--line)'}`, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', transition: 'background 200ms, color 200ms' }}><Icon className="icon icon-sm" /> {item.label}</button>; })}<div style={{ flex: '0 0 8px' }} /></div>;
+  const categorias = useCategorias();
+  const chips = [{ id: 'todos', label: 'Todos', iconKey: 'Grid' }, ...categorias.map((c) => ({ id: c.id, label: c.label, iconKey: ICONE_DA_CATEGORIA[c.id] || 'Sparkle' }))];
+  return <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '4px 18px 6px', scrollbarWidth: 'none' }}>{chips.map((item) => { const Icon = I[item.iconKey] || I.Sparkle; const active = value === item.id; return <button key={item.id} className={`sacramento-chip${active ? ' active' : ''}`} onClick={() => onChange(item.id)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 999, background: active ? 'var(--brand)' : 'var(--surface-2)', color: active ? '#fff' : 'var(--ink-2)', border: `1px solid ${active ? 'var(--brand)' : 'var(--line)'}`, fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap', transition: 'background 200ms, color 200ms' }}><Icon className="icon icon-sm" /> {item.label}</button>; })}<div style={{ flex: '0 0 8px' }} /></div>;
 }
 

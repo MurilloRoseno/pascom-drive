@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { listarFotosEvento, listarOfertasEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
-import { categoryLabel } from '../data/categories.js';
+import { categoryLabel, useCategorias } from '../shared/categorias.js';
 import { dateLabel } from '../lib/event-format.js';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
 import { buildEventSharePayload } from '../shared/eventShare.js';
@@ -21,6 +21,7 @@ function formatPhoto(photo) {
 }
 
 export default function EventPage() {
+  useCategorias(); // atualiza o nome da categoria quando a lista do painel chega
   const { eventoId } = useParams();
   const [params, setParams] = useSearchParams();
   const [event, setEvent] = useState(null);

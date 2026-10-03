@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
-import { categories, categoryLabel } from '../data/categories.js';
+import { categoryLabel, useCategorias } from '../shared/categorias.js';
 import { scheduleLabel } from '../lib/event-format.js';
 
 function monthLabel(key) {
@@ -53,6 +53,7 @@ SearchCard.propTypes = {
 
 export default function SearchPage() {
   const [params, setParams] = useSearchParams();
+  const categories = useCategorias();
   const [form, setForm] = useState({
     q: params.get('q') || '',
     categoria: params.get('categoria') || '',
@@ -86,7 +87,7 @@ export default function SearchPage() {
     query && `Busca: ${query}`,
     category && categoryLabel(category),
     date && monthLabel(date),
-  ].filter(Boolean), [query, category, date]);
+  ].filter(Boolean), [query, category, date, categories]);
 
   function submit(event) {
     event.preventDefault();
