@@ -35,27 +35,27 @@ describe('lerConfig', () => {
     expect(cfg.prazoPadraoDias).toBe(7);
     expect(cfg.tarja).toBe(true);
     expect(cfg).toMatchObject({
-      repassarTaxa: true, distribuicaoTaxa: 50,
+      taxaServico: 2, taxaComodidade: 1,
       tarifaCartaoPct: 3.99, tarifaCartaoFixo: 0.39, tarifaPixPct: 1.19, tarifaPixFixo: 0,
     });
   });
 
-  it('lê as tarifas e o repasse da planilha', async () => {
+  it('lê as taxas e as tarifas da planilha', async () => {
     mockAba([
       { Chave: 'tarifaCartaoPct', Valor: '4,2' },
       { Chave: 'tarifaPixFixo', Valor: '0,10' },
-      { Chave: 'repassarTaxa', Valor: 'NAO' },
-      { Chave: 'distribuicaoTaxa', Valor: '30' },
+      { Chave: 'taxaServico', Valor: '2,50' },
+      { Chave: 'taxaComodidade', Valor: '0' },
     ]);
     const cfg = await lerConfig();
-    expect(cfg).toMatchObject({ tarifaCartaoPct: 4.2, tarifaPixFixo: 0.1, repassarTaxa: false, distribuicaoTaxa: 30 });
+    expect(cfg).toMatchObject({ tarifaCartaoPct: 4.2, tarifaPixFixo: 0.1, taxaServico: 2.5, taxaComodidade: 0 });
   });
 
-  it('recusa tarifa absurda e distribuição fora de 0 a 100', async () => {
+  it('recusa tarifa e taxas absurdas ou negativas', async () => {
     mockAba([]);
     await expect(salvarConfig('tarifaCartaoPct', 90, 'x')).rejects.toThrow();
-    await expect(salvarConfig('distribuicaoTaxa', 101, 'x')).rejects.toThrow();
-    await expect(salvarConfig('distribuicaoTaxa', 33.5, 'x')).rejects.toThrow();
+    await expect(salvarConfig('taxaServico', 51, 'x')).rejects.toThrow();
+    await expect(salvarConfig('taxaComodidade', -1, 'x')).rejects.toThrow();
   });
 
   it('sobrescreve o padrão com o valor da planilha, convertendo o tipo', async () => {

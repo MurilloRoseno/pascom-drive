@@ -6,7 +6,7 @@ jest.mock('../lib/config-store', () => ({
   salvarConfig: jest.fn(),
   CAMPOS: {
     precoFoto: {}, prazoPadraoDias: {}, tarja: {}, previaLargura: {}, whatsapp: {},
-    repassarTaxa: {}, distribuicaoTaxa: {}, tarifaCartaoPct: {},
+    taxaServico: {}, taxaComodidade: {}, tarifaCartaoPct: {},
   },
 }));
 jest.mock('../lib/audit', () => ({ registrarAuditoria: jest.fn().mockResolvedValue(true), ultimasAlteracoes: jest.fn() }));
@@ -74,7 +74,7 @@ describe('configurações', () => {
       expect(salvarConfig).toHaveBeenCalled();
     });
 
-    it.each(['repassarTaxa', 'distribuicaoTaxa', 'tarifaCartaoPct'])('%s também exige reautenticação', async (chave) => {
+    it.each(['taxaServico', 'taxaComodidade', 'tarifaCartaoPct'])('%s também exige reautenticação', async (chave) => {
       expect((await PUT('admin-velho', { chave, valor: 1 })).status).toBe(403);
       expect(salvarConfig).not.toHaveBeenCalled();
     });

@@ -139,6 +139,10 @@ async function listarItensPedido(pedidoId) {
     .map((row) => ({ fotoId: row.get('FotoID'), eventoId: row.get('EventoID') }));
 }
 
+async function contarDownloadsPedido(pedidoId) {
+  return (await rows('Downloads')).filter((row) => row.get('PedidoID') === pedidoId).length;
+}
+
 async function buscarOriginaisPedido(pedidoId) {
   const itens = await listarItensPedido(pedidoId);
   const itemIds = new Set(itens.map((item) => item.fotoId));
@@ -291,6 +295,7 @@ module.exports = {
   registrarWebhookSeNovo,
   finalizarWebhook,
   listarItensPedido,
+  contarDownloadsPedido,
   buscarOriginaisPedido,
   criarAutorizacoesDownload,
   prepararDownload,

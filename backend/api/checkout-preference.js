@@ -1,10 +1,11 @@
 const { criarPagamentoSchema } = require('../lib/validation');
-const {
-  buscarFotosParaCompra, listarRegrasPagamento, registrarPedido, novoPedidoId,
-} = require('../lib/google-sheets');
+const { buscarFotosParaCompra, registrarPedido, novoPedidoId } = require('../lib/google-sheets');
+const { regrasPagamento } = require('../lib/tarifas');
+const { gatewayAtivo } = require('../lib/gateway');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
 const { calcularComercial } = require('../lib/commercial-rules');
 const { criarPreferencia } = require('../lib/mercado-pago');
+const { criarSessao } = require('../lib/stripe-gateway');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -27,18 +28,30 @@ module.exports = async function handler(req, res, next) {
     const pricing = await calcularComercial({
       items,
       paymentMethod: input.paymentMethod,
-      paymentRules: await listarRegrasPagamento(),
+      paymentRules: await regrasPagamento(),
       couponCode: input.couponCode,
       packageId: input.packageId,
     });
     const id = novoPedidoId();
-    const preference = await criarPreferencia({
+    // O valor de cada foto é o preço em vigor (configuração do servidor), não o que estiver na planilha de fotos.
+    const precificados = items.map((item) => ({ ...item, foto: { ...item.foto, price: pricing.unitPrice } }));
+    const gateway = gatewayAtivo();
+    const dados = {
       pedidoId: id,
       buyer: input,
-      items,
+      items: precificados,
       pricing,
       paymentMethod: input.paymentMethod,
-    });
+    };
+    let preference;
+    try {
+      preference = gateway === 'stripe' ? await criarSessao(dados) : await criarPreferencia(dados);
+    } catch (error) {
+      if (gateway === 'stripe' && input.paymentMethod === 'pix' && /pix/i.test(error.message || '')) {
+        return res.status(409).json({ error: 'O Pix não está disponível no momento. Escolha cartão de crédito.' });
+      }
+      throw error;
+    }
     await registrarPedido({
       id,
       preferenceId: preference.id,
@@ -49,8 +62,8 @@ module.exports = async function handler(req, res, next) {
       couponCode: pricing.couponApplied?.code || '',
       packageId: pricing.packageApplied?.id || '',
       pricing,
-    }, items);
-    return res.status(201).json({ pedidoId: id, checkoutUrl: preference.checkoutUrl, pricing });
+    }, precificados);
+    return res.status(201).json({ pedidoId: id, checkoutUrl: preference.checkoutUrl, pricing, gateway });
   } catch (error) {
     if (/Pagamento indisponivel|Cupom invalido|Pacote invalido/.test(error.message)) return res.status(409).json({ error: error.message });
     next(error);

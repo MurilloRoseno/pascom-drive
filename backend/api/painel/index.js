@@ -36,8 +36,8 @@ const PERMISSAO_DA_CHAVE = {
   precoFoto: 'pagamentos.editar',
   prazoPadraoDias: 'eventos.editar',
   whatsapp: 'conteudo.editar',
-  repassarTaxa: 'pagamentos.editar',
-  distribuicaoTaxa: 'pagamentos.editar',
+  taxaServico: 'pagamentos.editar',
+  taxaComodidade: 'pagamentos.editar',
   tarifaCartaoPct: 'pagamentos.editar',
   tarifaCartaoFixo: 'pagamentos.editar',
   tarifaPixPct: 'pagamentos.editar',
@@ -48,9 +48,9 @@ const PERMISSAO_DA_CHAVE = {
   assistenteFonteEventos: 'ajuda.editar',
   assistenteForaDoEscopo: 'ajuda.editar',
 };
-// Mudar dinheiro (preço, repasse, tarifas) exige login recente: reautenticação.
+// Mudar dinheiro (preço, taxas, tarifas) exige login recente: reautenticação.
 const SENSIVEIS = new Set([
-  'precoFoto', 'repassarTaxa', 'distribuicaoTaxa',
+  'precoFoto', 'taxaServico', 'taxaComodidade',
   'tarifaCartaoPct', 'tarifaCartaoFixo', 'tarifaPixPct', 'tarifaPixFixo',
 ]);
 
@@ -58,8 +58,8 @@ const ROTULO_DA_CHAVE = {
   precoFoto: 'Preço por foto',
   prazoPadraoDias: 'Prazo padrão de permanência (dias)',
   whatsapp: 'WhatsApp da secretaria',
-  repassarTaxa: 'Repassar a taxa ao comprador',
-  distribuicaoTaxa: 'Distribuição da taxa (% em comodidade)',
+  taxaServico: 'Taxa de serviço (R$)',
+  taxaComodidade: 'Taxa de comodidade (R$)',
   tarifaCartaoPct: 'Tarifa do cartão (%)',
   tarifaCartaoFixo: 'Tarifa fixa do cartão (R$)',
   tarifaPixPct: 'Tarifa do Pix (%)',

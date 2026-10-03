@@ -10,6 +10,8 @@ jest.mock('../lib/google-sheets.shared', () => ({
   }),
 }));
 
+jest.mock('../lib/tarifas', () => ({ precosBase: async () => ({ unitPrice: 10, serviceFee: 2, convenienceFee: 1 }) }));
+
 const shared = require('../lib/google-sheets.shared');
 const { calcularComercial, listarOfertasEvento } = require('../lib/commercial-rules');
 

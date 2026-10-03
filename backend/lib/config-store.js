@@ -58,8 +58,9 @@ const CAMPOS = {
   // Página inicial: blocos (JSON validado em lib/home.js) e evento em destaque. Só /api/pascom/home grava.
   homeBlocos: { schema: z.string().max(1500), padrao: '' },
   homeDestaque: { schema: z.string().max(80), padrao: '' },
-  repassarTaxa: { schema: booleano, padrao: true },
-  distribuicaoTaxa: { schema: inteiro(0, 100), padrao: 50 }, // % da taxa que vai em "comodidade"
+  // Taxas fixas somadas ao pedido (aparecem separadas para o comprador) e tarifa do gateway repassada por cima.
+  taxaServico: { schema: numero(0, 50), padrao: 2 },
+  taxaComodidade: { schema: numero(0, 50), padrao: 1 },
   tarifaCartaoPct: { schema: numero(0, 20), padrao: 3.99 },
   tarifaCartaoFixo: { schema: numero(0, 10), padrao: 0.39 },
   tarifaPixPct: { schema: numero(0, 20), padrao: 1.19 },

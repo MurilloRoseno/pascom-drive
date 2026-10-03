@@ -1,5 +1,7 @@
 const { cotacaoSchema } = require('../lib/validation');
-const { buscarFotosParaCompra, listarRegrasPagamento } = require('../lib/google-sheets');
+const { buscarFotosParaCompra } = require('../lib/google-sheets');
+const { regrasPagamento } = require('../lib/tarifas');
+const { gatewayAtivo } = require('../lib/gateway');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
 const { calcularComercial } = require('../lib/commercial-rules');
 
@@ -18,10 +20,11 @@ module.exports = async function handler(req, res, next) {
       evento.visibility === 'protegida' && !tokenAllowsEvent(input.galleryTokens[evento.eventoId], evento)
     )) return res.status(401).json({ error: 'Acesso expirado para galeria protegida.' });
     return res.json({
+      gateway: gatewayAtivo(),
       pricing: await calcularComercial({
         items,
         paymentMethod: input.paymentMethod,
-        paymentRules: await listarRegrasPagamento(),
+        paymentRules: await regrasPagamento(),
         couponCode: input.couponCode,
         packageId: input.packageId,
       }),

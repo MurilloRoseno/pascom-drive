@@ -1,5 +1,6 @@
 const { rows, yes, fotoFromRow } = require('./google-sheets.shared');
-const { calculatePricing, PHOTO_PRICE } = require('./pricing');
+const { calculatePricing } = require('./pricing');
+const { precosBase } = require('./tarifas');
 
 function money(value) {
   return Math.round(Number(value || 0) * 100) / 100;
@@ -116,7 +117,9 @@ async function listarOfertasEvento(eventoId) {
 }
 
 async function calcularComercial({ items, paymentMethod, paymentRules, couponCode = '', packageId = '' }) {
-  const subtotal = money(items.length * PHOTO_PRICE);
+  // Preço da foto e taxas fixas: sempre os da configuração do servidor, nunca algo vindo do navegador.
+  const base = await precosBase();
+  const subtotal = money(items.length * base.unitPrice);
   const [coupons, packages] = await Promise.all([listarCupons(), listarPacotes()]);
   const coupon = normalizeCode(couponCode)
     ? coupons.find((item) => item.code === normalizeCode(couponCode))
@@ -154,7 +157,7 @@ async function calcularComercial({ items, paymentMethod, paymentRules, couponCod
     },
     couponApplied: winner.couponApplied || null,
     packageApplied: winner.packageApplied || null,
-  });
+  }, base);
 }
 
 async function incrementarUsoCupom(couponCode) {
