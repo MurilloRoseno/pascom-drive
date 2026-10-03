@@ -16,4 +16,28 @@ const ACESSOS = {
   cabecalhos: ['Papel', 'Permissoes', 'AtualizadoEm', 'Por'],
 };
 
-module.exports = { ACESSOS, CATEGORIAS, EVENTOS_EXTRA };
+const FAQ = {
+  aba: 'Faq',
+  cabecalhos: [
+    'Id', 'Tema', 'Pergunta', 'Resposta', 'Passos', 'Imagem', 'ImagemLegenda',
+    'Video', 'VideoTitulo', 'Publicada', 'Ordem', 'AtualizadoEm',
+  ],
+};
+
+// Perguntas que o assistente não soube responder (só o texto, sem dado pessoal).
+const SEM_RESPOSTA = {
+  aba: 'PerguntasSemResposta',
+  cabecalhos: ['Quando', 'Pergunta', 'Situacao'],
+};
+
+// Compromissos da paróquia (missas, reuniões, festas). Não confundir com a aba Eventos (galerias de fotos).
+const AGENDA = {
+  aba: 'Agenda',
+  cabecalhos: [
+    'Id', 'Titulo', 'Data', 'Hora', 'HoraFim', 'Local', 'Tipo', 'Recorrencia', 'Ate', 'Descricao', 'Ativo', 'AtualizadoEm',
+  ],
+};
+
+module.exports = {
+  ACESSOS, AGENDA, CATEGORIAS, EVENTOS_EXTRA, FAQ, SEM_RESPOSTA,
+};

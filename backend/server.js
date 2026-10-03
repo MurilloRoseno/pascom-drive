@@ -34,6 +34,7 @@ const pascomPedidoDetalheHandler = require('./api/pascom-pedido-detalhe');
 const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-downloads');
 const painelRouter = require('./api/painel');
 const categoriasHandler = require('./api/categorias');
+const agendaHandler = require('./api/agenda');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -91,6 +92,7 @@ app.post('/api/preprocess', processamento, preprocessHandler);
 app.post('/api/cover-preview', processamento, coverPreviewHandler);
 app.get('/api/download', download, downloadHandler);
 app.get('/api/categorias', fotos, categoriasHandler);
+app.get('/api/agenda', fotos, agendaHandler);
 app.get('/api/eventos', fotos, eventosHandler);
 app.get('/api/e/:slug', fotos, eventoSlugHandler);
 app.get('/api/eventos/:eventoId', fotos, eventosHandler);
