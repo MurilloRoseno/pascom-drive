@@ -36,6 +36,7 @@ const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-download
 const painelRouter = require('./api/painel');
 const categoriasHandler = require('./api/categorias');
 const agendaHandler = require('./api/agenda');
+const siteHandler = require('./api/site');
 const faqHandler = require('./api/faq');
 const assistenteHandler = require('./api/assistente');
 
@@ -96,6 +97,7 @@ app.post('/api/watermark', processamento, watermarkHandler);
 app.post('/api/preprocess', processamento, preprocessHandler);
 app.post('/api/cover-preview', processamento, coverPreviewHandler);
 app.get('/api/download', download, downloadHandler);
+app.get('/api/site', fotos, siteHandler); // identidade, home, módulos e preço: nunca barrado (a vitrine precisa saber o que está no ar)
 app.get('/api/categorias', fotos, exigirModulo('busca'), categoriasHandler);
 app.get('/api/agenda', fotos, exigirModulo('agenda'), agendaHandler);
 app.get('/api/faq', fotos, exigirModulo('ajuda'), faqHandler);

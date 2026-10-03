@@ -11,6 +11,11 @@ const {
 } = require('../../lib/categorias');
 const { listarEventosAdmin, atualizarPublicacao, atualizarCategoriaEvento } = require('../../lib/eventos-admin');
 const { lerConteudo, publicarConteudo } = require('../../lib/conteudo');
+const {
+  BLOCOS, lerHome, salvarHome,
+} = require('../../lib/home');
+const { lerModulos } = require('../../lib/modulos');
+const { montarBackup } = require('../../lib/backup');
 const { precisaReverificar, DICA_REVERIFICACAO } = require('../../lib/reverificacao');
 
 const router = express.Router();
@@ -102,6 +107,41 @@ router.put('/conteudo', exigirPermissao('conteudo.editar'), tratar(async (req, r
   res.json({ alterados, conteudo: await lerConteudo() });
 }));
 
+
+// ── Backup ───────────────────────────────────────────────────────────────────
+/** GET /api/pascom/backup: cópia das configurações em JSON. Só o administrador (leva a lista da equipe). */
+router.get('/backup', exigirPermissao('acessos.gerenciar'), tratar(async (req, res) => {
+  const backup = await montarBackup();
+  await auditar(req, 'Backup das configurações baixado');
+  const dia = backup.geradoEm.slice(0, 10);
+  res.setHeader('Content-Disposition', `attachment; filename="pascom-backup-${dia}.json"`);
+  res.setHeader('Cache-Control', 'no-store');
+  res.json(backup);
+}));
+
+// ── Página inicial ───────────────────────────────────────────────────────────
+/** GET /api/pascom/home: blocos na ordem, destaque, de que módulo cada bloco depende e eventos no ar. */
+router.get('/home', exigirPermissao('conteudo.ver'), tratar(async (_req, res) => {
+  const [{ blocos, destaque }, modulos, eventos] = await Promise.all([lerHome(), lerModulos(), listarEventosAdmin()]);
+  const info = Object.fromEntries(BLOCOS.map((b) => [b.id, {
+    modulo: b.modulo,
+    noAr: b.modulo && modulos[b.modulo] ? modulos[b.modulo].efetivo : true,
+    so: b.so || null,
+  }]));
+  res.json({
+    blocos,
+    destaque,
+    info,
+    eventosNoAr: eventos.filter((e) => e.estado === 'no_ar').map((e) => ({ eventoId: e.eventoId, nome: e.nome })),
+  });
+}));
+
+/** PUT /api/pascom/home { blocos: [{id, titulo, ligado}] (todos, na ordem), destaque } */
+router.put('/home', exigirPermissao('conteudo.editar'), tratar(async (req, res) => {
+  const dados = await salvarHome(req.body, req.membro.email);
+  await auditar(req, 'Página inicial publicada (ordem, títulos e destaque)');
+  res.json(dados);
+}));
 
 // ── Eventos ──────────────────────────────────────────────────────────────────
 router.get('/eventos', exigirPermissao('eventos.ver'), tratar(async (_req, res) => {

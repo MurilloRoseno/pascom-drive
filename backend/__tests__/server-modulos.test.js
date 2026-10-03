@@ -98,6 +98,7 @@ describe('o que envolve dinheiro em trânsito nunca é barrado', () => {
     ['POST', '/api/webhook/stripe'],
     ['POST', '/api/webhook/mercado-pago'],
     ['GET', '/api/health'],
+    ['GET', '/api/site'],
   ])('%s %s não vira 503 de módulo', async (metodo, rota) => {
     const r = await request(app)[metodo.toLowerCase()](rota).send({});
     expect(r.body && r.body.modulo).toBeUndefined();
