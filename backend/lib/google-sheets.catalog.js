@@ -1,12 +1,13 @@
 const { applicationPreviewUrl, rows, eventoFromRow, fotoFromRow } = require('./google-sheets.shared');
 const { readThrough } = require('./runtime-cache');
+const { publicacaoEfetiva } = require('./publicacao');
 
 async function listarEventos() {
   return (await rows('Eventos')).map(eventoFromRow);
 }
 
 async function catalogoPublicado() {
-  const { value } = await readThrough('catalogo-publicado:v2', async () => {
+  const { value } = await readThrough('catalogo-publicado:v3', async () => {
     const startedAt = Date.now();
     const [eventRows, photoRows] = await Promise.all([rows('Eventos'), rows('Fotos')]);
     console.log(JSON.stringify({
@@ -15,7 +16,9 @@ async function catalogoPublicado() {
       ts: new Date().toISOString(),
     }));
     return {
-      events: eventRows.map(eventoFromRow).filter((event) => event.publication === 'publicado'),
+      // Guarda no cache todo evento "publicado" na planilha (inclusive os agendados e com prazo);
+      // a janela de publicação é conferida a cada leitura, depois do cache.
+      events: eventRows.map(eventoFromRow).filter((event) => event.publicationRaw === 'publicado'),
       photos: photoRows.map(fotoFromRow),
     };
   }, { ttl: 300, tags: ['catalogo-eventos'], name: 'catalogo-eventos' });
@@ -25,13 +28,21 @@ async function catalogoPublicado() {
 async function listarEventosPublicados({ categoria = '', q = '' } = {}) {
   const term = q.trim().toLowerCase();
   const catalog = await catalogoPublicado();
+  const agora = new Date();
   const events = catalog.events
+    .filter((event) => publicacaoEfetiva(event, agora) === 'publicado')
     .filter((event) => !categoria || event.category === categoria)
     .filter((event) => !term || `${event.title} ${event.category} ${event.date}`.toLowerCase().includes(term));
   return events.map((event) => {
     const publicEvent = { ...event };
     delete publicEvent.codeHash;
     delete publicEvent.codeVersion;
+    // Datas internas da janela não vão para o site; o estado já foi conferido acima.
+    publicEvent.publication = 'publicado';
+    delete publicEvent.publicationRaw;
+    delete publicEvent.publishAt;
+    delete publicEvent.expiresAt;
+    delete publicEvent.retentionDays;
     const cover = catalog.photos.find((foto) =>
       foto.eventoId === event.eventoId && foto.type === 'capa' && foto.status === 'Processada' && foto.previewFileId
     );

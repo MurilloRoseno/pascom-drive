@@ -1,5 +1,6 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
+const { publicacaoEfetiva } = require('./publicacao');
 
 function drivePreviewUrl(fileId) {
   return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1280` : '';
@@ -75,6 +76,9 @@ async function rows(title) {
 
 function eventoFromRow(row) {
   const date = row.get('DataEvento') || '';
+  const publicationRaw = row.get('Publicacao') || 'rascunho';
+  const publishAt = row.get('PublicarEm') || '';
+  const expiresAt = row.get('ExpiraEm') || '';
   return {
     eventoId: row.get('EventoID'),
     title: displayTitle(row.get('Titulo') || row.get('NomePasta')),
@@ -85,7 +89,12 @@ function eventoFromRow(row) {
     time: row.get('HorarioEvento') || '',
     visibility: row.get('Visibilidade') || 'protegida',
     salesAuthorized: yes(row.get('VendaAutorizada')),
-    publication: row.get('Publicacao') || 'rascunho',
+    // Estado efetivo: só é 'publicado' com o evento no ar agora (janela PublicarEm/ExpiraEm).
+    publication: publicacaoEfetiva({ publicationRaw, publishAt, expiresAt }),
+    publicationRaw,
+    publishAt,
+    expiresAt,
+    retentionDays: Number(row.get('PrazoDias') || 0),
     minorProtection: yes(row.get('ProtecaoMenores')),
     codeHash: row.get('CodigoHash') || '',
     codeVersion: Number(row.get('CodigoVersao') || 0),
