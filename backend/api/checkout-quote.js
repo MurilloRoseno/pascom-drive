@@ -19,16 +19,15 @@ module.exports = async function handler(req, res, next) {
     if (items.some(({ evento }) =>
       evento.visibility === 'protegida' && !tokenAllowsEvent(input.galleryTokens[evento.eventoId], evento)
     )) return res.status(401).json({ error: 'Acesso expirado para galeria protegida.' });
-    return res.json({
-      gateway: gatewayAtivo(),
-      pricing: await calcularComercial({
-        items,
-        paymentMethod: input.paymentMethod,
-        paymentRules: await regrasPagamento(),
-        couponCode: input.couponCode,
-        packageId: input.packageId,
-      }),
+    const pricing = await calcularComercial({
+      items,
+      paymentMethod: input.paymentMethod,
+      paymentRules: await regrasPagamento(),
+      couponCode: input.couponCode,
+      packageId: input.packageId,
     });
+    // O gateway vai dentro de `pricing` para as telas (desktop e mobile) mostrarem o nome certo.
+    return res.json({ pricing: { ...pricing, gateway: gatewayAtivo() } });
   } catch (error) {
     if (/Pagamento indisponivel|Cupom invalido|Pacote invalido/.test(error.message)) return res.status(409).json({ error: error.message });
     next(error);

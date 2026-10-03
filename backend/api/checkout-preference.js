@@ -63,7 +63,7 @@ module.exports = async function handler(req, res, next) {
       packageId: pricing.packageApplied?.id || '',
       pricing,
     }, precificados);
-    return res.status(201).json({ pedidoId: id, checkoutUrl: preference.checkoutUrl, pricing, gateway });
+    return res.status(201).json({ pedidoId: id, checkoutUrl: preference.checkoutUrl, pricing: { ...pricing, gateway } });
   } catch (error) {
     if (/Pagamento indisponivel|Cupom invalido|Pacote invalido/.test(error.message)) return res.status(409).json({ error: error.message });
     next(error);

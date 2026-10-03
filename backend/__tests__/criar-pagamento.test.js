@@ -59,7 +59,7 @@ describe('POST /api/checkout/preference', () => {
     const res = await request(app).post('/api/checkout/preference').send({ ...VALID_BODY, total: 0.01 });
     expect(res.status).toBe(201);
     expect(res.body.checkoutUrl).toBe('https://mp.test/checkout');
-    expect(res.body.gateway).toBe('mercadopago');
+    expect(res.body.pricing.gateway).toBe('mercadopago');
     expect(res.body.pricing.subtotal).toBe(10);
     expect(res.body.pricing.total).toBeGreaterThan(13);
     expect(sheets.registrarPedido).toHaveBeenCalled();
@@ -72,7 +72,8 @@ describe('POST /api/checkout/preference', () => {
     it('cria a sessão da Stripe com o valor do servidor e guarda o id da sessão no pedido', async () => {
       const res = await request(app).post('/api/checkout/preference').send({ ...VALID_BODY, total: 0.01, gateway: 'mercadopago', amount: 1 });
       expect(res.status).toBe(201);
-      expect(res.body).toMatchObject({ pedidoId: 'PED_TESTE_123456789', gateway: 'stripe', checkoutUrl: 'https://checkout.stripe.test/c/pay/cs_test_1' });
+      expect(res.body).toMatchObject({ pedidoId: 'PED_TESTE_123456789', checkoutUrl: 'https://checkout.stripe.test/c/pay/cs_test_1' });
+      expect(res.body.pricing.gateway).toBe('stripe');
       expect(mp.criarPreferencia).not.toHaveBeenCalled();
       const dados = stripe.criarSessao.mock.calls[0][0];
       expect(dados.pricing.total).toBe(res.body.pricing.total);
