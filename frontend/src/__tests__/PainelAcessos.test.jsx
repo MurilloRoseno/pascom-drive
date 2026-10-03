@@ -167,3 +167,27 @@ describe('equipe', () => {
     expect(chamadas('/api/pascom/acessos', 'GET').length).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe('backup das configurações', () => {
+  it('o botão baixa o arquivo gerado pelo servidor', async () => {
+    globalThis.URL.createObjectURL = jest.fn(() => 'blob:x');
+    globalThis.URL.revokeObjectURL = jest.fn();
+    const clique = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    renderPainel(<Acessos />, {
+      rotas: rotas({ 'GET /api/pascom/backup': () => resposta(200, { geradoEm: '2026-10-03T12:00:00.000Z', configuracoes: {} }) }),
+    });
+    await aberta();
+    await userEvent.click(screen.getByRole('button', { name: 'Baixar backup' }));
+    expect(await screen.findByText('Backup baixado.')).toBeInTheDocument();
+    expect(globalThis.URL.createObjectURL).toHaveBeenCalled();
+    expect(clique).toHaveBeenCalled();
+    clique.mockRestore();
+  });
+
+  it('avisa em português que o arquivo leva os e-mails da equipe e não leva pedidos', async () => {
+    renderPainel(<Acessos />, { rotas: rotas() });
+    await aberta();
+    expect(screen.getByText(/Não inclui pedidos, fotos nem chaves/)).toBeInTheDocument();
+    expect(screen.getByText(/e-mails da equipe/)).toBeInTheDocument();
+  });
+});

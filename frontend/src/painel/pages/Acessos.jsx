@@ -5,6 +5,7 @@ import {
   Aviso, Botao, Cartao, Pilula, useToast,
 } from '../ui.jsx';
 import EquipePainel from '../components/EquipePainel.jsx';
+import BackupConfiguracoes from '../components/BackupConfiguracoes.jsx';
 
 const ACOES = ['ver', 'criar', 'editar', 'excluir', 'gerenciar'];
 const ROTULO_ACAO = {
@@ -166,6 +167,7 @@ export default function Acessos() {
       </Cartao>
 
       <EquipePainel equipe={equipe} papeis={papeis} onMudou={carregar} />
+      <BackupConfiguracoes />
     </div>
   );
 }

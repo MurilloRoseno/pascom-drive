@@ -12,6 +12,9 @@ import Pagamentos from './pages/Pagamentos.jsx';
 import Agenda from './pages/Agenda.jsx';
 import Ajuda from './pages/Ajuda.jsx';
 import Assistente from './pages/Assistente.jsx';
+import Conteudo from './pages/Conteudo.jsx';
+import PaginaInicial from './pages/PaginaInicial.jsx';
+import Modulos from './pages/Modulos.jsx';
 import Seguranca from './pages/Seguranca.jsx';
 import Acessos from './pages/Acessos.jsx';
 
@@ -101,6 +104,9 @@ export default function PainelAutenticado({ obterToken, onSair, chamarSensivel }
             <Route path="agenda" element={<Agenda />} />
             <Route path="ajuda" element={<Ajuda />} />
             <Route path="assistente" element={<Assistente />} />
+            <Route path="conteudo" element={<Conteudo />} />
+            <Route path="pagina-inicial" element={<PaginaInicial />} />
+            <Route path="modulos" element={<Modulos />} />
             <Route path="acessos" element={<Acessos />} />
             <Route path="seguranca" element={<Seguranca />} />
             <Route path="*" element={<Navigate to="/painel" replace />} />
