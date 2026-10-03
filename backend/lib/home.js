@@ -16,7 +16,7 @@ const BLOCOS = [
   { id: 'missao', titulo: 'Nossa missão', modulo: null, so: 'desktop' },
   { id: 'agenda', titulo: 'Próximas atividades', modulo: 'agenda' },
   { id: 'depoimentos', titulo: 'O que dizem nossos fiéis', modulo: null, so: 'desktop' },
-  { id: 'contato', titulo: 'Fale com a secretaria', modulo: null, so: 'mobile' },
+  { id: 'contato', titulo: 'Estamos aqui para acolher sua família.', modulo: null, so: 'mobile' },
 ];
 const IDS = BLOCOS.map((b) => b.id);
 const BLOCOS_PADRAO = BLOCOS.map(({ id, titulo }) => ({ id, titulo, ligado: true }));

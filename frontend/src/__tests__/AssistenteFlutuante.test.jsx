@@ -2,20 +2,20 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import AssistenteFlutuante from '../components/AssistenteFlutuante.jsx';
-import { reiniciarContato, WHATSAPP_PADRAO, carregarContato } from '../shared/contato.js';
+import { reiniciarSite, WHATSAPP_PADRAO, carregarSite } from '../shared/site.js';
 
-jest.mock('../lib/api', () => ({ obterFaq: jest.fn(), perguntarAoAssistente: jest.fn() }));
-const { obterFaq, perguntarAoAssistente } = require('../lib/api');
+jest.mock('../lib/api', () => ({ obterSite: jest.fn(), perguntarAoAssistente: jest.fn() }));
+const { obterSite, perguntarAoAssistente } = require('../lib/api');
 
-const ligado = { temas: [], perguntas: [], whatsapp: '5599988887777', assistenteAtivo: true };
+const ligado = { whatsapp: '5599988887777', assistenteAtivo: true, modulos: {} };
 
 function renderFab(url = '/', props = {}) {
   return render(<MemoryRouter initialEntries={[url]}><AssistenteFlutuante {...props} /></MemoryRouter>);
 }
 
 beforeEach(() => {
-  reiniciarContato();
-  obterFaq.mockReset().mockResolvedValue(ligado);
+  reiniciarSite();
+  obterSite.mockReset().mockResolvedValue(ligado);
   perguntarAoAssistente.mockReset();
 });
 
@@ -48,22 +48,22 @@ describe('AssistenteFlutuante', () => {
   });
 
   it('não aparece com o assistente desligado no painel', async () => {
-    obterFaq.mockResolvedValue({ ...ligado, assistenteAtivo: false });
+    obterSite.mockResolvedValue({ ...ligado, assistenteAtivo: false });
     renderFab();
-    await waitFor(() => expect(obterFaq).toHaveBeenCalled());
+    await waitFor(() => expect(obterSite).toHaveBeenCalled());
     expect(screen.queryByRole('button', { name: /assistente/i })).not.toBeInTheDocument();
   });
 
   it('não aparece se a API falhar (o site segue funcionando sem ele)', async () => {
-    obterFaq.mockRejectedValue(new Error('fora do ar'));
+    obterSite.mockRejectedValue(new Error('fora do ar'));
     renderFab();
-    await waitFor(() => expect(obterFaq).toHaveBeenCalled());
+    await waitFor(() => expect(obterSite).toHaveBeenCalled());
     expect(screen.queryByRole('button', { name: /assistente/i })).not.toBeInTheDocument();
   });
 
   it.each(['/ajuda', '/checkout', '/pagamento/sucesso', '/evento/e1?view=foto&idx=0'])('some em %s', async (url) => {
     renderFab(url);
-    await waitFor(() => expect(obterFaq).toHaveBeenCalled());
+    await waitFor(() => expect(obterSite).toHaveBeenCalled());
     expect(screen.queryByRole('button', { name: /assistente/i })).not.toBeInTheDocument();
   });
 
@@ -74,17 +74,33 @@ describe('AssistenteFlutuante', () => {
   });
 });
 
-describe('contato compartilhado', () => {
-  it('usa o WhatsApp da configuração e, se vier vazio, o número que já existia no site', async () => {
-    expect((await carregarContato()).whatsapp).toBe('5599988887777');
-    reiniciarContato();
-    obterFaq.mockResolvedValue({ ...ligado, whatsapp: '' });
-    expect((await carregarContato()).whatsapp).toBe(WHATSAPP_PADRAO);
+describe('conteúdo do site compartilhado', () => {
+  it('usa o WhatsApp da configuração; vazio quer dizer "não mostrar" (não volta ao número antigo)', async () => {
+    expect((await carregarSite()).whatsapp).toBe('5599988887777');
+    reiniciarSite();
+    obterSite.mockResolvedValue({ ...ligado, whatsapp: '' });
+    expect((await carregarSite()).whatsapp).toBe('');
+  });
+
+  it('se a API falhar, o site segue com o número e os textos de sempre', async () => {
+    obterSite.mockRejectedValue(new Error('fora do ar'));
+    const s = await carregarSite();
+    expect(s.whatsapp).toBe(WHATSAPP_PADRAO);
+    expect(s.nome).toBe('Paróquia São Rafael');
   });
 
   it('carrega uma vez só por visita', async () => {
-    await carregarContato();
-    await carregarContato();
-    expect(obterFaq).toHaveBeenCalledTimes(1);
+    await carregarSite();
+    await carregarSite();
+    expect(obterSite).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('assistente e módulo de ajuda', () => {
+  it('módulo de ajuda fora do ar esconde o botão, mesmo com o assistente ligado', async () => {
+    obterSite.mockResolvedValue({ ...ligado, modulos: { ajuda: { ligado: false, recado: 'x' } } });
+    renderFab();
+    await waitFor(() => expect(obterSite).toHaveBeenCalled());
+    expect(screen.queryByRole('button', { name: /assistente/i })).not.toBeInTheDocument();
   });
 });

@@ -2,12 +2,13 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DesktopApp from '../desktop/DesktopApp.jsx';
 import MobileApp from '../mobile/MobileApp.jsx';
-import { reiniciarContato } from '../shared/contato.js';
+import { reiniciarSite } from '../shared/site.js';
 
 jest.mock('../lib/api', () => ({
   listarEventos: jest.fn().mockResolvedValue({ eventos: [] }),
   listarCategorias: jest.fn().mockResolvedValue([]),
   obterFaq: jest.fn(),
+  obterSite: jest.fn(),
   obterAgenda: jest.fn(),
   obterProximas: jest.fn(),
   perguntarAoAssistente: jest.fn(),
@@ -30,7 +31,8 @@ function irPara(caminho) {
 }
 
 beforeEach(() => {
-  reiniciarContato();
+  reiniciarSite();
+  api.obterSite.mockReset().mockResolvedValue({ whatsapp: '5599988887777', assistenteAtivo: true, modulos: {} });
   api.obterFaq.mockReset().mockResolvedValue(FAQ);
   api.obterAgenda.mockReset().mockResolvedValue({ mes: '2026-10', hoje: '2026-10-03', tipos: TIPOS, ocorrencias: [OCORRENCIA] });
   api.obterProximas.mockReset().mockResolvedValue({ hoje: '2026-10-03', tipos: TIPOS, ocorrencias: [OCORRENCIA] });

@@ -22,6 +22,11 @@ export function listarCategorias() {
   return request('/api/categorias');
 }
 
+/** GET /api/site: identidade, contato, página inicial, módulos no ar e preço (só o que é público). */
+export function obterSite() {
+  return request('/api/site');
+}
+
 /** GET /api/faq: Central de Ajuda (perguntas publicadas, WhatsApp da secretaria e se o assistente está ligado). */
 export function obterFaq() {
   return request('/api/faq');

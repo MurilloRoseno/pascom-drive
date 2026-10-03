@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { obterProximas } from '../lib/api.js';
 import { linkWhatsapp, useContato } from '../shared/contato.js';
+import { blocosVisiveis, moduloLigado, useSite } from '../shared/site.js';
 import PascomPanel from '../shared/PascomPanel.jsx';
 import { I } from './referenceIcons.jsx';
-import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, resolveEventPhotos, SacramentoChips, } from './referenceUtils.jsx';
+import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, resolveEventPhotos, SacramentoChips, } from './referenceUtils.jsx';
 
 const MESES_CURTOS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
@@ -22,23 +23,80 @@ function useProximas(quantidade) {
 }
 
 export function HomeScreen({ go, eventos, loading, tweaks }) {
+  const site = useSite();
   const recentes = eventos.slice(0, 4);
   const proximas = useProximas(4);
   const { whatsapp } = useContato();
   const totalFotos = eventos.reduce((sum, ev) => sum + Number(ev.totalFotos || 0), 0);
+  const destaque = site.home.destaque ? eventos.find((ev) => ev.id === site.home.destaque.eventoId) : null;
+
+  // Blocos abaixo do topo, na ordem escolhida no painel. O que o celular não tem (missão, depoimentos) é ignorado.
+  const blocos = {
+    categorias: (titulo) => (
+      <div key="categorias">
+        <section className="section-tight">
+          <div className="eyebrow">Explore por sacramento</div>
+          <h2 className="h3" style={{ marginTop: 4 }}>{titulo}</h2>
+        </section>
+        <SacramentoChips value="todos" onChange={(sacramento) => go({ name: 'galerias', sacramento })} />
+      </div>
+    ),
+    destaque: (titulo) => destaque && (
+      <section className="section" key="destaque">
+        <div className="eyebrow">Galeria em destaque</div>
+        <h2 className="h2" style={{ marginTop: 4 }}>{titulo}</h2>
+        <div style={{ marginTop: 14 }}><EventCard ev={destaque} onClick={() => go({ name: 'evento', eventoId: destaque.id })} isPascom={tweaks.role === 'pascom'} /></div>
+      </section>
+    ),
+    eventos: (titulo) => (
+      <section className="section" key="eventos">
+        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
+          <div><div className="eyebrow">Galerias da Comunidade</div><h2 className="h2" style={{ marginTop: 4 }}>{titulo}</h2></div>
+          <button className="link-btn" onClick={() => go({ name: 'galerias' })}>Ver todas <I.ChevronRight className="icon icon-sm" /></button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 14 }}>
+          {loading ? <LoadingCards /> : recentes.map((ev) => <EventCard key={ev.id} ev={ev} onClick={() => go({ name: 'evento', eventoId: ev.id })} isPascom={tweaks.role === 'pascom'} />)}
+          {!loading && recentes.length === 0 && <EmptyCard text="Nenhuma galeria publicada ainda." />}
+        </div>
+      </section>
+    ),
+    agenda: (titulo) => (
+      <section className="section" style={{ background: 'var(--surface-2)' }} key="agenda">
+        <div className="eyebrow">Agenda Paroquial</div><h2 className="h2" style={{ marginTop: 4 }}>{titulo}</h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
+          {proximas.itens.map((item) => <AgendaRow key={`${item.id}-${item.data}`} onClick={() => go({ name: 'agenda' })} agenda={{ dia: item.data.slice(8, 10), mes: MESES_CURTOS[Number(item.data.slice(5, 7)) - 1], titulo: item.titulo, local: item.local || site.nome, hora: item.hora || 'Dia inteiro' }} />)}
+          {!proximas.carregando && proximas.itens.length === 0 && <EmptyCard text="Nenhuma atividade na agenda por enquanto." />}
+        </div>
+        <button className="link-btn" style={{ marginTop: 12 }} onClick={() => go({ name: 'agenda' })}>Ver a agenda completa <I.ChevronRight className="icon icon-sm" /></button>
+      </section>
+    ),
+    contato: (titulo) => (
+      <section className="section-purple" key="contato">
+        <CornerOrnament at="tr" />
+        <div className="eyebrow eyebrow-light">Secretaria Paroquial</div>
+        <h2 className="h2" style={{ marginTop: 8, color: '#fff' }}>{titulo}</h2>
+        <p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 8 }}>Escolha fotos, finalize com segurança e receba os links após a confirmação.</p>
+        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+          {whatsapp && <a className="btn btn-primary" href={linkWhatsapp(whatsapp)} target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon" /> WhatsApp</a>}
+          {site.email && <a className="btn btn-outline" href={`mailto:${site.email}`} style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.55)' }}><I.Mail className="icon" /> E-mail</a>}
+        </div>
+        <div className="glory-text">AD GLORIAM DEI</div>
+      </section>
+    ),
+  };
 
   return (
     <div className="scroll">
       <section style={{ background: 'linear-gradient(170deg, rgba(20,5,28,0.88) 0%, rgba(70,19,86,0.82) 45%, rgba(20,5,28,0.95) 100%), url(/assets/church-background.png) center 35%/cover no-repeat', color: '#fff', padding: '28px 18px 32px', position: 'relative', overflow: 'hidden' }}>
         <CornerOrnament at="tr" />
-        <div className="eyebrow eyebrow-light" style={{ marginBottom: 12 }}>Açailândia · Maranhão</div>
+        <div className="eyebrow eyebrow-light" style={{ marginBottom: 12 }}>{site.cidade}</div>
         <h1 className="display" style={{ color: '#fff' }}>Galerias da comunidade no seu bolso.</h1>
-        <p className="scripture" style={{ marginTop: 14, color: 'var(--parish-yellow)' }}>“A serviço da memória, da fé e das famílias.”</p>
+        <p className="scripture" style={{ marginTop: 14, color: 'var(--parish-yellow)' }}>“{site.lema || 'A serviço da memória, da fé e das famílias.'}”</p>
         <button className="input-with-icon mobile-search-card" onClick={() => go({ name: 'galerias' })} style={{ width: '100%', marginTop: 22, background: '#fff', borderRadius: 14, padding: '13px 14px', color: 'var(--ink-3)', textAlign: 'left' }}>
           <I.Search className="icon" style={{ color: 'var(--brand)' }} /> Buscar celebração, sacramento...
         </button>
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
-          <span className="pill pill-yellow">Galerias 2026</span>
+          <span className="pill pill-yellow">Galerias {new Date().getFullYear()}</span>
           <span className="pill" style={{ background: 'rgba(255,255,255,0.16)', color: '#fff', border: '1px solid rgba(255,255,255,0.18)' }}><I.Camera className="icon icon-sm" /> {totalFotos} fotos</span>
         </div>
       </section>
@@ -53,43 +111,7 @@ export function HomeScreen({ go, eventos, loading, tweaks }) {
         </section>
       )}
 
-      <section className="section-tight">
-        <div className="eyebrow">Explore por sacramento</div>
-        <h2 className="h3" style={{ marginTop: 4 }}>O que você procura?</h2>
-      </section>
-      <SacramentoChips value="todos" onChange={(sacramento) => go({ name: 'galerias', sacramento })} />
-
-      <section className="section">
-        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12 }}>
-          <div><div className="eyebrow">Galerias da Comunidade</div><h2 className="h2" style={{ marginTop: 4 }}>Eventos recentes</h2></div>
-          <button className="link-btn" onClick={() => go({ name: 'galerias' })}>Ver todas <I.ChevronRight className="icon icon-sm" /></button>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 14 }}>
-          {loading ? <LoadingCards /> : recentes.map((ev) => <EventCard key={ev.id} ev={ev} onClick={() => go({ name: 'evento', eventoId: ev.id })} isPascom={tweaks.role === 'pascom'} />)}
-          {!loading && recentes.length === 0 && <EmptyCard text="Nenhuma galeria publicada ainda." />}
-        </div>
-      </section>
-
-      <section className="section" style={{ background: 'var(--surface-2)' }}>
-        <div className="eyebrow">Agenda Paroquial</div><h2 className="h2" style={{ marginTop: 4 }}>Próximas atividades</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
-          {proximas.itens.map((item) => <AgendaRow key={`${item.id}-${item.data}`} onClick={() => go({ name: 'agenda' })} agenda={{ dia: item.data.slice(8, 10), mes: MESES_CURTOS[Number(item.data.slice(5, 7)) - 1], titulo: item.titulo, local: item.local || 'Paróquia São Rafael', hora: item.hora || 'Dia inteiro' }} />)}
-          {!proximas.carregando && proximas.itens.length === 0 && <EmptyCard text="Nenhuma atividade na agenda por enquanto." />}
-        </div>
-        <button className="link-btn" style={{ marginTop: 12 }} onClick={() => go({ name: 'agenda' })}>Ver a agenda completa <I.ChevronRight className="icon icon-sm" /></button>
-      </section>
-
-      <section className="section-purple">
-        <CornerOrnament at="tr" />
-        <div className="eyebrow eyebrow-light">Secretaria Paroquial</div>
-        <h2 className="h2" style={{ marginTop: 8, color: '#fff' }}>Estamos aqui para acolher sua família.</h2>
-        <p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 8 }}>Escolha fotos, finalize com segurança e receba os links após a confirmação.</p>
-        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-          <a className="btn btn-primary" href={linkWhatsapp(whatsapp)} target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon" /> WhatsApp</a>
-          <a className="btn btn-outline" href="mailto:paroquiasaorafael@hotmail.com" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.55)' }}><I.Mail className="icon" /> E-mail</a>
-        </div>
-        <div className="glory-text">AD GLORIAM DEI</div>
-      </section>
+      {blocosVisiveis(site).map((bloco) => (blocos[bloco.id] ? blocos[bloco.id](bloco.titulo) : null))}
     </div>
   );
 }
@@ -133,6 +155,7 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
 }
 
 export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromCart, photos: loadedPhotos = [], loading = false, locked = false, offers = { coupons: [], packages: [] }, selectPackage, shareEvent, isDevtoolsOpen = false }) {
+  const { precos } = useSite();
   if (!ev) return <EmptyCard text="Evento não encontrado." />;
   const cover = getCoverPhoto(ev);
   const photos = (loadedPhotos.length ? loadedPhotos : resolveEventPhotos(ev)).slice(0, 9);
@@ -160,7 +183,7 @@ export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromC
       <section className="mobile-protected-section">
         <ProtectedPreviewCard />
         {(offers.packages?.length > 0 || offers.coupons?.length > 0) && <MobileOffers offers={offers} selectPackage={selectPackage} />}
-        {tweaks.role === 'pascom' && <div style={{ marginTop: 14 }} className="card"><div style={{ padding: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><div><div className="eyebrow">Status Pascom</div><span className="tag tag-green">Publicado</span></div><PascomStat label="Receita" v={brl((cart.length || 9) * PRECO_FOTO)} /></div></div>}
+        {tweaks.role === 'pascom' && <div style={{ marginTop: 14 }} className="card"><div style={{ padding: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}><div><div className="eyebrow">Status Pascom</div><span className="tag tag-green">Publicado</span></div><PascomStat label="Receita" v={brl((cart.length || 9) * precos.foto)} /></div></div>}
       </section>
       <section className="mobile-event-preview-section">
         <div className="mobile-gallery-strip-head"><strong>{ev.totalFotos} fotos</strong><button className="tag tag-yellow" onClick={() => go({ name: 'galeria', eventoId: ev.id })}>Ver todas</button></div>
@@ -253,13 +276,14 @@ function ProtectedPreviewCard() {
 
 function PriceHelpCard() {
   const { whatsapp } = useContato();
+  const { precos } = useSite();
   return (
     <div className="mobile-price-help-card">
       <div>
         <div className="caption">Cada foto custa</div>
-        <strong>{brl(PRECO_FOTO)}</strong>
+        <strong>{brl(precos.foto)}</strong>
       </div>
-      <a className="btn btn-outline btn-sm" href={linkWhatsapp(whatsapp)} target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a>
+      {whatsapp && <a className="btn btn-outline btn-sm" href={linkWhatsapp(whatsapp)} target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a>}
     </div>
   );
 }
@@ -283,6 +307,7 @@ export function PerfilScreen({ setRole, go, role = 'publico', eventos = [], recu
 
 function PublicoScreen({ go, setRole, recuperarPedido }) {
   const { whatsapp } = useContato();
+  const site = useSite();
   const [form, setForm] = useState({ email: '', pedidoId: '' });
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -300,7 +325,7 @@ function PublicoScreen({ go, setRole, recuperarPedido }) {
       <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos e fale com a secretaria.</p></section>
       <section className="section">
         <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra e o código do pedido.</p><input className="input" placeholder="seu@email.com" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} style={{ marginTop: 14 }} /><input className="input" placeholder="PED_..." value={form.pedidoId} onChange={(event) => setForm({ ...form, pedidoId: event.target.value.toUpperCase() })} style={{ marginTop: 10 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} onClick={submit}>Recuperar fotos</button>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}{result && <div className="caption" style={{ textAlign: 'left', marginTop: 12 }}><strong>{result.status}</strong><br />{result.deliveryReady ? `${result.downloads.length} link(s) liberado(s) por 24h.` : 'Pedido ainda não confirmado.'}{result.downloads?.map((item, index) => <a key={item.url} href={item.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>Baixar foto {index + 1}</a>)}</div>}</div>
-        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Calendar" label="Agenda da paróquia" onClick={() => go({ name: 'agenda' })} /><MenuRow icon="Sparkle" label="Central de ajuda e assistente" onClick={() => go({ name: 'ajuda' })} /><MenuRow icon="Whatsapp" label="Falar com a secretaria" href={linkWhatsapp(whatsapp)} /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
+        <div style={{ marginTop: 14 }} className="card">{moduloLigado(site, 'agenda') && <MenuRow icon="Calendar" label="Agenda da paróquia" onClick={() => go({ name: 'agenda' })} />}{moduloLigado(site, 'ajuda') && <MenuRow icon="Sparkle" label="Central de ajuda e assistente" onClick={() => go({ name: 'ajuda' })} />}{whatsapp && <MenuRow icon="Whatsapp" label="Falar com a secretaria" href={linkWhatsapp(whatsapp)} />}{site.email && <MenuRow icon="Mail" label="Contato por e-mail" href={`mailto:${site.email}`} />}<MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
         <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para consultar pedidos, downloads, suporte e métricas.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div>
       </section>
     </div>
@@ -328,6 +353,7 @@ export function formatMobileCardDate(dateLabel, date) {
 }
 
 function EventCard({ ev, onClick, isPascom }) {
+  const { precos } = useSite();
   const cover = getCoverPhoto(ev);
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' || event.key === ' ') onClick(event);
@@ -348,7 +374,7 @@ function EventCard({ ev, onClick, isPascom }) {
         <div className="mobile-event-card-location"><I.MapPin className="icon icon-sm" /> {ev.local}</div>
         <div className="mobile-event-card-footer">
           <span className="mobile-event-card-link">Ver fotos →</span>
-          <span className="mobile-event-card-summary"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(PRECO_FOTO)} cada</span>
+          <span className="mobile-event-card-summary"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(precos.foto)} cada</span>
         </div>
       </div>
     </article>

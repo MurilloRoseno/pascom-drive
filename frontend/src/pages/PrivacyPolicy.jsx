@@ -1,12 +1,9 @@
 /* eslint-disable react/prop-types */
 import { Link } from 'react-router-dom';
+import { SITE_PADRAO, useSite } from '../shared/site.js';
 import './privacy-policy.css';
 
 const lastUpdate = '29 de maio de 2026';
-const controllerName = 'Paróquia São Rafael';
-const controllerAddress = 'Av. Contorno, Qd 59 Lt 09, Jardim de Alah, Açailândia - MA, CEP 65930-000';
-const controllerEmail = 'paroquiasaorafael@hotmail.com';
-const dpoEmail = 'paroquiasaorafael@hotmail.com';
 
 const toc = [
   ['controlador', '1. Identificação do Controlador'],
@@ -105,6 +102,13 @@ function Table({ columns, rows }) {
 }
 
 export default function PrivacyPolicy({ mobile = false }) {
+  // Identificação do controlador: sai do conteúdo do site (painel). A política é um documento legal,
+  // então nunca fica sem contato: campo apagado cai no dado original.
+  const site = useSite();
+  const controllerName = site.nome || SITE_PADRAO.nome;
+  const controllerAddress = site.endereco || SITE_PADRAO.endereco;
+  const controllerEmail = site.email || SITE_PADRAO.email;
+  const dpoEmail = controllerEmail;
   return (
     <div className={`privacy-page${mobile ? ' privacy-page--mobile scroll' : ''}`}>
       <header className="privacy-hero">

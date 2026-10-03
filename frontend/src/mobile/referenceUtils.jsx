@@ -1,17 +1,12 @@
 ﻿/* eslint-disable react/prop-types */
 import { I } from './referenceIcons.jsx';
 import { categoryLabel as rotuloDaCategoria, useCategorias } from '../shared/categorias.js';
+import { SITE_PADRAO } from '../shared/site.js';
 
-export const PROXIMAS = [
-  { id: 'a1', dia: '01', mes: 'Jun', titulo: 'Festa de Corpus Christi', local: 'Paróquia São Rafael', hora: '17h00' },
-  { id: 'a2', dia: '07', mes: 'Jun', titulo: 'Crisma · Turma B', local: 'Paróquia São Rafael', hora: '19h00' },
-  { id: 'a3', dia: '15', mes: 'Jun', titulo: 'Batismo Coletivo · Junho', local: 'Capela do Sagrado Coração', hora: '10h00' },
-  { id: 'a4', dia: '24', mes: 'Jun', titulo: 'São João — Quermesse paroquial', local: 'Praça São Rafael', hora: '18h00' },
-];
-
-export const PRECO_FOTO = 10;
-export const TAXA_SERVICO = 2;
-export const TAXA_COMODIDADE = 1;
+// Só fallback (antes de /api/site responder): o preço e as taxas de verdade vêm do painel, via useSite().precos.
+export const PRECO_FOTO = SITE_PADRAO.precos.foto;
+export const TAXA_SERVICO = SITE_PADRAO.precos.taxaServico;
+export const TAXA_COMODIDADE = SITE_PADRAO.precos.taxaComodidade;
 
 export function brl(value = 0) {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;

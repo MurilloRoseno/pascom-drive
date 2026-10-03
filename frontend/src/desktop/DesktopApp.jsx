@@ -15,6 +15,8 @@ import PascomPage from '../pages/Pascom.jsx';
 import AjudaPage from '../pages/Ajuda.jsx';
 import AgendaPage from '../pages/Agenda.jsx';
 import AssistenteFlutuante from '../components/AssistenteFlutuante.jsx';
+import ModuloGuard from '../components/ModuloGuard.jsx';
+import { moduloLigado, useSite } from '../shared/site.js';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import '../index.css';
 import '../reference-pages.css';
@@ -26,6 +28,7 @@ function LegacyCategoryRedirect() {
 }
 
 export default function DesktopApp() {
+  const site = useSite();
   return (
     <BrowserRouter>
       <div className="parish-app">
@@ -33,23 +36,23 @@ export default function DesktopApp() {
         <Header />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/buscar" element={<SearchPage />} />
+          <Route path="/buscar" element={<ModuloGuard chave="busca"><SearchPage /></ModuloGuard>} />
           <Route path="/categoria" element={<LegacyCategoryRedirect />} />
           <Route path="/e/:slug" element={<EventSlugRedirect />} />
           <Route path="/privacidade" element={<PrivacyPolicy />} />
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/recuperar-pedido" element={<RecoverOrderPage />} />
           <Route path="/pascom" element={<PascomPage />} />
-          <Route path="/ajuda" element={<AjudaPage />} />
-          <Route path="/agenda" element={<AgendaPage />} />
+          <Route path="/ajuda" element={<ModuloGuard chave="ajuda"><AjudaPage /></ModuloGuard>} />
+          <Route path="/agenda" element={<ModuloGuard chave="agenda"><AgendaPage /></ModuloGuard>} />
           <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
         </Routes>
         <CarrinhoProvider>
           <Routes>
-            <Route path="/evento/:eventoId" element={<EventPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/evento/:eventoId" element={<ModuloGuard chave="busca"><EventPage /></ModuloGuard>} />
+            <Route path="/checkout" element={<ModuloGuard chave="checkout"><CheckoutPage /></ModuloGuard>} />
           </Routes>
-          <CartSummary />
+          {moduloLigado(site, 'checkout') && <CartSummary />}
         </CarrinhoProvider>
         <Footer />
         <AssistenteFlutuante />

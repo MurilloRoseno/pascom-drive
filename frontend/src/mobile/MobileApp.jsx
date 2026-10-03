@@ -9,6 +9,8 @@ import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import AjudaPage from '../pages/Ajuda.jsx';
 import AgendaPage from '../pages/Agenda.jsx';
 import AssistenteFlutuante from '../components/AssistenteFlutuante.jsx';
+import ModuloGuard from '../components/ModuloGuard.jsx';
+import { moduloLigado, useSite } from '../shared/site.js';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
 import { buildEventSharePayload, shareEventNatively } from '../shared/eventShare.js';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
@@ -40,7 +42,7 @@ function useEventosCatalog(enabled = true) {
   return state;
 }
 
-function useEventGallery(eventoId, catalogEvent) {
+function useEventGallery(eventoId, catalogEvent, preco) {
   const [state, setState] = useState({ event: catalogEvent || null, photos: [], loading: true, locked: false, error: '' });
   const loadPhotos = useCallback(async (event) => {
     if (!event) return;
@@ -50,8 +52,9 @@ function useEventGallery(eventoId, catalogEvent) {
     }
     const result = await listarFotosEvento(event.id, galleryToken(event.id));
     const referenceEvent = toReferenceEvent({ ...event, ...result.event });
-    setState({ event: referenceEvent, photos: result.photos.map((photo, index) => toReferencePhoto(photo, referenceEvent, index)), loading: false, locked: false, error: '' });
-  }, []);
+    // o preço mostrado é o que o servidor cobra (aba Configuracoes), não o da linha da planilha
+    setState({ event: referenceEvent, photos: result.photos.map((photo, index) => toReferencePhoto({ ...photo, price: preco }, referenceEvent, index)), loading: false, locked: false, error: '' });
+  }, [preco]);
 
   useEffect(() => {
     let alive = true;
@@ -71,12 +74,14 @@ function MobileRoutes() {
   const routeName = routeNameFromLocation(location);
   const shouldLoadCatalog = ['home', 'galerias', 'calendario', 'evento', 'galeria', 'foto'].includes(routeName);
   const catalog = useEventosCatalog(shouldLoadCatalog);
+  const site = useSite();
   const { fotos, couponCode, packageId, addFoto, addFotos, removeFoto, clearCarrinho, setCouponCode, setPackageId } = useCarrinho();
   const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
   const [cartOpen, setCartOpen] = useState(false);
 
   const setTweak = (key, value) => setTweaks((current) => ({ ...current, [key]: value }));
-  const cart = fotos.map((foto) => ({ ...foto, photoId: foto.id || foto.photoId }));
+  const cart = fotos.map((foto) => ({ ...foto, photoId: foto.id || foto.photoId, price: site.precos.foto }));
+  const vendaNoAr = moduloLigado(site, 'checkout');
   const go = useCallback((next) => {
     if (next.name === 'home') navigate('/');
     if (next.name === 'galerias') navigate(`/buscar${next.sacramento && next.sacramento !== 'todos' ? `?categoria=${next.sacramento}` : ''}`);
@@ -94,32 +99,32 @@ function MobileRoutes() {
   const appStyle = { '--accent': tweaks.accent, '--accent-d': shadeColor(tweaks.accent, -25) };
   const isLightbox = routeName === 'foto';
   const hideChrome = isLightbox || routeName === 'checkout' || location.pathname.startsWith('/pagamento/');
-  const showCartBar = cart.length > 0 && !hideChrome && !cartOpen;
+  const showCartBar = vendaNoAr && cart.length > 0 && !hideChrome && !cartOpen;
 
   useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }, [location.pathname, location.search]);
 
   return (
     <div className={`app ${tweaks.dark ? 'dark' : ''} ${!tweaks.ornaments ? 'hide-ornaments' : ''}`} style={appStyle}>
-      {!hideChrome && <AppBar cartCount={cart.length} openCart={() => setCartOpen(true)} tweaks={tweaks} setTweak={setTweak} />}
+      {!hideChrome && <AppBar cartCount={cart.length} openCart={() => setCartOpen(true)} tweaks={tweaks} setTweak={setTweak} site={site} vendaNoAr={vendaNoAr} />}
       <Routes>
         <Route path="/" element={<HomeScreen go={go} eventos={catalog.eventos} loading={catalog.loading} tweaks={tweaks} />} />
-        <Route path="/buscar" element={<GaleriasRoute go={go} catalog={catalog} />} />
+        <Route path="/buscar" element={<ModuloGuard chave="busca"><GaleriasRoute go={go} catalog={catalog} /></ModuloGuard>} />
         <Route path="/categoria" element={<Navigate replace to={`/buscar${location.search}`} />} />
         <Route path="/e/:slug" element={<EventSlugRedirect />} />
-        <Route path="/calendario" element={<CalendarioScreen eventos={catalog.eventos} go={go} />} />
-        <Route path="/agenda" element={<AgendaPage mobile />} />
-        <Route path="/ajuda" element={<AjudaPage mobile />} />
+        <Route path="/calendario" element={<ModuloGuard chave="busca"><CalendarioScreen eventos={catalog.eventos} go={go} /></ModuloGuard>} />
+        <Route path="/agenda" element={<ModuloGuard chave="agenda"><AgendaPage mobile /></ModuloGuard>} />
+        <Route path="/ajuda" element={<ModuloGuard chave="ajuda"><AjudaPage mobile /></ModuloGuard>} />
         <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} role={tweaks.role} eventos={catalog.eventos} recuperarPedido={recuperarPedido} />} />
         <Route path="/privacidade" element={<PrivacyPolicy mobile />} />
         <Route path="/politica-de-privacidade" element={<PrivacyPolicy mobile />} />
-        <Route path="/evento/:eventoId" element={<EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} addFotos={addFotos} removeFoto={removeFoto} setPackageId={setPackageId} gridCols={tweaks.gridCols} setGridCols={(value) => setTweak('gridCols', value)} tweaks={tweaks} />} />
-        <Route path="/checkout" element={<CheckoutRoute cart={cart} couponCode={couponCode} packageId={packageId} setCouponCode={setCouponCode} removeFoto={removeFoto} go={go} clearCarrinho={clearCarrinho} />} />
+        <Route path="/evento/:eventoId" element={<ModuloGuard chave="busca"><EventRoute go={go} catalog={catalog} cart={cart} addFoto={addFoto} addFotos={addFotos} removeFoto={removeFoto} setPackageId={setPackageId} gridCols={tweaks.gridCols} setGridCols={(value) => setTweak('gridCols', value)} tweaks={tweaks} /></ModuloGuard>} />
+        <Route path="/checkout" element={<ModuloGuard chave="checkout"><CheckoutRoute cart={cart} couponCode={couponCode} packageId={packageId} setCouponCode={setCouponCode} removeFoto={removeFoto} go={go} clearCarrinho={clearCarrinho} /></ModuloGuard>} />
         <Route path="/pagamento/:resultado" element={<PaymentRoute go={go} />} />
       </Routes>
       {showCartBar && <CartBar cart={cart} onClick={() => setCartOpen(true)} />}
-      {cartOpen && <CarrinhoScreen cart={cart} removeFromCart={removeFoto} go={go} close={() => setCartOpen(false)} />}
+      {vendaNoAr && cartOpen && <CarrinhoScreen cart={cart} removeFromCart={removeFoto} go={go} close={() => setCartOpen(false)} />}
       {!hideChrome && <AssistenteFlutuante mobile acima={showCartBar} />}
-      {!hideChrome && <BottomNav routeName={routeName} go={go} role={tweaks.role} />}
+      {!hideChrome && <BottomNav routeName={routeName} go={go} role={tweaks.role} site={site} />}
     </div>
   );
 }
@@ -137,7 +142,8 @@ function EventRoute({ go, catalog, cart, addFoto, addFotos, removeFoto, setPacka
   const { eventoId } = useParams();
   const [params] = useSearchParams();
   const catalogEvent = catalog.eventos.find((event) => event.id === eventoId);
-  const gallery = useEventGallery(eventoId, catalogEvent);
+  const site = useSite();
+  const gallery = useEventGallery(eventoId, catalogEvent, site.precos.foto);
   const [offers, setOffers] = useState({ coupons: [], packages: [] });
   const [accessCode, setAccessCode] = useState('');
   const [accessError, setAccessError] = useState('');
@@ -218,13 +224,23 @@ function PaymentRoute({ go }) {
   return <PaymentReturnScreen approved={approved} order={order} go={go} />;
 }
 
-function AppBar({ cartCount, openCart, tweaks, setTweak }) {
-  return <header className="appbar"><div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}><img src="/assets/logo-header.png" alt="Paróquia São Rafael" style={{ height: 40, width: 'auto', display: 'block', flexShrink: 0 }} /><div style={{ minWidth: 0, lineHeight: 1 }}><div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent-d)', whiteSpace: 'nowrap' }}>Paróquia</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--brand)', lineHeight: 1.1, marginTop: 3, whiteSpace: 'nowrap' }}>São Rafael</div></div></div><div style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}><button className="appbar-icon-btn" onClick={() => setTweak('dark', !tweaks.dark)} title="Tema">{tweaks.dark ? <I.Sun className="icon" /> : <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>}</button><button className="appbar-icon-btn" onClick={openCart} title="Carrinho"><I.Bag className="icon" />{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}</button></div></header>;
+function AppBar({ cartCount, openCart, tweaks, setTweak, site, vendaNoAr }) {
+  // "Paróquia São Rafael" vira duas linhas: a primeira palavra em cima, o resto embaixo
+  const [primeira, ...resto] = site.nome.split(' ');
+  return <header className="appbar"><div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}><img src="/assets/logo-header.png" alt={site.nome} style={{ height: 40, width: 'auto', display: 'block', flexShrink: 0 }} /><div style={{ minWidth: 0, lineHeight: 1 }}><div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent-d)', whiteSpace: 'nowrap' }}>{primeira}</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, color: 'var(--brand)', lineHeight: 1.1, marginTop: 3, whiteSpace: 'nowrap' }}>{resto.join(' ')}</div></div></div><div style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}><button className="appbar-icon-btn" onClick={() => setTweak('dark', !tweaks.dark)} title="Tema">{tweaks.dark ? <I.Sun className="icon" /> : <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>}</button>{vendaNoAr && <button className="appbar-icon-btn" onClick={openCart} title="Carrinho"><I.Bag className="icon" />{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}</button>}</div></header>;
 }
 
-function BottomNav({ routeName, go, role }) {
-  const items = [{ id: 'home', label: 'Início', icon: I.Home }, { id: 'galerias', label: 'Galerias', icon: I.Camera }, { id: 'calendario', label: 'Calendário', icon: I.Calendar }, { id: 'perfil', label: role === 'pascom' ? 'Pascom' : 'Perfil', icon: role === 'pascom' ? I.Upload : I.User }];
-  return <nav className="botnav">{items.map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => go({ name: item.id })} className={`botnav-item${routeName === item.id || (item.id === 'calendario' && routeName === 'agenda') || (item.id === 'perfil' && routeName === 'ajuda') ? ' active' : ''}`}><Icon className="icon" /><span>{item.label}</span></button>; })}</nav>;
+function BottomNav({ routeName, go, role, site }) {
+  const busca = moduloLigado(site, 'busca');
+  const agenda = moduloLigado(site, 'agenda');
+  const items = [
+    { id: 'home', label: 'Início', icon: I.Home },
+    ...(busca ? [{ id: 'galerias', label: 'Galerias', icon: I.Camera }] : []),
+    ...(busca || agenda ? [{ id: busca ? 'calendario' : 'agenda', label: 'Calendário', icon: I.Calendar }] : []),
+    { id: 'perfil', label: role === 'pascom' ? 'Pascom' : 'Perfil', icon: role === 'pascom' ? I.Upload : I.User },
+  ];
+  const ativa = (id) => routeName === id || (id === 'calendario' && routeName === 'agenda') || (id === 'perfil' && routeName === 'ajuda');
+  return <nav className="botnav" style={{ gridTemplateColumns: `repeat(${items.length}, 1fr)` }}>{items.map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => go({ name: item.id })} className={`botnav-item${ativa(item.id) ? ' active' : ''}`}><Icon className="icon" /><span>{item.label}</span></button>; })}</nav>;
 }
 
 function routeNameFromLocation(location) {
