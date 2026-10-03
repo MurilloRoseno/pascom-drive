@@ -9,6 +9,9 @@ import VisaoGeral from './pages/VisaoGeral.jsx';
 import Eventos from './pages/Eventos.jsx';
 import Categorias from './pages/Categorias.jsx';
 import Pagamentos from './pages/Pagamentos.jsx';
+import Agenda from './pages/Agenda.jsx';
+import Ajuda from './pages/Ajuda.jsx';
+import Assistente from './pages/Assistente.jsx';
 import Seguranca from './pages/Seguranca.jsx';
 import Acessos from './pages/Acessos.jsx';
 
@@ -95,6 +98,9 @@ export default function PainelAutenticado({ obterToken, onSair, chamarSensivel }
             <Route path="eventos" element={<Eventos />} />
             <Route path="categorias" element={<Categorias />} />
             <Route path="pagamentos" element={<Pagamentos />} />
+            <Route path="agenda" element={<Agenda />} />
+            <Route path="ajuda" element={<Ajuda />} />
+            <Route path="assistente" element={<Assistente />} />
             <Route path="acessos" element={<Acessos />} />
             <Route path="seguranca" element={<Seguranca />} />
             <Route path="*" element={<Navigate to="/painel" replace />} />

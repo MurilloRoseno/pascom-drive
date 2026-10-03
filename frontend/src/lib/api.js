@@ -22,6 +22,30 @@ export function listarCategorias() {
   return request('/api/categorias');
 }
 
+/** GET /api/faq: Central de Ajuda (perguntas publicadas, WhatsApp da secretaria e se o assistente está ligado). */
+export function obterFaq() {
+  return request('/api/faq');
+}
+
+/** GET /api/agenda?mes=AAAA-MM: compromissos do mês e dos dias vizinhos que a grade mostra. */
+export function obterAgenda(mes) {
+  return request(`/api/agenda?mes=${encodeURIComponent(mes)}`);
+}
+
+/** GET /api/agenda?proximas=N: os próximos N compromissos a partir de hoje. */
+export function obterProximas(n) {
+  return request(`/api/agenda?proximas=${encodeURIComponent(n)}`);
+}
+
+/** POST /api/assistente: responde só com o que a paróquia escreveu (FAQ, agenda, eventos publicados). */
+export function perguntarAoAssistente(mensagem) {
+  return request('/api/assistente', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mensagem }),
+  });
+}
+
 export function obterEvento(eventoId) {
   return request(`/api/eventos/${encodeURIComponent(eventoId)}`);
 }

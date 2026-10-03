@@ -14,7 +14,7 @@ module.exports = {
     },
     {
       files: ['**/__tests__/**', '**/*.test.js', '**/*.test.jsx'],
-      env: { jest: true },
+      env: { jest: true, node: true },
     },
   ],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
