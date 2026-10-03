@@ -9,13 +9,13 @@ jest.mock('../lib/config-store', () => ({
     repassarTaxa: {}, distribuicaoTaxa: {}, tarifaCartaoPct: {},
   },
 }));
-jest.mock('../lib/audit', () => ({ registrarAuditoria: jest.fn().mockResolvedValue(true) }));
+jest.mock('../lib/audit', () => ({ registrarAuditoria: jest.fn().mockResolvedValue(true), ultimasAlteracoes: jest.fn() }));
 
 const request = require('supertest');
 const express = require('express');
 const router = require('../api/painel');
 const { lerConfig, salvarConfig } = require('../lib/config-store');
-const { registrarAuditoria } = require('../lib/audit');
+const { registrarAuditoria, ultimasAlteracoes } = require('../lib/audit');
 const { ErroNegocio } = require('../lib/erros');
 
 const app = express();
@@ -104,3 +104,21 @@ describe('configurações', () => {
   });
 });
 
+
+describe('auditoria', () => {
+  it('qualquer membro vê as últimas alterações; sem login, 401', async () => {
+    ultimasAlteracoes.mockResolvedValue([{ quando: '03/10/2026 10:00:00', quem: 'a@p.org', mensagem: 'x' }]);
+    const r = await request(app).get('/api/pascom/auditoria').set(como('atend'));
+    expect(r.status).toBe(200);
+    expect(r.body.alteracoes).toHaveLength(1);
+    expect(ultimasAlteracoes).toHaveBeenCalledWith(8);
+    expect((await request(app).get('/api/pascom/auditoria')).status).toBe(401);
+  });
+
+  it('falha na planilha vira 500 genérico, sem vazar o motivo', async () => {
+    ultimasAlteracoes.mockRejectedValue(new Error('chave secreta xyz'));
+    const r = await request(app).get('/api/pascom/auditoria').set(como('admin'));
+    expect(r.status).toBe(500);
+    expect(JSON.stringify(r.body)).not.toMatch(/xyz/);
+  });
+});

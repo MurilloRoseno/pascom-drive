@@ -3,7 +3,7 @@ const { z } = require('zod');
 const { exigirPermissao } = require('../../lib/pascom-permissoes');
 const { temPermissao } = require('../../lib/permissions');
 const { lerConfig, salvarConfig, CAMPOS } = require('../../lib/config-store');
-const { registrarAuditoria } = require('../../lib/audit');
+const { registrarAuditoria, ultimasAlteracoes } = require('../../lib/audit');
 const { ErroNegocio } = require('../../lib/erros');
 const { precisaReverificar, DICA_REVERIFICACAO } = require('../../lib/reverificacao');
 
@@ -96,5 +96,9 @@ router.put('/configuracoes', exigirPermissao(), tratar(async (req, res) => {
   return res.json({ chave, valor: depois });
 }));
 
+// ── Últimas alterações no painel (Visão geral) ─────────────────────────────────
+router.get('/auditoria', exigirPermissao(), tratar(async (_req, res) => {
+  res.json({ alteracoes: await ultimasAlteracoes(8) });
+}));
 
 module.exports = router;
