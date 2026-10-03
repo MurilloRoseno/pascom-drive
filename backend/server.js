@@ -3,7 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, assistente,
 } = require('./middleware/rate-limit');
 const { mediaAbuseGuard } = require('./middleware/media-abuse');
 const { authenticatePascom, pascomClerkMiddleware } = require('./lib/pascom-auth');
@@ -35,6 +35,8 @@ const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-download
 const painelRouter = require('./api/painel');
 const categoriasHandler = require('./api/categorias');
 const agendaHandler = require('./api/agenda');
+const faqHandler = require('./api/faq');
+const assistenteHandler = require('./api/assistente');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -93,6 +95,8 @@ app.post('/api/cover-preview', processamento, coverPreviewHandler);
 app.get('/api/download', download, downloadHandler);
 app.get('/api/categorias', fotos, categoriasHandler);
 app.get('/api/agenda', fotos, agendaHandler);
+app.get('/api/faq', fotos, faqHandler);
+app.post('/api/assistente', assistente, assistenteHandler);
 app.get('/api/eventos', fotos, eventosHandler);
 app.get('/api/e/:slug', fotos, eventoSlugHandler);
 app.get('/api/eventos/:eventoId', fotos, eventosHandler);

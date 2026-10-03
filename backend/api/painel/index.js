@@ -19,6 +19,7 @@ const auditar = (req, mensagem) => registrarAuditoria({ quem: req.membro.email, 
 router.use('/acessos', require('./acessos'));
 router.use('/pagamentos', require('./pagamentos'));
 router.use('/agenda', require('./agenda'));
+router.use('/faq', require('./ajuda'));
 
 // ── Configurações ────────────────────────────────────────────────────────────
 const PERMISSAO_DA_CHAVE = {

@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const { signToken } = require('./jwt-utils');
 const { buscarOriginaisPedido, criarAutorizacoesDownload } = require('./google-sheets');
 const { createFingerprintId, hashFingerprint, FINGERPRINT_VERSION } = require('./forensic-watermark');
+const { VALIDADE_HORAS, USOS_MAXIMOS } = require('./regras-entrega');
 
 async function criarDownloadsDoPedido(pedido) {
   const secret = process.env.DOWNLOAD_JWT_SECRET;
@@ -11,7 +12,7 @@ async function criarDownloadsDoPedido(pedido) {
   if (!forensicSecret) throw new Error('Segredo forense nao configurado.');
   const photos = await buscarOriginaisPedido(pedido.id);
   const appUrl = process.env.PUBLIC_APP_URL || 'https://pascom-drive.vercel.app';
-  const exp = Date.now() + 24 * 60 * 60 * 1000;
+  const exp = Date.now() + VALIDADE_HORAS * 60 * 60 * 1000;
   const records = photos.map((photo) => {
     const id = `DL_${crypto.randomBytes(12).toString('hex')}`;
     const token = signToken({ downloadId: id, exp }, secret);
@@ -24,7 +25,7 @@ async function criarDownloadsDoPedido(pedido) {
       fingerprintHash: hashFingerprint(fingerprintId),
       fingerprintVersion: FINGERPRINT_VERSION,
       exp,
-      maxUses: 2,
+      maxUses: USOS_MAXIMOS,
       tokenHash: crypto.createHash('sha256').update(token).digest('hex'),
       url: `${appUrl}/api/download?token=${encodeURIComponent(token)}`,
     };

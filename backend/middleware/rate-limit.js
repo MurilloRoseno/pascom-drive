@@ -56,6 +56,15 @@ const recuperacaoPedido = rateLimit({
   message: { error: 'Muitas tentativas de recuperacao. Aguarde alguns minutos.' },
 });
 
+// Assistente: 20 mensagens por visitante por hora (sem histórico entre sessões).
+const assistente = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Você fez muitas perguntas seguidas. Tente de novo em uma hora ou veja a Central de ajuda.' },
+});
+
 const processamento = rateLimit({
   windowMs: 60 * 1000,
   max: 240,
@@ -106,5 +115,5 @@ const pascom = rateLimit({
 
 module.exports = {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, assistente,
 };

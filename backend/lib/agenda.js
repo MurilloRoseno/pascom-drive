@@ -87,7 +87,9 @@ async function acharLinha(id) {
 /** Mescla o que veio com o que já existe e valida o conjunto final. */
 async function atualizarCompromisso(id, patch) {
   const row = await acharLinha(id);
-  const { id: _id, ativo, ...atual } = paraObjeto(row);
+  const atual = paraObjeto(row);
+  delete atual.id;
+  delete atual.ativo;
   const dados = conferir(validar(entradaSchema, { ...atual, ...patch }));
   for (const [k, v] of Object.entries(paraLinha(dados))) row.set(k, v);
   await row.save();
