@@ -79,10 +79,17 @@ describe('configurações', () => {
       expect(salvarConfig).not.toHaveBeenCalled();
     });
 
-    it('prazo padrão e tarja não são dinheiro: não pedem reautenticação', async () => {
+    it('prazo padrão não é dinheiro: não pede reautenticação', async () => {
       salvarConfig.mockResolvedValue(3);
       expect((await PUT('admin-velho', { chave: 'prazoPadraoDias', valor: 3 })).status).toBe(200);
-      expect((await PUT('admin-velho', { chave: 'tarja', valor: false })).status).toBe(200);
+    });
+
+    it('a tarja das prévias é regra do processo: nem o admin consegue mudar pela API', async () => {
+      for (const chave of ['tarja', 'previaLargura']) {
+        const r = await PUT('admin-novo', { chave, valor: false });
+        expect(r.status).toBe(400);
+      }
+      expect(salvarConfig).not.toHaveBeenCalled();
     });
 
     it('sem a permissão, 403 comum de permissão vem antes da dica (coordenação nunca vê o desafio)', async () => {
