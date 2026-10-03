@@ -88,7 +88,8 @@ describe('criarSessao', () => {
     const p = calculatePricing(2, 'pix', REGRAS, {}, BASE);
     await criarSessao({ pedidoId: 'PED_2', buyer: { email: 'a@b.com' }, items: itens(2), pricing: p, paymentMethod: 'pix' });
     expect(mockCriar.mock.calls[0][0].excluded_payment_method_types).toEqual(EXCLUIR_NO_PIX);
-    expect(EXCLUIR_NO_PIX).toEqual(expect.arrayContaining(['card', 'link']));
+    expect(EXCLUIR_NO_PIX).toEqual(expect.arrayContaining(['card']));
+    expect(EXCLUIR_NO_PIX).not.toContain('link'); // a API recusa 'link' em excluded_payment_method_types
   });
 
   it('sem chave da Stripe, não tenta cobrar', async () => {

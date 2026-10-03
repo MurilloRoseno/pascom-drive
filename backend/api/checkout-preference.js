@@ -47,7 +47,8 @@ module.exports = async function handler(req, res, next) {
     try {
       preference = gateway === 'stripe' ? await criarSessao(dados) : await criarPreferencia(dados);
     } catch (error) {
-      if (gateway === 'stripe' && input.paymentMethod === 'pix' && /pix/i.test(error.message || '')) {
+      // Sem Pix ligado no Dashboard, excluir o cartão deixa a sessão sem nenhum meio de pagamento.
+      if (gateway === 'stripe' && input.paymentMethod === 'pix' && /no valid payment method types|activated payment methods/i.test(error.message || '')) {
         return res.status(409).json({ error: 'O Pix não está disponível no momento. Escolha cartão de crédito.' });
       }
       throw error;

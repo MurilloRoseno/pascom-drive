@@ -90,11 +90,19 @@ describe('POST /api/checkout/preference', () => {
     });
 
     it('Pix indisponível na conta Stripe vira aviso claro (409) e nenhum pedido é gravado', async () => {
-      stripe.criarSessao.mockRejectedValueOnce(new Error('The payment method type "pix" is invalid. Please ensure the provided type is activated in your dashboard.'));
+      stripe.criarSessao.mockRejectedValueOnce(new Error('No valid payment method types for this Checkout Session. Please ensure that you have activated payment methods compatible with the chosen currency in your dashboard.'));
       const res = await request(app).post('/api/checkout/preference').send(VALID_BODY);
       expect(res.status).toBe(409);
       expect(res.body.error).toMatch(/Pix não está disponível/);
       expect(sheets.registrarPedido).not.toHaveBeenCalled();
+    });
+
+    it('erro de parâmetro que só cita "pix" NÃO vira aviso de Pix indisponível (foi o que escondeu um bug de verdade)', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+      stripe.criarSessao.mockRejectedValueOnce(new Error('Invalid excluded_payment_method_types[2]: must be one of card, boleto, pix'));
+      const res = await request(app).post('/api/checkout/preference').send(VALID_BODY);
+      expect(res.status).toBe(500);
+      expect(res.body.error).not.toMatch(/Pix não está disponível/);
     });
 
     it('outro erro da Stripe não vaza detalhes e não grava pedido', async () => {

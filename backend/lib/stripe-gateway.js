@@ -23,7 +23,7 @@ const centavos = (valor) => Math.round(Number(valor) * 100);
 // Na API atual da Stripe os meios de pagamento são ligados no Dashboard (Configurações > Meios de pagamento)
 // e `payment_method_types` não é mais aceito. Para cada pedido, o código só EXCLUI os meios que não
 // foram escolhidos, para o comprador não pagar de cartão uma cotação feita com a tarifa do Pix.
-const EXCLUIR_NO_PIX = ['card', 'boleto', 'link'];
+const EXCLUIR_NO_PIX = ['card', 'boleto']; // 'link' não existe nessa lista da Stripe (a API recusa)
 const EXCLUIR_NO_CARTAO = ['pix', 'boleto'];
 
 /**
