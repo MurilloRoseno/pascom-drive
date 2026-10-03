@@ -30,6 +30,12 @@ export function reiniciarContato() {
 
 export const linkWhatsapp = (numero) => `https://wa.me/${numero}`;
 
+/** 5599991646063 -> (99) 99164-6063. Número fora do padrão brasileiro volta como veio. */
+export function formatarTelefone(numero) {
+  const m = /^55(\d{2})(\d{4,5})(\d{4})$/.exec(String(numero));
+  return m ? `(${m[1]}) ${m[2]}-${m[3]}` : String(numero);
+}
+
 /** @returns {{ whatsapp: string, assistenteAtivo: boolean }} */
 export function useContato() {
   const [contato, setContato] = useState(FALHA);

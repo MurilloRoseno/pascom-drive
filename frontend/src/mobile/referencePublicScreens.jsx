@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types, no-unused-vars */
 import { useEffect, useMemo, useState } from 'react';
 import { obterProximas } from '../lib/api.js';
+import { linkWhatsapp, useContato } from '../shared/contato.js';
 import PascomPanel from '../shared/PascomPanel.jsx';
 import { I } from './referenceIcons.jsx';
 import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, resolveEventPhotos, SacramentoChips, } from './referenceUtils.jsx';
@@ -23,6 +24,7 @@ function useProximas(quantidade) {
 export function HomeScreen({ go, eventos, loading, tweaks }) {
   const recentes = eventos.slice(0, 4);
   const proximas = useProximas(4);
+  const { whatsapp } = useContato();
   const totalFotos = eventos.reduce((sum, ev) => sum + Number(ev.totalFotos || 0), 0);
 
   return (
@@ -83,7 +85,7 @@ export function HomeScreen({ go, eventos, loading, tweaks }) {
         <h2 className="h2" style={{ marginTop: 8, color: '#fff' }}>Estamos aqui para acolher sua família.</h2>
         <p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 8 }}>Escolha fotos, finalize com segurança e receba os links após a confirmação.</p>
         <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
-          <a className="btn btn-primary" href="https://wa.me/5599991646063" target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon" /> WhatsApp</a>
+          <a className="btn btn-primary" href={linkWhatsapp(whatsapp)} target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon" /> WhatsApp</a>
           <a className="btn btn-outline" href="mailto:paroquiasaorafael@hotmail.com" style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.55)' }}><I.Mail className="icon" /> E-mail</a>
         </div>
         <div className="glory-text">AD GLORIAM DEI</div>
@@ -250,13 +252,14 @@ function ProtectedPreviewCard() {
 }
 
 function PriceHelpCard() {
+  const { whatsapp } = useContato();
   return (
     <div className="mobile-price-help-card">
       <div>
         <div className="caption">Cada foto custa</div>
         <strong>{brl(PRECO_FOTO)}</strong>
       </div>
-      <a className="btn btn-outline btn-sm" href="https://wa.me/5599991646063" target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a>
+      <a className="btn btn-outline btn-sm" href={linkWhatsapp(whatsapp)} target="_blank" rel="noopener noreferrer"><I.Whatsapp className="icon icon-sm" /> Tirar dúvidas</a>
     </div>
   );
 }
@@ -279,6 +282,7 @@ export function PerfilScreen({ setRole, go, role = 'publico', eventos = [], recu
 }
 
 function PublicoScreen({ go, setRole, recuperarPedido }) {
+  const { whatsapp } = useContato();
   const [form, setForm] = useState({ email: '', pedidoId: '' });
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
@@ -296,7 +300,7 @@ function PublicoScreen({ go, setRole, recuperarPedido }) {
       <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos e fale com a secretaria.</p></section>
       <section className="section">
         <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra e o código do pedido.</p><input className="input" placeholder="seu@email.com" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} style={{ marginTop: 14 }} /><input className="input" placeholder="PED_..." value={form.pedidoId} onChange={(event) => setForm({ ...form, pedidoId: event.target.value.toUpperCase() })} style={{ marginTop: 10 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} onClick={submit}>Recuperar fotos</button>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}{result && <div className="caption" style={{ textAlign: 'left', marginTop: 12 }}><strong>{result.status}</strong><br />{result.deliveryReady ? `${result.downloads.length} link(s) liberado(s) por 24h.` : 'Pedido ainda não confirmado.'}{result.downloads?.map((item, index) => <a key={item.url} href={item.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>Baixar foto {index + 1}</a>)}</div>}</div>
-        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Calendar" label="Agenda da paróquia" onClick={() => go({ name: 'agenda' })} /><MenuRow icon="Sparkle" label="Central de ajuda e assistente" onClick={() => go({ name: 'ajuda' })} /><MenuRow icon="Whatsapp" label="Falar com a secretaria" href="https://wa.me/5599991646063" /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
+        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Calendar" label="Agenda da paróquia" onClick={() => go({ name: 'agenda' })} /><MenuRow icon="Sparkle" label="Central de ajuda e assistente" onClick={() => go({ name: 'ajuda' })} /><MenuRow icon="Whatsapp" label="Falar com a secretaria" href={linkWhatsapp(whatsapp)} /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
         <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para consultar pedidos, downloads, suporte e métricas.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div>
       </section>
     </div>

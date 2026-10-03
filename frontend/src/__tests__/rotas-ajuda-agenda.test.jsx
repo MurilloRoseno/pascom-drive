@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DesktopApp from '../desktop/DesktopApp.jsx';
 import MobileApp from '../mobile/MobileApp.jsx';
@@ -66,6 +66,25 @@ describe.each([
     const botao = await screen.findByRole('button', { name: /assistente/i });
     await userEvent.click(botao);
     expect(screen.getByRole('dialog', { name: 'Assistente' })).toBeInTheDocument();
+  });
+});
+
+describe('contato da secretaria vem da configuração', () => {
+  it('desktop: o rodapé usa o WhatsApp configurado no painel, formatado', async () => {
+    irPara('/privacidade');
+    render(<DesktopApp />);
+    const telefone = await screen.findByRole('link', { name: '(99) 98888-7777' });
+    expect(telefone).toHaveAttribute('href', 'https://wa.me/5599988887777');
+    expect(screen.getByRole('link', { name: /falar no whatsapp/i })).toHaveAttribute('href', 'https://wa.me/5599988887777');
+  });
+
+  it('mobile: o perfil abre agenda e ajuda e fala com a secretaria no número configurado', async () => {
+    irPara('/perfil');
+    render(<MobileApp />);
+    expect(await screen.findByRole('button', { name: /agenda da paróquia/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /central de ajuda e assistente/i })).toBeInTheDocument();
+    const zap = await screen.findByRole('link', { name: /falar com a secretaria/i });
+    await waitFor(() => expect(zap).toHaveAttribute('href', 'https://wa.me/5599988887777'));
   });
 });
 
