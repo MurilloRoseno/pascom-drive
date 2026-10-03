@@ -13,9 +13,23 @@ beforeEach(() => {
 });
 
 describe('conteudoDoSite', () => {
-  it('sem nada cadastrado: identidade padrão e seções da Home vazias (nada inventado)', () => {
+  it('sem nada cadastrado: o site continua igual ao de hoje e as seções novas da Home ficam vazias (nada inventado)', () => {
     const c = conteudoDoSite(DEFAULTS);
-    expect(c).toMatchObject({ nome: 'Paróquia São Rafael', cidade: 'Açailândia – MA', missao: null, numeros: [], depoimentos: [] });
+    expect(c).toMatchObject({
+      nome: 'Paróquia São Rafael',
+      cidade: 'Açailândia – MA',
+      email: 'paroquiasaorafael@hotmail.com',
+      whatsapp: '5599991646063',
+      horario: 'Terça a sexta: 8h30 às 11h',
+      referencia: 'Filipenses 4:13',
+      missao: null,
+      numeros: [],
+      depoimentos: [],
+    });
+  });
+
+  it('apagar um campo no painel o esconde (em branco é escolha, não volta ao padrão)', () => {
+    expect(conteudoDoSite({ ...DEFAULTS, siteInstagram: '' }).instagram).toBe('');
   });
 
   it('lê as listas gravadas e ignora JSON quebrado ou fora da regra, sem derrubar o site', () => {
@@ -31,8 +45,8 @@ describe('conteudoDoSite', () => {
   });
 
   it('nunca devolve preço, tarifas nem chaves internas', () => {
-    const c = conteudoDoSite({ ...DEFAULTS, precoFoto: 99, tarifaCartaoPct: 9 });
-    expect(JSON.stringify(c)).not.toMatch(/precoFoto|tarifa|99/);
+    const c = conteudoDoSite({ ...DEFAULTS, precoFoto: 777, tarifaCartaoPct: 888 });
+    expect(JSON.stringify(c)).not.toMatch(/precoFoto|tarifa|777|888/);
   });
 });
 

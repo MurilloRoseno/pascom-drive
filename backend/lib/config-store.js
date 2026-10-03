@@ -91,20 +91,21 @@ const CAMPOS = {
       const d = String(v ?? '').replace(/\D/g, '');
       return d.length === 10 || d.length === 11 ? `55${d}` : d;
     }, z.string().regex(/^(\d{12,13})?$/, 'Telefone inválido. Informe DDD e número.')),
-    padrao: '',
+    padrao: '5599991646063', // o número que o site já usava: sem configuração, nada muda
   },
-  // Conteúdo do site (rodapé, contato, redes).
+  // Conteúdo do site (rodapé, contato, redes). Os padrões são o que o site já mostrava: sem configuração nada muda;
+  // apagar o campo no painel esconde o item (em branco é uma escolha).
   siteNome: { schema: z.preprocess(limpar, z.string().min(3, 'Informe o nome da paróquia.').max(80).refine(semFormula, MSG_FORMULA)), padrao: 'Paróquia São Rafael' },
   siteCidade: { schema: z.preprocess(limpar, z.string().min(2, 'Informe a cidade e o estado.').max(80).refine(semFormula, MSG_FORMULA)), padrao: 'Açailândia – MA' },
   siteLema: { schema: textoOpcional(120), padrao: '' },
-  siteEmail: { schema: emailOpcional, padrao: '' },
-  siteEndereco: { schema: textoOpcional(200), padrao: '' },
-  siteHorario: { schema: textoOpcional(120), padrao: '' },
-  siteInstagram: { schema: redeSocial(['instagram.com'], 'Instagram'), padrao: '' },
-  siteFacebook: { schema: redeSocial(['facebook.com'], 'Facebook'), padrao: '' },
+  siteEmail: { schema: emailOpcional, padrao: 'paroquiasaorafael@hotmail.com' },
+  siteEndereco: { schema: textoOpcional(200), padrao: 'Av. Contorno, Qd 59 Lt 09, Jardim de Alah, Açailândia - MA, CEP 65930-000' },
+  siteHorario: { schema: textoOpcional(120), padrao: 'Terça a sexta: 8h30 às 11h' },
+  siteInstagram: { schema: redeSocial(['instagram.com'], 'Instagram'), padrao: 'https://www.instagram.com/paroquia.sao.rafael/' },
+  siteFacebook: { schema: redeSocial(['facebook.com'], 'Facebook'), padrao: 'https://www.facebook.com/paroquiasaorafaelacai' },
   siteYoutube: { schema: redeSocial(['youtube.com', 'youtu.be'], 'YouTube'), padrao: '' },
-  siteVersiculo: { schema: textoOpcional(200), padrao: '' },
-  siteReferencia: { schema: textoOpcional(60), padrao: '' },
+  siteVersiculo: { schema: textoOpcional(200), padrao: 'Tudo posso naquele que me fortalece.' },
+  siteReferencia: { schema: textoOpcional(60), padrao: 'Filipenses 4:13' },
 };
 
 const DEFAULTS = Object.fromEntries(Object.entries(CAMPOS).map(([k, c]) => [k, c.padrao]));

@@ -118,7 +118,7 @@ function fotoFromRow(row) {
     previewFileId: previewId || '',
     thumbnailFileId: thumbnailId || '',
     previewUrl: previewId ? drivePreviewUrl(previewId) : driveUrlToThumbnail(row.get('Link_Amostra')),
-    price: numeroDaPlanilha(row.get('PrecoUnitario') || row.get('Preco')) || 10,
+    price: numeroDaPlanilha(row.get('PrecoUnitario') || row.get('Preco')) || 5, // mesmo padrão de config-store; a cobrança real usa precoFoto (aba Configuracoes)
     type,
     availableForSale: type !== 'capa' && yes(row.get('DisponivelVenda')),
     status: row.get('StatusProcessamento') || row.get('Status'),
