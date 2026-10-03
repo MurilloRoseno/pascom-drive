@@ -31,6 +31,7 @@ const pascomDashboardHandler = require('./api/pascom-dashboard');
 const pascomPedidosHandler = require('./api/pascom-pedidos');
 const pascomPedidoDetalheHandler = require('./api/pascom-pedido-detalhe');
 const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-downloads');
+const painelRouter = require('./api/painel');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -60,7 +61,7 @@ app.use((req, res, next) => {
   } else if (origin) {
     return res.status(403).json({ error: 'Origem nao autorizada.' });
   }
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Gallery-Token');
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
@@ -70,6 +71,7 @@ app.use(geral);
 
 app.get('/api/health', healthHandler);
 app.use('/api/pascom', pascom, pascomClerkMiddleware(), authenticatePascom);
+app.use('/api/pascom', painelRouter); // painel: configurações, acessos… (cada rota confere a permissão do papel)
 app.get('/api/pascom/me', pascomMeHandler);
 app.get('/api/pascom/dashboard', pascomDashboardHandler);
 app.get('/api/pascom/pedidos', pascomPedidosHandler);

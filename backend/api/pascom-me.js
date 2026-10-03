@@ -1,3 +1,6 @@
+const { permissoesDoPapel } = require('../lib/permissions');
+
+// `permissoes` só serve para o front montar o menu; cada rota do painel confere de novo no servidor.
 module.exports = async function pascomMeHandler(req, res) {
   res.json({
     authorized: true,
@@ -7,6 +10,7 @@ module.exports = async function pascomMeHandler(req, res) {
       role: req.pascom.role,
       email: req.pascom.email,
       phone: req.pascom.phone,
+      permissoes: permissoesDoPapel(req.pascom.role),
     },
   });
 };
