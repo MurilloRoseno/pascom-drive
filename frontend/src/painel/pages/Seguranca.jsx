@@ -1,4 +1,5 @@
 import { Aviso, Cartao, Pilula } from '../ui.jsx';
+import SegurancaPagamento from '../components/SegurancaPagamento.jsx';
 
 /**
  * A tarja nas prévias é regra do processo: está em todas as fotos de amostra e não
@@ -21,6 +22,7 @@ export default function Seguranca() {
           </Aviso>
         </div>
       </Cartao>
+      <SegurancaPagamento />
     </div>
   );
 }

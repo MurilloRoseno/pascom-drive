@@ -8,6 +8,7 @@ import { ToastProvider } from './ui.jsx';
 import VisaoGeral from './pages/VisaoGeral.jsx';
 import Eventos from './pages/Eventos.jsx';
 import Categorias from './pages/Categorias.jsx';
+import Pagamentos from './pages/Pagamentos.jsx';
 import Seguranca from './pages/Seguranca.jsx';
 import Acessos from './pages/Acessos.jsx';
 
@@ -93,6 +94,7 @@ export default function PainelAutenticado({ obterToken, onSair, chamarSensivel }
             <Route index element={<VisaoGeral />} />
             <Route path="eventos" element={<Eventos />} />
             <Route path="categorias" element={<Categorias />} />
+            <Route path="pagamentos" element={<Pagamentos />} />
             <Route path="acessos" element={<Acessos />} />
             <Route path="seguranca" element={<Seguranca />} />
             <Route path="*" element={<Navigate to="/painel" replace />} />

@@ -45,6 +45,15 @@ export const MENU = [
     permissao: 'categorias.ver',
   },
   {
+    chave: 'pagamentos',
+    rota: '/painel/pagamentos',
+    rotulo: 'Pagamentos',
+    eyebrow: 'Financeiro',
+    titulo: 'Pagamentos e taxas',
+    subtitulo: 'Preço da foto, repasse da taxa do Stripe e o que o comprador paga em cada caso.',
+    permissao: 'pagamentos.ver',
+  },
+  {
     chave: 'acessos',
     rota: '/painel/acessos',
     rotulo: 'Acessos',
