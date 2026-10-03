@@ -15,7 +15,18 @@ const PARADAS = new Set([
   'meu', 'minha', 'esta', 'esse', 'essa', 'isso', 'tambem', 'onde', 'sobre', 'ainda', 'muito', 'favor', 'ola', 'bom',
   'dia', 'tarde', 'noite', 'voce', 'voces', 'ela', 'ele', 'nos', 'foi', 'sao', 'estao', 'estou', 'tenho', 'quero', 'gostaria',
   'preciso', 'ajuda', 'queria', 'vou', 'vai', 'cada', 'tudo', 'sem', 'aqui', 'ali', 'entao',
+  'aceita', 'aceitam', 'aceito',
 ]);
+
+// Formas diferentes da mesma ideia viram uma só antes de comparar ("pago", "paguei" e "pagamento"
+// com "pagar"). Lista curta e só do que as pessoas realmente perguntam sobre este site.
+const SINONIMOS = {
+  preco: 'custa', precos: 'custa', valor: 'custa', valores: 'custa', custo: 'custa', custar: 'custa',
+  pago: 'pagar', paga: 'pagar', paguei: 'pagar', pagou: 'pagar', pagando: 'pagar', pagamento: 'pagar', pagamentos: 'pagar',
+  baixo: 'baixar', baixei: 'baixar', baixa: 'baixar', download: 'baixar', downloads: 'baixar', baixando: 'baixar',
+  chegou: 'chegar', chegaram: 'chegar', chegam: 'chegar', chega: 'chegar', recebi: 'chegar',
+  vale: 'expirar', validade: 'expirar', vence: 'expirar', venceu: 'expirar', expira: 'expirar', expirou: 'expirar', expirado: 'expirar', expirar: 'expirar',
+};
 
 /** Minúsculas, sem acento nem pontuação. */
 function normalizar(texto) {
@@ -37,7 +48,7 @@ function radicais(texto) {
   return normalizar(texto)
     .split(' ')
     .filter((p) => p.length >= 3 && !PARADAS.has(p))
-    .map(radical);
+    .map((p) => radical(SINONIMOS[p] || p));
 }
 
 const BLOQUEADOS = [
@@ -77,12 +88,14 @@ function buscarNoFaq(consulta, faq) {
     return { faq: f, pontos, cobertura: cobertas / q.length };
   }).sort((a, b) => b.pontos - a.pontos);
 
-  const topo = avaliadas[0];
-  const bom = topo && topo.cobertura >= 0.6 && topo.pontos >= 2;
+  // Entre as que cobrem boa parte da pergunta, vale a de mais pontos; a de mais pontos que
+  // cobre pouco (acertou "link" e "download" mas errou o assunto) não pode esconder a certa.
+  const aceitas = avaliadas.filter((a) => a.cobertura >= 0.6 && a.pontos >= 2);
+  const topo = aceitas[0] || null;
   return {
-    melhor: bom ? topo.faq : null,
-    pontos: topo ? topo.pontos : 0,
-    parecidas: avaliadas.filter((a) => a.pontos > 0 && (!bom || a.faq.id !== topo.faq.id)).slice(0, 2).map((a) => ({ id: a.faq.id, pergunta: a.faq.pergunta })),
+    melhor: topo ? topo.faq : null,
+    pontos: avaliadas[0] ? avaliadas[0].pontos : 0,
+    parecidas: avaliadas.filter((a) => a.pontos > 0 && (!topo || a.faq.id !== topo.faq.id)).slice(0, 2).map((a) => ({ id: a.faq.id, pergunta: a.faq.pergunta })),
   };
 }
 

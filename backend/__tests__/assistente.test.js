@@ -152,3 +152,30 @@ describe('responder', () => {
     expect(['faq', 'fora']).toContain(r.tipo);
   });
 });
+
+describe('variações de jeito de perguntar', () => {
+  it('"preço", "valor" e "custa" são a mesma ideia', () => {
+    expect(radicais('Qual o preço?')).toEqual(radicais('Quanto custa?'));
+    expect(radicais('qual o valor da foto')).toEqual(['custa', 'foto']);
+  });
+
+  it('"pago", "paguei" e "pagamento" casam com "pagar"', async () => {
+    expect(new Set(radicais('pago paguei pagamento pagando'))).toEqual(new Set(['pagar']));
+    expect((await perguntar('Quais as formas de pagamento?')).fonte).toBe('FAQ · Que formas de pagamento posso usar?');
+  });
+
+  it('entre as perguntas que cobrem o que foi dito, vale a melhor (não a de mais pontos que erra o assunto)', () => {
+    const faq = [
+      { id: 'x', pergunta: 'Meu link de download expirou. E agora?', resposta: 'Use Recuperar pedido.', passos: [], publicada: true },
+      { id: 'y', pergunta: 'Por quanto tempo posso baixar as fotos?', resposta: 'Cada link vale por 24 horas.', passos: [], publicada: true },
+    ];
+    // "download" e "link" dão pontos altos em x, mas "tempo" só existe em y
+    const r = buscarNoFaq('Quanto tempo dura o link de download?', faq);
+    expect(r.melhor && r.melhor.id).toBe('y');
+  });
+
+  it('uma pergunta que só acerta metade das palavras continua indo para "fora do escopo"', async () => {
+    const r = await perguntar('Qual a capital da França?');
+    expect(r.tipo).toBe('fora');
+  });
+});
