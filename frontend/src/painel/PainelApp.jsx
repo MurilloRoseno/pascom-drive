@@ -1,4 +1,5 @@
 import { Show, SignIn, useAuth, useClerk, useReverification } from '@clerk/react';
+import '../index.css'; // Tailwind e tokens da marca (o site público carrega o mesmo arquivo pelo DesktopApp)
 import { clerkConfigured } from '../shared/clerkConfig.js';
 import { chamarPainel } from './api.js';
 import PainelAutenticado from './PainelAutenticado.jsx';
