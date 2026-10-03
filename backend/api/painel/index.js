@@ -21,6 +21,7 @@ router.use('/acessos', require('./acessos'));
 router.use('/pagamentos', require('./pagamentos'));
 router.use('/agenda', require('./agenda'));
 router.use('/faq', require('./ajuda'));
+router.use('/modulos', require('./modulos'));
 
 // ── Configurações ────────────────────────────────────────────────────────────
 const PERMISSAO_DA_CHAVE = {

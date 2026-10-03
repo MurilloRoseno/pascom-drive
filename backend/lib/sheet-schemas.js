@@ -38,6 +38,12 @@ const AGENDA = {
   ],
 };
 
+// Partes do site que o administrador pode tirar do ar. Linha ausente = módulo ligado.
+const MODULOS = {
+  aba: 'Modulos',
+  cabecalhos: ['Chave', 'Ligado', 'Recado', 'AtualizadoEm', 'Por'],
+};
+
 module.exports = {
-  ACESSOS, AGENDA, CATEGORIAS, EVENTOS_EXTRA, FAQ, SEM_RESPOSTA,
+  ACESSOS, AGENDA, CATEGORIAS, EVENTOS_EXTRA, FAQ, MODULOS, SEM_RESPOSTA,
 };

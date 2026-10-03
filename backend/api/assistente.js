@@ -6,6 +6,7 @@ const { listarEventosPublicados } = require('../lib/google-sheets.catalog');
 const { registrarSemResposta } = require('../lib/sem-resposta');
 const { proximas } = require('../lib/agenda');
 const { ErroNegocio, validar } = require('../lib/erros');
+const { moduloEfetivo } = require('../lib/modulos');
 
 const corpoSchema = z.object({ mensagem: z.string().max(1000) }).strict();
 
@@ -21,9 +22,15 @@ module.exports = async function handler(req, res, next) {
     const config = await lerConfig();
     if (!config.assistenteAtivo) throw new ErroNegocio('O assistente está desligado no momento.', 503);
 
+    // Agenda ou galerias fora do ar não podem vazar pelo assistente.
+    const [agendaNoAr, buscaNoAr] = await Promise.all([moduloEfetivo('agenda'), moduloEfetivo('busca')]);
     const resultado = await responder({
       mensagem,
-      config,
+      config: {
+        ...config,
+        assistenteFonteAgenda: config.assistenteFonteAgenda && agendaNoAr,
+        assistenteFonteEventos: config.assistenteFonteEventos && buscaNoAr,
+      },
       faq: config.assistenteFonteFaq ? await listarFaq({ apenasPublicadas: true }) : [],
       valores: valoresDosTokens(config),
       eventosNoAr: async () => (await listarEventosPublicados()).map((e) => e.title),
