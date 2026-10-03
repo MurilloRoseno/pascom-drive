@@ -9,7 +9,7 @@ jest.mock('stripe', () => jest.fn().mockImplementation(() => ({
 
 const { calculatePricing } = require('../lib/pricing');
 const {
-  criarSessao, construirEvento, tarifaReal, montarLinhas, centavos,
+  criarSessao, construirEvento, tarifaReal, montarLinhas, centavos, EXCLUIR_NO_PIX, EXCLUIR_NO_CARTAO,
 } = require('../lib/stripe-gateway');
 
 const REGRAS = [{ method: 'pix', percentage: 1.19, fixed: 0 }, { method: 'credit_card', percentage: 3.99, fixed: 0.39 }];
@@ -64,13 +64,13 @@ describe('montarLinhas: a soma sempre fecha com o total calculado no servidor', 
 describe('criarSessao', () => {
   const pricing = calculatePricing(2, 'credit_card', REGRAS, {}, BASE);
 
-  it('cria a sessão hospedada só com o meio escolhido, ligada ao pedido, com idempotência', async () => {
+  it('cria a sessão hospedada excluindo o Pix no cartão, ligada ao pedido, com idempotência', async () => {
     const r = await criarSessao({ pedidoId: 'PED_1', buyer: { email: 'a@b.com' }, items: itens(2), pricing, paymentMethod: 'credit_card' });
     expect(r).toEqual({ id: 'cs_test_1', checkoutUrl: 'https://checkout.stripe.com/c/pay/cs_test_1' });
     const [corpo, opcoes] = mockCriar.mock.calls[0];
     expect(corpo).toMatchObject({
       mode: 'payment',
-      payment_method_types: ['card'],
+      excluded_payment_method_types: EXCLUIR_NO_CARTAO,
       customer_email: 'a@b.com',
       client_reference_id: 'PED_1',
       metadata: { pedido_id: 'PED_1', meio: 'credit_card' },
@@ -78,14 +78,17 @@ describe('criarSessao', () => {
       success_url: 'https://loja.test/pagamento/sucesso?pedido=PED_1',
       cancel_url: 'https://loja.test/pagamento/falha?pedido=PED_1',
     });
+    expect(corpo).not.toHaveProperty('payment_method_types'); // a API atual da Stripe recusa esse parâmetro
+    expect(EXCLUIR_NO_CARTAO).toContain('pix');
     expect(corpo.expires_at).toBeGreaterThan(Math.floor(Date.now() / 1000));
     expect(opcoes).toEqual({ idempotencyKey: 'cs_PED_1' });
   });
 
-  it('Pix usa o tipo pix', async () => {
+  it('no Pix, exclui o cartão (e a carteira baseada em cartão) para ninguém pagar de cartão a cotação do Pix', async () => {
     const p = calculatePricing(2, 'pix', REGRAS, {}, BASE);
     await criarSessao({ pedidoId: 'PED_2', buyer: { email: 'a@b.com' }, items: itens(2), pricing: p, paymentMethod: 'pix' });
-    expect(mockCriar.mock.calls[0][0].payment_method_types).toEqual(['pix']);
+    expect(mockCriar.mock.calls[0][0].excluded_payment_method_types).toEqual(EXCLUIR_NO_PIX);
+    expect(EXCLUIR_NO_PIX).toEqual(expect.arrayContaining(['card', 'link']));
   });
 
   it('sem chave da Stripe, não tenta cobrar', async () => {

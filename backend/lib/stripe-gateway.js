@@ -20,6 +20,12 @@ function stripe() {
 
 const centavos = (valor) => Math.round(Number(valor) * 100);
 
+// Na API atual da Stripe os meios de pagamento são ligados no Dashboard (Configurações > Meios de pagamento)
+// e `payment_method_types` não é mais aceito. Para cada pedido, o código só EXCLUI os meios que não
+// foram escolhidos, para o comprador não pagar de cartão uma cotação feita com a tarifa do Pix.
+const EXCLUIR_NO_PIX = ['card', 'boleto', 'link'];
+const EXCLUIR_NO_CARTAO = ['pix', 'boleto'];
+
 /**
  * Linhas da cobrança, em centavos. A soma TEM de fechar com o total calculado: se não
  * fechar, nada é cobrado (melhor recusar do que cobrar um valor diferente do mostrado).
@@ -56,7 +62,7 @@ async function criarSessao({ pedidoId, buyer, items, pricing, paymentMethod }) {
   const publicUrl = process.env.PUBLIC_APP_URL || 'https://pascom-drive.vercel.app';
   const sessao = await stripe().checkout.sessions.create({
     mode: 'payment',
-    payment_method_types: [paymentMethod === 'pix' ? 'pix' : 'card'],
+    excluded_payment_method_types: paymentMethod === 'pix' ? EXCLUIR_NO_PIX : EXCLUIR_NO_CARTAO,
     line_items: montarLinhas({ items, pricing }),
     customer_email: buyer.email,
     client_reference_id: pedidoId,
@@ -93,5 +99,5 @@ async function tarifaReal(paymentIntentId) {
 }
 
 module.exports = {
-  criarSessao, construirEvento, tarifaReal, montarLinhas, centavos,
+  criarSessao, construirEvento, tarifaReal, montarLinhas, centavos, EXCLUIR_NO_PIX, EXCLUIR_NO_CARTAO,
 };
