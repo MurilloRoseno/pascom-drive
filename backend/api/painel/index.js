@@ -5,6 +5,7 @@ const { temPermissao } = require('../../lib/permissions');
 const { lerConfig, salvarConfig, CAMPOS } = require('../../lib/config-store');
 const { registrarAuditoria, ultimasAlteracoes } = require('../../lib/audit');
 const { ErroNegocio } = require('../../lib/erros');
+const { tratar } = require('./tratar');
 const {
   listarCategorias, criarCategoria, atualizarCategoria, moverCategoria, removerCategoria,
 } = require('../../lib/categorias');
@@ -13,23 +14,10 @@ const { precisaReverificar, DICA_REVERIFICACAO } = require('../../lib/reverifica
 
 const router = express.Router();
 
-/** Só ErroNegocio e erro de validação têm a mensagem devolvida; o resto vira 500 genérico. */
-function tratar(fn) {
-  return async (req, res) => {
-    try {
-      await fn(req, res);
-    } catch (err) {
-      if (err instanceof ErroNegocio) return res.status(err.status).json({ error: err.message });
-      if (err instanceof z.ZodError) return res.status(400).json({ error: 'Dados inválidos' });
-      console.error('[pascom]', req.method, req.path, err.message);
-      return res.status(500).json({ error: 'Erro interno. Tente de novo em instantes.' });
-    }
-  };
-}
-
 const auditar = (req, mensagem) => registrarAuditoria({ quem: req.membro.email, mensagem });
 
 router.use('/acessos', require('./acessos'));
+router.use('/pagamentos', require('./pagamentos'));
 
 // ── Configurações ────────────────────────────────────────────────────────────
 const PERMISSAO_DA_CHAVE = {
