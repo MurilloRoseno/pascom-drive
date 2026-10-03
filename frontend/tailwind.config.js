@@ -26,6 +26,17 @@ export default {
         'photo-bone':          '#F4EDE0',
         'photo-grafite':       '#5C5347',
         'photo-sepia':         '#9C8E7E',
+
+        // Painel admin — neutros quentes do protótipo
+        'painel-linha':        '#E8DFD0',
+        'painel-divisor':      '#F0E9DB',
+        'painel-cabecalho':    '#F4EEE2',
+        'painel-borda':        '#D9CFBD',
+        'painel-texto2':       '#5E584E',
+        'painel-pontilhado':   '#B9AC93',
+        'painel-desligado':    '#8F8678',
+        'painel-perigo':       '#A33F20',
+        'painel-selecionado':  '#F6ECF7',
       },
       fontFamily: {
         'display': '"Playfair Display", Georgia, serif',
