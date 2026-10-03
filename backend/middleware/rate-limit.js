@@ -113,7 +113,16 @@ const pascom = rateLimit({
   message: { error: 'Muitas consultas na area Pascom. Aguarde 1 minuto.' },
 });
 
+// Relatórios da CSP: o navegador manda vários de uma vez; o limite só impede que alguém inunde o log.
+const cspReport = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Muitos relatórios.' },
+});
+
 module.exports = {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, assistente,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, assistente, cspReport,
 };

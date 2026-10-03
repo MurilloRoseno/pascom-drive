@@ -237,3 +237,20 @@ Aba de autorização operacional da equipe Pascom. Clerk autentica a identidade;
 | `UltimoAcessoEm` | Atualizado pelo backend ao autorizar acesso |
 
 Risco: Sheets não é banco transacional; para V2, roles granulares e auditoria administrativa devem migrar para banco relacional.
+
+## Abas criadas pelo painel
+
+Colunas definidas em `backend/lib/sheet-schemas.js`; `obterAba` cria a aba ou acrescenta as colunas que faltam. Nada e apagado: remover e marcar como inativo/excluido.
+
+| Aba | Colunas | Uso |
+| --- | --- | --- |
+| `Configuracoes` | `Chave`, `Valor`, `AtualizadoEm`, `Por` | Preco, taxas, tarifas, prazo, WhatsApp, assistente, conteudo do site e pagina inicial (`site*`, `home*`) |
+| `AuditoriaPascom` | `Quando`, `Quem`, `Mensagem` | Toda mudanca feita no painel, com valor antigo e novo |
+| `Acessos` | `Papel`, `Permissoes`, `AtualizadoEm`, `Por` | Matriz de permissoes editavel por papel |
+| `Categorias` | `Id`, `Nome`, `Tipo`, `Ordem`, `Ativo` | Sacramentos e celebracoes do catalogo |
+| `Faq` | `Id`, `Tema`, `Pergunta`, `Resposta`, `Passos`, `Imagem`, `ImagemLegenda`, `Video`, `VideoTitulo`, `Publicada`, `Ordem`, `AtualizadoEm` | Central de Ajuda (nasce com 13 perguntas; so a de privacidade como rascunho) |
+| `PerguntasSemResposta` | `Quando`, `Pergunta`, `Situacao` | Fila do que o assistente nao soube responder (texto mascarado) |
+| `Agenda` | `Id`, `Titulo`, `Data`, `Hora`, `HoraFim`, `Local`, `Tipo`, `Recorrencia`, `Ate`, `Descricao`, `Ativo`, `AtualizadoEm` | Compromissos da paroquia (nao confundir com `Eventos`, que sao galerias) |
+| `Modulos` | `Chave`, `Ligado`, `Recado`, `AtualizadoEm`, `Por` | Modulos fora do ar; linha ausente = ligado |
+
+`Eventos` ganhou ao fim `PublicarEm`, `ExpiraEm` e `PrazoDias` (publicacao agendada e prazo). O estado de publicacao e calculado na leitura, sem gatilho agendado.

@@ -19,7 +19,7 @@ const CONTROLES = [
   { texto: 'Chave de idempotência por pedido: repetir a chamada não cria duas cobranças', camada: 'Servidor', situacao: 'ativo' },
   { texto: 'Limite de tentativas por IP em cotação, checkout, consulta de status, webhook e download', camada: 'Servidor', situacao: 'ativo' },
   { texto: 'Mudar preço, taxas ou tarifas exige login recente (reautenticação) e fica na auditoria com o valor antigo e o novo', camada: 'Ambos', situacao: 'ativo' },
-  { texto: 'CSP (política de segurança de conteúdo) ainda em modo de observação (Report-Only)', camada: 'Ambos', situacao: 'observacao' },
+  { texto: 'CSP (política de segurança de conteúdo) em modo de observação (Report-Only): as violações vão para o log do servidor e o bloqueio só entra depois de alguns dias sem violações', camada: 'Ambos', situacao: 'observacao' },
 ];
 
 const SITUACAO = {

@@ -27,7 +27,7 @@
 ## Prioridade Baixa
 
 - Remover alias `/api/criar-pagamento` após janela de depreciação.
-- Reduzir `unsafe-inline` na CSP.
+- CSP: ja entregue em Report-Only (ver `docs/painel.md`). Proximos passos: observar o log por alguns dias, ativar o bloqueio e depois reduzir `unsafe-inline`.
 - Avaliar persistência de carrinho em `sessionStorage`.
 - Avaliar TypeScript apenas após V1 estável.
 - Criar licença formal.

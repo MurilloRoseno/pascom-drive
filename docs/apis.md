@@ -582,3 +582,16 @@ Todas as rotas `/api/pascom/*` exigem `Authorization: Bearer <clerk-session-toke
 - `POST /api/pascom/pedidos/:pedidoId/regenerar-downloads`: regenera links somente para `Pagamento Confirmado`; pedidos pendentes retornam `409`.
 
 Erros esperados: `401` sem sessão Clerk, `403` fora da `EquipePascom` e `503` quando Clerk não estiver configurado.
+
+## APIs publicas do site editavel
+
+Detalhes e regras em `docs/painel.md`.
+
+- `GET /api/site`: identidade, contato, redes, pagina inicial publica, modulos no ar (com recado), `assistenteAtivo` e `precos` (`foto`, `taxaServico`, `taxaComodidade`). Cache de 60 s. Nunca expoe tarifas, segredos nem o resto da configuracao.
+- `GET /api/faq`, `GET /api/agenda?mes=AAAA-MM` ou `?proximas=N`, `GET /api/categorias`, `POST /api/assistente` (`{ mensagem }`, ate 300 letras, 20 por hora por IP).
+- `POST /api/csp-report`: recebe violacoes da CSP (`application/csp-report` ou `application/reports+json`), corpo maximo de 8 KB, responde `204` e so registra no log. Limite de 60 por minuto.
+- Modulos desligados no painel: `busca` barra `/api/eventos*`, `/api/e/:slug`, `/api/categorias`; `checkout` barra `/api/checkout/quote`, `/api/checkout/preference`, `/api/criar-pagamento`; `agenda` barra `/api/agenda`; `ajuda` barra `/api/faq` e `/api/assistente`. Resposta: `503 { error: <recado>, modulo }`. Nunca barrados: `/api/status-pagamento`, `/api/pedidos/recuperar`, `/api/download`, webhooks, `/api/site`, `/api/pascom/*`.
+
+### Painel (`/api/pascom/*`, login Clerk + permissao por papel)
+
+`configuracoes` (GET/PUT), `eventos` (publicacao e categoria), `categorias`, `agenda`, `faq`, `pagamentos` (`/simulador`, `/estado`), `conteudo` (GET/PUT, tudo ou nada), `home` (GET/PUT), `modulos` (GET e `PUT /:chave`, so admin), `acessos`, `auditoria`, `backup` (GET, so admin; `Content-Disposition` e `no-store`). Erros esperados: `401` sem sessao, `403` sem permissao (ou sem login recente em dinheiro), `400` com mensagem em portugues.

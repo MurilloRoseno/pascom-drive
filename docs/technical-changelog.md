@@ -1,5 +1,17 @@
 # Changelog Tecnico
 
+## 2026-10-03 - Painel administrativo: conteudo, modulos, pagina inicial, backup e CSP
+
+- **Tipo:** backend, frontend, painel, seguranca e documentacao.
+- **Alteracao:** conteudo do site editavel pelo painel (nome, contato, redes, versiculo, missao, numeros, depoimentos); modulos liga/desliga exigidos no servidor (`busca`, `checkout`, `agenda`, `ajuda`); pagina inicial em blocos com ordem, titulo e destaque; `GET /api/site` publico; backup das configuracoes (so admin); coletor `POST /api/csp-report`; Central de Ajuda, agenda e assistente sem IA; Stripe como gateway principal com preco e taxas vindos da aba `Configuracoes`.
+- **Motivo:** a equipe passa a operar o site sem publicar codigo; regras de dinheiro, permissao e publicacao ficam no servidor.
+- **Impacto:** o site mostra os mesmos textos de antes enquanto nada for configurado (os padroes do codigo sao os textos antigos). O mobile deixa de mostrar R$ 10 fixo e passa a usar o preco do servidor. Desligar um modulo responde 503 com recado; status do pedido, recuperar pedido, download, webhooks, painel e login nunca saem do ar.
+- **CSP:** o `vercel.json` ignorava `headers` de topo por usar `builds` + `routes`; em producao o site respondia sem cabecalhos de seguranca. Cabecalhos agora vao em uma rota `/(.*)` com `continue: true`. A CSP entra em **Report-Only** (nao bloqueia nada); ativar o bloqueio e uma decisao posterior, depois de observar o log. Passam a valer tambem `X-Frame-Options: DENY`, `X-Content-Type-Options`, `Referrer-Policy` e `Permissions-Policy`.
+- **Breaking changes:** chave `siteCor` removida (cor do site nao e configuravel). Cabecalhos de seguranca que antes eram ignorados passam a ser entregues.
+- **Migracoes necessarias:** abas novas criadas sob demanda (`Configuracoes`, `AuditoriaPascom`, `Acessos`, `Categorias`, `Faq`, `PerguntasSemResposta`, `Agenda`, `Modulos`); `Eventos` ganha 3 colunas no fim (`PublicarEm`, `ExpiraEm`, `PrazoDias`). Reimplantar o Apps Script para a lista dinamica de categorias. Variaveis de producao: `PAYMENT_GATEWAY=stripe`, chaves Stripe/Clerk, `PUBLIC_APP_URL`, `PAINEL_ADMIN_EMAIL`.
+- **Responsavel:** Claude.
+- **Documentos afetados:** `docs/painel.md` (novo), `docs/apis.md`, `docs/database.md`, `docs/technical-roadmap.md`, `README.md`, `AGENTS.md` e `docs/technical-changelog.md`.
+
 ## 2026-05-30 - Login Pascom centralizado
 
 - **Tipo:** frontend, autenticacao visual e documentacao.

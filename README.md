@@ -73,7 +73,7 @@ O deploy principal usa Vercel. O arquivo `vercel.json` da raiz publica:
 
 - `/api/*` para `backend/api/index.js`
 - assets e SPA fallback para o build do `frontend`
-- headers de segurança globais, incluindo HSTS, CSP e `X-Frame-Options`
+- cabeçalhos de segurança numa rota `/(.*)` com `continue: true` (a Vercel ignora `headers` de topo quando há `builds` + `routes`): `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` e a CSP em modo **Report-Only** (violações em `/api/csp-report`). O HSTS vem da própria Vercel. Detalhes em [docs/painel.md](./docs/painel.md).
 
 O Apps Script é implantado separadamente com clasp após configurar propriedades do script.
 

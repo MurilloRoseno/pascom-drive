@@ -3,7 +3,7 @@ const express = require('express');
 const helmet = require('helmet');
 const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, assistente,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom, assistente, cspReport,
 } = require('./middleware/rate-limit');
 const { mediaAbuseGuard } = require('./middleware/media-abuse');
 const { exigirModulo } = require('./middleware/modulo');
@@ -37,6 +37,7 @@ const painelRouter = require('./api/painel');
 const categoriasHandler = require('./api/categorias');
 const agendaHandler = require('./api/agenda');
 const siteHandler = require('./api/site');
+const cspReportHandler = require('./api/csp-report');
 const faqHandler = require('./api/faq');
 const assistenteHandler = require('./api/assistente');
 
@@ -77,6 +78,8 @@ app.use((req, res, next) => {
 app.use(geral);
 
 app.get('/api/health', healthHandler);
+// O navegador manda a violação como application/csp-report (ou reports+json): corpo pequeno, só desta rota.
+app.post('/api/csp-report', cspReport, express.json({ type: ['application/csp-report', 'application/reports+json', 'application/json'], limit: '8kb' }), cspReportHandler);
 app.use('/api/pascom', pascom, pascomClerkMiddleware(), authenticatePascom);
 app.use('/api/pascom', painelRouter); // painel: configurações, acessos… (cada rota confere a permissão do papel)
 app.get('/api/pascom/me', pascomMeHandler);

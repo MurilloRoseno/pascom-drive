@@ -5,6 +5,8 @@
 **Developer:** 1 pessoa, 7 semanas, YAGNI-first  
 **Status:** Congelado MVP (sem mudanças scope até V1.0 pronto)
 
+> **Exceção formal ao congelamento (2026-10):** o painel administrativo (`/painel`: conteúdo do site, módulos, página inicial, categorias, agenda, ajuda, pagamentos, acessos e backup), o gateway Stripe, a Central de Ajuda e o assistente sem IA foram aprovados pelo responsável e entregues na branch `painel`. A documentação atual está em [docs/painel.md](./docs/painel.md). Os documentos `LEGADO-*` em `docs/archive/` descrevem o MVP original e **não** valem onde contradizem o painel (por exemplo "sem painel administrativo visual" e "pagamentos só Mercado Pago"). Regras que seguem valendo: dinheiro, permissões e publicação são decididos no servidor; a tarja nas prévias não é desligável; nada é apagado das planilhas.
+
 ---
 
 ## 🎯 Platform & Tech Stack
@@ -15,26 +17,26 @@
 | **Backend** | Node.js + Vercel Functions | Zero infra, auto-deploy, serverless |
 | **Automation** | Google Apps Script | Drive/Sheets nativo, zero setup |
 | **Database** | Google Sheets | Backup automático, leve, nada to manage |
-| **Payments** | Mercado Pago (Pix) | Taxa 2.99% + R$0.30, webhook HMAC |
+| **Payments** | Stripe (principal; Mercado Pago desligado no código) | Checkout hospedado, webhook assinado, preço e taxas na aba `Configuracoes` |
 | **Communication** | WhatsApp (link wa.me) | MVP zero custo, simples |
 
 ---
 
 ## 📚 Documentation Hub (Leia Primeiro)
 
-**START HERE:** Leia [INDEX.md](./INDEX.md) para navegação completa. Resumo:
+**START HERE:** Leia [INDEX.md](./docs/archive/LEGADO-INDEX.md) para navegação completa. Resumo:
 
 | Doc | Purpose | When |
 |-----|---------|------|
-| [INDEX.md](./INDEX.md) | Navigation central | **FIRST** |
-| [MVP_FINAL.md](./MVP_FINAL.md) | Scope + exclusões | Before any feature |
-| [ARCHITECTURE_SINGLE_PERSON.md](./ARCHITECTURE_SINGLE_PERSON.md) | Decisões arquitetura | Before coding |
-| [CODE_STANDARDS.md](./CODE_STANDARDS.md) | ESLint, naming, patterns | Before commit |
-| [ROADMAP_SOLO.md](./ROADMAP_SOLO.md) | Timeline 7 semanas | Planning |
-| [DEFINITION_OF_DONE.md](./DEFINITION_OF_DONE.md) | Checklist pronto | Daily before commit |
-| [INSTALL_ME.md](./INSTALL_ME.md) | Setup local | Immediately |
-| [SETUP_INSTRUCTIONS.md](./SETUP_INSTRUCTIONS.md) | Credenciais (Google, MP, Vercel) | After install |
-| [INCIDENT_RESPONSE.md](./INCIDENT_RESPONSE.md) | Troubleshooting | When broken |
+| [INDEX.md](./docs/archive/LEGADO-INDEX.md) | Navigation central | **FIRST** |
+| [MVP_FINAL.md](./docs/archive/LEGADO-MVP_FINAL.md) | Scope + exclusões | Before any feature |
+| [ARCHITECTURE_SINGLE_PERSON.md](./docs/archive/LEGADO-ARCHITECTURE_SINGLE_PERSON.md) | Decisões arquitetura | Before coding |
+| [CODE_STANDARDS.md](./docs/archive/LEGADO-CODE_STANDARDS.md) | ESLint, naming, patterns | Before commit |
+| [ROADMAP_SOLO.md](./docs/archive/LEGADO-ROADMAP_SOLO.md) | Timeline 7 semanas | Planning |
+| [DEFINITION_OF_DONE.md](./docs/archive/LEGADO-DEFINITION_OF_DONE.md) | Checklist pronto | Daily before commit |
+| [INSTALL_ME.md](./docs/archive/LEGADO-INSTALL_ME.md) | Setup local | Immediately |
+| [SETUP_INSTRUCTIONS.md](./docs/archive/LEGADO-SETUP_INSTRUCTIONS.md) | Credenciais (Google, MP, Vercel) | After install |
+| [INCIDENT_RESPONSE.md](./docs/archive/LEGADO-INCIDENT_RESPONSE.md) | Troubleshooting | When broken |
 
 ---
 
@@ -117,11 +119,11 @@ sed -E 's/=.{10,}/=<redacted>/g' .env.local
 
 Sequência típica ao usar Codex neste projeto:
 
-1. **Explore:** Leia [ARCHITECTURE_SINGLE_PERSON.md](./ARCHITECTURE_SINGLE_PERSON.md) ou `graphify query "<concept>"`
-2. **Understand:** Leia [CODE_STANDARDS.md](./CODE_STANDARDS.md) para padrões da área
+1. **Explore:** Leia [ARCHITECTURE_SINGLE_PERSON.md](./docs/archive/LEGADO-ARCHITECTURE_SINGLE_PERSON.md) ou `graphify query "<concept>"`
+2. **Understand:** Leia [CODE_STANDARDS.md](./docs/archive/LEGADO-CODE_STANDARDS.md) para padrões da área
 3. **Plan:** Se feature > 100 linhas, use skill `superpowers:writing-plans`
 4. **Implement:** Respeite hard limits (50/300/500), nunca skip testes
-5. **Verify:** Rode [DEFINITION_OF_DONE.md](./DEFINITION_OF_DONE.md) checklist antes de commit
+5. **Verify:** Rode [DEFINITION_OF_DONE.md](./docs/archive/LEGADO-DEFINITION_OF_DONE.md) checklist antes de commit
 6. **Test:** `npm test` + navegador (mobile + desktop)
 
 ---
@@ -148,7 +150,7 @@ Sequência típica ao usar Codex neste projeto:
 
 ## ✅ Key Decisions (Closed)
 
-**Decisões técnicas confirmadas (veja [ARCHITECTURE_SINGLE_PERSON.md](./ARCHITECTURE_SINGLE_PERSON.md) para detalhes):**
+**Decisões técnicas confirmadas (veja [ARCHITECTURE_SINGLE_PERSON.md](./docs/archive/LEGADO-ARCHITECTURE_SINGLE_PERSON.md) para detalhes):**
 
 | Decision | Choice | Why |
 |----------|--------|-----|
@@ -166,11 +168,11 @@ Sequência típica ao usar Codex neste projeto:
 
 ## 🚀 Ready to Start?
 
-1. ✅ Leia [MVP_FINAL.md](./MVP_FINAL.md) (5 min)
-2. ✅ Rode [INSTALL_ME.md](./INSTALL_ME.md) (30 min)
-3. ✅ Leia [CODE_STANDARDS.md](./CODE_STANDARDS.md) (15 min)
-4. ✅ Entenda [ARCHITECTURE_SINGLE_PERSON.md](./ARCHITECTURE_SINGLE_PERSON.md) (15 min)
-5. ✅ Comece [ROADMAP_SOLO.md](./ROADMAP_SOLO.md) Semana 1
+1. ✅ Leia [MVP_FINAL.md](./docs/archive/LEGADO-MVP_FINAL.md) (5 min)
+2. ✅ Rode [INSTALL_ME.md](./docs/archive/LEGADO-INSTALL_ME.md) (30 min)
+3. ✅ Leia [CODE_STANDARDS.md](./docs/archive/LEGADO-CODE_STANDARDS.md) (15 min)
+4. ✅ Entenda [ARCHITECTURE_SINGLE_PERSON.md](./docs/archive/LEGADO-ARCHITECTURE_SINGLE_PERSON.md) (15 min)
+5. ✅ Comece [ROADMAP_SOLO.md](./docs/archive/LEGADO-ROADMAP_SOLO.md) Semana 1
 
 **Total onboarding:** ~2 horas. Você está pronto!
 
