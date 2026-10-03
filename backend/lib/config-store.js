@@ -20,17 +20,33 @@ const inteiro = (min, max) => numero(min, max).pipe(z.number().int());
 
 const limpar = (v) => (typeof v === 'string' ? v.replace(/\s+/g, ' ').trim() : v);
 
+// Célula que começa com = + - @ vira fórmula na planilha; texto do site nunca precisa começar assim.
+const semFormula = (v) => !/^[=+\-@]/.test(v);
+const MSG_FORMULA = 'Não comece com = + - ou @.';
+
 // Texto livre que pode ficar em branco ("não mostrar"): em branco é uma escolha, não um defeito.
-const textoOpcional = (max) => z.preprocess(limpar, z.string().max(max, `Use no máximo ${max} caracteres.`));
+const textoOpcional = (max) => z.preprocess(
+  limpar,
+  z.string().max(max, `Use no máximo ${max} caracteres.`).refine(semFormula, MSG_FORMULA),
+);
 
 const emailOpcional = z.preprocess(limpar, z.union([z.literal(''), z.string().email('E-mail inválido.').max(120)]));
 
-const httpsOpcional = z.preprocess(
+// Rede social: https e só no site da própria rede (o link vai para o rodapé).
+const redeSocial = (dominios, nome) => z.preprocess(
   limpar,
-  z.string().max(200).refine((v) => v === '' || /^https:\/\/[^\s]+$/.test(v), 'Comece com https://'),
+  z.string().max(200)
+    .refine((v) => v === '' || /^https:\/\/[^\s]+$/.test(v), 'Comece com https://')
+    .refine((v) => {
+      if (v === '') return true;
+      try {
+        const host = new URL(v).hostname.replace(/^www\./, '');
+        return dominios.some((d) => host === d || host.endsWith(`.${d}`));
+      } catch {
+        return false;
+      }
+    }, `O link precisa ser do ${nome}.`),
 );
-
-const CORES_DO_SITE = ['#6D2077', '#461356', '#2F6B4B', '#A33F20'];
 
 // Texto livre curto (aparece para o visitante): sem quebra de linha estranha, com limite.
 const texto = (max) => z.preprocess(
@@ -58,6 +74,10 @@ const CAMPOS = {
   // Página inicial: blocos (JSON validado em lib/home.js) e evento em destaque. Só /api/pascom/home grava.
   homeBlocos: { schema: z.string().max(1500), padrao: '' },
   homeDestaque: { schema: z.string().max(80), padrao: '' },
+  // Missão, números e depoimentos da Home: JSON validado em lib/conteudo.js. Vazio = a seção não aparece.
+  homeMissao: { schema: z.string().max(2000), padrao: '' },
+  homeNumeros: { schema: z.string().max(600), padrao: '' },
+  homeDepoimentos: { schema: z.string().max(3200), padrao: '' },
   // Taxas fixas somadas ao pedido (aparecem separadas para o comprador) e tarifa do gateway repassada por cima.
   taxaServico: { schema: numero(0, 50), padrao: 2 },
   taxaComodidade: { schema: numero(0, 50), padrao: 1 },
@@ -73,19 +93,18 @@ const CAMPOS = {
     }, z.string().regex(/^(\d{12,13})?$/, 'Telefone inválido. Informe DDD e número.')),
     padrao: '',
   },
-  // Conteúdo do site (rodapé, contato, redes, cor).
-  siteNome: { schema: z.preprocess(limpar, z.string().min(3, 'Informe o nome da paróquia.').max(80)), padrao: 'Paróquia São Rafael' },
-  siteCidade: { schema: z.preprocess(limpar, z.string().min(2, 'Informe a cidade e o estado.').max(80)), padrao: 'Açailândia – MA' },
+  // Conteúdo do site (rodapé, contato, redes).
+  siteNome: { schema: z.preprocess(limpar, z.string().min(3, 'Informe o nome da paróquia.').max(80).refine(semFormula, MSG_FORMULA)), padrao: 'Paróquia São Rafael' },
+  siteCidade: { schema: z.preprocess(limpar, z.string().min(2, 'Informe a cidade e o estado.').max(80).refine(semFormula, MSG_FORMULA)), padrao: 'Açailândia – MA' },
   siteLema: { schema: textoOpcional(120), padrao: '' },
   siteEmail: { schema: emailOpcional, padrao: '' },
   siteEndereco: { schema: textoOpcional(200), padrao: '' },
   siteHorario: { schema: textoOpcional(120), padrao: '' },
-  siteInstagram: { schema: httpsOpcional, padrao: '' },
-  siteFacebook: { schema: httpsOpcional, padrao: '' },
-  siteYoutube: { schema: httpsOpcional, padrao: '' },
+  siteInstagram: { schema: redeSocial(['instagram.com'], 'Instagram'), padrao: '' },
+  siteFacebook: { schema: redeSocial(['facebook.com'], 'Facebook'), padrao: '' },
+  siteYoutube: { schema: redeSocial(['youtube.com', 'youtu.be'], 'YouTube'), padrao: '' },
   siteVersiculo: { schema: textoOpcional(200), padrao: '' },
   siteReferencia: { schema: textoOpcional(60), padrao: '' },
-  siteCor: { schema: z.enum(CORES_DO_SITE, { errorMap: () => ({ message: 'Escolha uma das cores da lista.' }) }), padrao: '#6D2077' },
 };
 
 const DEFAULTS = Object.fromEntries(Object.entries(CAMPOS).map(([k, c]) => [k, c.padrao]));
@@ -144,4 +163,4 @@ async function salvarConfig(chave, bruto, por) {
   return valor;
 }
 
-module.exports = { lerConfig, salvarConfig, limparCache, DEFAULTS, CAMPOS, CORES_DO_SITE };
+module.exports = { lerConfig, salvarConfig, limparCache, DEFAULTS, CAMPOS };

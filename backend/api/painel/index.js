@@ -10,6 +10,7 @@ const {
   listarCategorias, criarCategoria, atualizarCategoria, moverCategoria, removerCategoria,
 } = require('../../lib/categorias');
 const { listarEventosAdmin, atualizarPublicacao, atualizarCategoriaEvento } = require('../../lib/eventos-admin');
+const { lerConteudo, publicarConteudo } = require('../../lib/conteudo');
 const { precisaReverificar, DICA_REVERIFICACAO } = require('../../lib/reverificacao');
 
 const router = express.Router();
@@ -84,6 +85,20 @@ router.put('/configuracoes', exigirPermissao(), tratar(async (req, res) => {
   const depois = await salvarConfig(chave, valor, req.membro.email);
   await auditar(req, `${ROTULO_DA_CHAVE[chave]}: ${antes} → ${depois}`);
   return res.json({ chave, valor: depois });
+}));
+
+
+// ── Conteúdo do site ─────────────────────────────────────────────────────────
+router.get('/conteudo', exigirPermissao('conteudo.ver'), tratar(async (_req, res) => {
+  res.json(await lerConteudo());
+}));
+
+/** PUT /api/pascom/conteudo: { nome?, email?, missao?, numeros?, depoimentos?, ... }. Tudo ou nada. */
+router.put('/conteudo', exigirPermissao('conteudo.editar'), tratar(async (req, res) => {
+  const alteracoes = z.record(z.unknown()).parse(req.body);
+  const { alterados } = await publicarConteudo(alteracoes, req.membro.email);
+  await auditar(req, `Conteúdo do site publicado: ${alterados.join(', ')}`);
+  res.json({ alterados, conteudo: await lerConteudo() });
 }));
 
 
