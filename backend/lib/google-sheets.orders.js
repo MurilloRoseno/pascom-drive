@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { rows, sheet, fotoFromRow } = require('./google-sheets.shared');
 const { incrementarUsoCupom } = require('./commercial-rules');
+const { numeroDaPlanilha } = require('./numero-planilha');
 
 async function registrarPedido(pedido, itens) {
   const pedidos = await sheet('Pedidos');
@@ -47,11 +48,11 @@ async function buscarPedidoById(pedidoId) {
     status: match.get('Status'),
     email: match.get('Email'),
     whatsapp: match.get('WhatsApp'),
-    total: Number(match.get('Total') || 0),
+    total: numeroDaPlanilha(match.get('Total')),
     createdAt: match.get('DataCriacao') || '',
     paidAt: match.get('DataPagamento') || '',
-    totalBeforeDiscount: Number(match.get('TotalAntesDesconto') || match.get('Total') || 0),
-    discountTotal: Number(match.get('DescontoTotal') || 0),
+    totalBeforeDiscount: numeroDaPlanilha(match.get('TotalAntesDesconto') || match.get('Total')),
+    discountTotal: numeroDaPlanilha(match.get('DescontoTotal')),
     couponCode: match.get('CupomCodigo') || '',
     packageId: match.get('PacoteID') || '',
   };
@@ -66,7 +67,7 @@ async function buscarPedidoByPreferenceOrPayment(reference) {
   return match ? {
     row: match,
     id: match.get('PedidoID'),
-    total: Number(match.get('Total') || 0),
+    total: numeroDaPlanilha(match.get('Total')),
     status: match.get('Status'),
   } : null;
 }
@@ -178,8 +179,8 @@ async function prepararDownload(downloadId, tokenHash) {
   const row = downloadRows.find((item) => item.get('DownloadID') === downloadId);
   if (!row || row.get('TokenHash') !== tokenHash) return null;
   if (Date.now() > new Date(row.get('ExpiraEm')).getTime()) return null;
-  const uses = Number(row.get('Usos') || 0);
-  const maxUses = Number(row.get('UsosMaximos') || 1);
+  const uses = numeroDaPlanilha(row.get('Usos'));
+  const maxUses = numeroDaPlanilha(row.get('UsosMaximos')) || 1;
   if (uses >= maxUses) return null;
   const pedidoId = row.get('PedidoID');
   const fotoId = row.get('FotoID');
@@ -213,7 +214,7 @@ async function registrarUsoDownload(downloadId, tokenHash, fingerprint = {}) {
   const downloadRows = await rows('Downloads');
   const row = downloadRows.find((item) => item.get('DownloadID') === downloadId);
   if (!row || row.get('TokenHash') !== tokenHash) return false;
-  const uses = Number(row.get('Usos') || 0);
+  const uses = numeroDaPlanilha(row.get('Usos'));
   row.set('Usos', uses + 1);
   row.set('UltimoUsoEm', new Date().toISOString());
   safeSet(row, 'FingerprintID', fingerprint.fingerprintId || row.get('FingerprintID') || '');

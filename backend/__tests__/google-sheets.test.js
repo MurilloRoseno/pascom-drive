@@ -53,7 +53,7 @@ GoogleSpreadsheet.mockImplementation(() => ({ loadInfo: jest.fn().mockResolvedVa
 
 const {
   driveUrlToThumbnail, listarEventosPublicados, listarFotosEvento, registrarPedido, registrarEntrega,
-  prepararDownload, auditarConsistenciaComercial,
+  prepararDownload, auditarConsistenciaComercial, buscarPedidoByPreferenceOrPayment, buscarPedidoById, listarRegrasPagamento,
 } = require('../lib/google-sheets');
 
 it('lista apenas evento publicado e remove configuracao secreta', async () => {
@@ -138,4 +138,20 @@ it('audita inconsistencias comerciais em pedidos, downloads e webhooks', async (
   } finally {
     downloadRows.pop();
   }
+});
+
+describe('números no formato brasileiro (a planilha devolve "13,95")', () => {
+  it('o total do pedido lido da planilha vira número, para a conferência do webhook em centavos', async () => {
+    sheets.Pedidos.getRows.mockResolvedValueOnce([row({ PedidoID: 'PED_BR', PreferenceID: 'cs_test_br', Status: 'Pagamento Pendente', Total: '13,95', DescontoTotal: '1,5', TotalAntesDesconto: '15,45' })]);
+    const pedido = await buscarPedidoByPreferenceOrPayment('PED_BR');
+    expect(pedido.total).toBe(13.95);
+    expect(Math.round(pedido.total * 100)).toBe(1395);
+    sheets.Pedidos.getRows.mockResolvedValueOnce([row({ PedidoID: 'PED_BR', Total: '13,95', DescontoTotal: '1,5', TotalAntesDesconto: '15,45' })]);
+    expect(await buscarPedidoById('PED_BR')).toMatchObject({ total: 13.95, discountTotal: 1.5, totalBeforeDiscount: 15.45 });
+  });
+
+  it('as tarifas da aba RegrasPagamento ("0,99") viram número, não NaN', async () => {
+    sheets.RegrasPagamento = { getRows: jest.fn().mockResolvedValue([row({ MeioPagamento: 'pix', PercentualEstimado: '0,99', ValorFixo: '0,30', Ativo: 'SIM' })]) };
+    expect(await listarRegrasPagamento()).toEqual([{ method: 'pix', percentage: 0.99, fixed: 0.3, activeFrom: '' }]);
+  });
 });

@@ -1,6 +1,7 @@
 const { applicationPreviewUrl, rows, eventoFromRow, fotoFromRow } = require('./google-sheets.shared');
 const { readThrough } = require('./runtime-cache');
 const { publicacaoEfetiva } = require('./publicacao');
+const { numeroDaPlanilha } = require('./numero-planilha');
 
 async function listarEventos() {
   return (await rows('Eventos')).map(eventoFromRow);
@@ -117,8 +118,8 @@ async function listarRegrasPagamento() {
     .filter((row) => String(row.get('Ativo') || '').toUpperCase() === 'SIM' || row.get('Ativo') === true)
     .map((row) => ({
       method: row.get('MeioPagamento'),
-      percentage: Number(row.get('PercentualEstimado') || 0),
-      fixed: Number(row.get('ValorFixo') || 0),
+      percentage: numeroDaPlanilha(row.get('PercentualEstimado')),
+      fixed: numeroDaPlanilha(row.get('ValorFixo')),
       activeFrom: row.get('Vigencia') || '',
     }));
 }

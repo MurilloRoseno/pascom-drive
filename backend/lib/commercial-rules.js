@@ -1,6 +1,7 @@
 const { rows, yes, fotoFromRow } = require('./google-sheets.shared');
 const { calculatePricing } = require('./pricing');
 const { precosBase } = require('./tarifas');
+const { numeroDaPlanilha } = require('./numero-planilha');
 
 function money(value) {
   return Math.round(Number(value || 0) * 100) / 100;
@@ -24,12 +25,12 @@ function couponFromRow(row) {
     code: normalizeCode(row.get('Codigo')),
     eventId: row.get('EventoID') || '',
     type: row.get('TipoDesconto') || '',
-    value: Number(row.get('Valor') || 0),
+    value: numeroDaPlanilha(row.get('Valor')),
     active: active(row),
     validFrom: row.get('ValidoDe') || '',
     validUntil: row.get('ValidoAte') || '',
-    maxUses: Number(row.get('UsoMaximo') || 0),
-    uses: Number(row.get('Usos') || 0),
+    maxUses: numeroDaPlanilha(row.get('UsoMaximo')),
+    uses: numeroDaPlanilha(row.get('Usos')),
     description: row.get('Descricao') || '',
   };
 }
@@ -39,9 +40,9 @@ function packageFromRow(row) {
     id: row.get('PacoteID') || '',
     eventId: row.get('EventoID') || '',
     type: row.get('Tipo') || '',
-    minQuantity: Number(row.get('QuantidadeMinima') || 0),
-    packagePrice: Number(row.get('PrecoPacote') || 0),
-    percentage: Number(row.get('PercentualDesconto') || 0),
+    minQuantity: numeroDaPlanilha(row.get('QuantidadeMinima')),
+    packagePrice: numeroDaPlanilha(row.get('PrecoPacote')),
+    percentage: numeroDaPlanilha(row.get('PercentualDesconto')),
     active: active(row),
     description: row.get('Descricao') || '',
   };
@@ -165,7 +166,7 @@ async function incrementarUsoCupom(couponCode) {
   if (!code) return false;
   const match = (await rows('Cupons')).find((row) => normalizeCode(row.get('Codigo')) === code);
   if (!match) return false;
-  match.set('Usos', Number(match.get('Usos') || 0) + 1);
+  match.set('Usos', numeroDaPlanilha(match.get('Usos')) + 1);
   await match.save();
   return true;
 }
