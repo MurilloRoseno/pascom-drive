@@ -6,6 +6,9 @@ import { useCarrinho } from '../hooks/useCarrinho.js';
 import { cotarCheckout, criarPagamento, listarEventos, listarFotosEvento, listarOfertasEvento, obterEvento, recuperarPedido, statusPagamento, validarAcessoGaleria } from '../lib/api.js';
 import { checkoutSchema } from '../lib/validation.js';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
+import AjudaPage from '../pages/Ajuda.jsx';
+import AgendaPage from '../pages/Agenda.jsx';
+import AssistenteFlutuante from '../components/AssistenteFlutuante.jsx';
 import { useDevtoolsGuard } from '../shared/devtoolsGuard.js';
 import { buildEventSharePayload, shareEventNatively } from '../shared/eventShare.js';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
@@ -78,6 +81,8 @@ function MobileRoutes() {
     if (next.name === 'home') navigate('/');
     if (next.name === 'galerias') navigate(`/buscar${next.sacramento && next.sacramento !== 'todos' ? `?categoria=${next.sacramento}` : ''}`);
     if (next.name === 'calendario') navigate('/calendario');
+    if (next.name === 'agenda') navigate('/agenda');
+    if (next.name === 'ajuda') navigate('/ajuda');
     if (next.name === 'perfil') navigate('/perfil');
     if (next.name === 'privacidade') navigate('/privacidade');
     if (next.name === 'evento') navigate(`/evento/${encodeURIComponent(next.eventoId)}`);
@@ -102,6 +107,8 @@ function MobileRoutes() {
         <Route path="/categoria" element={<Navigate replace to={`/buscar${location.search}`} />} />
         <Route path="/e/:slug" element={<EventSlugRedirect />} />
         <Route path="/calendario" element={<CalendarioScreen eventos={catalog.eventos} go={go} />} />
+        <Route path="/agenda" element={<AgendaPage mobile />} />
+        <Route path="/ajuda" element={<AjudaPage mobile />} />
         <Route path="/perfil" element={<PerfilScreen setRole={(role) => setTweak('role', role)} go={go} role={tweaks.role} eventos={catalog.eventos} recuperarPedido={recuperarPedido} />} />
         <Route path="/privacidade" element={<PrivacyPolicy mobile />} />
         <Route path="/politica-de-privacidade" element={<PrivacyPolicy mobile />} />
@@ -111,6 +118,7 @@ function MobileRoutes() {
       </Routes>
       {showCartBar && <CartBar cart={cart} onClick={() => setCartOpen(true)} />}
       {cartOpen && <CarrinhoScreen cart={cart} removeFromCart={removeFoto} go={go} close={() => setCartOpen(false)} />}
+      {!hideChrome && <AssistenteFlutuante mobile acima={showCartBar} />}
       {!hideChrome && <BottomNav routeName={routeName} go={go} role={tweaks.role} />}
     </div>
   );
@@ -216,13 +224,15 @@ function AppBar({ cartCount, openCart, tweaks, setTweak }) {
 
 function BottomNav({ routeName, go, role }) {
   const items = [{ id: 'home', label: 'Início', icon: I.Home }, { id: 'galerias', label: 'Galerias', icon: I.Camera }, { id: 'calendario', label: 'Calendário', icon: I.Calendar }, { id: 'perfil', label: role === 'pascom' ? 'Pascom' : 'Perfil', icon: role === 'pascom' ? I.Upload : I.User }];
-  return <nav className="botnav">{items.map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => go({ name: item.id })} className={`botnav-item${routeName === item.id ? ' active' : ''}`}><Icon className="icon" /><span>{item.label}</span></button>; })}</nav>;
+  return <nav className="botnav">{items.map((item) => { const Icon = item.icon; return <button key={item.id} onClick={() => go({ name: item.id })} className={`botnav-item${routeName === item.id || (item.id === 'calendario' && routeName === 'agenda') || (item.id === 'perfil' && routeName === 'ajuda') ? ' active' : ''}`}><Icon className="icon" /><span>{item.label}</span></button>; })}</nav>;
 }
 
 function routeNameFromLocation(location) {
   if (location.pathname === '/') return 'home';
   if (location.pathname === '/buscar') return 'galerias';
   if (location.pathname === '/calendario') return 'calendario';
+  if (location.pathname === '/agenda') return 'agenda';
+  if (location.pathname === '/ajuda') return 'ajuda';
   if (location.pathname === '/perfil') return 'perfil';
   if (location.pathname === '/privacidade' || location.pathname === '/politica-de-privacidade') return 'privacidade';
   if (location.pathname === '/checkout') return 'checkout';

@@ -37,6 +37,8 @@ export default function Footer() {
               <li><a href="/#sobre">Sobre a Paróquia</a></li>
               <li><a href="/#sacramentos">Sacramentos</a></li>
               <li><Link to="/buscar">Eventos</Link></li>
+              <li><Link to="/agenda">Agenda</Link></li>
+              <li><Link to="/ajuda">Central de ajuda</Link></li>
               <li><Link to="/recuperar-pedido">Recuperar pedido</Link></li>
               <li><Link to="/pascom">Área Pascom</Link></li>
               <li><Link to="/privacidade">Política de Privacidade</Link></li>

@@ -1,11 +1,28 @@
 /* eslint-disable react/prop-types, no-unused-vars */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { obterProximas } from '../lib/api.js';
 import PascomPanel from '../shared/PascomPanel.jsx';
 import { I } from './referenceIcons.jsx';
-import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, PROXIMAS, resolveEventPhotos, SacramentoChips, } from './referenceUtils.jsx';
+import { brl, categoryLabel, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, formatMobileDisplayDate, getCoverPhoto, Photo, PRECO_FOTO, resolveEventPhotos, SacramentoChips, } from './referenceUtils.jsx';
+
+const MESES_CURTOS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+/** Próximos compromissos da agenda paroquial (dados reais; lista vazia se a API falhar). */
+function useProximas(quantidade) {
+  const [estado, setEstado] = useState({ carregando: true, itens: [] });
+  useEffect(() => {
+    let ativo = true;
+    obterProximas(quantidade)
+      .then(({ ocorrencias }) => ativo && setEstado({ carregando: false, itens: ocorrencias }))
+      .catch(() => ativo && setEstado({ carregando: false, itens: [] }));
+    return () => { ativo = false; };
+  }, [quantidade]);
+  return estado;
+}
 
 export function HomeScreen({ go, eventos, loading, tweaks }) {
   const recentes = eventos.slice(0, 4);
+  const proximas = useProximas(4);
   const totalFotos = eventos.reduce((sum, ev) => sum + Number(ev.totalFotos || 0), 0);
 
   return (
@@ -53,7 +70,11 @@ export function HomeScreen({ go, eventos, loading, tweaks }) {
 
       <section className="section" style={{ background: 'var(--surface-2)' }}>
         <div className="eyebrow">Agenda Paroquial</div><h2 className="h2" style={{ marginTop: 4 }}>Próximas atividades</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>{PROXIMAS.map((agenda) => <AgendaRow key={agenda.id} agenda={agenda} />)}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 14 }}>
+          {proximas.itens.map((item) => <AgendaRow key={`${item.id}-${item.data}`} onClick={() => go({ name: 'agenda' })} agenda={{ dia: item.data.slice(8, 10), mes: MESES_CURTOS[Number(item.data.slice(5, 7)) - 1], titulo: item.titulo, local: item.local || 'Paróquia São Rafael', hora: item.hora || 'Dia inteiro' }} />)}
+          {!proximas.carregando && proximas.itens.length === 0 && <EmptyCard text="Nenhuma atividade na agenda por enquanto." />}
+        </div>
+        <button className="link-btn" style={{ marginTop: 12 }} onClick={() => go({ name: 'agenda' })}>Ver a agenda completa <I.ChevronRight className="icon icon-sm" /></button>
       </section>
 
       <section className="section-purple">
@@ -155,11 +176,11 @@ export function EventoScreen({ ev, go, tweaks, cart = [], addToCart, removeFromC
 
 export function CalendarioScreen({ eventos, go }) {
   const [monthOffset, setMonthOffset] = useState(0);
-  const visibleMonth = useMemo(() => new Date(2026, 4 + monthOffset, 1), [monthOffset]);
+  const visibleMonth = useMemo(() => { const hoje = new Date(); return new Date(hoje.getFullYear(), hoje.getMonth() + monthOffset, 1); }, [monthOffset]);
   const monthName = visibleMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
   const linked = useMemo(() => buildCalendarEvents(eventos, visibleMonth), [eventos, visibleMonth]);
   const monthDays = useMemo(() => buildCalendarDays(visibleMonth), [visibleMonth]);
-  const featured = linked.length ? linked.map((item) => item.event) : eventos.slice(0, 4);
+  const featured = linked.map((item) => item.event);
   return (
     <div className="scroll mobile-calendar-scroll">
       <section className="mobile-calendar-hero"><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Calendário Litúrgico</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Tempos & celebrações</h1><p className="body" style={{ color: 'rgba(255,255,255,0.76)', marginTop: 8, fontSize: 13 }}>Eventos publicados e atividades da comunidade.</p></section>
@@ -171,10 +192,11 @@ export function CalendarioScreen({ eventos, go }) {
             const marker = item.current ? linked.find((event) => event.day === item.day) : null;
             return <button key={`${item.day}-${index}`} className={`mobile-calendar-day${item.current ? '' : ' muted'}${marker ? ' marked' : ''}`} onClick={() => marker && go({ name: 'evento', eventoId: marker.event.id })}>{item.current ? item.day : ''}{marker && <span className={`mobile-calendar-dot ${marker.color}`} />}</button>;
           })}</div>
-          <div className="mobile-calendar-legend"><LegendDot color="var(--accent-d)" label="Evento publicado" /><LegendDot color="var(--parish-green)" label="Agenda" /></div>
+          <div className="mobile-calendar-legend"><LegendDot color="var(--accent-d)" label="Dia com galeria de fotos" /></div>
         </div>
+        <button className="btn btn-outline btn-block" style={{ marginTop: 12 }} onClick={() => go({ name: 'agenda' })}><I.Calendar className="icon" /> Ver a agenda da paróquia</button>
       </section>
-      <section className="section" style={{ paddingTop: 0 }}><h3 className="h3">Em destaque neste mês</h3><div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>{featured.map((ev) => <button key={ev.id} onClick={() => go({ name: 'evento', eventoId: ev.id })} className="card mobile-calendar-feature"><div style={{ width: 52, height: 52 }}><Photo photo={getCoverPhoto(ev)} aspect="1/1" showBadge={false} ornaments={false} /></div><div style={{ flex: 1 }}><strong>{ev.titulo}</strong><div className="caption" style={{ marginTop: 2 }}><I.Calendar className="icon icon-sm" /> {formatMobileDisplayDate(ev.dataLabel, ev.data)}</div></div><I.ChevronRight className="icon" /></button>)}</div></section>
+      <section className="section" style={{ paddingTop: 0 }}><h3 className="h3">Galerias deste mês</h3><div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>{featured.length === 0 && <EmptyCard text="Nenhuma galeria de fotos neste mês." />}{featured.map((ev) => <button key={ev.id} onClick={() => go({ name: 'evento', eventoId: ev.id })} className="card mobile-calendar-feature"><div style={{ width: 52, height: 52 }}><Photo photo={getCoverPhoto(ev)} aspect="1/1" showBadge={false} ornaments={false} /></div><div style={{ flex: 1 }}><strong>{ev.titulo}</strong><div className="caption" style={{ marginTop: 2 }}><I.Calendar className="icon icon-sm" /> {formatMobileDisplayDate(ev.dataLabel, ev.data)}</div></div><I.ChevronRight className="icon" /></button>)}</div></section>
     </div>
   );
 }
@@ -187,8 +209,7 @@ function buildCalendarEvents(eventos, visibleMonth) {
     return date ? { day: date.getDate(), month: date.getMonth(), year: date.getFullYear(), event, color: index % 2 ? 'green' : 'yellow' } : null;
   }).filter(Boolean).filter((item) => item.month === month && item.year === year);
 
-  if (parsed.length) return parsed;
-  return eventos.slice(0, 4).map((event, index) => ({ day: [5, 12, 18, 25][index] || (index + 1), event, color: index % 2 ? 'green' : 'yellow' }));
+  return parsed;
 }
 
 function buildCalendarDays(visibleMonth) {
@@ -275,7 +296,7 @@ function PublicoScreen({ go, setRole, recuperarPedido }) {
       <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos e fale com a secretaria.</p></section>
       <section className="section">
         <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra e o código do pedido.</p><input className="input" placeholder="seu@email.com" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} style={{ marginTop: 14 }} /><input className="input" placeholder="PED_..." value={form.pedidoId} onChange={(event) => setForm({ ...form, pedidoId: event.target.value.toUpperCase() })} style={{ marginTop: 10 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} onClick={submit}>Recuperar fotos</button>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}{result && <div className="caption" style={{ textAlign: 'left', marginTop: 12 }}><strong>{result.status}</strong><br />{result.deliveryReady ? `${result.downloads.length} link(s) liberado(s) por 24h.` : 'Pedido ainda não confirmado.'}{result.downloads?.map((item, index) => <a key={item.url} href={item.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>Baixar foto {index + 1}</a>)}</div>}</div>
-        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Whatsapp" label="Falar com a secretaria" href="https://wa.me/5599991646063" /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
+        <div style={{ marginTop: 14 }} className="card"><MenuRow icon="Calendar" label="Agenda da paróquia" onClick={() => go({ name: 'agenda' })} /><MenuRow icon="Sparkle" label="Central de ajuda e assistente" onClick={() => go({ name: 'ajuda' })} /><MenuRow icon="Whatsapp" label="Falar com a secretaria" href="https://wa.me/5599991646063" /><MenuRow icon="Mail" label="Contato por e-mail" href="mailto:paroquiasaorafael@hotmail.com" /><MenuRow icon="Lock" label="Política de privacidade (LGPD)" onClick={() => go({ name: 'privacidade' })} last /></div>
         <div style={{ marginTop: 22, padding: 16, background: 'var(--surface-2)', borderRadius: 12, border: '1px solid var(--line)' }}><div className="eyebrow">Você é da Pascom?</div><p className="body-sm" style={{ marginTop: 6 }}>Acesse a área restrita para consultar pedidos, downloads, suporte e métricas.</p><button className="btn btn-outline btn-block" style={{ marginTop: 10 }} onClick={() => setRole('pascom')}><I.Lock className="icon" /> Entrar como Pascom</button></div>
       </section>
     </div>
@@ -330,7 +351,7 @@ function EventCard({ ev, onClick, isPascom }) {
   );
 }
 function MenuRow({ icon, label, href, onClick, disabled, last }) { const Icon = I[icon] || I.Sparkle; const content = <><span style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--surface-2)', color: 'var(--brand)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Icon className="icon icon-sm" /></span><span style={{ flex: 1, fontSize: 14, fontWeight: 700, color: disabled ? 'var(--ink-3)' : 'var(--ink)' }}>{label}</span><I.ChevronRight className="icon icon-sm" style={{ color: 'var(--ink-3)' }} /></>; const style = { width: '100%', padding: '13px 14px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: last ? 0 : '1px solid var(--line)', textAlign: 'left', cursor: disabled ? 'not-allowed' : 'pointer' }; if (href) return <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" style={style}>{content}</a>; return <button onClick={disabled ? undefined : onClick} style={style} title={disabled ? 'Funcionalidade futura' : undefined}>{content}</button>; }
-function AgendaRow({ agenda }) { return <div className="card" style={{ padding: 12, display: 'flex', alignItems: 'center', gap: 12 }}><div className="agenda-date-tile" style={{ width: 52, height: 52, borderRadius: 12, background: 'var(--brand)', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><strong style={{ fontSize: 20 }}>{agenda.dia}</strong><span style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--accent)' }}>{agenda.mes}</span></div><div style={{ flex: 1 }}><strong style={{ color: 'var(--brand)', fontSize: 14 }}>{agenda.titulo}</strong><div className="caption" style={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}><span><I.MapPin className="icon icon-sm" /> {agenda.local}</span><span><I.Clock className="icon icon-sm" /> {agenda.hora}</span></div></div><I.ChevronRight className="icon" style={{ color: 'var(--ink-3)' }} /></div>; }
+function AgendaRow({ agenda, onClick }) { return <div className="card" role="button" tabIndex={0} onClick={onClick} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') onClick?.(); }} style={{ padding: 12, display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}><div className="agenda-date-tile" style={{ width: 52, height: 52, borderRadius: 12, background: 'var(--brand)', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}><strong style={{ fontSize: 20 }}>{agenda.dia}</strong><span style={{ fontSize: 10, textTransform: 'uppercase', color: 'var(--accent)' }}>{agenda.mes}</span></div><div style={{ flex: 1 }}><strong style={{ color: 'var(--brand)', fontSize: 14 }}>{agenda.titulo}</strong><div className="caption" style={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}><span><I.MapPin className="icon icon-sm" /> {agenda.local}</span><span><I.Clock className="icon icon-sm" /> {agenda.hora}</span></div></div><I.ChevronRight className="icon" style={{ color: 'var(--ink-3)' }} /></div>; }
 function LegendDot({ color, label }) { return <span className="caption" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 8, height: 8, borderRadius: 999, background: color }} />{label}</span>; }
 function BigStat({ label, value, delta, muted }) { return <div className="card" style={{ padding: 12 }}><div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.14em', color: 'var(--ink-3)', textTransform: 'uppercase' }}>{label}</div><div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: muted ? 'var(--ink-3)' : 'var(--brand)', marginTop: 6 }}>{value}</div><div style={{ fontSize: 11, fontWeight: 600, color: muted ? 'var(--ink-3)' : 'var(--parish-green)', marginTop: 4 }}>{delta}</div></div>; }
 function ActionTile({ icon, label, sub, primary }) { const Icon = I[icon] || I.Sparkle; return <button className={`card pascom-action-tile${primary ? ' primary' : ''}`} style={{ padding: 14, textAlign: 'left', minHeight: 96, background: primary ? 'var(--brand)' : 'var(--surface)', color: primary ? '#fff' : 'var(--ink)' }} title="Funcionalidade futura"><Icon className="icon" style={{ color: primary ? 'var(--accent)' : 'var(--brand)' }} /><div style={{ fontWeight: 800, fontSize: 14, marginTop: 10 }}>{label}</div><div className="caption" style={{ color: primary ? 'rgba(255,255,255,0.72)' : 'var(--ink-3)' }}>{sub}</div></button>; }

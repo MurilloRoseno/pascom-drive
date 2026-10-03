@@ -12,6 +12,9 @@ import PaymentReturnPage from '../pages/PaymentReturn.jsx';
 import PrivacyPolicy from '../pages/PrivacyPolicy.jsx';
 import RecoverOrderPage from '../pages/RecoverOrder.jsx';
 import PascomPage from '../pages/Pascom.jsx';
+import AjudaPage from '../pages/Ajuda.jsx';
+import AgendaPage from '../pages/Agenda.jsx';
+import AssistenteFlutuante from '../components/AssistenteFlutuante.jsx';
 import EventSlugRedirect from '../shared/EventSlugRedirect.jsx';
 import '../index.css';
 import '../reference-pages.css';
@@ -37,6 +40,8 @@ export default function DesktopApp() {
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/recuperar-pedido" element={<RecoverOrderPage />} />
           <Route path="/pascom" element={<PascomPage />} />
+          <Route path="/ajuda" element={<AjudaPage />} />
+          <Route path="/agenda" element={<AgendaPage />} />
           <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
         </Routes>
         <CarrinhoProvider>
@@ -47,6 +52,7 @@ export default function DesktopApp() {
           <CartSummary />
         </CarrinhoProvider>
         <Footer />
+        <AssistenteFlutuante />
       </div>
     </BrowserRouter>
   );

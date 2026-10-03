@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { listarEventos } from '../lib/api.js';
+import { listarEventos, obterProximas } from '../lib/api.js';
 import { scheduleLabel } from '../lib/event-format.js';
 
 const sacraments = [
@@ -129,12 +129,21 @@ export default function HomePage() {
   const [q, setQ] = useState('');
   const [events, setEvents] = useState([]);
   const [eventsLoading, setEventsLoading] = useState(true);
+  const [agenda, setAgenda] = useState({ carregando: true, itens: [] });
 
   useEffect(() => {
     listarEventos()
       .then(({ eventos }) => setEvents(eventos))
       .catch(() => setEvents([]))
       .finally(() => setEventsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    let ativo = true;
+    obterProximas(4)
+      .then(({ ocorrencias }) => ativo && setAgenda({ carregando: false, itens: ocorrencias }))
+      .catch(() => ativo && setAgenda({ carregando: false, itens: [] }));
+    return () => { ativo = false; };
   }, []);
 
   function search(event) {
@@ -206,19 +215,20 @@ export default function HomePage() {
       <section className="atividades">
         <Ornament />
         <h2 className="sec-titulo">Próximas Atividades</h2>
-        {eventsLoading && <ActivitySkeleton />}
+        {agenda.carregando && <ActivitySkeleton />}
         <div className="atividades-lista">
-          {!eventsLoading && events.length === 0 && <p className="home-events-state">Nenhuma atividade publicada no momento.</p>}
-          {events.slice(0, 4).map((event) => {
-            const { day, month } = eventDateParts(event);
+          {!agenda.carregando && agenda.itens.length === 0 && <p className="home-events-state">Nenhuma atividade na agenda no momento.</p>}
+          {agenda.itens.map((item) => {
+            const { day, month } = eventDateParts({ date: item.data });
             return (
-              <Link className="ativ-item" to={`/evento/${encodeURIComponent(event.eventoId)}`} key={event.eventoId} aria-label={`Abrir evento ${event.title}`}>
+              <Link className="ativ-item" to={`/agenda?mes=${item.data.slice(0, 7)}&dia=${item.data}`} key={`${item.id}-${item.data}`} aria-label={`Ver na agenda: ${item.titulo}`}>
                 <div className="ativ-data"><span className="dia">{day}</span><span className="mes">{month}</span></div>
-                <div className="ativ-texto"><div className="ativ-nome">{event.title}</div><div className="ativ-local">{event.location || 'Paróquia São Rafael'} · {scheduleLabel(event)}</div></div>
+                <div className="ativ-texto"><div className="ativ-nome">{item.titulo}</div><div className="ativ-local">{item.local || 'Paróquia São Rafael'}{item.hora ? ` · ${item.hora}` : ' · dia inteiro'}</div></div>
               </Link>
             );
           })}
         </div>
+        <p className="home-events-state"><Link to="/agenda">Ver a agenda completa →</Link></p>
       </section>
       <section className="testemunhos">
         <Ornament />

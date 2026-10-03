@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useSearchParams } from 'react-router-dom';
 import { obterAgenda } from '../lib/api.js';
 import { somarMeses } from '../lib/datas.js';
 import CalendarioMes from '../components/agenda/CalendarioMes.jsx';
 import FiltroTipos from '../components/agenda/FiltroTipos.jsx';
 import { ListaDoMes, PainelDoDia } from '../components/agenda/PainelDoDia.jsx';
+import '../shared/ajuda-agenda.css';
 
 const MES = /^\d{4}-(0[1-9]|1[0-2])$/;
 const DIA = /^\d{4}-\d{2}-\d{2}$/;
@@ -15,10 +17,11 @@ function mesDeHoje() {
 }
 
 /**
- * /agenda — calendário paroquial. O mês, o dia e o filtro ficam na URL, então o
- * endereço pode ser compartilhado e o botão "voltar" funciona.
+ * /agenda: calendário paroquial. O mês, o dia e o filtro ficam na URL, então o endereço
+ * pode ser compartilhado e o botão "voltar" funciona. Em tela estreita a lista do mês
+ * vem primeiro (leitura natural no celular) e a grade logo abaixo.
  */
-export default function AgendaPage() {
+export default function AgendaPage({ mobile = false }) {
   const [params, setParams] = useSearchParams();
   const [estado, setEstado] = useState({ fase: 'carregando' });
 
@@ -48,21 +51,20 @@ export default function AgendaPage() {
   const tipos = estado.fase === 'ok' ? estado.tipos : [];
   const ocorrencias = estado.fase === 'ok' ? estado.ocorrencias.filter((o) => !tipo || o.tipo === tipo) : [];
 
-  return (
-    <section className="py-6" style={{ background: 'var(--photo-paper)', minHeight: '100vh' }}>
-      <div className="max-w-5xl mx-auto px-4">
-        <h1 className="font-display font-bold" style={{ color: 'var(--photo-ink)', fontSize: 'var(--text-3xl)' }}>Agenda da paróquia</h1>
-        <p className="mt-1 mb-5" style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-base)' }}>
-          Missas, celebrações, reuniões e formações. Toque num dia para ver os detalhes.
-        </p>
+  const conteudo = (
+    <section className={`aa aa-pagina${mobile ? '' : ' aa-pagina--solta'}`}>
+      <div className="aa-conteudo aa-conteudo--largo">
+        <h1 className="aa-h1">Agenda da paróquia</h1>
+        <p className="aa-lead">Missas, celebrações, reuniões e formações. Toque num dia para ver os detalhes.</p>
 
-        {estado.fase === 'erro' && <p role="alert" style={{ fontSize: 'var(--text-base)' }}>Não foi possível carregar a agenda agora. Tente de novo em instantes.</p>}
-        {estado.fase === 'carregando' && <p role="status" style={{ fontSize: 'var(--text-base)' }}>Carregando a agenda…</p>}
+        {estado.fase === 'erro' && <p role="alert" className="aa-estado">Não foi possível carregar a agenda agora. Tente de novo em instantes.</p>}
+        {estado.fase === 'carregando' && <p role="status" className="aa-estado">Carregando a agenda…</p>}
 
         {estado.fase === 'ok' && (
-          <div className="space-y-5">
+          <div className="aa-pilha">
             <FiltroTipos tipos={tipos} valor={tipo} onChange={(t) => atualizar({ tipo: t })} />
-            <div className="grid gap-5 lg:grid-cols-[1fr_20rem]">
+            <ListaDoMes mes={mes} ocorrencias={ocorrencias} tipos={tipos} onSelecionarDia={(d) => atualizar({ dia: d })} />
+            <div className="aa-agenda-grade">
               <CalendarioMes
                 mes={mes}
                 hoje={hoje}
@@ -72,9 +74,8 @@ export default function AgendaPage() {
                 onMudarMes={(n) => atualizar({ mes: somarMeses(mes, n), dia: null })}
                 onHoje={() => atualizar({ mes: hoje.slice(0, 7), dia: hoje })}
               />
-              <div className="space-y-5">
+              <div className="aa-agenda-lado">
                 <PainelDoDia data={dia} ocorrencias={ocorrencias} tipos={tipos} />
-                <ListaDoMes mes={mes} ocorrencias={ocorrencias} tipos={tipos} onSelecionarDia={(d) => atualizar({ dia: d })} />
               </div>
             </div>
           </div>
@@ -82,4 +83,8 @@ export default function AgendaPage() {
       </div>
     </section>
   );
+
+  return mobile ? <div className="scroll">{conteudo}</div> : conteudo;
 }
+
+AgendaPage.propTypes = { mobile: PropTypes.bool };
