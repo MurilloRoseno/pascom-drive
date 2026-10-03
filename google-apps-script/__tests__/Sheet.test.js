@@ -1,4 +1,6 @@
-const { getSheet, registrarFoto, inicializarEstrutura, invalidarCacheSite } = require('../Sheet');
+const {
+  getSheet, registrarFoto, inicializarEstrutura, invalidarCacheSite, listarCategoriasEvento,
+} = require('../Sheet');
 
 beforeEach(() => jest.clearAllMocks());
 
@@ -69,4 +71,47 @@ it('assina invalidacao de cache com HMAC do Apps Script', () => {
     PropertiesService.getScriptProperties().getProperty = original;
     delete global.UrlFetchApp;
   }
+});
+
+describe('listarCategoriasEvento (lista suspensa de Eventos.Categoria)', () => {
+  const PADRAO = ['celebracoes', 'batismo', 'eucaristia', 'crisma', 'casamento', 'uncao-dos-enfermos', 'ordem'];
+  const abaCom = (valores) => ({ getDataRange: () => ({ getValues: () => valores }) });
+  const CAB = ['Id', 'Nome', 'Tipo', 'Ordem', 'Ativo'];
+
+  afterEach(() => __mockSpreadsheet__.getSheetByName.mockReset());
+
+  it('usa as categorias ativas da aba Categorias, na ordem do painel', () => {
+    __mockSpreadsheet__.getSheetByName.mockReturnValue(abaCom([
+      CAB,
+      ['ordem', 'Ordem', 'sacramento', '3', 'SIM'],
+      ['profissao-de-fe', 'Profissão de Fé', 'sacramento', '8', 'SIM'],
+      ['batismo', 'Batismo', 'sacramento', '2', 'SIM'],
+      ['escondida', 'Escondida', 'celebracao', '4', 'NAO'],
+      ['antiga', 'Antiga', 'celebracao', '5', 'REMOVIDA'],
+    ]));
+    expect(listarCategoriasEvento()).toEqual(['batismo', 'ordem', 'profissao-de-fe']);
+    expect(__mockSpreadsheet__.getSheetByName).toHaveBeenCalledWith('Categorias');
+  });
+
+  it('sem a aba, com a aba vazia, sem as colunas esperadas ou sem nenhuma ativa: lista fixa', () => {
+    __mockSpreadsheet__.getSheetByName.mockReturnValue(null);
+    expect(listarCategoriasEvento()).toEqual(PADRAO);
+    __mockSpreadsheet__.getSheetByName.mockReturnValue(abaCom([CAB]));
+    expect(listarCategoriasEvento()).toEqual(PADRAO);
+    __mockSpreadsheet__.getSheetByName.mockReturnValue(abaCom([['Outra', 'Coisa'], ['a', 'b']]));
+    expect(listarCategoriasEvento()).toEqual(PADRAO);
+    __mockSpreadsheet__.getSheetByName.mockReturnValue(abaCom([CAB, ['x', 'X', 'sacramento', '1', 'NAO']]));
+    expect(listarCategoriasEvento()).toEqual(PADRAO);
+  });
+
+  it('erro ao ler a planilha não derruba a preparação da estrutura: lista fixa', () => {
+    __mockSpreadsheet__.getSheetByName.mockImplementation(() => { throw new Error('sem acesso'); });
+    expect(listarCategoriasEvento()).toEqual(PADRAO);
+  });
+
+  it('a lista fixa devolvida é uma cópia: mexer nela não altera a configuração', () => {
+    __mockSpreadsheet__.getSheetByName.mockReturnValue(null);
+    listarCategoriasEvento().push('lixo');
+    expect(listarCategoriasEvento()).toEqual(PADRAO);
+  });
 });

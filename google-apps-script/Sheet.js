@@ -49,6 +49,36 @@ var EVENTO_OPCOES = {
   ProtecaoMenores: ['SIM', 'NAO'],
 };
 
+/**
+ * Categorias que a lista suspensa de Eventos.Categoria aceita: as ativas da aba
+ * `Categorias` (editada no painel, na ordem do painel). Sem a aba, vazia ou com erro
+ * de leitura, vale a lista fixa de EVENTO_OPCOES.Categoria.
+ */
+function listarCategoriasEvento() {
+  var padrao = EVENTO_OPCOES.Categoria.slice();
+  try {
+    var aba = getSpreadsheet().getSheetByName('Categorias');
+    if (!aba) return padrao;
+    var valores = aba.getDataRange().getValues();
+    if (!valores || valores.length < 2) return padrao;
+    var cab = valores[0];
+    var iId = cab.indexOf('Id');
+    var iOrdem = cab.indexOf('Ordem');
+    var iAtivo = cab.indexOf('Ativo');
+    if (iId < 0 || iAtivo < 0) return padrao;
+    var ativas = valores.slice(1).filter(function(linha) {
+      return String(linha[iId] || '').trim() && String(linha[iAtivo]).toUpperCase() === 'SIM';
+    });
+    ativas.sort(function(a, b) {
+      return (Number(a[iOrdem]) || 0) - (Number(b[iOrdem]) || 0);
+    });
+    var ids = ativas.map(function(linha) { return String(linha[iId]).trim(); });
+    return ids.length ? ids : padrao;
+  } catch (error) {
+    return padrao;
+  }
+}
+
 var REGRA_PAGAMENTO_OPCOES = {
   MeioPagamento: ['pix', 'debit_card', 'credit_card'],
   Ativo: ['SIM', 'NAO'],
@@ -261,8 +291,9 @@ function aplicarValidacoesAdministrativas() {
   });
   var eventos = getEventosSheet();
   // Column additions can leave an old list rule attached to a date/status cell.
-  Object.keys(EVENTO_OPCOES).forEach(function(field) {
-    aplicarValidacaoLista(eventos, field, EVENTO_OPCOES[field]);
+  var opcoesEvento = Object.assign({}, EVENTO_OPCOES, { Categoria: listarCategoriasEvento() });
+  Object.keys(opcoesEvento).forEach(function(field) {
+    aplicarValidacaoLista(eventos, field, opcoesEvento[field]);
   });
   var regras = ensureSheet('RegrasPagamento', REGRAS_HEADERS);
   Object.keys(REGRA_PAGAMENTO_OPCOES).forEach(function(field) {
@@ -660,6 +691,7 @@ if (typeof module !== 'undefined') {
     getStatusEvento: getStatusEvento, getStatusEventoByFolderId: getStatusEventoByFolderId,
     eventoProntoParaRemover: eventoProntoParaRemover, inicializarEstrutura: inicializarEstrutura,
     reiniciarDadosParaEstreia: reiniciarDadosParaEstreia,
+    listarCategoriasEvento: listarCategoriasEvento,
     atualizarDisponibilidadeFotos: atualizarDisponibilidadeFotos,
     atualizarDerivadosFoto: atualizarDerivadosFoto,
     listarFotosParaReprocessar: listarFotosParaReprocessar,
