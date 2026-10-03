@@ -1,5 +1,6 @@
 const { clerkClient, clerkMiddleware, getAuth } = require('@clerk/express');
 const { rows, yes } = require('./google-sheets.shared');
+const { papelValido, adminDoAmbiente } = require('./equipe');
 
 function normalizeEmail(value) {
   return String(value || '').trim().toLowerCase();
@@ -69,7 +70,7 @@ async function findPascomMember({ emails = [], phones = [] }) {
   }
   return {
     name: member.get('Nome') || '',
-    role: member.get('Role') || 'admin',
+    role: papelValido(member.get('Role')), // vazio ou desconhecido: sem papel no painel
     identifier: member.get('Identificador') || '',
     type: member.get('Tipo') || '',
   };
@@ -91,7 +92,10 @@ async function authenticatePascom(req, res, next) {
   try {
     const user = await clerkClient.users.getUser(auth.userId);
     const identifiers = userIdentifiers(user);
-    const member = await findPascomMember(identifiers);
+    const fixo = adminDoAmbiente(); // PAINEL_ADMIN_EMAIL entra sempre como admin (primeiro acesso)
+    const member = fixo && identifiers.emails.includes(fixo)
+      ? { name: 'Administrador', role: 'admin', identifier: fixo, type: 'email' }
+      : await findPascomMember(identifiers);
     if (!member) {
       return res.status(403).json({ error: 'Usuario sem permissao na EquipePascom.' });
     }
@@ -102,6 +106,7 @@ async function authenticatePascom(req, res, next) {
       email: identifiers.emails[0] || '',
       phone: identifiers.phones[0] || '',
       identifiers,
+      sessao: auth.sessionClaims || {}, // claims do token (reautenticação: fva)
     };
     return next();
   } catch (error) {
