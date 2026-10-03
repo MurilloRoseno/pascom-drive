@@ -22,7 +22,7 @@ export default function PaymentReturnPage() {
         <p>
           {approved
             ? 'Os links seguros das suas fotos serao enviados ao e-mail informado. A secretaria tambem podera encaminha-los pelo WhatsApp.'
-            : 'Assim que o Mercado Pago confirmar a transacao, sua entrega sera preparada com seguranca.'}
+            : 'Assim que o pagamento for confirmado, sua entrega sera preparada com seguranca.'}
         </p>
         {pedidoId && <small>Pedido: {pedidoId}</small>}
         <Link className="primary-link" to="/buscar">Voltar aos eventos</Link>

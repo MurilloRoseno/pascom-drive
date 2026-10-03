@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { checkoutSchema } from '../lib/validation.js';
 import { cotarCheckout, criarPagamento } from '../lib/api.js';
+import { frasePagamentoSeguro, textoBotaoPagar } from '../shared/gateway.js';
 
 const money = (value) => `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
 const methods = [
@@ -78,7 +79,7 @@ export default function CheckoutPage() {
         <Link to="/buscar">Voltar aos eventos</Link>
         <p className="hero-kicker">Compra segura</p>
         <h1>Finalizar compra</h1>
-        <p>Pagamento processado no ambiente protegido do Mercado Pago.</p>
+        <p>{frasePagamentoSeguro(pricing?.gateway)}</p>
       </div>
       {!fotos.length ? (
         <div className="empty-checkout">
@@ -138,7 +139,7 @@ export default function CheckoutPage() {
             {quoteError && <p className="form-error">{quoteError}</p>}
             {formError && <p className="form-error">{formError}</p>}
             <button className="payment-button" type="button" disabled={!pricing || loading} onClick={pay}>
-              {loading ? 'Abrindo Mercado Pago...' : 'Pagar no Mercado Pago'}
+              {textoBotaoPagar(pricing?.gateway, loading)}
             </button>
             <small>O custo de processamento é estimado conforme a regra administrativa ativa para o meio escolhido.</small>
           </aside>

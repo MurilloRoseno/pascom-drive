@@ -10,7 +10,7 @@ jest.mock('../lib/api', () => ({
 
 const { cotarCheckout, criarPagamento } = require('../lib/api');
 const FOTO = { id: 'F1', eventoId: 'EV1', event: 'Missa', url: '/foto.jpg', price: 10 };
-const PRICING = { subtotal: 10, serviceFee: 2, convenienceFee: 1, paymentCost: 0.5, total: 13.5 };
+const PRICING = { subtotal: 10, serviceFee: 2, convenienceFee: 1, paymentCost: 0.5, total: 13.5, gateway: 'mercadopago' };
 
 function renderCheckout(fotos = [FOTO]) {
   return render(
@@ -44,11 +44,11 @@ it('mostra preco e taxas devolvidos pelo servidor', async () => {
 it('envia fotos, contato e metodo sem enviar total calculado no navegador', async () => {
   criarPagamento.mockReturnValue(new Promise(() => {}));
   renderCheckout();
-  await waitFor(() => expect(screen.getByRole('button', { name: /pagar no mercado pago/i })).toBeEnabled());
+  await waitFor(() => expect(screen.getByRole('button', { name: /pagar com mercado pago/i })).toBeEnabled());
   fireEvent.change(screen.getByLabelText(/nome completo/i), { target: { value: 'Maria Silva' } });
   fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'maria@example.com' } });
   fireEvent.change(screen.getByLabelText(/whatsapp/i), { target: { value: '99982061089' } });
-  fireEvent.click(screen.getByRole('button', { name: /pagar no mercado pago/i }));
+  fireEvent.click(screen.getByRole('button', { name: /pagar com mercado pago/i }));
   expect(criarPagamento).toHaveBeenCalledWith(expect.objectContaining({
     name: 'Maria Silva',
     email: 'maria@example.com',
@@ -63,5 +63,34 @@ it('mantem pagamento bloqueado quando nao existe regra de taxa cadastrada', asyn
   cotarCheckout.mockRejectedValueOnce(new Error('Pagamento indisponivel.'));
   renderCheckout();
   await screen.findByText(/pagamento indisponivel/i);
-  expect(screen.getByRole('button', { name: /pagar no mercado pago/i })).toBeDisabled();
+  expect(screen.getByRole('button', { name: 'Ir para o pagamento' })).toBeDisabled();
+});
+
+describe('nome do provedor de pagamento (vem do servidor)', () => {
+  it('com Stripe, a tela e o botão falam em Stripe, não em Mercado Pago', async () => {
+    cotarCheckout.mockResolvedValue({ pricing: { ...PRICING, gateway: 'stripe' } });
+    renderCheckout();
+    expect(await screen.findByRole('button', { name: 'Pagar com Stripe' })).toBeEnabled();
+    expect(screen.getByText('Pagamento processado no ambiente protegido da Stripe.')).toBeInTheDocument();
+    expect(screen.queryByText(/mercado pago/i)).not.toBeInTheDocument();
+  });
+
+  it('enquanto abre a página do provedor, o botão avisa e fica travado', async () => {
+    cotarCheckout.mockResolvedValue({ pricing: { ...PRICING, gateway: 'stripe' } });
+    criarPagamento.mockReturnValue(new Promise(() => {}));
+    renderCheckout();
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Pagar com Stripe' })).toBeEnabled());
+    fireEvent.change(screen.getByLabelText(/nome completo/i), { target: { value: 'Maria Silva' } });
+    fireEvent.change(screen.getByLabelText(/e-mail/i), { target: { value: 'maria@example.com' } });
+    fireEvent.change(screen.getByLabelText(/whatsapp/i), { target: { value: '99982061089' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Pagar com Stripe' }));
+    expect(await screen.findByRole('button', { name: 'Abrindo Stripe...' })).toBeDisabled();
+  });
+
+  it('sem saber o provedor (antes da cotação), usa texto neutro', () => {
+    cotarCheckout.mockReturnValue(new Promise(() => {}));
+    renderCheckout();
+    expect(screen.getByText('Pagamento processado no ambiente protegido do provedor de pagamento.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ir para o pagamento' })).toBeDisabled();
+  });
 });

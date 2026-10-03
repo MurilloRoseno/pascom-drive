@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
+import { frasePagamentoSeguro, textoBotaoPagar } from '../shared/gateway.js';
 import { I } from './referenceIcons.jsx';
 import { brl, CornerOrnament, CoverPhoto, DevtoolsGalleryNotice, getCoverPhoto, PRECO_FOTO, TAXA_COMODIDADE, TAXA_SERVICO, Photo, categoryLabel } from './referenceUtils.jsx';
 import { checkoutSchema } from '../lib/validation.js';
@@ -97,7 +98,7 @@ export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMeth
         <button onClick={() => go({ name: 'galerias' })} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, marginBottom: 10 }}><I.ChevronLeft className="icon icon-sm" /> Voltar</button>
         <div className="eyebrow eyebrow-light">Compra segura</div>
         <h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Finalizar compra</h1>
-        <p className="body" style={{ color: 'rgba(255,255,255,0.75)', marginTop: 4, fontSize: 13 }}>Pagamento processado no ambiente do Mercado Pago.</p>
+        <p className="body" style={{ color: 'rgba(255,255,255,0.75)', marginTop: 4, fontSize: 13 }}>{frasePagamentoSeguro(pricing?.gateway)}</p>
         <div style={{ display: 'flex', gap: 6, marginTop: 16, alignItems: 'center' }}><Step n={1} label="Identifica??o" active={step === 1} done={step > 1} /><span style={{ flex: 1, height: 1, background: 'rgba(255,255,255,0.20)' }} /><Step n={2} label="Pagamento" active={step === 2} done={step > 2} /></div>
       </section>
       <button onClick={() => setResumoOpen(!resumoOpen)} style={{ width: '100%', padding: '14px 18px', background: 'var(--surface-2)', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left' }}>
@@ -133,7 +134,7 @@ export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMeth
             {pricing?.discountTotal > 0 && <div className="caption" style={{ marginTop: 6, color: 'var(--parish-green)' }}>Desconto aplicado: {brl(pricing.discountTotal)}</div>}
           </div>
           {error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 10 }}>{error}</p>}
-          <button className="btn btn-primary btn-block" style={{ marginTop: 18 }} disabled={loading || !pricing} onClick={pay}>{loading ? 'Abrindo Mercado Pago...' : 'Pagar no Mercado Pago'}</button>
+          <button className="btn btn-primary btn-block" style={{ marginTop: 18 }} disabled={loading || !pricing} onClick={pay}>{textoBotaoPagar(pricing?.gateway, loading)}</button>
           <button className="btn btn-ghost btn-block btn-sm" style={{ marginTop: 8 }} onClick={() => setStep(1)}>Voltar ? identifica??o</button>
         </section>
       )}
