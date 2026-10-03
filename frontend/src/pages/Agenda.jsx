@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useSearchParams } from 'react-router-dom';
 import { obterAgenda } from '../lib/api.js';
@@ -24,6 +24,7 @@ function mesDeHoje() {
 export default function AgendaPage({ mobile = false }) {
   const [params, setParams] = useSearchParams();
   const [estado, setEstado] = useState({ fase: 'carregando' });
+  const painelRef = useRef(null);
 
   const mes = MES.test(params.get('mes') || '') ? params.get('mes') : mesDeHoje();
   const diaDaUrl = DIA.test(params.get('dia') || '') && params.get('dia').slice(0, 7) === mes ? params.get('dia') : null;
@@ -46,6 +47,12 @@ export default function AgendaPage({ mobile = false }) {
     setParams(p, { replace: true });
   }
 
+  /** Em tela estreita o painel do dia fica abaixo da grade: leva a pessoa até ele. */
+  function escolherDia(d) {
+    atualizar({ dia: d });
+    setTimeout(() => painelRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' }), 0);
+  }
+
   const hoje = estado.fase === 'ok' ? estado.hoje : null;
   const dia = diaDaUrl || (hoje && hoje.slice(0, 7) === mes ? hoje : null);
   const tipos = estado.fase === 'ok' ? estado.tipos : [];
@@ -63,18 +70,18 @@ export default function AgendaPage({ mobile = false }) {
         {estado.fase === 'ok' && (
           <div className="aa-pilha">
             <FiltroTipos tipos={tipos} valor={tipo} onChange={(t) => atualizar({ tipo: t })} />
-            <ListaDoMes mes={mes} ocorrencias={ocorrencias} tipos={tipos} onSelecionarDia={(d) => atualizar({ dia: d })} />
+            <ListaDoMes mes={mes} ocorrencias={ocorrencias} tipos={tipos} onSelecionarDia={escolherDia} />
             <div className="aa-agenda-grade">
               <CalendarioMes
                 mes={mes}
                 hoje={hoje}
                 ocorrencias={ocorrencias}
                 diaSelecionado={dia}
-                onSelecionarDia={(d) => atualizar({ dia: d })}
+                onSelecionarDia={escolherDia}
                 onMudarMes={(n) => atualizar({ mes: somarMeses(mes, n), dia: null })}
                 onHoje={() => atualizar({ mes: hoje.slice(0, 7), dia: hoje })}
               />
-              <div className="aa-agenda-lado">
+              <div className="aa-agenda-lado" ref={painelRef}>
                 <PainelDoDia data={dia} ocorrencias={ocorrencias} tipos={tipos} />
               </div>
             </div>

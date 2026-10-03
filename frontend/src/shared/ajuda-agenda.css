@@ -48,11 +48,13 @@
 .aa-pagina { background: var(--aa-paper); padding: 1.5rem 0 3rem; }
 .aa-pagina--solta { min-height: 100vh; }
 .aa-conteudo { max-width: 48rem; margin: 0 auto; padding: 0 1rem; }
-.aa-conteudo--largo { max-width: 64rem; }
+.aa-conteudo--largo { max-width: 76rem; }
 .aa-h1 { font-family: var(--aa-display); font-weight: 700; font-size: 2rem; line-height: 1.15; margin: 0; }
 .aa-lead { color: var(--aa-grafite); margin: 0.25rem 0 1.5rem; }
 .aa-h2 { font-family: var(--aa-display); font-weight: 700; font-size: 1.375rem; line-height: 1.2; margin: 0; }
-.aa-h3 { font-family: var(--aa-display); font-weight: 700; font-size: 1.125rem; line-height: 1.25; margin: 0; text-transform: capitalize; }
+.aa-h3 { font-family: var(--aa-display); font-weight: 700; font-size: 1.125rem; line-height: 1.25; margin: 0; }
+/* só a primeira letra: "capitalize" faria "3 De Outubro" */
+.aa-h3::first-letter, .aa-cal-cab .aa-h2::first-letter { text-transform: uppercase; }
 .aa-pilha > * + * { margin-top: 1.25rem; }
 .aa-pilha--curta > * + * { margin-top: 0.75rem; }
 .aa-muda { color: var(--aa-grafite); }
@@ -152,7 +154,7 @@
 .aa-agenda-grade { display: grid; gap: 1.25rem; }
 .aa-agenda-lado > * + * { margin-top: 1.25rem; }
 .aa-cal-cab { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
-.aa-cal-cab .aa-h2 { margin-right: auto; text-transform: capitalize; color: var(--aa-primary-dark); }
+.aa-cal-cab .aa-h2 { margin-right: auto; color: var(--aa-primary-dark); }
 .aa-cal-semana, .aa-cal-dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.25rem; }
 .aa-cal-semana { margin-bottom: 0.25rem; }
 .aa-cal-semana span { text-align: center; text-transform: uppercase; font: 500 0.75rem/1.6 var(--aa-mono); color: var(--aa-grafite); }
@@ -167,8 +169,9 @@
 .aa-dia__pontos { display: flex; flex-wrap: wrap; gap: 0.25rem; }
 .aa-dia__ponto { width: 8px; height: 8px; border-radius: 99px; }
 .aa-dia__chips { display: none; flex-direction: column; gap: 0.25rem; }
-.aa-chip-evento { display: flex; align-items: center; gap: 0.25rem; min-width: 0; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.8125rem; }
-.aa-chip-evento span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aa-chip-evento { display: flex; align-items: flex-start; gap: 0.25rem; min-width: 0; padding: 0.125rem 0.375rem; border-radius: 4px; font-size: 0.8125rem; line-height: 1.25; }
+.aa-chip-evento span:last-child { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; word-break: break-word; }
+.aa-chip-evento__ponto { margin-top: 0.3rem; }
 .aa-chip-evento__ponto { width: 8px; height: 8px; border-radius: 99px; flex-shrink: 0; }
 .aa-mais { font-size: 0.8125rem; color: var(--aa-grafite); }
 
@@ -201,8 +204,8 @@
   .aa-dia__chips { display: flex; }
   .aa-lista-mes { display: none; }
 }
-@media (min-width: 1024px) {
-  .aa-agenda-grade { grid-template-columns: 1fr 20rem; }
+@media (min-width: 1100px) {
+  .aa-agenda-grade { grid-template-columns: 1fr 20rem; align-items: start; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .aa-btn, .aa-chip, .aa-fab { transition: background-color 0.15s ease, transform 0.1s ease; }
