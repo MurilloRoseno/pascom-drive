@@ -90,7 +90,7 @@ export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMeth
   const total = pricing?.total ?? subtotal;
   const canAdvance = checkoutSchema.safeParse(buyer).success;
   return (
-    <div className="scroll" style={{ paddingBottom: 100 }}>
+    <div className="scroll" role="main" style={{ paddingBottom: 100 }}>
       <section style={{ background: 'linear-gradient(160deg, var(--brand-d) 0%, var(--brand) 100%)', color: '#fff', padding: '58px 18px 22px', position: 'relative', overflow: 'hidden' }}>
         <button onClick={() => go({ name: 'galerias' })} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, marginBottom: 10 }}><I.ChevronLeft className="icon icon-sm" /> Voltar</button>
         <div className="eyebrow eyebrow-light">Compra segura</div>
@@ -142,7 +142,7 @@ export function CheckoutScreen({ cart, pricing, buyer, setBuyer, method, setMeth
 export function PaymentReturnScreen({ approved, order, go }) {
   const status = order?.status || 'processando retorno do pagamento';
   return (
-    <div className="scroll">
+    <div className="scroll" role="main">
       <section style={{ background: 'linear-gradient(160deg, var(--brand-d) 0%, var(--brand) 60%, var(--brand-d) 100%)', color: '#fff', padding: '40px 18px 56px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
         <CornerOrnament at="tl" /><CornerOrnament at="tr" /><CornerOrnament at="bl" /><CornerOrnament at="br" />
         <div style={{ width: 84, height: 84, margin: '0 auto', borderRadius: 999, background: approved ? 'var(--parish-yellow)' : 'rgba(247,200,72,0.24)', color: approved ? 'var(--parish-purple-dark)' : 'var(--parish-yellow)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 0 8px rgba(247,200,72,0.18)' }}>{approved ? <I.Check className="icon" style={{ width: 38, height: 38, strokeWidth: 3 }} /> : <I.Clock className="icon" style={{ width: 38, height: 38 }} />}</div>

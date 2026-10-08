@@ -70,7 +70,7 @@ describe('POST /api/doacoes/checkout', () => {
   it('exige cartao na doacao mensal', async () => {
     const res = await request(app).post('/api/doacoes/checkout').send({ ...BODY, frequency: 'mensal' });
     expect(res.status).toBe(400);
-    expect(res.body.error).toMatch(/cartao/);
+    expect(res.body.error).toMatch(/cartão/);
     expect(stripe.criarSessaoDoacao).not.toHaveBeenCalled();
   });
 

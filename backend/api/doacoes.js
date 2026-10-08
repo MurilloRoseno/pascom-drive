@@ -14,12 +14,12 @@ function config(req, res) {
 async function checkout(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const parsed = doacaoSchema.safeParse(req.body);
-  if (!parsed.success) return res.status(400).json({ error: 'Dados da doacao invalidos.' });
+  if (!parsed.success) return res.status(400).json({ error: 'Dados da doação inválidos.' });
   const input = parsed.data;
   const destino = destinoPorId(input.destino);
-  if (!destino) return res.status(400).json({ error: 'Destino da doacao invalido.' });
+  if (!destino) return res.status(400).json({ error: 'Destino da doação inválido.' });
   if (input.frequency === 'mensal' && input.method !== 'credit_card') {
-    return res.status(400).json({ error: 'A doacao mensal so pode ser feita no cartao.' });
+    return res.status(400).json({ error: 'A doação mensal só pode ser feita no cartão.' });
   }
   let resumo;
   try {
@@ -59,10 +59,10 @@ async function checkout(req, res, next) {
 async function status(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
   const parsed = doacaoIdSchema.safeParse(req.query);
-  if (!parsed.success) return res.status(400).json({ error: 'Codigo da doacao invalido.' });
+  if (!parsed.success) return res.status(400).json({ error: 'Código da doação inválido.' });
   try {
     const doacao = await buscarDoacaoById(parsed.data.doacaoId);
-    if (!doacao) return res.status(404).json({ error: 'Doacao nao encontrada.' });
+    if (!doacao) return res.status(404).json({ error: 'Doação não encontrada.' });
     const destino = destinoPorId(doacao.destino);
     return res.json({
       id: doacao.id,
@@ -94,7 +94,7 @@ async function assinatura(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
   const parsed = assinaturaTokenSchema.safeParse(req.query);
   const subscriptionId = parsed.success ? lerTokenAssinatura(parsed.data.token) : null;
-  if (!subscriptionId) return res.status(401).json({ error: 'Link invalido ou expirado.' });
+  if (!subscriptionId) return res.status(401).json({ error: 'Link inválido ou expirado.' });
   try {
     return res.json(assinaturaPublica(await buscarAssinatura(subscriptionId)));
   } catch (error) {
@@ -106,7 +106,7 @@ async function cancelarAssinaturaHandler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const parsed = assinaturaTokenSchema.safeParse(req.body);
   const subscriptionId = parsed.success ? lerTokenAssinatura(parsed.data.token) : null;
-  if (!subscriptionId) return res.status(401).json({ error: 'Link invalido ou expirado.' });
+  if (!subscriptionId) return res.status(401).json({ error: 'Link inválido ou expirado.' });
   try {
     const atual = await buscarAssinatura(subscriptionId);
     if (atual.status !== 'canceled') await cancelarAssinatura(subscriptionId);

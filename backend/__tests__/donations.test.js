@@ -24,9 +24,9 @@ describe('calcularDoacao', () => {
   });
 
   it('recusa valores fora dos limites e meio desconhecido', () => {
-    expect(() => calcularDoacao({ amount: LIMITES.min - 0.01, method: 'pix' })).toThrow(/Valor da doacao/);
-    expect(() => calcularDoacao({ amount: LIMITES.max + 1, method: 'pix' })).toThrow(/Valor da doacao/);
-    expect(() => calcularDoacao({ amount: Number.NaN, method: 'pix' })).toThrow(/Valor da doacao/);
+    expect(() => calcularDoacao({ amount: LIMITES.min - 0.01, method: 'pix' })).toThrow(/valor da doação/);
+    expect(() => calcularDoacao({ amount: LIMITES.max + 1, method: 'pix' })).toThrow(/valor da doação/);
+    expect(() => calcularDoacao({ amount: Number.NaN, method: 'pix' })).toThrow(/valor da doação/);
     expect(() => calcularDoacao({ amount: 50, method: 'boleto' })).toThrow(/Meio de pagamento/);
   });
 });

@@ -8,7 +8,7 @@ export function HomeScreen({ go, eventos, loading, tweaks }) {
   const totalFotos = eventos.reduce((sum, ev) => sum + Number(ev.totalFotos || 0), 0);
 
   return (
-    <div className="scroll">
+    <div className="scroll" role="main">
       <section style={{ background: 'linear-gradient(170deg, rgba(20,5,28,0.88) 0%, rgba(70,19,86,0.82) 45%, rgba(20,5,28,0.95) 100%), url(/assets/church-background.png) center 35%/cover no-repeat', color: '#fff', padding: '28px 18px 32px', position: 'relative', overflow: 'hidden' }}>
         <CornerOrnament at="tr" />
         <div className="eyebrow eyebrow-light" style={{ marginBottom: 12 }}>Açailândia · Maranhão</div>
@@ -84,7 +84,7 @@ export function GaleriasScreen({ go, eventos, loading, initialSacramento = 'todo
   }, [eventos, query, sacramento, sort]);
 
   return (
-    <div className="scroll">
+    <div className="scroll" role="main">
       <section style={{ background: 'linear-gradient(145deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 22px', position: 'relative', overflow: 'hidden' }}>
         <CornerOrnament at="tr" />
         <div className="eyebrow eyebrow-light">Galerias da Comunidade</div>
@@ -269,7 +269,7 @@ function PublicoScreen({ go, setRole, recuperarPedido }) {
     }
   };
   return (
-    <div className="scroll">
+    <div className="scroll" role="main">
       <section style={{ background: 'linear-gradient(140deg, var(--brand-d), var(--brand))', color: '#fff', padding: '24px 18px 28px' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Bem-vindo(a)</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Sua área</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Acompanhe seus pedidos e fale com a secretaria.</p></section>
       <section className="section">
         <div className="card" style={{ padding: 16, textAlign: 'center' }}><I.User className="icon icon-xl" style={{ margin: '0 auto', color: 'var(--brand)' }} /><h3 className="h3" style={{ marginTop: 10 }}>Acesse seus pedidos</h3><p className="body-sm" style={{ marginTop: 6 }}>Informe o e-mail usado na compra e o código do pedido.</p><input className="input" placeholder="seu@email.com" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} style={{ marginTop: 14 }} /><input className="input" placeholder="PED_..." value={form.pedidoId} onChange={(event) => setForm({ ...form, pedidoId: event.target.value.toUpperCase() })} style={{ marginTop: 10 }} /><button className="btn btn-primary btn-block" style={{ marginTop: 10 }} onClick={submit}>Recuperar fotos</button>{error && <p className="caption" style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</p>}{result && <div className="caption" style={{ textAlign: 'left', marginTop: 12 }}><strong>{result.status}</strong><br />{result.deliveryReady ? `${result.downloads.length} link(s) liberado(s) por 24h.` : 'Pedido ainda não confirmado.'}{result.downloads?.map((item, index) => <a key={item.url} href={item.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>Baixar foto {index + 1}</a>)}</div>}</div>
@@ -281,7 +281,7 @@ function PublicoScreen({ go, setRole, recuperarPedido }) {
 
 function LegacyPascomScreen({ go, setRole, eventos }) {
   return (
-    <div className="scroll">
+    <div className="scroll" role="main">
       <section style={{ background: 'linear-gradient(140deg, #1a0f1f 0%, var(--brand-d) 100%)', color: '#fff', padding: '20px 18px 24px', position: 'relative', overflow: 'hidden' }}><CornerOrnament at="tr" /><div className="eyebrow eyebrow-light">Painel Pascom</div><h1 className="h1" style={{ color: '#fff', marginTop: 6 }}>Boa tarde, Equipe!</h1><p className="body" style={{ color: 'rgba(255,255,255,0.78)', marginTop: 6, fontSize: 13 }}>Resumo de hoje · Quinta, 28 de maio de 2026.</p></section>
       <section style={{ padding: '14px 18px 0' }}><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}><BigStat label="Vendas hoje" value="--" delta="placeholder" /><BigStat label="Pedidos" value="--" delta="sem API" /><BigStat label="Mês até hoje" value="--" delta="relatório futuro" /><BigStat label="Aguardando" value="--" delta="processando" muted /></div></section>
       <section className="section"><h2 className="h3">Ações rápidas</h2><div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}><ActionTile icon="Upload" label="Subir fotos" sub="Novo evento" primary /><ActionTile icon="Camera" label="Marca d'água" sub="Configurar" /><ActionTile icon="DollarSign" label="Vendas" sub="Relatório" /><ActionTile icon="Settings" label="Galerias" sub="Moderar" /></div></section>
@@ -305,7 +305,7 @@ function EventCard({ ev, onClick, isPascom }) {
     if (event.key === 'Enter' || event.key === ' ') onClick(event);
   };
   return (
-    <article onClick={onClick} onKeyDown={handleKeyDown} role="button" tabIndex="0" className="mobile-event-card">
+    <div onClick={onClick} onKeyDown={handleKeyDown} role="button" tabIndex="0" className="mobile-event-card">
       <div className="mobile-event-card-cover">
         <CoverPhoto photo={cover} aspect="16/10" />
         <div className="mobile-event-card-badges">
@@ -323,7 +323,7 @@ function EventCard({ ev, onClick, isPascom }) {
           <span className="mobile-event-card-summary"><I.Camera className="icon icon-sm" /> {ev.totalFotos} fotos · {brl(PRECO_FOTO)} cada</span>
         </div>
       </div>
-    </article>
+    </div>
   );
 }
 function MenuRow({ icon, label, href, onClick, disabled, last }) { const Icon = I[icon] || I.Sparkle; const content = <><span style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--surface-2)', color: 'var(--brand)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><Icon className="icon icon-sm" /></span><span style={{ flex: 1, fontSize: 14, fontWeight: 700, color: disabled ? 'var(--ink-3)' : 'var(--ink)' }}>{label}</span><I.ChevronRight className="icon icon-sm" style={{ color: 'var(--ink-3)' }} /></>; const style = { width: '100%', padding: '13px 14px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: last ? 0 : '1px solid var(--line)', textAlign: 'left', cursor: disabled ? 'not-allowed' : 'pointer' }; if (href) return <a href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" style={style}>{content}</a>; return <button onClick={disabled ? undefined : onClick} style={style} title={disabled ? 'Funcionalidade futura' : undefined}>{content}</button>; }

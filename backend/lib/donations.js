@@ -34,10 +34,10 @@ function novaDoacaoId() {
  */
 function calcularDoacao({ amount, method, coverFees }) {
   const fee = STRIPE_FEES[method];
-  if (!fee) throw new Error('Meio de pagamento invalido.');
+  if (!fee) throw new Error('Meio de pagamento inválido.');
   const oferta = roundMoney(amount);
   if (!Number.isFinite(oferta) || oferta < LIMITES.min || oferta > LIMITES.max) {
-    throw new Error(`Valor da doacao deve ficar entre R$ ${LIMITES.min} e R$ ${LIMITES.max}.`);
+    throw new Error(`O valor da doação deve ficar entre R$ ${LIMITES.min.toLocaleString('pt-BR')} e R$ ${LIMITES.max.toLocaleString('pt-BR')}.`);
   }
   const total = coverFees ? chargedTotal(oferta, fee) : oferta;
   return { amount: oferta, fee: roundMoney(total - oferta), total, method, coverFees: Boolean(coverFees) };
