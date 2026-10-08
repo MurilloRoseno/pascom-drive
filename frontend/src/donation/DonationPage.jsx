@@ -72,11 +72,20 @@ export default function DonationPage() {
     const observer = new IntersectionObserver(([entry]) => setFormVisible(entry.isIntersecting), { threshold: 0.05 });
     observer.observe(aside);
     // Altura do cartao para o CSS decidir como fixa-lo quando e maior que a tela.
-    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(() => {
-      aside.style.setProperty('--aside-h', `${aside.offsetHeight}px`);
-    });
+    const measure = () => aside.style.setProperty('--aside-h', `${aside.offsetHeight}px`);
+    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure);
     if (resize) resize.observe(aside);
-    return () => { observer.disconnect(); if (resize) resize.disconnect(); };
+    // Abrir "Quero me identificar" ou marcar opcoes muda a altura na hora.
+    const measureSoon = () => setTimeout(measure, 0);
+    aside.addEventListener('toggle', measure, true);
+    aside.addEventListener('change', measureSoon);
+    measure();
+    return () => {
+      observer.disconnect();
+      if (resize) resize.disconnect();
+      aside.removeEventListener('toggle', measure, true);
+      aside.removeEventListener('change', measureSoon);
+    };
   }, []);
 
   const goToForm = useCallback(() => {
