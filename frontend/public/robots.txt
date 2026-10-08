@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /checkout
+Disallow: /pagamento/
+Disallow: /recuperar-pedido
+Disallow: /doar/obrigado
+Disallow: /doar/gerenciar
+
+Sitemap: https://pascom-drive.vercel.app/sitemap.xml

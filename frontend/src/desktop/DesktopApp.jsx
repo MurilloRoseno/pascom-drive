@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Link, Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import { CarrinhoProvider } from '../context/CarrinhoContext.jsx';
 import Header from '../components/layout/Header.jsx';
 import Footer from '../components/layout/Footer.jsx';
@@ -21,6 +21,21 @@ function LegacyCategoryRedirect() {
   return <Navigate replace to={`/buscar${search}`} />;
 }
 
+// Endereco desconhecido. As rotas de evento e checkout ficam no segundo bloco de rotas.
+function NotFound() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/evento/') || pathname === '/checkout') return null;
+  return (
+    <main className="checkout-page">
+      <div className="checkout-heading">
+        <p className="hero-kicker">Erro 404</p>
+        <h1>Página não encontrada</h1>
+        <p>O endereço pode ter mudado ou sido digitado errado. <Link to="/">Voltar ao início</Link> ou <Link to="/buscar">ver as galerias</Link>.</p>
+      </div>
+    </main>
+  );
+}
+
 export default function DesktopApp() {
   return (
     <BrowserRouter>
@@ -36,6 +51,7 @@ export default function DesktopApp() {
           <Route path="/politica-de-privacidade" element={<PrivacyPolicy />} />
           <Route path="/recuperar-pedido" element={<RecoverOrderPage />} />
           <Route path="/pagamento/:resultado" element={<PaymentReturnPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <CarrinhoProvider>
           <Routes>
