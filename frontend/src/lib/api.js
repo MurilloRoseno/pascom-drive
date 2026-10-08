@@ -97,3 +97,31 @@ export function pascomRegenerarDownloads(token, pedidoId) {
     headers: bearer(token),
   });
 }
+
+export function doacaoConfig() {
+  return request('/api/doacoes/config');
+}
+
+export function criarDoacao(payload) {
+  return request('/api/doacoes/checkout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+export function statusDoacao(doacaoId) {
+  return request(`/api/doacoes/status?doacaoId=${encodeURIComponent(doacaoId)}`);
+}
+
+export function assinaturaDoacao(token) {
+  return request(`/api/doacoes/assinatura?token=${encodeURIComponent(token)}`);
+}
+
+export function cancelarAssinaturaDoacao(token) {
+  return request('/api/doacoes/assinatura/cancelar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token }),
+  });
+}

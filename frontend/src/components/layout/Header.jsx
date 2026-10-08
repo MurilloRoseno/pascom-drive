@@ -19,7 +19,7 @@ export default function Header() {
             <li><a href="/#contato">Contato</a></li>
           </ul>
         </nav>
-        <a className="header-action" href="/#contato">Doe Agora</a>
+        <a className="header-action" href="/doar">Doe Agora</a>
       </div>
     </header>
   );
