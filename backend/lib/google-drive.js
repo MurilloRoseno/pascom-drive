@@ -127,6 +127,23 @@ async function downloadFile(fileId) {
 }
 
 /**
+ * Check that a Drive file still exists and is not in the trash.
+ * @param {string} fileId
+ * @returns {Promise<boolean>}
+ */
+async function fileExists(fileId) {
+  if (!fileId) return false;
+  const token = await getAccessToken();
+  const res = await fetch(
+    `https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,trashed`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (res.status === 404) return false;
+  if (!res.ok) throw new Error(`Drive metadata failed (${res.status}): ${await res.text()}`);
+  return !(await res.json()).trashed;
+}
+
+/**
  * Download a Drive HEIC/HEIF file as a JPEG Buffer using Google's thumbnail service.
  * Google Drive generates JPEG previews of HEIC files server-side — we request one
  * at 2400px (sufficient for 1200px max output after watermark resize).
@@ -253,4 +270,4 @@ async function updateFile(fileId, buffer, mimeType) {
   }
 }
 
-module.exports = { downloadFile, downloadFileAsJpeg, uploadFile, updateFile };
+module.exports = { downloadFile, downloadFileAsJpeg, fileExists, uploadFile, updateFile };

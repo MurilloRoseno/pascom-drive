@@ -46,7 +46,21 @@ module.exports = async function handler(req, res, next) {
     }
     const forensicSecret = process.env.FORENSIC_WATERMARK_SECRET;
     if (!forensicSecret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
-    const { buffer, mimeType } = await downloadFile(authorized.originalFileId);
+    let original;
+    try {
+      original = await downloadFile(authorized.originalFileId);
+    } catch (error) {
+      if (!/Drive download failed \(404\)/.test(error.message)) throw error;
+      logDownload('download_original_missing', {
+        severity: 'critical',
+        downloadId: authorized.downloadId,
+        pedidoId: authorized.pedidoId,
+        fotoId: authorized.fotoId,
+        reason: 'original_not_found_in_drive',
+      });
+      return res.status(503).json({ error: 'Sua foto esta temporariamente indisponivel. O link continua valido: fale com a secretaria paroquial.' });
+    }
+    const { buffer, mimeType } = original;
     const fingerprintId = authorized.fingerprintId || createFingerprintId(forensicSecret, {
       pedidoId: authorized.pedidoId,
       fotoId: authorized.fotoId,

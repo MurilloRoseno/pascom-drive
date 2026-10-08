@@ -21,6 +21,7 @@ const express = require('express');
 const handler = require('../api/download');
 const sheets = require('../lib/google-sheets');
 const forensic = require('../lib/forensic-watermark');
+const drive = require('../lib/google-drive');
 
 const app = express();
 app.get('/api/download', handler);
@@ -52,6 +53,14 @@ it('entrega copia fingerprinted apenas ao token persistido valido', async () => 
     fingerprintId: 'fp-id',
     fingerprintHash: 'fp-hash',
   }));
+});
+
+it('avisa sem consumir o link quando o original sumiu do Drive', async () => {
+  drive.downloadFile.mockRejectedValueOnce(new Error('Drive download failed (404): {"error":{"code":404}}'));
+  const res = await request(app).get(`/api/download?token=${token()}`);
+  expect(res.status).toBe(503);
+  expect(res.body.error).toMatch(/temporariamente indisponivel/);
+  expect(sheets.registrarUsoDownload).not.toHaveBeenCalled();
 });
 
 it('bloqueia token expirado antes de consultar arquivo', async () => {

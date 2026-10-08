@@ -5,6 +5,7 @@ const {
 const { tokenAllowsEvent } = require('../lib/gallery-access');
 const { calcularComercial } = require('../lib/commercial-rules');
 const { criarPreferencia } = require('../lib/stripe');
+const { fileExists } = require('../lib/google-drive');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -23,6 +24,16 @@ module.exports = async function handler(req, res, next) {
       evento.visibility === 'protegida' && !tokenAllowsEvent(input.galleryTokens[evento.eventoId], evento)
     );
     if (blocked) return res.status(401).json({ error: 'Acesso expirado para uma galeria protegida.' });
+
+    // Nunca cobrar por uma foto cujo original nao pode mais ser entregue.
+    const originals = await Promise.all(items.map(({ foto }) => fileExists(foto.originalFileId)));
+    const missing = items.filter((_item, index) => !originals[index]).map(({ foto }) => foto.id);
+    if (missing.length) {
+      console.error(JSON.stringify({
+        event: 'checkout_original_missing', severity: 'critical', fotoIds: missing, ts: new Date().toISOString(),
+      }));
+      return res.status(409).json({ error: 'Uma ou mais fotos estao temporariamente indisponiveis para compra. Fale com a secretaria.' });
+    }
 
     const pricing = await calcularComercial({
       items,
