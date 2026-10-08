@@ -5,6 +5,9 @@ jest.mock('../lib/google-sheets', () => ({
   marcarPedidoDivergente: jest.fn(),
   buscarPedidoByPreferenceOrPayment: jest.fn(),
   registrarEntrega: jest.fn(),
+  buscarDoacaoById: jest.fn(),
+  atualizarDoacao: jest.fn(),
+  registrarDoacao: jest.fn(),
 }));
 jest.mock('../lib/stripe', () => ({
   construirEventoWebhook: jest.fn(),
@@ -133,6 +136,18 @@ it('nao rebaixa pedido ja confirmado quando a sessao expira', async () => {
   const res = await post();
   expect(res.status).toBe(200);
   expect(sheets.atualizarPedidoPagamento).not.toHaveBeenCalled();
+});
+
+it('desvia eventos de doacao para o fluxo proprio, sem entregar fotos', async () => {
+  stripe.construirEventoWebhook.mockReturnValueOnce(sessionEvent('checkout.session.completed', {
+    client_reference_id: 'DOA_1', metadata: { tipo: 'doacao', doacao_id: 'DOA_1' },
+  }));
+  sheets.buscarDoacaoById.mockResolvedValue(null);
+  const res = await post();
+  expect(res.status).toBe(202);
+  expect(sheets.buscarPedidoByPreferenceOrPayment).not.toHaveBeenCalled();
+  expect(delivery.criarDownloadsDoPedido).not.toHaveBeenCalled();
+  expect(sheets.finalizarWebhook).toHaveBeenCalledWith('evt_1', 'DoacaoNaoEncontrada');
 });
 
 it('registra pedido nao encontrado', async () => {

@@ -81,4 +81,21 @@ function criarMensagemWhatsApp(downloads) {
   return `Ola! Seu pagamento foi confirmado. Seus links seguros de fotos (validos por 24 horas):\n${links}`;
 }
 
-module.exports = { criarDownloadsDoPedido, enviarEmailEntrega, criarMensagemWhatsApp };
+async function enviarEmail({ to, subject, html, text }) {
+  const attemptedAt = new Date().toISOString();
+  if (!to) return { status: 'sem_destinatario', error: '', attemptedAt };
+  if (!smtpConfigured()) return { status: 'nao_configurado', error: 'SMTP nao configurado.', attemptedAt };
+  const fromName = process.env.SMTP_FROM_NAME || 'Paroquia Sao Rafael - Fotos';
+  try {
+    await createTransporter().sendMail({
+      from: `"${fromName}" <${process.env.SMTP_USER}>`,
+      replyTo: process.env.SMTP_REPLY_TO || process.env.SMTP_USER,
+      to, subject, html, text,
+    });
+    return { status: 'enviado', error: '', attemptedAt };
+  } catch (error) {
+    return { status: 'falhou', error: String(error.message || 'Falha ao enviar e-mail.').slice(0, 500), attemptedAt };
+  }
+}
+
+module.exports = { criarDownloadsDoPedido, enviarEmailEntrega, enviarEmail, criarMensagemWhatsApp };

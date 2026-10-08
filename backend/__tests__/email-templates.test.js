@@ -44,3 +44,47 @@ it('escapa dados do comprador antes de inserir no HTML', () => {
   expect(email.html).toContain('PED_&lt;b&gt;');
   expect(escapeHtml(null)).toBe('');
 });
+
+describe('doacaoEmail', () => {
+  const { doacaoEmail } = require('../lib/email-templates');
+  const doacao = {
+    id: 'DOA_1', name: 'Maria Aparecida', destinoLabel: 'Obras da Matriz', frequency: 'unica',
+    amount: 100, fee: 4.56, total: 104.56, paidAt: '2026-10-08T18:00:00.000Z',
+  };
+
+  it('monta o comprovante com destino, valores e data', () => {
+    const email = doacaoEmail({ doacao });
+    expect(email.subject).toBe('Recebemos sua oferta — Paróquia São Rafael');
+    expect(email.html).toContain('Maria, obrigado pela sua oferta.');
+    expect(email.html).toContain('Obras da Matriz');
+    expect(email.html).toContain('R$ 100,00');
+    expect(email.html).toContain('R$ 4,56');
+    expect(email.html).toContain('R$ 104,56');
+    expect(email.html).toContain('8 de outubro de 2026');
+    expect(email.html).toContain('cân. 1267 §3');
+    expect(email.html).toContain('Açailândia · Ofertas');
+    expect(email.html).not.toContain('compra de fotos');
+    expect(email.text).toContain('Total: R$ 104,56');
+  });
+
+  it('omite a linha de taxa quando o doador nao cobriu e funciona sem nome', () => {
+    const email = doacaoEmail({ doacao: { ...doacao, name: '', fee: 0, total: 100 } });
+    expect(email.html).toContain('Obrigado pela sua oferta.');
+    expect(email.html).not.toContain('Taxa do pagamento');
+  });
+
+  it('inclui o link de gerenciamento na doacao mensal', () => {
+    const email = doacaoEmail({ doacao: { ...doacao, frequency: 'mensal' }, manageUrl: 'https://pascom-drive.test/doar/gerenciar?token=abc' });
+    expect(email.subject).toBe('Recebemos sua oferta mensal — Paróquia São Rafael');
+    expect(email.html).toContain('Gerenciar doação mensal');
+    expect(email.html).toContain('href="https://pascom-drive.test/doar/gerenciar?token=abc"');
+    expect(email.text).toContain('https://pascom-drive.test/doar/gerenciar?token=abc');
+  });
+
+  it('mantem o rodape de fotos no e-mail de entrega', () => {
+    const { entregaFotosEmail: entrega } = require('../lib/email-templates');
+    const html = entrega({ pedido: { id: 'PED_1' }, downloads: [{ url: 'https://safe.test/a' }] }).html;
+    expect(html).toContain('compra de fotos');
+    expect(html).toContain('Açailândia · Fotos');
+  });
+});

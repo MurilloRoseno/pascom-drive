@@ -29,7 +29,20 @@ const recuperarPedidoSchema = z.object({
   pedidoId: z.string().trim().min(6, 'Codigo do pedido obrigatorio.').max(80),
 });
 
+const doacaoSchema = z.object({
+  amount: z.number().finite().positive(),
+  destino: z.string().trim().min(1).max(40),
+  frequency: z.enum(['unica', 'mensal']),
+  method: methodSchema,
+  coverFees: z.boolean().optional().default(false),
+  name: z.string().trim().max(120).optional().default(''),
+  email: z.union([z.literal(''), z.string().trim().email('E-mail invalido.').max(160)]).optional().default(''),
+});
+const doacaoIdSchema = z.object({ doacaoId: z.string().regex(/^DOA_[a-f0-9]{24}$/, 'Codigo invalido.') });
+const assinaturaTokenSchema = z.object({ token: z.string().min(20).max(600) });
+
 module.exports = {
+  doacaoSchema, doacaoIdSchema, assinaturaTokenSchema,
   whatsappSchema, methodSchema, criarPagamentoSchema,
   cotacaoSchema, acessoGaleriaSchema, statusPagamentoSchema, recuperarPedidoSchema,
 };

@@ -50,6 +50,60 @@ async function criarPreferencia({ pedidoId, buyer, items, pricing, paymentMethod
   return { id: String(session.id), checkoutUrl: session.url };
 }
 
+// Doacao: "Doar" no botao do Stripe; mensal vira assinatura (somente cartao).
+async function criarSessaoDoacao({ doacaoId, destino, frequency, method, resumo, email }) {
+  const publicUrl = process.env.PUBLIC_APP_URL || 'https://pascom-drive.vercel.app';
+  const mensal = frequency === 'mensal';
+  const metadata = {
+    tipo: 'doacao',
+    doacao_id: doacaoId,
+    destino: destino.id,
+    frequencia: frequency,
+    valor: String(resumo.amount),
+    taxa: String(resumo.fee),
+  };
+  const item = (name, amount) => {
+    const base = lineItem(name, amount);
+    if (mensal) base.price_data.recurring = { interval: 'month' };
+    return base;
+  };
+  const params = {
+    mode: mensal ? 'subscription' : 'payment',
+    submit_type: 'donate',
+    excluded_payment_method_types: EXCLUDED_METHOD_TYPES[mensal ? 'credit_card' : method],
+    line_items: [
+      item(`Doação — ${destino.label}${mensal ? ' (mensal)' : ''}`, resumo.amount),
+      item('Taxa do pagamento coberta por você', resumo.fee),
+    ].filter((entry) => entry.price_data.unit_amount > 0),
+    client_reference_id: doacaoId,
+    success_url: `${publicUrl}/doar/obrigado?doacao=${doacaoId}`,
+    cancel_url: `${publicUrl}/doar?cancelada=1`,
+    metadata,
+  };
+  if (email) params.customer_email = email;
+  if (mensal) params.subscription_data = { metadata };
+  const session = await client().checkout.sessions.create(params, { idempotencyKey: doacaoId });
+  return { id: String(session.id), checkoutUrl: session.url };
+}
+
+async function buscarAssinatura(subscriptionId) {
+  const subscription = await client().subscriptions.retrieve(subscriptionId);
+  const items = (subscription.items && subscription.items.data) || [];
+  const periodEnd = (items[0] && items[0].current_period_end) || subscription.current_period_end || null;
+  return {
+    id: subscription.id,
+    status: subscription.status,
+    metadata: subscription.metadata || {},
+    total: items.reduce((sum, entry) => sum + Number((entry.price && entry.price.unit_amount) || 0), 0) / 100,
+    nextChargeAt: periodEnd ? new Date(periodEnd * 1000).toISOString() : '',
+  };
+}
+
+async function cancelarAssinatura(subscriptionId) {
+  const subscription = await client().subscriptions.cancel(subscriptionId);
+  return { id: subscription.id, status: subscription.status };
+}
+
 function construirEventoWebhook({ rawBody, signature, secret }) {
   if (!rawBody || !signature || !secret) return null;
   try {
@@ -59,4 +113,7 @@ function construirEventoWebhook({ rawBody, signature, secret }) {
   }
 }
 
-module.exports = { criarPreferencia, construirEventoWebhook, lineItems };
+module.exports = {
+  criarPreferencia, construirEventoWebhook, lineItems,
+  criarSessaoDoacao, buscarAssinatura, cancelarAssinatura,
+};

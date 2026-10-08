@@ -46,4 +46,4 @@ function calculatePricing(quantity, method, commercial = {}) {
   };
 }
 
-module.exports = { PHOTO_PRICE, PAYMENT_METHODS, STRIPE_FEES, calculatePricing };
+module.exports = { PHOTO_PRICE, PAYMENT_METHODS, STRIPE_FEES, STRIPE_MIN_CHARGE, calculatePricing, chargedTotal, roundMoney };

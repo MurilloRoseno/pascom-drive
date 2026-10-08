@@ -72,3 +72,55 @@ it('devolve o evento quando a assinatura confere', () => {
   Stripe.webhooks.constructEvent.mockReturnValueOnce({ id: 'evt_1' });
   expect(construirEventoWebhook({ rawBody: '{}', signature: 't=1,v1=x', secret: 'whsec_x' })).toEqual({ id: 'evt_1' });
 });
+
+describe('criarSessaoDoacao', () => {
+  const { criarSessaoDoacao } = require('../lib/stripe');
+  const destino = { id: 'obras', label: 'Obras da Matriz' };
+
+  it('cria doacao unica no Pix com o botao "Doar" e marca a sessao como doacao', async () => {
+    const result = await criarSessaoDoacao({
+      doacaoId: 'DOA_1', destino, frequency: 'unica', method: 'pix',
+      resumo: { amount: 50, fee: 0, total: 50 }, email: 'maria@example.com',
+    });
+    expect(result.checkoutUrl).toBe('https://checkout.stripe.test/cs_test_1');
+    const [params, options] = mockCreate.mock.calls[0];
+    expect(params).toMatchObject({
+      mode: 'payment',
+      submit_type: 'donate',
+      excluded_payment_method_types: ['card', 'boleto'],
+      client_reference_id: 'DOA_1',
+      customer_email: 'maria@example.com',
+      success_url: 'https://app.test/doar/obrigado?doacao=DOA_1',
+      cancel_url: 'https://app.test/doar?cancelada=1',
+      metadata: { tipo: 'doacao', doacao_id: 'DOA_1', destino: 'obras', frequencia: 'unica', valor: '50', taxa: '0' },
+    });
+    expect(params.line_items).toHaveLength(1);
+    expect(params.line_items[0].price_data).toMatchObject({ currency: 'brl', unit_amount: 5000 });
+    expect(params.line_items[0].price_data.recurring).toBeUndefined();
+    expect(params).not.toHaveProperty('subscription_data');
+    expect(options).toEqual({ idempotencyKey: 'DOA_1' });
+  });
+
+  it('discrimina a taxa coberta e omite o e-mail quando nao informado', async () => {
+    await criarSessaoDoacao({
+      doacaoId: 'DOA_2', destino, frequency: 'unica', method: 'credit_card',
+      resumo: { amount: 100, fee: 4.56, total: 104.56 }, email: '',
+    });
+    const [params] = mockCreate.mock.calls[0];
+    expect(params.excluded_payment_method_types).toEqual(['pix', 'boleto']);
+    expect(params.line_items.map((item) => item.price_data.unit_amount)).toEqual([10000, 456]);
+    expect(params).not.toHaveProperty('customer_email');
+  });
+
+  it('cria assinatura mensal somente no cartao e repete os metadados na assinatura', async () => {
+    await criarSessaoDoacao({
+      doacaoId: 'DOA_3', destino, frequency: 'mensal', method: 'credit_card',
+      resumo: { amount: 50, fee: 2.48, total: 52.48 }, email: 'maria@example.com',
+    });
+    const [params] = mockCreate.mock.calls[0];
+    expect(params.mode).toBe('subscription');
+    expect(params.excluded_payment_method_types).toEqual(['pix', 'boleto']);
+    expect(params.line_items.every((item) => item.price_data.recurring.interval === 'month')).toBe(true);
+    expect(params.subscription_data.metadata).toMatchObject({ tipo: 'doacao', destino: 'obras', valor: '50', taxa: '2.48' });
+  });
+});

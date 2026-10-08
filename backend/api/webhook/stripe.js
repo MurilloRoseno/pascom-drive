@@ -4,6 +4,7 @@ const {
 } = require('../../lib/google-sheets');
 const { construirEventoWebhook } = require('../../lib/stripe');
 const { criarDownloadsDoPedido, enviarEmailEntrega, criarMensagemWhatsApp } = require('../../lib/delivery');
+const { eventoDeDoacao, processarEventoDoacao } = require('../../lib/donation-webhook');
 
 const SESSION_EVENTS = [
   'checkout.session.completed',
@@ -37,6 +38,11 @@ module.exports = async function handler(req, res, next) {
         ts: new Date().toISOString(),
       }));
       return res.status(401).json({ error: 'Assinatura invalida' });
+    }
+    // Doacoes tem fluxo proprio: nunca passam pela entrega de fotos.
+    if (eventoDeDoacao(event)) {
+      const outcome = await processarEventoDoacao(event);
+      return res.status(outcome.status).json(outcome.body);
     }
     if (!SESSION_EVENTS.includes(event.type)) return res.status(200).json({ ok: true, ignored: true });
 

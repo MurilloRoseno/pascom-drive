@@ -27,6 +27,7 @@ const galeriaAcessoHandler = require('./api/galeria-acesso');
 const previewEventoHandler = require('./api/preview-evento');
 const cacheInvalidateHandler = require('./api/cache-invalidate');
 const pedidoRecuperarHandler = require('./api/pedido-recuperar');
+const doacoesHandlers = require('./api/doacoes');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -72,6 +73,11 @@ app.post('/api/checkout/quote', cotacao, checkoutQuoteHandler);
 app.post('/api/criar-pagamento', pagamento, checkoutPreferenceHandler);
 app.post('/api/pedidos/recuperar', recuperacaoPedido, pedidoRecuperarHandler);
 app.get('/api/status-pagamento', statusConsulta, statusPagamentoHandler);
+app.get('/api/doacoes/config', fotos, doacoesHandlers.config);
+app.post('/api/doacoes/checkout', pagamento, doacoesHandlers.checkout);
+app.get('/api/doacoes/status', statusConsulta, doacoesHandlers.status);
+app.get('/api/doacoes/assinatura', statusConsulta, doacoesHandlers.assinatura);
+app.post('/api/doacoes/assinatura/cancelar', pagamento, doacoesHandlers.cancelarAssinatura);
 app.post('/api/webhook/stripe', webhook, webhookHandler);
 // app.post('/api/webhook/mercado-pago', webhook, mercadoPagoWebhookHandler);
 app.post('/api/watermark', processamento, watermarkHandler);
