@@ -92,6 +92,13 @@ function button(url, label) {
 </td></tr></table>`;
 }
 
+function outlineButton(url, label) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px;"><tr>
+<td align="center" style="background:${COLORS.card};border:2px solid ${COLORS.purple};border-radius:8px;">
+<a href="${escapeHtml(url)}" style="display:block;padding:12px 18px;font-family:${FONT_BODY};font-size:16px;line-height:20px;font-weight:bold;color:${COLORS.purple};text-decoration:none;">${escapeHtml(label)}</a>
+</td></tr></table>`;
+}
+
 function infoBlock(title, html) {
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:18px 0 0;"><tr>
 <td style="background:${COLORS.paper};border-radius:8px;padding:16px 18px;font-family:${FONT_BODY};font-size:14px;line-height:22px;color:${COLORS.ink};">
@@ -164,10 +171,12 @@ function detailRows(rows) {
 }
 
 /**
- * Comprovante de oferta. `manageUrl` so existe na doacao mensal.
- * @param {{doacao: {id: string, name?: string, destinoLabel: string, frequency: string, amount: number, fee: number, total: number, paidAt?: string}, manageUrl?: string}} input
+ * Comprovante de oferta. `manageUrl` so existe na doacao mensal; `receiptUrl`
+ * e o recibo (ou a fatura) emitido pelo Stripe, quando disponivel.
+ * @param {{doacao: {id: string, name?: string, destinoLabel: string, frequency: string, amount: number, fee: number, total: number, paidAt?: string}, manageUrl?: string, receiptUrl?: string}} input
  */
-function doacaoEmail({ doacao, manageUrl = '' }) {
+function doacaoEmail({ doacao, manageUrl = '', receiptUrl = '' }) {
+  const recibo = /^https:\/\//.test(receiptUrl) ? receiptUrl : '';
   const mensal = doacao.frequency === 'mensal';
   const nome = firstName(doacao.name);
   const saudacao = nome ? `${nome}, obrigado pela sua oferta.` : 'Obrigado pela sua oferta.';
@@ -188,6 +197,8 @@ function doacaoEmail({ doacao, manageUrl = '' }) {
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 18px;"><tr><td style="background:${COLORS.greenTint};border-radius:999px;padding:6px 14px;font-family:${FONT_BODY};font-size:13px;line-height:18px;font-weight:bold;color:${COLORS.green};">&#10003; Oferta recebida</td></tr></table>`,
     paragraph(`${escapeHtml(saudacao)} Ela ajuda a sustentar a vida e a missão da Paróquia São Rafael.`),
     detailRows(rows),
+    recibo ? `${outlineButton(recibo, 'Ver comprovante do Stripe')}
+<p style="margin:0 0 4px;font-family:${FONT_BODY};font-size:13px;line-height:20px;color:${COLORS.muted};">O comprovante é emitido pelo Stripe, que processa o pagamento. Nele você pode ver os dados da cobrança e baixar o recibo.</p>` : '',
     infoBlock('Destino respeitado', destinoNote),
     mensal ? infoBlock('Sua doação mensal', `A mesma oferta será repetida todo mês no cartão informado. Você pode cancelar quando quiser, sem precisar falar com ninguém.${manageUrl ? `<div style="margin-top:12px;">${button(manageUrl, 'Gerenciar doação mensal')}</div>` : ''}`) : '',
     `<p style="margin:18px 0 0;font-family:${FONT_BODY};font-size:13px;line-height:20px;color:${COLORS.muted};">Guarde este e-mail como comprovante da sua oferta.</p>`,
@@ -197,6 +208,7 @@ function doacaoEmail({ doacao, manageUrl = '' }) {
     `${saudacao} Ela ajuda a sustentar a vida e a missão da Paróquia São Rafael.`,
     '',
     ...rows.map(([label, value]) => `${label}: ${value}`),
+    ...(recibo ? ['', `Comprovante do Stripe: ${recibo}`] : []),
     '',
     `Sua oferta será aplicada ao destino escolhido (${doacao.destinoLabel}).`,
     ...(mensal ? ['', `Doação mensal: a oferta se repete todo mês. Para cancelar: ${manageUrl || 'fale com a secretaria paroquial.'}`] : []),

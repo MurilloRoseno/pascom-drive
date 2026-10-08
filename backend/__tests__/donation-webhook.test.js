@@ -6,9 +6,11 @@ jest.mock('../lib/google-sheets', () => ({
   registrarDoacao: jest.fn(),
 }));
 jest.mock('../lib/delivery', () => ({ enviarEmail: jest.fn() }));
+jest.mock('../lib/stripe', () => ({ buscarComprovante: jest.fn() }));
 
 const sheets = require('../lib/google-sheets');
 const delivery = require('../lib/delivery');
+const stripe = require('../lib/stripe');
 const { eventoDeDoacao, processarEventoDoacao } = require('../lib/donation-webhook');
 
 const DOACAO = {
@@ -49,6 +51,7 @@ function invoiceEvent(overrides = {}) {
         currency: 'brl',
         customer: 'cus_1',
         customer_email: 'maria@example.com',
+        hosted_invoice_url: 'https://invoice.stripe.com/i/abc',
         parent: { subscription_details: { subscription: 'sub_1', metadata: { tipo: 'doacao', destino: 'obras', valor: '50', taxa: '2.46' } } },
         ...overrides,
       },
@@ -62,6 +65,7 @@ beforeEach(() => {
   process.env.PUBLIC_APP_URL = 'https://pascom-drive.test';
   sheets.registrarWebhookSeNovo.mockResolvedValue(true);
   sheets.buscarDoacaoById.mockResolvedValue({ ...DOACAO });
+  stripe.buscarComprovante.mockResolvedValue('https://pay.stripe.com/receipts/abc');
   delivery.enviarEmail.mockResolvedValue({ status: 'enviado', error: '', attemptedAt: 'agora' });
 });
 
@@ -91,6 +95,8 @@ describe('doacao unica', () => {
       subject: 'Recebemos sua oferta — Paróquia São Rafael',
       html: expect.stringContaining('Dízimo'),
     }));
+    expect(stripe.buscarComprovante).toHaveBeenCalledWith({ paymentIntentId: 'pi_1', invoiceId: '' });
+    expect(delivery.enviarEmail.mock.calls[0][0].html).toContain('href="https://pay.stripe.com/receipts/abc"');
     expect(sheets.atualizarDoacao).toHaveBeenCalledWith('DOA_1', expect.objectContaining({
       Status: 'Confirmada', PaymentID: 'pi_1', AssinaturaID: '', ClienteID: 'cus_1', EmailStatus: 'enviado',
     }));
@@ -161,6 +167,14 @@ describe('doacao mensal', () => {
     const mail = delivery.enviarEmail.mock.calls[0][0];
     expect(mail.subject).toBe('Recebemos sua oferta mensal — Paróquia São Rafael');
     expect(mail.html).toContain('https://pascom-drive.test/doar/gerenciar?token=');
+    expect(stripe.buscarComprovante).toHaveBeenCalledWith({ paymentIntentId: '', invoiceId: 'in_0' });
+  });
+
+  it('envia o comprovante mesmo sem o link do Stripe', async () => {
+    stripe.buscarComprovante.mockResolvedValue('');
+    await processarEventoDoacao(sessionEvent());
+    expect(delivery.enviarEmail.mock.calls[0][0].html).not.toContain('Ver comprovante do Stripe');
+    expect(sheets.atualizarDoacao).toHaveBeenCalledWith('DOA_1', expect.objectContaining({ Status: 'Confirmada' }));
   });
 
   it('registra cada cobranca seguinte como nova linha, sem nome nem e-mail', async () => {
@@ -171,7 +185,9 @@ describe('doacao mensal', () => {
       status: 'Confirmada', destino: 'obras', frequency: 'mensal', amount: 50, fee: 2.46, total: 52.46, emailStatus: 'enviado',
     }));
     expect(sheets.registrarDoacao.mock.calls[0][0]).not.toHaveProperty('email');
-    expect(delivery.enviarEmail).toHaveBeenCalledWith(expect.objectContaining({ to: 'maria@example.com' }));
+    expect(delivery.enviarEmail).toHaveBeenCalledWith(expect.objectContaining({
+      to: 'maria@example.com', html: expect.stringContaining('href="https://invoice.stripe.com/i/abc"'),
+    }));
     expect(sheets.finalizarWebhook).toHaveBeenCalledWith('evt_inv_1', 'Processado');
   });
 

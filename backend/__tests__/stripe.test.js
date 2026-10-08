@@ -1,6 +1,12 @@
 const mockCreate = jest.fn();
+const mockIntent = jest.fn();
+const mockInvoice = jest.fn();
 jest.mock('stripe', () => {
-  const Stripe = jest.fn(() => ({ checkout: { sessions: { create: mockCreate } } }));
+  const Stripe = jest.fn(() => ({
+    checkout: { sessions: { create: mockCreate } },
+    paymentIntents: { retrieve: mockIntent },
+    invoices: { retrieve: mockInvoice },
+  }));
   Stripe.webhooks = { constructEvent: jest.fn() };
   return Stripe;
 });
@@ -122,5 +128,28 @@ describe('criarSessaoDoacao', () => {
     expect(params.excluded_payment_method_types).toEqual(['pix', 'boleto']);
     expect(params.line_items.every((item) => item.price_data.recurring.interval === 'month')).toBe(true);
     expect(params.subscription_data.metadata).toMatchObject({ tipo: 'doacao', destino: 'obras', valor: '50', taxa: '2.48' });
+  });
+});
+
+describe('buscarComprovante', () => {
+  const { buscarComprovante } = require('../lib/stripe');
+
+  it('devolve o recibo da cobranca na oferta unica', async () => {
+    mockIntent.mockResolvedValue({ latest_charge: { receipt_url: 'https://pay.stripe.com/receipts/abc' } });
+    expect(await buscarComprovante({ paymentIntentId: 'pi_1' })).toBe('https://pay.stripe.com/receipts/abc');
+    expect(mockIntent).toHaveBeenCalledWith('pi_1', { expand: ['latest_charge'] });
+  });
+
+  it('devolve a fatura hospedada na oferta mensal', async () => {
+    mockInvoice.mockResolvedValue({ hosted_invoice_url: 'https://invoice.stripe.com/i/abc' });
+    expect(await buscarComprovante({ invoiceId: 'in_1' })).toBe('https://invoice.stripe.com/i/abc');
+  });
+
+  it('devolve vazio quando o Stripe falha ou nao ha identificador', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    mockIntent.mockRejectedValue(new Error('timeout'));
+    expect(await buscarComprovante({ paymentIntentId: 'pi_1' })).toBe('');
+    expect(await buscarComprovante({})).toBe('');
+    warn.mockRestore();
   });
 });

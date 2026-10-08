@@ -8,6 +8,7 @@ const {
 const { destinoPorId, novaDoacaoId, criarTokenAssinatura } = require('./donations');
 const { doacaoEmail } = require('./email-templates');
 const { enviarEmail } = require('./delivery');
+const { buscarComprovante } = require('./stripe');
 
 const SESSION_EVENTS = [
   'checkout.session.completed',
@@ -92,9 +93,14 @@ async function processarSessao(event) {
   const paidAt = new Date().toISOString();
   const subscriptionId = String(session.subscription || '');
   const destino = destinoPorId(doacao.destino);
+  const receiptUrl = await buscarComprovante({
+    paymentIntentId: String(session.payment_intent || ''),
+    invoiceId: String(session.invoice || ''),
+  });
   const message = doacaoEmail({
     doacao: { ...doacao, destinoLabel: destino ? destino.label : doacao.destino, paidAt },
     manageUrl: subscriptionId ? manageUrl(subscriptionId) : '',
+    receiptUrl,
   });
   // O e-mail digitado no formulario tem prioridade; sem ele, usa o informado ao Stripe.
   const to = doacao.email || (session.customer_details && session.customer_details.email) || '';
@@ -141,6 +147,7 @@ async function processarFatura(event) {
   const message = doacaoEmail({
     doacao: { ...doacao, destinoLabel: destino ? destino.label : 'Paróquia São Rafael' },
     manageUrl: manageUrl(subscription.id),
+    receiptUrl: String(invoice.hosted_invoice_url || ''),
   });
   const emailResult = await enviarEmail({ to: invoice.customer_email || '', ...message });
   await registrarDoacao({ ...doacao, emailStatus: emailResult.status });

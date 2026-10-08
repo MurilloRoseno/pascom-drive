@@ -104,6 +104,24 @@ async function cancelarAssinatura(subscriptionId) {
   return { id: subscription.id, status: subscription.status };
 }
 
+// Link do comprovante emitido pelo proprio Stripe: recibo da cobranca (oferta
+// unica) ou fatura hospedada (mensal). Sem link, o e-mail segue sem o botao.
+async function buscarComprovante({ paymentIntentId = '', invoiceId = '' }) {
+  try {
+    if (paymentIntentId) {
+      const intent = await client().paymentIntents.retrieve(paymentIntentId, { expand: ['latest_charge'] });
+      return String((intent.latest_charge && intent.latest_charge.receipt_url) || '');
+    }
+    if (invoiceId) {
+      const invoice = await client().invoices.retrieve(invoiceId);
+      return String(invoice.hosted_invoice_url || '');
+    }
+  } catch (error) {
+    console.warn(JSON.stringify({ event: 'stripe_receipt_unavailable', message: error.message, ts: new Date().toISOString() }));
+  }
+  return '';
+}
+
 function construirEventoWebhook({ rawBody, signature, secret }) {
   if (!rawBody || !signature || !secret) return null;
   try {
@@ -115,5 +133,5 @@ function construirEventoWebhook({ rawBody, signature, secret }) {
 
 module.exports = {
   criarPreferencia, construirEventoWebhook, lineItems,
-  criarSessaoDoacao, buscarAssinatura, cancelarAssinatura,
+  criarSessaoDoacao, buscarAssinatura, cancelarAssinatura, buscarComprovante,
 };

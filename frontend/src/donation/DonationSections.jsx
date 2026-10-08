@@ -130,6 +130,13 @@ export function DonationFooter() {
         </nav>
       </div>
       <p className="doar-footer-note">Pagamentos processados pelo Stripe. A doação é livre e não dá direito a produto ou serviço.</p>
+      <div className="doar-footer-legal">
+        <span>© {new Date().getFullYear()} {PARISH.name}. Todos os direitos reservados.</span>
+        <span>{PARISH.city} · Maranhão · <a href="/privacidade">Privacidade</a></span>
+      </div>
+      <div className="doar-footer-motto" aria-hidden="true">
+        <img src="/assets/footer-motto.svg" alt="" width="1834" height="196" loading="lazy" draggable="false" />
+      </div>
     </footer>
   );
 }

@@ -81,6 +81,15 @@ describe('doacaoEmail', () => {
     expect(email.text).toContain('https://pascom-drive.test/doar/gerenciar?token=abc');
   });
 
+  it('inclui o comprovante do Stripe quando o link existe', () => {
+    const email = doacaoEmail({ doacao, receiptUrl: 'https://pay.stripe.com/receipts/abc' });
+    expect(email.html).toContain('Ver comprovante do Stripe');
+    expect(email.html).toContain('href="https://pay.stripe.com/receipts/abc"');
+    expect(email.text).toContain('Comprovante do Stripe: https://pay.stripe.com/receipts/abc');
+    expect(doacaoEmail({ doacao }).html).not.toContain('Ver comprovante do Stripe');
+    expect(doacaoEmail({ doacao, receiptUrl: 'javascript:alert(1)' }).html).not.toContain('Ver comprovante do Stripe');
+  });
+
   it('mantem o rodape de fotos no e-mail de entrega', () => {
     const { entregaFotosEmail: entrega } = require('../lib/email-templates');
     const html = entrega({ pedido: { id: 'PED_1' }, downloads: [{ url: 'https://safe.test/a' }] }).html;

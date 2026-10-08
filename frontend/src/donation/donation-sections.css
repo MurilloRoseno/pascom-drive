@@ -65,7 +65,12 @@
 .doar-footer nav { display: grid; gap: 0.6rem; align-content: start; }
 .doar .doar-footer a { color: var(--d-card); }
 .doar .doar-footer :focus-visible { box-shadow: 0 0 0 3px var(--d-purple-950), 0 0 0 6px var(--d-gold-500); }
-.doar-footer-note { max-width: var(--d-max); margin-inline: auto; padding: 1.25rem var(--d-gutter) calc(2rem + env(safe-area-inset-bottom)); border-top: 1px solid color-mix(in srgb, var(--d-card) 16%, transparent); font-size: 0.9375rem; }
+.doar-footer-note { max-width: var(--d-max); margin-inline: auto; padding: 1.25rem var(--d-gutter); border-top: 1px solid color-mix(in srgb, var(--d-card) 16%, transparent); font-size: 0.9375rem; }
+.doar-footer-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.5rem; max-width: var(--d-max); margin-inline: auto; padding: 0 var(--d-gutter) 1.5rem; font-size: 0.875rem; color: color-mix(in srgb, var(--d-card) 70%, transparent); }
+.doar .doar-footer-legal a { color: inherit; }
+/* Lema da paroquia, igual ao rodape do site. */
+.doar-footer-motto { display: flex; justify-content: center; padding: clamp(2.25rem, 4.5vw, 3.75rem) var(--d-gutter) calc(clamp(2.5rem, 5.5vw, 4.5rem) + env(safe-area-inset-bottom)); border-top: 1px solid color-mix(in srgb, var(--d-card) 10%, transparent); user-select: none; pointer-events: none; }
+.doar-footer-motto img { width: min(100%, 75rem); height: auto; opacity: 0.12; }
 
 /* Barra fixa no celular: aparece quando o formulario sai da tela. */
 .doar-bar {
@@ -82,7 +87,7 @@
 }
 .doar-bar.is-visible { transform: translateY(0); visibility: visible; transition: transform 450ms var(--d-ease), visibility 0s; }
 @media (min-width: 60rem) { .doar-bar { display: none; } }
-@media (max-width: 59.99rem) { .doar-footer-note { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom)); } }
+@media (max-width: 59.99rem) { .doar-footer-motto { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom)); } }
 
 /* Telas simples: obrigado e gerenciar doacao mensal. */
 .doar-simple { display: flex; flex-direction: column; }
