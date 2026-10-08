@@ -133,7 +133,7 @@ export default function EventPage() {
 
   const canBuy = event.salesAuthorized;
   const canBuyActivePhoto = canBuy && activePhoto?.availableForSale === true;
-  const activePhotoPrice = Number(activePhoto?.price || 10).toFixed(2).replace('.', ',');
+  const activePhotoPrice = Number(activePhoto?.price || 5).toFixed(2).replace('.', ',');
   const sharePayload = buildEventSharePayload(event, window.location.origin);
 
   return (

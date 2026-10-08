@@ -3,17 +3,18 @@ const express = require('express');
 const helmet = require('helmet');
 const {
   geral, pagamento, cotacao, fotos, midiaGaleria, statusConsulta,
-  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao, pascom,
+  recuperacaoPedido, processamento, acessoGaleria, download, webhook, administracao,
 } = require('./middleware/rate-limit');
 const { mediaAbuseGuard } = require('./middleware/media-abuse');
-const { authenticatePascom, pascomClerkMiddleware } = require('./lib/pascom-auth');
 const errorHandler = require('./middleware/error-handler');
 
 const healthHandler = require('./api/health.js');
 const checkoutPreferenceHandler = require('./api/checkout-preference');
 const checkoutQuoteHandler = require('./api/checkout-quote');
 const statusPagamentoHandler = require('./api/status-pagamento');
-const webhookHandler = require('./api/webhook/mercado-pago');
+// Mercado Pago desativado: o Stripe e o unico gateway em uso.
+// const mercadoPagoWebhookHandler = require('./api/webhook/mercado-pago');
+const webhookHandler = require('./api/webhook/stripe');
 const watermarkHandler = require('./api/watermark');
 const preprocessHandler = require('./api/preprocess');
 const coverPreviewHandler = require('./api/cover-preview');
@@ -26,11 +27,6 @@ const galeriaAcessoHandler = require('./api/galeria-acesso');
 const previewEventoHandler = require('./api/preview-evento');
 const cacheInvalidateHandler = require('./api/cache-invalidate');
 const pedidoRecuperarHandler = require('./api/pedido-recuperar');
-const pascomMeHandler = require('./api/pascom-me');
-const pascomDashboardHandler = require('./api/pascom-dashboard');
-const pascomPedidosHandler = require('./api/pascom-pedidos');
-const pascomPedidoDetalheHandler = require('./api/pascom-pedido-detalhe');
-const pascomRegenerarDownloadsHandler = require('./api/pascom-regenerar-downloads');
 
 const app = express();
 app.set('trust proxy', 1); // Vercel/nginx sit in front — trust X-Forwarded-For
@@ -69,18 +65,15 @@ app.use((req, res, next) => {
 app.use(geral);
 
 app.get('/api/health', healthHandler);
-app.use('/api/pascom', pascom, pascomClerkMiddleware(), authenticatePascom);
-app.get('/api/pascom/me', pascomMeHandler);
-app.get('/api/pascom/dashboard', pascomDashboardHandler);
-app.get('/api/pascom/pedidos', pascomPedidosHandler);
-app.get('/api/pascom/pedidos/:pedidoId', pascomPedidoDetalheHandler);
-app.post('/api/pascom/pedidos/:pedidoId/regenerar-downloads', pascomRegenerarDownloadsHandler);
+// Area Pascom desativada: login e rotas /api/pascom nao sao montados.
+// Handlers preservados em api/pascom-*.js e lib/pascom-auth.js.
 app.post('/api/checkout/preference', pagamento, checkoutPreferenceHandler);
 app.post('/api/checkout/quote', cotacao, checkoutQuoteHandler);
 app.post('/api/criar-pagamento', pagamento, checkoutPreferenceHandler);
 app.post('/api/pedidos/recuperar', recuperacaoPedido, pedidoRecuperarHandler);
 app.get('/api/status-pagamento', statusConsulta, statusPagamentoHandler);
-app.post('/api/webhook/mercado-pago', webhook, webhookHandler);
+app.post('/api/webhook/stripe', webhook, webhookHandler);
+// app.post('/api/webhook/mercado-pago', webhook, mercadoPagoWebhookHandler);
 app.post('/api/watermark', processamento, watermarkHandler);
 app.post('/api/preprocess', processamento, preprocessHandler);
 app.post('/api/cover-preview', processamento, coverPreviewHandler);

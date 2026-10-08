@@ -115,7 +115,7 @@ async function listarOfertasEvento(eventoId) {
   };
 }
 
-async function calcularComercial({ items, paymentMethod, paymentRules, couponCode = '', packageId = '' }) {
+async function calcularComercial({ items, paymentMethod, couponCode = '', packageId = '' }) {
   const subtotal = money(items.length * PHOTO_PRICE);
   const [coupons, packages] = await Promise.all([listarCupons(), listarPacotes()]);
   const coupon = normalizeCode(couponCode)
@@ -145,7 +145,7 @@ async function calcularComercial({ items, paymentMethod, paymentRules, couponCod
 
   const winner = candidates.sort((a, b) => b.discount - a.discount)[0] || { discount: 0 };
   const discountTotal = Math.min(subtotal, money(winner.discount || 0));
-  return calculatePricing(items.length, paymentMethod, paymentRules, {
+  return calculatePricing(items.length, paymentMethod, {
     discountTotal,
     discounts: {
       coupon: winner.source === 'coupon' ? discountTotal : 0,

@@ -1,19 +1,18 @@
 jest.mock('../lib/google-sheets', () => ({
   buscarFotosParaCompra: jest.fn().mockResolvedValue([{
-    foto: { id: 'FOTO_001', eventoId: 'EV1', price: 10, availableForSale: true, status: 'Processada' },
+    foto: { id: 'FOTO_001', eventoId: 'EV1', price: 5, availableForSale: true, status: 'Processada' },
     evento: { eventoId: 'EV1', title: 'Missa', publication: 'publicado', salesAuthorized: true, visibility: 'publica' },
   }]),
-  listarRegrasPagamento: jest.fn().mockResolvedValue([{ method: 'pix', percentage: 1, fixed: 0 }]),
   registrarPedido: jest.fn().mockResolvedValue(undefined),
   novoPedidoId: jest.fn(() => 'PED_TESTE_123456789'),
 }));
-jest.mock('../lib/mercado-pago', () => ({
-  criarPreferencia: jest.fn().mockResolvedValue({ id: 'PREF_1', checkoutUrl: 'https://mp.test/checkout' }),
+jest.mock('../lib/stripe', () => ({
+  criarPreferencia: jest.fn().mockResolvedValue({ id: 'cs_test_1', checkoutUrl: 'https://checkout.stripe.test/cs_test_1' }),
 }));
 jest.mock('../lib/commercial-rules', () => ({
-  calcularComercial: jest.fn(async ({ items, paymentMethod, paymentRules }) => {
+  calcularComercial: jest.fn(async ({ items, paymentMethod }) => {
     const { calculatePricing } = jest.requireActual('../lib/pricing');
-    return calculatePricing(items.length, paymentMethod, paymentRules);
+    return calculatePricing(items.length, paymentMethod);
   }),
 }));
 
@@ -40,12 +39,12 @@ const VALID_BODY = {
 describe('POST /api/checkout/preference', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('cria preferencia Checkout Pro com cotacao calculada no servidor', async () => {
+  it('cria sessao de checkout Stripe com cotacao calculada no servidor', async () => {
     const res = await request(app).post('/api/checkout/preference').send({ ...VALID_BODY, total: 0.01 });
     expect(res.status).toBe(201);
-    expect(res.body.checkoutUrl).toBe('https://mp.test/checkout');
-    expect(res.body.pricing.subtotal).toBe(10);
-    expect(res.body.pricing.total).toBeGreaterThan(13);
+    expect(res.body.checkoutUrl).toBe('https://checkout.stripe.test/cs_test_1');
+    expect(res.body.pricing.subtotal).toBe(5);
+    expect(res.body.pricing.total).toBe(5.06);
     expect(sheets.registrarPedido).toHaveBeenCalled();
   });
 

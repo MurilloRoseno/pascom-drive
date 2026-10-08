@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { checkoutSchema } from '../lib/validation.js';
 import { cotarCheckout, criarPagamento } from '../lib/api.js';
+import { feeHints } from '../lib/fee-hints.js';
 
 const money = (value) => `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
 const methods = [
@@ -28,6 +29,7 @@ export default function CheckoutPage() {
   const [quoteError, setQuoteError] = useState('');
   const [formError, setFormError] = useState('');
   const [loading, setLoading] = useState(false);
+  const hints = feeHints(pricing);
 
   const galleryTokens = useCallback(() => {
     return Object.fromEntries([...new Set(fotos.map((photo) => photo.eventoId))]
@@ -78,7 +80,7 @@ export default function CheckoutPage() {
         <Link to="/buscar">Voltar aos eventos</Link>
         <p className="hero-kicker">Compra segura</p>
         <h1>Finalizar compra</h1>
-        <p>Pagamento processado no ambiente protegido do Mercado Pago.</p>
+        <p>Pagamento processado no ambiente protegido do Stripe.</p>
       </div>
       {!fotos.length ? (
         <div className="empty-checkout">
@@ -132,15 +134,16 @@ export default function CheckoutPage() {
             {pricing?.couponApplied && <div className="total-row muted"><span>Cupom</span><strong>{pricing.couponApplied.code}</strong></div>}
             {pricing?.packageApplied && <div className="total-row muted"><span>Pacote</span><strong>{pricing.packageApplied.description || pricing.packageApplied.id}</strong></div>}
             <div className="total-row"><span>Taxa de servico</span><strong>{pricing ? money(pricing.serviceFee) : '--'}</strong></div>
+            {hints.service && <small>{hints.service}</small>}
             <div className="total-row"><span>Taxa de comodidade</span><strong>{pricing ? money(pricing.convenienceFee) : '--'}</strong></div>
-            <div className="total-row muted"><span>Custo estimado do pagamento</span><strong>{pricing ? money(pricing.paymentCost) : '--'}</strong></div>
+            {hints.convenience && <small>{hints.convenience}</small>}
             <div className="total-row final"><span>Total</span><strong>{pricing ? money(pricing.total) : '--'}</strong></div>
             {quoteError && <p className="form-error">{quoteError}</p>}
             {formError && <p className="form-error">{formError}</p>}
             <button className="payment-button" type="button" disabled={!pricing || loading} onClick={pay}>
-              {loading ? 'Abrindo Mercado Pago...' : 'Pagar no Mercado Pago'}
+              {loading ? 'Abrindo Stripe...' : 'Pagar no Stripe'}
             </button>
-            <small>O custo de processamento é estimado conforme a regra administrativa ativa para o meio escolhido.</small>
+            <small>As duas taxas repassam o custo do Stripe para o meio escolhido e mudam entre Pix e cartão. O valor das fotos vai integralmente para a paróquia.</small>
           </aside>
         </div>
       )}

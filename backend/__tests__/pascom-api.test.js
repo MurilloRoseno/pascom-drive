@@ -62,25 +62,35 @@ afterEach(() => {
   delete process.env.CLERK_AUTHORIZED_PARTIES;
 });
 
-it('rejeita rotas Pascom sem Clerk configurado', async () => {
+// Area Pascom desativada: as rotas /api/pascom nao sao montadas em server.js.
+// Os casos abaixo ficam preservados (skip) para quando a area for reativada.
+it('nao expoe rotas Pascom enquanto a area esta desativada', async () => {
+  const me = await request(app).get('/api/pascom/me');
+  const pedidos = await request(app).get('/api/pascom/pedidos');
+  const regenerar = await request(app).post('/api/pascom/pedidos/PED_1/regenerar-downloads');
+  expect([me.status, pedidos.status, regenerar.status]).toEqual([404, 404, 404]);
+  expect(sheets.listarPedidosPascom).not.toHaveBeenCalled();
+});
+
+it.skip('rejeita rotas Pascom sem Clerk configurado', async () => {
   delete process.env.CLERK_SECRET_KEY;
   const response = await request(app).get('/api/pascom/me');
   expect(response.status).toBe(503);
 });
 
-it('rejeita sessao ausente', async () => {
+it.skip('rejeita sessao ausente', async () => {
   global.__clerkUserId = null;
   const response = await request(app).get('/api/pascom/me');
   expect(response.status).toBe(401);
 });
 
-it('rejeita usuario fora da EquipePascom', async () => {
+it.skip('rejeita usuario fora da EquipePascom', async () => {
   shared.rows.mockResolvedValue([]);
   const response = await request(app).get('/api/pascom/me');
   expect(response.status).toBe(403);
 });
 
-it('retorna dashboard e lista de pedidos para usuario autorizado', async () => {
+it.skip('retorna dashboard e lista de pedidos para usuario autorizado', async () => {
   const me = await request(app).get('/api/pascom/me');
   const dashboard = await request(app).get('/api/pascom/dashboard');
   const pedidos = await request(app).get('/api/pascom/pedidos?q=PED');
@@ -90,13 +100,13 @@ it('retorna dashboard e lista de pedidos para usuario autorizado', async () => {
   expect(pedidos.body.pedidos[0].id).toBe('PED_1');
 });
 
-it('regenera downloads somente para pedido aprovado', async () => {
+it.skip('regenera downloads somente para pedido aprovado', async () => {
   const response = await request(app).post('/api/pascom/pedidos/PED_1/regenerar-downloads');
   expect(response.status).toBe(200);
   expect(response.body.downloads[0].fotoId).toBe('F1');
 });
 
-it('bloqueia regeneracao de pedido pendente', async () => {
+it.skip('bloqueia regeneracao de pedido pendente', async () => {
   sheets.buscarPedidoById.mockResolvedValue({ id: 'PED_2', status: 'Pagamento Pendente' });
   const response = await request(app).post('/api/pascom/pedidos/PED_2/regenerar-downloads');
   expect(response.status).toBe(409);

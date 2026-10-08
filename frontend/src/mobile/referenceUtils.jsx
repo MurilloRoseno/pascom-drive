@@ -19,9 +19,7 @@ export const PROXIMAS = [
   { id: 'a4', dia: '24', mes: 'Jun', titulo: 'São João — Quermesse paroquial', local: 'Praça São Rafael', hora: '18h00' },
 ];
 
-export const PRECO_FOTO = 10;
-export const TAXA_SERVICO = 2;
-export const TAXA_COMODIDADE = 1;
+export const PRECO_FOTO = 5;
 
 export function brl(value = 0) {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;

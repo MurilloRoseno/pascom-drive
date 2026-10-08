@@ -1,10 +1,10 @@
 const { criarPagamentoSchema } = require('../lib/validation');
 const {
-  buscarFotosParaCompra, listarRegrasPagamento, registrarPedido, novoPedidoId,
+  buscarFotosParaCompra, registrarPedido, novoPedidoId,
 } = require('../lib/google-sheets');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
 const { calcularComercial } = require('../lib/commercial-rules');
-const { criarPreferencia } = require('../lib/mercado-pago');
+const { criarPreferencia } = require('../lib/stripe');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -27,7 +27,6 @@ module.exports = async function handler(req, res, next) {
     const pricing = await calcularComercial({
       items,
       paymentMethod: input.paymentMethod,
-      paymentRules: await listarRegrasPagamento(),
       couponCode: input.couponCode,
       packageId: input.packageId,
     });

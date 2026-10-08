@@ -1,5 +1,5 @@
 const { cotacaoSchema } = require('../lib/validation');
-const { buscarFotosParaCompra, listarRegrasPagamento } = require('../lib/google-sheets');
+const { buscarFotosParaCompra } = require('../lib/google-sheets');
 const { tokenAllowsEvent } = require('../lib/gallery-access');
 const { calcularComercial } = require('../lib/commercial-rules');
 
@@ -21,7 +21,6 @@ module.exports = async function handler(req, res, next) {
       pricing: await calcularComercial({
         items,
         paymentMethod: input.paymentMethod,
-        paymentRules: await listarRegrasPagamento(),
         couponCode: input.couponCode,
         packageId: input.packageId,
       }),

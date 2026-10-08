@@ -1,5 +1,6 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
 const { JWT } = require('google-auth-library');
+const { PHOTO_PRICE } = require('./pricing');
 
 function drivePreviewUrl(fileId) {
   return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1280` : '';
@@ -108,7 +109,7 @@ function fotoFromRow(row) {
     previewFileId: previewId || '',
     thumbnailFileId: thumbnailId || '',
     previewUrl: previewId ? drivePreviewUrl(previewId) : driveUrlToThumbnail(row.get('Link_Amostra')),
-    price: Number(row.get('PrecoUnitario') || row.get('Preco') || 10),
+    price: PHOTO_PRICE,
     type,
     availableForSale: type !== 'capa' && yes(row.get('DisponivelVenda')),
     status: row.get('StatusProcessamento') || row.get('Status'),

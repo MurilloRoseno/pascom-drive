@@ -29,7 +29,7 @@ const toc = [
 const legalBases = [
   ['Catálogo de eventos e galeria', 'Execução de serviço solicitado e legítimo interesse pastoral'],
   ['Compra e entrega de fotos', 'Execução de contrato, consentimento e cumprimento de obrigações legais'],
-  ['Pagamentos via Mercado Pago', 'Execução de contrato e prevenção a fraude'],
+  ['Pagamentos via Stripe', 'Execução de contrato e prevenção a fraude'],
   ['Galerias protegidas por código', 'Legítimo interesse, segurança e proteção de imagem'],
   ['Comunicação por e-mail/WhatsApp', 'Execução de serviço, consentimento e legítimo interesse'],
   ['Logs técnicos e segurança', 'Legítimo interesse e Marco Civil da Internet'],
@@ -209,7 +209,7 @@ export default function PrivacyPolicy({ mobile = false }) {
           <Section id="compartilhamento" icon="user" title="6. Compartilhamento de Dados">
             <p>O compartilhamento ocorre somente quando necessário e proporcional:</p>
             <ul className="privacy-list">
-              <Li><strong>Mercado Pago:</strong> processamento do pagamento e retorno de status financeiro.</Li>
+              <Li><strong>Stripe:</strong> processamento do pagamento e retorno de status financeiro.</Li>
               <Li><strong>Google Sheets/Drive:</strong> organização operacional de eventos, fotos, pedidos e links de entrega.</Li>
               <Li><strong>Vercel:</strong> hospedagem da aplicação, APIs e registros técnicos de execução.</Li>
               <Li><strong>Clerk:</strong> autenticação da equipe Pascom por e-mail OTP e, se habilitado, SMS/celular.</Li>

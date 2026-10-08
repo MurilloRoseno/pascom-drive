@@ -376,14 +376,14 @@ function registrarFoto(dados) {
     TipoFoto: dados.tipoFoto === 'capa' ? 'capa' : 'foto',
     StatusProcessamento: 'Processada',
     DisponivelVenda: 'NAO',
-    PrecoUnitario: dados.preco || 10,
+    PrecoUnitario: dados.preco || 5,
     DataProcessamento: new Date().toISOString(),
     // Legacy fields are intentionally left without a public original URL.
     ID: dados.id,
     Evento: dados.evento || '',
     Link_Amostra: dados.linkAmostra || '',
     Status: 'Processada',
-    Preco: dados.preco || 10,
+    Preco: dados.preco || 5,
   });
 }
 

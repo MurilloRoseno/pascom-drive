@@ -21,7 +21,7 @@ describe('api comercial', () => {
       body: JSON.stringify(payload),
     }));
 
-    mockOk({ pedidoId: 'PED_1', checkoutUrl: 'https://mercadopago.test' });
+    mockOk({ pedidoId: 'PED_1', checkoutUrl: 'https://checkout.stripe.test' });
     await criarPagamento(payload);
     expect(fetch).toHaveBeenLastCalledWith(`${BASE}/api/checkout/preference`, expect.objectContaining({
       method: 'POST',

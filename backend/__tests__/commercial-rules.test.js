@@ -26,7 +26,6 @@ const items = [
   { foto: { id: 'F2', eventoId: 'EV1' }, evento: { eventoId: 'EV1' } },
   { foto: { id: 'F3', eventoId: 'EV1' }, evento: { eventoId: 'EV1' } },
 ];
-const paymentRules = [{ method: 'pix', percentage: 0, fixed: 0 }];
 
 beforeEach(() => {
   shared.rows.mockImplementation(async (sheet) => {
@@ -44,14 +43,13 @@ it('aplica o maior desconto valido sem empilhar cupom e pacote', async () => {
   const pricing = await calcularComercial({
     items,
     paymentMethod: 'pix',
-    paymentRules,
     couponCode: 'PASTORAL10',
     packageId: 'COMBO3',
   });
-  expect(pricing.discountTotal).toBe(6);
+  expect(pricing.discountTotal).toBe(3);
   expect(pricing.packageApplied.id).toBe('COMBO3');
   expect(pricing.couponApplied).toBeNull();
-  expect(pricing.total).toBe(27);
+  expect(pricing.total).toBe(12.14);
 });
 
 it('retorna ofertas publicas aplicaveis ao evento', async () => {
