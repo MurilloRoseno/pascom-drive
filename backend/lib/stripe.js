@@ -1,6 +1,8 @@
 const Stripe = require('stripe');
 
-const METHOD_TYPES = { pix: 'pix', credit_card: 'card' };
+// A API atual do Stripe nao aceita mais payment_method_types na sessao: os meios
+// vem do Dashboard e aqui excluimos os que o comprador nao escolheu.
+const EXCLUDED_METHOD_TYPES = { pix: ['card', 'boleto'], credit_card: ['pix', 'boleto'] };
 
 function client() {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error('Stripe nao configurado.');
@@ -37,7 +39,7 @@ async function criarPreferencia({ pedidoId, buyer, items, pricing, paymentMethod
   const publicUrl = process.env.PUBLIC_APP_URL || 'https://pascom-drive.vercel.app';
   const session = await client().checkout.sessions.create({
     mode: 'payment',
-    payment_method_types: [METHOD_TYPES[paymentMethod]],
+    excluded_payment_method_types: EXCLUDED_METHOD_TYPES[paymentMethod],
     line_items: lineItems({ items, pricing }),
     client_reference_id: pedidoId,
     customer_email: buyer.email,

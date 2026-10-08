@@ -27,7 +27,8 @@ it('cria sessao Pix em BRL com o total igual ao pedido', async () => {
   const result = await criarPreferencia({ pedidoId: 'PED_1', buyer, items, pricing, paymentMethod: 'pix' });
   expect(result).toEqual({ id: 'cs_test_1', checkoutUrl: 'https://checkout.stripe.test/cs_test_1' });
   const [params, options] = mockCreate.mock.calls[0];
-  expect(params.payment_method_types).toEqual(['pix']);
+  expect(params.excluded_payment_method_types).toEqual(['card', 'boleto']);
+  expect(params).not.toHaveProperty('payment_method_types');
   expect(params.client_reference_id).toBe('PED_1');
   expect(params.success_url).toBe('https://app.test/pagamento/sucesso?pedido=PED_1');
   expect(params.line_items.every((item) => item.price_data.currency === 'brl')).toBe(true);
@@ -41,7 +42,7 @@ it('cria sessao de cartao com as duas taxas discriminadas', async () => {
   const pricing = calculatePricing(2, 'credit_card');
   await criarPreferencia({ pedidoId: 'PED_2', buyer, items, pricing, paymentMethod: 'credit_card' });
   const [params] = mockCreate.mock.calls[0];
-  expect(params.payment_method_types).toEqual(['card']);
+  expect(params.excluded_payment_method_types).toEqual(['pix', 'boleto']);
   const byName = Object.fromEntries(params.line_items.map((item) => [item.price_data.product_data.name, item.price_data.unit_amount]));
   expect(byName['Taxa de servico']).toBe(43);
   expect(byName['Taxa de comodidade']).toBe(39);
