@@ -2,6 +2,11 @@ const crypto = require('crypto');
 const { rows, sheet, fotoFromRow } = require('./google-sheets.shared');
 const { incrementarUsoCupom } = require('./commercial-rules');
 
+// A planilha em pt-BR devolve valores monetarios com virgula decimal ("5,61").
+function moneyValue(value) {
+  return Number(String(value || '0').replace(',', '.')) || 0;
+}
+
 async function registrarPedido(pedido, itens) {
   const pedidos = await sheet('Pedidos');
   const itensSheet = await sheet('ItensPedido');
@@ -47,11 +52,11 @@ async function buscarPedidoById(pedidoId) {
     status: match.get('Status'),
     email: match.get('Email'),
     whatsapp: match.get('WhatsApp'),
-    total: Number(match.get('Total') || 0),
+    total: moneyValue(match.get('Total')),
     createdAt: match.get('DataCriacao') || '',
     paidAt: match.get('DataPagamento') || '',
-    totalBeforeDiscount: Number(match.get('TotalAntesDesconto') || match.get('Total') || 0),
-    discountTotal: Number(match.get('DescontoTotal') || 0),
+    totalBeforeDiscount: moneyValue(match.get('TotalAntesDesconto') || match.get('Total')),
+    discountTotal: moneyValue(match.get('DescontoTotal')),
     couponCode: match.get('CupomCodigo') || '',
     packageId: match.get('PacoteID') || '',
   };
@@ -66,7 +71,7 @@ async function buscarPedidoByPreferenceOrPayment(reference) {
   return match ? {
     row: match,
     id: match.get('PedidoID'),
-    total: Number(match.get('Total') || 0),
+    total: moneyValue(match.get('Total')),
     status: match.get('Status'),
   } : null;
 }
