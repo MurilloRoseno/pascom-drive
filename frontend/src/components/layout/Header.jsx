@@ -7,7 +7,10 @@ export default function Header() {
     <header className="site-header">
       <div className="nav-inner">
         <Link to="/" className="brand" aria-label="Paróquia São Rafael - Início">
-          <img src="/assets/logo-paroquia-sao-rafael.png" alt="Paróquia São Rafael" />
+          <picture>
+            <source srcSet="/assets/logo-header-2x.webp" type="image/webp" />
+            <img src="/assets/logo-header-2x.png" alt="Paróquia São Rafael" width="150" height="72" />
+          </picture>
         </Link>
         <nav aria-label="Navegação principal">
           <ul className="nav-list">
