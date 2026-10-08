@@ -50,6 +50,7 @@ async function buscarPedidoById(pedidoId) {
     preferenceId: match.get('PreferenceID'),
     paymentId: match.get('PaymentID') || '',
     status: match.get('Status'),
+    name: match.get('Nome') || '',
     email: match.get('Email'),
     whatsapp: match.get('WhatsApp'),
     total: moneyValue(match.get('Total')),

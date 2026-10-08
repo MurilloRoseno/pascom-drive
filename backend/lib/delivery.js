@@ -3,6 +3,7 @@ const nodemailer = require('nodemailer');
 const { signToken } = require('./jwt-utils');
 const { buscarOriginaisPedido, criarAutorizacoesDownload } = require('./google-sheets');
 const { createFingerprintId, hashFingerprint, FINGERPRINT_VERSION } = require('./forensic-watermark');
+const { entregaFotosEmail } = require('./email-templates');
 
 async function criarDownloadsDoPedido(pedido) {
   const secret = process.env.DOWNLOAD_JWT_SECRET;
@@ -54,15 +55,16 @@ async function enviarEmailEntrega(pedido, downloads) {
   if (!smtpConfigured()) {
     return { status: 'nao_configurado', error: 'SMTP nao configurado.', attemptedAt };
   }
-  const links = downloads.map((item, index) => `<li><a href="${item.url}">Baixar foto ${index + 1}</a></li>`).join('');
+  const message = entregaFotosEmail({ pedido, downloads });
   const fromName = process.env.SMTP_FROM_NAME || 'Paroquia Sao Rafael - Fotos';
   try {
     await createTransporter().sendMail({
       from: `"${fromName}" <${process.env.SMTP_USER}>`,
       replyTo: process.env.SMTP_REPLY_TO || process.env.SMTP_USER,
       to: pedido.email,
-      subject: 'Suas fotos - Paroquia Sao Rafael',
-      html: `<p>Pagamento confirmado. Seus links seguros expiram em 24 horas.</p><ul>${links}</ul>`,
+      subject: message.subject,
+      html: message.html,
+      text: message.text,
     });
     return { status: 'enviado', error: '', attemptedAt };
   } catch (error) {

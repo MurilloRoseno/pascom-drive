@@ -8,7 +8,7 @@ const nodemailer = require('nodemailer');
 const { criarDownloadsDoPedido, enviarEmailEntrega } = require('../lib/delivery');
 const sheets = require('../lib/google-sheets');
 
-const pedido = { email: 'cliente@example.com' };
+const pedido = { id: 'PED_1', name: 'Maria Silva', email: 'cliente@example.com' };
 const downloads = [{ url: 'https://safe.test/download-1' }];
 
 beforeEach(() => {
@@ -76,7 +76,9 @@ it('envia links temporarios por Gmail SMTP com senha de app sanitizada', async (
     from: '"Paroquia Sao Rafael - Fotos" <murillo.roseno.lima@gmail.com>',
     replyTo: 'murillo.roseno.lima@gmail.com',
     to: 'cliente@example.com',
+    subject: 'Suas fotos estão prontas — Paróquia São Rafael',
     html: expect.stringContaining('https://safe.test/download-1'),
+    text: expect.stringContaining('https://safe.test/download-1'),
   }));
   expect(result).toEqual(expect.objectContaining({ status: 'enviado', error: '' }));
 });

@@ -7,6 +7,7 @@ const runtimeFiles = [
   'appsscript.json',
   'Code.js',
   'Drive.js',
+  'EmailTemplates.js',
   'EventQueue.js',
   'Sheet.js',
   'Security.js',

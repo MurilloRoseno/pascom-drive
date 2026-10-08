@@ -9,7 +9,17 @@ function notificarFalhaEntrega(row, erro) {
   var adminEmail = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
   if (!adminEmail) return;
   try {
-    MailApp.sendEmail(adminEmail, '[Pascom] Falha definitiva: ' + row.id, 'Erro: ' + erro.message);
+    var email = montarEmailAdmin({
+      titulo: 'Falha definitiva de entrega: ' + row.id,
+      resumo: 'O sistema não conseguiu preparar a entrega deste registro depois de todas as tentativas.',
+      detalhes: [
+        { rotulo: 'Registro', valor: row.id },
+        { rotulo: 'Tentativas', valor: String(MAX_TENTATIVAS) },
+        { rotulo: 'Erro', valor: erro.message }
+      ],
+      proximoPasso: 'Faça a entrega manualmente pela secretaria e confira os dados do comprador na planilha.'
+    });
+    MailApp.sendEmail(adminEmail, email.assunto, email.texto, { htmlBody: email.html });
   } catch (mailError) {
     Logger.log('Aviso por e-mail nao enviado: ' + mailError.message);
   }

@@ -55,6 +55,7 @@ global.PropertiesService = {
 };
 
 global.MailApp   = { sendEmail: jest.fn() };
+global.montarEmailAdmin = require('../EmailTemplates').montarEmailAdmin;
 global.Utilities = { formatDate: jest.fn().mockReturnValue('01/01/2026 12:00:00') };
 global.Logger    = { log: jest.fn() };
 
@@ -229,7 +230,8 @@ describe('processarFoto', () => {
     expect(global.MailApp.sendEmail).toHaveBeenCalledWith(
       'admin@example.com',
       expect.stringContaining('foto.jpg'),
-      expect.any(String)
+      expect.any(String),
+      { htmlBody: expect.stringContaining('foto.jpg') }
     );
   });
 

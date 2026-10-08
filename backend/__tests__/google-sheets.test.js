@@ -57,10 +57,10 @@ const {
 } = require('../lib/google-sheets');
 
 it('le totais gravados com virgula decimal pela planilha em pt-BR', async () => {
-  const brRow = row({ PedidoID: 'PED_BR', PreferenceID: 'cs_test_1', Status: 'Pagamento Pendente', Total: '5,61', TotalAntesDesconto: '6,62', DescontoTotal: '1,01' });
+  const brRow = row({ Nome: 'Maria Silva', PedidoID: 'PED_BR', PreferenceID: 'cs_test_1', Status: 'Pagamento Pendente', Total: '5,61', TotalAntesDesconto: '6,62', DescontoTotal: '1,01' });
   sheets.Pedidos.getRows.mockResolvedValueOnce([brRow]).mockResolvedValueOnce([brRow]);
   await expect(buscarPedidoByPreferenceOrPayment('PED_BR')).resolves.toMatchObject({ id: 'PED_BR', total: 5.61 });
-  await expect(buscarPedidoById('PED_BR')).resolves.toMatchObject({ total: 5.61, totalBeforeDiscount: 6.62, discountTotal: 1.01 });
+  await expect(buscarPedidoById('PED_BR')).resolves.toMatchObject({ name: 'Maria Silva', total: 5.61, totalBeforeDiscount: 6.62, discountTotal: 1.01 });
 });
 
 it('lista apenas evento publicado e remove configuracao secreta', async () => {

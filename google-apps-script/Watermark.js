@@ -8,7 +8,7 @@
 
 /* global copyFileToFolder, trashFileById, moveFileToFolderIfNeeded, getShareableLink, getOriginaisFolder, getAmostrasFolder, getThumbnailsFolder,
           registrarFoto, atualizarDerivadosFoto, listarFotosParaReprocessar, listarFotosComMiniatura, invalidarCacheSite,
-          criarHeadersBackendInterno, UrlFetchApp, PropertiesService, MailApp, Logger */
+          criarHeadersBackendInterno, UrlFetchApp, PropertiesService, MailApp, Logger, montarEmailAdmin, Utilities */
 
 var PRECO_PADRAO = 10;
 var _idCounter = 0;
@@ -112,11 +112,17 @@ function notificarErroProcessamento(arquivo, erro) {
   var adminEmail = PropertiesService.getScriptProperties().getProperty('ADMIN_EMAIL');
   if (!adminEmail) return;
   try {
-    MailApp.sendEmail(
-      adminEmail,
-      '[Pascom] Erro ao processar foto: ' + arquivo.getName(),
-      'Erro: ' + erro.message
-    );
+    var email = montarEmailAdmin({
+      titulo: 'Erro ao processar foto: ' + arquivo.getName(),
+      resumo: 'Uma foto enviada não pôde ser processada e ainda não está disponível na galeria.',
+      detalhes: [
+        { rotulo: 'Arquivo', valor: arquivo.getName() },
+        { rotulo: 'Erro', valor: erro.message },
+        { rotulo: 'Quando', valor: Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'dd/MM/yyyy HH:mm') }
+      ],
+      proximoPasso: 'O arquivo continua na pasta de origem e será processado de novo na próxima execução. Se o erro se repetir, confira se o arquivo abre normalmente e se está em JPG, PNG ou HEIC.'
+    });
+    MailApp.sendEmail(adminEmail, email.assunto, email.texto, { htmlBody: email.html });
   } catch (mailError) {
     Logger.log('Aviso por e-mail nao enviado: ' + mailError.message);
   }
