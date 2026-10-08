@@ -6,6 +6,7 @@ const { readThrough } = require('../lib/runtime-cache');
 
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  let isCover = false;
   try {
     const variant = req.query.variant === 'thumbnail' ? 'thumbnail' : 'preview';
     const event = await buscarEvento(req.params.eventoId);
@@ -14,6 +15,7 @@ module.exports = async function handler(req, res, next) {
     }
     const photo = await buscarPreviewFoto(event.eventoId, req.params.fotoId, variant);
     if (!photo) return res.status(404).json({ error: 'Previa nao encontrada.' });
+    isCover = photo.type === 'capa' || req.query.capa === '1';
     const mediaAllowed = mediaTokenAllows(String(req.query.mt || ''), {
       eventoId: event.eventoId,
       fotoId: req.params.fotoId,
@@ -60,6 +62,16 @@ module.exports = async function handler(req, res, next) {
     res.setHeader('Referrer-Policy', 'no-referrer');
     return res.end(buffer);
   } catch (error) {
-    next(error);
+    if (!/Drive download failed \(404\)/.test(error.message)) return next(error);
+    // A previa sumiu do Drive: a capa cai na foto da igreja; as demais respondem 404.
+    console.warn(JSON.stringify({
+      event: 'preview_derivative_missing',
+      eventoId: req.params.eventoId,
+      fotoId: req.params.fotoId,
+      ts: new Date().toISOString(),
+    }));
+    res.setHeader('Cache-Control', 'public, max-age=300');
+    if (isCover) return res.redirect(302, '/assets/hero-igreja-sao-rafael.webp');
+    return res.status(404).json({ error: 'Prévia indisponível.' });
   }
 };

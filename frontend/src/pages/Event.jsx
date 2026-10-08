@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { fallbackTo } from '../lib/image-fallback.js';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { listarFotosEvento, listarOfertasEvento, obterEvento, validarAcessoGaleria } from '../lib/api.js';
@@ -154,7 +155,7 @@ export default function EventPage() {
               <a className="ghost-button" href={sharePayload.whatsappWebUrl} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar evento pelo WhatsApp Web">Compartilhar evento</a>
             </div>
           </div>
-          <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Capa de ${event.title}`} decoding="async" draggable="false" /></div>
+          <div className="event-cover-large"><img src={event.cover || '/assets/hero-igreja-sao-rafael.webp'} onError={fallbackTo('/assets/hero-igreja-sao-rafael.webp')} alt={`Capa de ${event.title}`} decoding="async" draggable="false" /></div>
         </div>
       </section>
       <section className="main-content">

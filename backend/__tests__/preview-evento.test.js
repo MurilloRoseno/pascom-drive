@@ -72,3 +72,33 @@ it('transmite capa editorial publicada sem abrir as demais fotos protegidas', as
   expect(response.headers['vercel-cdn-cache-control']).toContain('max-age=86400');
   expect(drive.downloadFile).toHaveBeenCalledWith('COVER_PRIVATE_ID');
 });
+
+it('troca a capa que sumiu do Drive pela foto da igreja, sem erro 500', async () => {
+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  sheets.buscarPreviewFoto.mockResolvedValueOnce({ derivativeFileId: 'COVER_PRIVATE_ID', type: 'capa', variant: 'thumbnail' });
+  drive.downloadFile.mockRejectedValueOnce(new Error('Drive download failed (404): File not found'));
+  const response = await request(app).get('/api/eventos/EV1/previews/CAPA1?variant=thumbnail');
+  expect(response.status).toBe(302);
+  expect(response.headers.location).toBe('/assets/hero-igreja-sao-rafael.webp');
+  expect(response.headers['cache-control']).toBe('public, max-age=300');
+  warn.mockRestore();
+});
+
+it('responde 404 quando a previa de uma foto sumiu do Drive', async () => {
+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  mediaToken.mediaTokenAllows.mockReturnValueOnce(true);
+  drive.downloadFile.mockRejectedValueOnce(new Error('Drive download failed (404): File not found'));
+  const response = await request(app).get('/api/eventos/EV1/previews/F1?mt=ok');
+  expect(response.status).toBe(404);
+  expect(response.body).toEqual({ error: 'Prévia indisponível.' });
+  warn.mockRestore();
+});
+
+it('trata como capa a primeira foto usada na vitrine do evento publico', async () => {
+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  access.tokenAllowsEvent.mockReturnValueOnce(true);
+  drive.downloadFile.mockRejectedValueOnce(new Error('Drive download failed (404): File not found'));
+  const response = await request(app).get('/api/eventos/EV1/previews/F1?variant=thumbnail&capa=1');
+  expect(response.status).toBe(302);
+  warn.mockRestore();
+});

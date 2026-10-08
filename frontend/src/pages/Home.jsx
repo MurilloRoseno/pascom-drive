@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fallbackTo } from '../lib/image-fallback.js';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
@@ -50,7 +51,7 @@ function EventCard({ event }) {
     <article className="evento-card">
       <Link to={`/evento/${encodeURIComponent(event.eventoId)}`} className="evento-card-link" aria-label={`Abrir galeria de ${event.title}`}>
         <div className="evento-foto">
-          <img src={event.coverThumbnail || event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Galeria de ${event.title}`} loading="lazy" decoding="async" draggable="false" />
+          <img src={event.coverThumbnail || event.cover || '/assets/hero-igreja-sao-rafael.webp'} onError={fallbackTo('/assets/hero-igreja-sao-rafael.webp')} alt={`Galeria de ${event.title}`} loading="lazy" decoding="async" draggable="false" />
           <div className="evento-data-badge"><span className="dia">{day}</span><span className="mes">{month}</span></div>
         </div>
         <div className="evento-info">

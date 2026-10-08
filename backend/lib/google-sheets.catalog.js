@@ -43,8 +43,9 @@ async function listarEventosPublicados({ categoria = '', q = '' } = {}) {
         foto.eventoId === event.eventoId && foto.status === 'Processada' && foto.previewFileId
       );
       if (firstPhoto) {
-        publicEvent.cover = applicationPreviewUrl(event.eventoId, firstPhoto.id, 'preview');
-        publicEvent.coverThumbnail = applicationPreviewUrl(event.eventoId, firstPhoto.id, 'thumbnail');
+        // capa=1: se a previa sumir do Drive, a API devolve a foto da igreja no lugar.
+        publicEvent.cover = `${applicationPreviewUrl(event.eventoId, firstPhoto.id, 'preview')}?capa=1`;
+        publicEvent.coverThumbnail = `${applicationPreviewUrl(event.eventoId, firstPhoto.id, 'thumbnail')}&capa=1`;
       }
     }
     return publicEvent;

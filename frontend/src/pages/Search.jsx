@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { fallbackTo } from '../lib/image-fallback.js';
 import { Link, useSearchParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { listarEventos } from '../lib/api.js';
@@ -21,7 +22,7 @@ function SearchCard({ event }) {
     <article className="event-card">
       <Link className="event-card-link" to={`/evento/${encodeURIComponent(event.eventoId)}`} aria-label={`Abrir galeria de ${event.title}`}>
         <div className="event-cover">
-          <img src={event.coverThumbnail || event.cover || '/assets/hero-igreja-sao-rafael.webp'} alt={`Galeria de ${event.title}`} loading="lazy" decoding="async" draggable="false" />
+          <img src={event.coverThumbnail || event.cover || '/assets/hero-igreja-sao-rafael.webp'} onError={fallbackTo('/assets/hero-igreja-sao-rafael.webp')} alt={`Galeria de ${event.title}`} loading="lazy" decoding="async" draggable="false" />
           <span className="event-tag">{categoryLabel(event.category)}</span>
           <span className={event.visibility === 'publica' ? 'event-open' : 'event-lock'}>{event.visibility === 'publica' ? 'Galeria pública' : 'Galeria protegida'}</span>
         </div>
