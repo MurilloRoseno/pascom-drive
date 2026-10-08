@@ -1,104 +1,148 @@
-jest.mock('google-spreadsheet', () => {
-  return { GoogleSpreadsheet: jest.fn() };
-});
+jest.mock('google-spreadsheet', () => ({ GoogleSpreadsheet: jest.fn() }));
+jest.mock('google-auth-library', () => ({ JWT: jest.fn() }));
 
-jest.mock('google-auth-library', () => {
-  return { JWT: jest.fn() };
-});
-
-function makeRow(data) {
-  return {
-    get: (k) => data[k],
-    set: jest.fn((k, v) => { data[k] = v; }),
-    save: jest.fn().mockResolvedValue(undefined),
-  };
+function row(data) {
+  return { get: (key) => data[key], set: jest.fn((key, value) => { data[key] = value; }), save: jest.fn().mockResolvedValue() };
 }
 
-const mockRows = [
-  makeRow({ ID: 'FOTO_001', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/a', Status: 'Processada', Preco: '25', ID_Mercado_Pago: 'MP_001' }),
-  makeRow({ ID: 'FOTO_002', Evento: 'Missa de Páscoa', Link_Amostra: 'https://drive.google.com/b', Status: 'Processada', Preco: '25' }),
+const eventRows = [
+  row({ EventoID: 'EV1', Titulo: 'Padre Paulo Na FranÇA_202605261456', Categoria: 'celebracoes', DataEvento: '2026-05-26', HorarioEvento: '15:32', Publicacao: 'publicado', Visibilidade: 'publica', VendaAutorizada: 'SIM' }),
+  row({ EventoID: 'EV2', Titulo: 'Rascunho', Publicacao: 'rascunho', Visibilidade: 'protegida', VendaAutorizada: 'NAO' }),
 ];
-
-const mockSheet = {
-  getRows: jest.fn().mockResolvedValue(mockRows),
-  addRow: jest.fn().mockResolvedValue(undefined),
+const photoRows = [
+  row({ FotoID: 'CAPA1', EventoID: 'EV1', TipoFoto: 'capa', PreviewFileID: 'COVER_1', ThumbnailFileID: 'COVER_THUMB', OriginalFileID: 'PRIVATE_COVER', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'F1', EventoID: 'EV1', PreviewFileID: 'PREVIEW_1', ThumbnailFileID: 'THUMB_1', OriginalFileID: 'PRIVATE_1', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'F2', EventoID: 'EV2', PreviewFileID: 'PREVIEW_2', OriginalFileID: 'PRIVATE_2', StatusProcessamento: 'Processada', DisponivelVenda: 'SIM', PrecoUnitario: '10' }),
+  row({ FotoID: 'F3', EventoID: 'EV1', PreviewFileID: 'PREVIEW_LEGACY', OriginalFileID: 'PRIVATE_LEGACY', StatusProcessamento: 'Processada', PrecoUnitario: '10' }),
+];
+const pedidoRow = row({ PedidoID: 'PED_1', Status: 'Pagamento Confirmado', Email: 'maria@example.com' });
+const itemRows = [row({ PedidoID: 'PED_1', FotoID: 'F1', EventoID: 'EV1' })];
+const downloadRows = [
+  row({
+    DownloadID: 'DL_1',
+    PedidoID: 'PED_1',
+    FotoID: 'F1',
+    OriginalFileID: 'PRIVATE_1',
+    TokenHash: 'hash-ok',
+    ExpiraEm: new Date(Date.now() + 60000).toISOString(),
+    UsosMaximos: '1',
+    Usos: '0',
+  }),
+  row({
+    DownloadID: 'DL_NOT_BOUGHT',
+    PedidoID: 'PED_1',
+    FotoID: 'F999',
+    OriginalFileID: 'PRIVATE_999',
+    TokenHash: 'hash-ok',
+    ExpiraEm: new Date(Date.now() + 60000).toISOString(),
+    UsosMaximos: '1',
+    Usos: '0',
+  }),
+];
+const webhookRows = [row({ ChaveEvento: 'REQ_1:PAY_1:payment.updated', Status: 'Processado' })];
+const sheets = {
+  Eventos: { getRows: jest.fn().mockResolvedValue(eventRows) },
+  Fotos: { getRows: jest.fn().mockResolvedValue(photoRows) },
+  Pedidos: { addRow: jest.fn().mockResolvedValue(), getRows: jest.fn().mockResolvedValue([pedidoRow]) },
+  ItensPedido: { addRow: jest.fn().mockResolvedValue(), getRows: jest.fn().mockResolvedValue(itemRows) },
+  Downloads: { getRows: jest.fn().mockResolvedValue(downloadRows) },
+  Webhooks: { getRows: jest.fn().mockResolvedValue(webhookRows) },
 };
-
-const mockDoc = {
-  loadInfo: jest.fn().mockResolvedValue(undefined),
-  sheetsByTitle: { Fotos: mockSheet },
-};
-
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-GoogleSpreadsheet.mockImplementation(() => mockDoc);
+GoogleSpreadsheet.mockImplementation(() => ({ loadInfo: jest.fn().mockResolvedValue(), sheetsByTitle: sheets }));
 
-const { listarFotos, registrarPedido, atualizarStatus, driveUrlToThumbnail, buscarPedido } = require('../lib/google-sheets');
+const {
+  driveUrlToThumbnail, listarEventosPublicados, listarFotosEvento, registrarPedido, registrarEntrega,
+  prepararDownload, auditarConsistenciaComercial, buscarPedidoById, buscarPedidoByPreferenceOrPayment,
+} = require('../lib/google-sheets');
 
-describe('listarFotos', () => {
-  it('retorna array de fotos com campos esperados', async () => {
-    const fotos = await listarFotos();
-    expect(Array.isArray(fotos)).toBe(true);
-    expect(fotos[0]).toHaveProperty('id');
-    expect(fotos[0]).toHaveProperty('event');
-    expect(fotos[0]).toHaveProperty('url');
-    expect(fotos[0]).toHaveProperty('price');
-  });
-
-  it('filtra apenas fotos com status Processada', async () => {
-    const fotos = await listarFotos();
-    expect(fotos.length).toBe(2);
-  });
-
-  it('listarFotos nunca expõe Link_Original', async () => {
-    const fotos = await listarFotos();
-    expect(fotos[0]).not.toHaveProperty('originalUrl');
-    expect(JSON.stringify(fotos)).not.toMatch(/Link_Original/i);
-  });
+it('le totais gravados com virgula decimal pela planilha em pt-BR', async () => {
+  const brRow = row({ Nome: 'Maria Silva', PedidoID: 'PED_BR', PreferenceID: 'cs_test_1', Status: 'Pagamento Pendente', Total: '5,61', TotalAntesDesconto: '6,62', DescontoTotal: '1,01' });
+  sheets.Pedidos.getRows.mockResolvedValueOnce([brRow]).mockResolvedValueOnce([brRow]);
+  await expect(buscarPedidoByPreferenceOrPayment('PED_BR')).resolves.toMatchObject({ id: 'PED_BR', total: 5.61 });
+  await expect(buscarPedidoById('PED_BR')).resolves.toMatchObject({ name: 'Maria Silva', total: 5.61, totalBeforeDiscount: 6.62, discountTotal: 1.01 });
 });
 
-describe('registrarPedido', () => {
-  it('não lança erro com dados válidos', async () => {
-    await expect(
-      registrarPedido({ fotoIds: ['FOTO_001'], whatsapp: '11999999999', totalPago: 25.75, idMercadoPago: 'MP_123' })
-    ).resolves.not.toThrow();
-  });
+it('lista apenas evento publicado e remove configuracao secreta', async () => {
+  expect(await listarEventosPublicados()).toEqual([expect.objectContaining({
+    eventoId: 'EV1',
+    title: 'Padre Paulo Na França',
+    dateLabel: '26 de maio de 2026',
+    time: '15:32',
+    cover: '/api/eventos/EV1/previews/CAPA1',
+    coverThumbnail: '/api/eventos/EV1/previews/CAPA1?variant=thumbnail',
+  })]);
 });
 
-describe('driveUrlToThumbnail', () => {
-  it('converte URL de compartilhamento para URL de thumbnail', () => {
-    const input = 'https://drive.google.com/file/d/abc123XYZ/view?usp=sharing';
-    expect(driveUrlToThumbnail(input)).toBe('https://drive.google.com/thumbnail?id=abc123XYZ&sz=w800');
-  });
-
-  it('retorna original se URL não tiver padrão /d/{id}', () => {
-    expect(driveUrlToThumbnail('https://exemplo.com/foto.jpg')).toBe('https://exemplo.com/foto.jpg');
-  });
-
-  it('retorna null/undefined inalterado', () => {
-    expect(driveUrlToThumbnail(null)).toBeNull();
-    expect(driveUrlToThumbnail(undefined)).toBeUndefined();
-  });
+it('separa preview processado da autorizacao comercial da foto', async () => {
+  const photos = await listarFotosEvento('EV2');
+  expect(photos).toHaveLength(1);
+  expect(photos[0].previewUrl).toBe('/api/eventos/EV2/previews/F2');
+  expect(photos[0]).not.toHaveProperty('previewFileId');
+  expect(photos[0]).not.toHaveProperty('originalFileId');
 });
 
-describe('buscarPedido', () => {
-  it('retorna row quando ID_Mercado_Pago encontrado', async () => {
-    const row = await buscarPedido('MP_001');
-    expect(row).not.toBeNull();
-    expect(row.get('ID_Mercado_Pago')).toBe('MP_001');
-  });
-
-  it('retorna null quando não encontrado', async () => {
-    const row = await buscarPedido('INEXISTENTE');
-    expect(row).toBeNull();
-  });
+it('envia thumbnail leve distinta quando o derivado ja foi gerado', async () => {
+  const photos = await listarFotosEvento('EV1');
+  expect(photos[0].thumbnailUrl).toBe('/api/eventos/EV1/previews/F1?variant=thumbnail');
+  expect(photos[0].previewUrl).toBe('/api/eventos/EV1/previews/F1');
 });
 
-describe('atualizarStatus', () => {
-  it('lança erro se fotoId não encontrada', async () => {
-    await expect(atualizarStatus('INEXISTENTE', 'Pagamento Confirmado')).rejects.toThrow();
+it('registra pedidos e itens em abas separadas', async () => {
+  await registrarPedido({
+    id: 'PED_1', preferenceId: 'PREF_1', name: 'Maria', email: 'maria@example.com',
+    whatsapp: '99982061089', paymentMethod: 'pix',
+    pricing: { subtotal: 10, serviceFee: 2, convenienceFee: 1, paymentCost: 0.2, total: 13.2 },
+  }, [{ foto: { id: 'F1', eventoId: 'EV1', price: 10 } }]);
+  expect(sheets.Pedidos.addRow).toHaveBeenCalled();
+  expect(sheets.ItensPedido.addRow).toHaveBeenCalledWith(expect.objectContaining({ FotoID: 'F1' }));
+});
+
+it('persiste status e falha do envio de e-mail preservando WhatsApp assistido', async () => {
+  await registrarEntrega('PED_1', {
+    emailResult: { status: 'falhou', error: 'SMTP indisponivel', attemptedAt: '2026-05-26T12:00:00.000Z' },
+    whatsappLink: 'https://wa.me/5599982061089',
   });
 
-  it('atualiza status da foto existente', async () => {
-    await expect(atualizarStatus('FOTO_001', 'Pagamento Confirmado')).resolves.not.toThrow();
-  });
+  expect(pedidoRow.set).toHaveBeenCalledWith('EmailStatus', 'falhou');
+  expect(pedidoRow.set).toHaveBeenCalledWith('EmailErro', 'SMTP indisponivel');
+  expect(pedidoRow.set).toHaveBeenCalledWith('EmailUltimaTentativaEm', '2026-05-26T12:00:00.000Z');
+  expect(pedidoRow.set).toHaveBeenCalledWith('WhatsAppLink', 'https://wa.me/5599982061089');
+});
+
+it('gera apenas thumbnail de preview com limite de tamanho', () => {
+  expect(driveUrlToThumbnail('https://drive.google.com/file/d/abc123/view')).toContain('sz=w1280');
+});
+
+it('autoriza download somente quando pedido esta pago e item foi comprado', async () => {
+  await expect(prepararDownload('DL_1', 'hash-ok')).resolves.toEqual(expect.objectContaining({
+    pedidoId: 'PED_1',
+    fotoId: 'F1',
+    originalFileId: 'PRIVATE_1',
+  }));
+  await expect(prepararDownload('DL_NOT_BOUGHT', 'hash-ok')).resolves.toBeNull();
+});
+
+it('audita inconsistencias comerciais em pedidos, downloads e webhooks', async () => {
+  downloadRows.push(row({
+    DownloadID: 'DL_BAD',
+    PedidoID: 'PED_1',
+    FotoID: 'F999',
+    OriginalFileID: 'PRIVATE_BAD',
+    TokenHash: 'hash-ok',
+    ExpiraEm: new Date(Date.now() + 60000).toISOString(),
+    UsosMaximos: '1',
+    Usos: '0',
+  }));
+  try {
+    await expect(auditarConsistenciaComercial()).resolves.toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: 'download_without_purchased_item',
+        downloadId: 'DL_BAD',
+        severity: 'critical',
+      }),
+    ]));
+  } finally {
+    downloadRows.pop();
+  }
 });

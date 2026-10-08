@@ -40,8 +40,7 @@ function parsePrivateKey(raw) {
 
   if (!key.includes(BEGIN) || !key.includes(END)) {
     // Log safe diagnostic info (no key content exposed)
-    console.error('[drive] Key missing PEM markers. Length:', key.length,
-      'Starts with:', JSON.stringify(key.substring(0, 30)));
+    console.error('[drive] Key missing PEM markers. Length:', key.length);
     throw new Error('GOOGLE_PRIVATE_KEY is missing PEM markers (-----BEGIN/END PRIVATE KEY-----)');
   }
 
@@ -125,6 +124,23 @@ async function downloadFile(fileId) {
   const mimeType = res.headers.get('content-type') || 'image/jpeg';
   const buffer = Buffer.from(await res.arrayBuffer());
   return { buffer, mimeType };
+}
+
+/**
+ * Check that a Drive file still exists and is not in the trash.
+ * @param {string} fileId
+ * @returns {Promise<boolean>}
+ */
+async function fileExists(fileId) {
+  if (!fileId) return false;
+  const token = await getAccessToken();
+  const res = await fetch(
+    `https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,trashed`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (res.status === 404) return false;
+  if (!res.ok) throw new Error(`Drive metadata failed (${res.status}): ${await res.text()}`);
+  return !(await res.json()).trashed;
 }
 
 /**
@@ -254,4 +270,4 @@ async function updateFile(fileId, buffer, mimeType) {
   }
 }
 
-module.exports = { downloadFile, downloadFileAsJpeg, uploadFile, updateFile };
+module.exports = { downloadFile, downloadFileAsJpeg, fileExists, uploadFile, updateFile };

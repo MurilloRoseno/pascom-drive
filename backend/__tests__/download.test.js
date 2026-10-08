@@ -1,87 +1,82 @@
-// download.test.js
+jest.mock('../lib/google-sheets', () => ({
+  prepararDownload: jest.fn(),
+  registrarUsoDownload: jest.fn(),
+}));
 jest.mock('../lib/google-drive', () => ({
   downloadFile: jest.fn().mockResolvedValue({ buffer: Buffer.from('fake-jpeg'), mimeType: 'image/jpeg' }),
+}));
+jest.mock('../lib/forensic-watermark', () => ({
+  applyForensicWatermark: jest.fn(async (buffer) => ({ buffer: Buffer.concat([buffer, Buffer.from('-fp')]), mimeType: 'image/jpeg', fingerprintVersion: 'pascom-v1' })),
+  createFingerprintId: jest.fn(() => 'fp-id'),
+  hashFingerprint: jest.fn(() => 'fp-hash'),
 }));
 
 const SECRET = 'test-secret';
 process.env.DOWNLOAD_JWT_SECRET = SECRET;
+process.env.FORENSIC_WATERMARK_SECRET = 'forensic-secret';
 
 const { signToken } = require('../lib/jwt-utils');
 const request = require('supertest');
 const express = require('express');
-const downloadHandler = require('../api/download');
-const errorHandler = require('../middleware/error-handler');
+const handler = require('../api/download');
+const sheets = require('../lib/google-sheets');
+const forensic = require('../lib/forensic-watermark');
+const drive = require('../lib/google-drive');
 
 const app = express();
-app.use(express.json());
-app.get('/api/download', downloadHandler);
-app.use(errorHandler);
+app.get('/api/download', handler);
 
-function makeToken(overrides = {}) {
-  const payload = {
-    fotoId: 'FOTO_001',
-    whatsapp: '11999999999',
-    exp: Date.now() + 60_000,
-    used: false,
-    ...overrides,
-  };
-  return signToken(payload, SECRET);
+function token(overrides = {}) {
+  return signToken({ downloadId: 'DL_001', exp: Date.now() + 60000, ...overrides }, SECRET);
 }
 
-describe('GET /api/download', () => {
-  let warnSpy;
-
-  beforeEach(() => {
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+beforeEach(() => {
+  jest.clearAllMocks();
+  sheets.prepararDownload.mockResolvedValue({
+    downloadId: 'DL_001',
+    pedidoId: 'PED_001',
+    originalFileId: 'PRIVATE_ORIGINAL',
+    fotoId: 'FOTO_001',
+    fingerprintId: 'fp-id',
   });
+  sheets.registrarUsoDownload.mockResolvedValue(true);
+});
 
-  afterEach(() => {
-    warnSpy.mockRestore();
-  });
+it('entrega copia fingerprinted apenas ao token persistido valido', async () => {
+  const res = await request(app).get(`/api/download?token=${token()}`);
+  expect(res.status).toBe(200);
+  expect(res.headers['cache-control']).toContain('no-store');
+  expect(res.headers['x-content-protection']).toBe('forensic-fingerprint');
+  expect(sheets.prepararDownload).toHaveBeenCalledWith('DL_001', expect.any(String));
+  expect(forensic.applyForensicWatermark).toHaveBeenCalledWith(Buffer.from('fake-jpeg'), expect.objectContaining({ fingerprintId: 'fp-id' }));
+  expect(sheets.registrarUsoDownload).toHaveBeenCalledWith('DL_001', expect.any(String), expect.objectContaining({
+    fingerprintId: 'fp-id',
+    fingerprintHash: 'fp-hash',
+  }));
+});
 
-  it('returns 200 with image/jpeg for a valid token', async () => {
-    const token = makeToken();
-    const res = await request(app).get(`/api/download?token=${token}`);
-    expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toMatch(/image\/jpeg/);
-  });
+it('avisa sem consumir o link quando o original sumiu do Drive', async () => {
+  drive.downloadFile.mockRejectedValueOnce(new Error('Drive download failed (404): {"error":{"code":404}}'));
+  const res = await request(app).get(`/api/download?token=${token()}`);
+  expect(res.status).toBe(503);
+  expect(res.body.error).toMatch(/temporariamente indisponivel/);
+  expect(sheets.registrarUsoDownload).not.toHaveBeenCalled();
+});
 
-  it('returns 401 for an expired token', async () => {
-    const token = makeToken({ exp: Date.now() - 1000 });
-    const res = await request(app).get(`/api/download?token=${token}`);
-    expect(res.status).toBe(401);
-    expect(warnSpy).toHaveBeenCalled();
-    const log = JSON.parse(warnSpy.mock.calls[0][0]);
-    expect(log.event).toBe('download_invalid_token');
-  });
+it('bloqueia token expirado antes de consultar arquivo', async () => {
+  const res = await request(app).get(`/api/download?token=${token({ exp: Date.now() - 1 })}`);
+  expect(res.status).toBe(401);
+  expect(sheets.prepararDownload).not.toHaveBeenCalled();
+});
 
-  it('returns 401 for an invalid signature', async () => {
-    const token = signToken({ fotoId: 'FOTO_001', whatsapp: '11999999999', exp: Date.now() + 60_000, used: false }, 'wrong-secret');
-    const res = await request(app).get(`/api/download?token=${token}`);
-    expect(res.status).toBe(401);
-    expect(warnSpy).toHaveBeenCalled();
-  });
+it('bloqueia link consumido ou revogado na persistencia', async () => {
+  sheets.prepararDownload.mockResolvedValueOnce(null);
+  expect((await request(app).get(`/api/download?token=${token()}`)).status).toBe(410);
+});
 
-  it('returns 400 when token is missing', async () => {
-    const res = await request(app).get('/api/download');
-    expect(res.status).toBe(400);
-  });
-
-  it('returns 410 when token has used=true', async () => {
-    const token = makeToken({ used: true });
-    const res = await request(app).get(`/api/download?token=${token}`);
-    expect(res.status).toBe(410);
-    expect(warnSpy).toHaveBeenCalled();
-    const log410 = JSON.parse(warnSpy.mock.calls[0][0]);
-    expect(log410.event).toBe('download_token_reuse');
-  });
-
-  it('returns 500 if DOWNLOAD_JWT_SECRET is not configured', async () => {
-    const original = process.env.DOWNLOAD_JWT_SECRET;
-    delete process.env.DOWNLOAD_JWT_SECRET;
-    const res = await request(app).get('/api/download?token=validtokenplaceholder');
-    expect(res.status).toBe(500);
-    expect(res.body.error).toBe('Configuração de servidor inválida');
-    process.env.DOWNLOAD_JWT_SECRET = original;
-  });
+it('nao consome uso quando fingerprint falha', async () => {
+  forensic.applyForensicWatermark.mockRejectedValueOnce(new Error('sharp failed'));
+  const res = await request(app).get(`/api/download?token=${token()}`);
+  expect(res.status).toBe(503);
+  expect(sheets.registrarUsoDownload).not.toHaveBeenCalled();
 });

@@ -4,6 +4,8 @@ global.atualizarCelula = jest.fn();
 global.incrementarTentativas = jest.fn();
 global.COL = { STATUS: 5, LINK_ENTREGA: 11, TENTATIVAS_ENTREGA: 12 };
 
+global.montarEmailAdmin = require('../EmailTemplates').montarEmailAdmin;
+
 const { gerarLinkWaMe, tentarEntrega, processarEntregas } = require('../WhatsApp');
 
 beforeEach(() => {
@@ -54,7 +56,22 @@ describe('tentarEntrega', () => {
   it('emails admin when tentativas reaches 3', () => {
     global.atualizarCelula.mockImplementation(() => { throw new Error('fail'); });
     tentarEntrega({ ...rowValido, tentativas: 2 });
-    expect(MailApp.sendEmail).toHaveBeenCalledWith('admin@paroquia.com', expect.stringContaining('FOTO_001'), expect.any(String));
+    expect(MailApp.sendEmail).toHaveBeenCalledWith(
+      'admin@paroquia.com',
+      expect.stringContaining('FOTO_001'),
+      expect.stringContaining('Erro: fail'),
+      { htmlBody: expect.stringContaining('Falha definitiva de entrega: FOTO_001') }
+    );
+  });
+
+  it('does not throw if final-failure email is not authorized', () => {
+    global.atualizarCelula.mockImplementation(() => { throw new Error('fail'); });
+    global.MailApp.sendEmail.mockImplementationOnce(() => {
+      throw new Error('Specified permissions are not sufficient to call MailApp.sendEmail.');
+    });
+
+    expect(() => tentarEntrega({ ...rowValido, tentativas: 2 })).not.toThrow();
+    expect(global.Logger.log).toHaveBeenCalledWith(expect.stringContaining('Aviso por e-mail nao enviado'));
   });
 
   it('does NOT email admin when tentativas < 2', () => {

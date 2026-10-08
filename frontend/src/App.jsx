@@ -1,29 +1,28 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { CarrinhoProvider } from './context/CarrinhoContext.jsx';
-import Header from './components/layout/Header.jsx';
-import Footer from './components/layout/Footer.jsx';
-import CartSummary from './components/CartSummary.jsx';
-import DevToolsBlock from './components/DevToolsBlock.jsx';
-import GalleryPage from './pages/Gallery.jsx';
-import CheckoutPage from './pages/Checkout.jsx';
+import { Suspense, lazy, useEffect, useState } from 'react';
+import { getPlatformSnapshot, isMobileExperience, subscribePlatform } from './shared/platform.js';
+
+const DesktopApp = lazy(() => import('./desktop/DesktopApp.jsx'));
+const MobileApp = lazy(() => import('./mobile/MobileApp.jsx'));
+const DonationApp = lazy(() => import('./donation/DonationApp.jsx'));
+
+// A pagina de doacao e independente do site de fotos (sem cabecalho, rodape ou carrinho).
+function isDonationPath() {
+  return /^\/doar(\/|$)/.test(window.location.pathname);
+}
 
 export default function App() {
+  const [platform, setPlatform] = useState(() => getPlatformSnapshot());
+
+  useEffect(() => subscribePlatform(setPlatform), []);
+  useEffect(() => {
+    document.documentElement.dataset.platform = platform;
+  }, [platform]);
+
+  const Experience = isDonationPath() ? DonationApp : isMobileExperience(platform) ? MobileApp : DesktopApp;
+
   return (
-    <BrowserRouter>
-      <CarrinhoProvider>
-        <div className="min-h-screen flex flex-col bg-photo-paper">
-          <DevToolsBlock />
-          <Header />
-          <div className="flex-1 pb-20">
-            <Routes>
-              <Route path="/" element={<GalleryPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-            </Routes>
-          </div>
-          <Footer />
-          <CartSummary />
-        </div>
-      </CarrinhoProvider>
-    </BrowserRouter>
+    <Suspense fallback={<div className="experience-loading" aria-label="Carregando experiência" />}>
+      <Experience platform={platform} />
+    </Suspense>
   );
 }

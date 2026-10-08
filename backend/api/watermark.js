@@ -6,10 +6,13 @@
 const { z } = require('zod');
 const { downloadFile } = require('../lib/google-drive');
 const { compositeWatermark } = require('../lib/watermark-processor');
+const { authorizeWorker } = require('../lib/worker-auth');
 
 const schema = z.object({
   fileId:        z.string().min(1),
   watermarkType: z.enum(['color', 'bw', 'auto']).default('auto'),
+  variant:       z.enum(['preview', 'thumbnail']).default('preview'),
+  watermarkSeed: z.string().max(160).optional(),
 });
 
 // Use only native Node.js ServerResponse methods (setHeader/writeHead/end).
@@ -23,20 +26,18 @@ function sendJson(res, status, body) {
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
 
-  const secret = process.env.WATERMARK_API_SECRET;
-  if (!secret || req.headers['x-watermark-secret'] !== secret) {
-    console.warn(JSON.stringify({
-      event: 'watermark_unauthorized',
-      ip: req.ip || req.headers['x-forwarded-for'],
-      hasHeader: !!req.headers['x-watermark-secret'],
-      timestamp: new Date().toISOString(),
-    }));
+  if (!authorizeWorker(req, {
+    legacyHeader: 'x-watermark-secret',
+    legacySecret: process.env.WATERMARK_API_SECRET,
+  })) {
     return sendJson(res, 401, { error: 'Não autorizado' });
   }
   try {
     const params = schema.parse(req.body);
     const { buffer } = await downloadFile(params.fileId);
-    const watermarked = await compositeWatermark(buffer, params.watermarkType);
+    const watermarked = await compositeWatermark(buffer, params.watermarkType, params.variant, {
+      seed: params.watermarkSeed || params.fileId,
+    });
     // Return raw JPEG — caller (Apps Script) saves blob to Drive as the user (who has quota)
     res.writeHead(200, { 'Content-Type': 'image/jpeg' });
     res.end(watermarked);

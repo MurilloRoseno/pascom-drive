@@ -1,367 +1,152 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useCarrinho } from '../hooks/useCarrinho.js';
 import { checkoutSchema } from '../lib/validation.js';
-import { criarPagamento } from '../lib/api';
-import { usePollingStatus } from '../hooks/usePollingStatus';
-import PixDisplay from '../components/PixDisplay';
+import { cotarCheckout, criarPagamento } from '../lib/api.js';
+import { feeHints } from '../lib/fee-hints.js';
 
-const fmt = (v) => `R$ ${v.toFixed(2).replace('.', ',')}`;
+const money = (value) => `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
+const methods = [
+  { id: 'pix', label: 'Pix', hint: 'Confirmação rápida', detail: 'Pagamento instantâneo' },
+  { id: 'credit_card', label: 'Cartão de crédito', hint: 'Crédito em 1x', detail: 'Recebimento imediato' },
+];
 
-const STEPS = ['Fotos', 'WhatsApp', 'Confirmar', 'Pagar'];
+function PaymentIcon({ method }) {
+  if (method === 'pix') {
+    return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5 20.5 12 12 20.5 3.5 12 12 3.5Z" /><path d="m8.3 12 2.3 2.3 5-5" /></svg>;
+  }
+  return <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.75" y="5" width="18.5" height="14" rx="2.5" /><path d="M3 9.5h18M6.5 15h4" /></svg>;
+}
+
+PaymentIcon.propTypes = { method: PropTypes.string.isRequired };
 
 export default function CheckoutPage() {
-  const navigate = useNavigate();
-  const { fotos, clearCarrinho, totais } = useCarrinho();
+  const { fotos, couponCode, packageId, removeFoto, setCouponCode } = useCarrinho();
+  const [buyer, setBuyer] = useState({ name: '', email: '', whatsapp: '' });
+  const [method, setMethod] = useState('pix');
+  const [pricing, setPricing] = useState(null);
+  const [quoteError, setQuoteError] = useState('');
+  const [formError, setFormError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const hints = feeHints(pricing);
 
-  const [step, setStep]                   = useState(0);
-  const [whatsapp, setWhatsapp]           = useState('');
-  const [error, setError]                 = useState('');
-  const [pagamento, setPagamento]         = useState(null);
-  const [pagandoLoading, setPagandoLoading] = useState(false);
-  const [pagamentoErro, setPagamentoErro] = useState('');
+  const galleryTokens = useCallback(() => {
+    return Object.fromEntries([...new Set(fotos.map((photo) => photo.eventoId))]
+      .map((id) => [id, sessionStorage.getItem(`gallery:${id}`) || '']));
+  }, [fotos]);
 
-  const { status: payStatus } = usePollingStatus(pagamento?.id || null);
+  useEffect(() => {
+    setPricing(null);
+    setQuoteError('');
+    if (!fotos.length) return;
+    cotarCheckout({ fotoIds: fotos.map((photo) => photo.id), paymentMethod: method, galleryTokens: galleryTokens(), couponCode, packageId })
+      .then(({ pricing: found }) => setPricing(found))
+      .catch((error) => setQuoteError(error.message));
+  }, [method, fotos, galleryTokens, couponCode, packageId]);
 
-  function avancar() {
-    if (step === 1) {
-      const result = checkoutSchema.safeParse({ whatsapp, fotoIds: fotos.map((f) => f.id) });
-      if (!result.success) {
-        setError(result.error.errors[0].message);
-        return;
-      }
-      setError('');
+  function change(field, value) {
+    setBuyer((state) => ({ ...state, [field]: value }));
+  }
+
+  async function pay() {
+    const valid = checkoutSchema.safeParse(buyer);
+    if (!valid.success) {
+      setFormError(valid.error.errors[0].message);
+      return;
     }
-    setStep((s) => s + 1);
-  }
-
-  function voltar() {
-    setStep((s) => s - 1);
-    setError('');
-  }
-
-  async function handleGerarPix() {
-    setPagandoLoading(true);
-    setPagamentoErro('');
+    if (!pricing) return;
+    setLoading(true);
+    setFormError('');
     try {
-      const resultado = await criarPagamento({
-        whatsapp,
-        fotoIds: fotos.map((f) => f.id),
-        total: totais.total,
+      const response = await criarPagamento({
+        ...buyer,
+        fotoIds: fotos.map((photo) => photo.id),
+        paymentMethod: method,
+        galleryTokens: galleryTokens(),
+        couponCode,
+        packageId,
       });
-      setPagamento(resultado);
-      setStep(3);
-    } catch (err) {
-      setPagamentoErro(err.message || 'Erro ao gerar pagamento');
-    } finally {
-      setPagandoLoading(false);
+      window.location.assign(response.checkoutUrl);
+    } catch (error) {
+      setFormError(error.message);
+      setLoading(false);
     }
   }
 
   return (
-    <section className="py-6" style={{ background: 'var(--photo-paper)', minHeight: '100vh' }}>
-      <div className="max-w-lg mx-auto px-4">
-
-        {/* Header da página */}
-        <div className="flex items-center gap-3 mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center justify-center rounded-lg transition-colors"
-            style={{
-              color: 'var(--photo-primary)',
-              background: 'var(--photo-primary-light)',
-              minWidth: 'var(--touch-md)',
-              minHeight: 'var(--touch-md)',
-              border: 'none',
-              cursor: 'pointer',
-              flexShrink: 0,
-            }}
-            aria-label="Voltar para galeria"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 19l-7-7 7-7"/>
-            </svg>
-          </button>
-          <h1 className="font-display font-bold"
-              style={{ color: 'var(--photo-ink)', fontSize: 'var(--text-2xl)' }}>
-            Pagamento
-          </h1>
-        </div>
-
-        {/* Step indicator com rótulos */}
-        <div
-          className="flex items-start justify-center mb-8"
-          role="list"
-          aria-label="Etapas do pagamento"
-        >
-          {STEPS.map((label, idx) => (
-            <div key={label} className="flex items-start" role="listitem">
-              <div className="flex flex-col items-center gap-1">
-                {/* Círculo */}
-                <div
-                  className="rounded-full flex items-center justify-center font-bold"
-                  style={{
-                    width: 40, height: 40,
-                    background: idx < step
-                      ? 'var(--photo-success)'
-                      : idx === step
-                        ? 'var(--photo-primary)'
-                        : 'rgba(24,21,15,0.10)',
-                    color: idx <= step ? 'white' : 'var(--photo-grafite)',
-                    fontSize: 'var(--text-sm)',
-                    flexShrink: 0,
-                  }}
-                  aria-current={idx === step ? 'step' : undefined}
-                >
-                  {idx < step ? '✓' : idx + 1}
-                </div>
-                {/* Rótulo */}
-                <span style={{
-                  fontSize: '0.7rem',
-                  fontWeight: 600,
-                  color: idx === step ? 'var(--photo-primary)' : 'var(--photo-sepia)',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {label}
-                </span>
-              </div>
-              {/* Linha */}
-              {idx < STEPS.length - 1 && (
-                <div style={{
-                  width: 28, height: 3, margin: '18px 4px 0',
-                  background: idx < step ? 'var(--photo-success)' : 'rgba(24,21,15,0.12)',
-                  borderRadius: 2,
-                  flexShrink: 0,
-                }} />
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* ── Step 0: Fotos selecionadas ── */}
-        {step === 0 && (
-          <div className="card">
-            <p className="eyebrow mb-4">Fotos Selecionadas</p>
-            {fotos.length === 0 ? (
-              <p style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-base)' }}>
-                Nenhuma foto selecionada.{' '}
-                <button
-                  onClick={() => navigate('/')}
-                  style={{
-                    color: 'var(--photo-primary)', textDecoration: 'underline',
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    fontSize: 'var(--text-base)',
-                  }}
-                >
-                  Voltar à galeria
-                </button>
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {fotos.map((f) => (
-                  <li key={f.id}
-                      className="flex items-center gap-3 rounded-xl p-3"
-                      style={{ background: 'var(--photo-paper)' }}>
-                    <img src={f.url} alt={f.event}
-                         className="rounded-lg object-cover flex-shrink-0"
-                         style={{ width: 56, height: 72 }} />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold truncate"
-                         style={{ color: 'var(--photo-ink)', fontSize: 'var(--text-base)' }}>
-                        {f.event}
-                      </p>
-                      <p className="font-mono font-bold mt-0.5"
-                         style={{ color: 'var(--photo-primary)', fontSize: 'var(--text-base)' }}>
-                        {fmt(f.price)}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        {/* ── Step 1: WhatsApp ── */}
-        {step === 1 && (
-          <div className="card">
-            <p className="eyebrow mb-3">Seu WhatsApp</p>
-            <p className="mb-5" style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-base)' }}>
-              Enviaremos o link das fotos para este número após o pagamento.
-            </p>
-
-            <div>
-              <label
-                htmlFor="whatsapp"
-                style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, fontSize: 'var(--text-base)' }}
-              >
-                Número com DDD
-              </label>
-              <input
-                id="whatsapp"
-                type="tel"
-                inputMode="numeric"
-                maxLength={11}
-                placeholder="Ex: 99 99999-9999"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ''))}
-                className="input-field"
-              />
-              <p style={{ marginTop: '0.5rem', fontSize: 'var(--text-sm)', color: 'var(--photo-grafite)' }}>
-                📱 Você receberá suas fotos pelo WhatsApp
-              </p>
-            </div>
-
-            {error && (
-              <div className="bloco bloco--roxo mt-4">
-                <div className="bloco__titulo">Atenção</div>
-                <p style={{ fontSize: 'var(--text-base)' }}>{error}</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Step 2: Confirmar pedido ── */}
-        {step === 2 && (
-          <div className="card">
-            <p className="eyebrow mb-4">Confirmar Pedido</p>
-
-            <div className="space-y-2 mb-4">
-              <p style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-base)' }}>
-                WhatsApp:{' '}
-                <strong style={{ color: 'var(--photo-ink)' }}>{whatsapp}</strong>
-              </p>
-              <p style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-base)' }}>
-                {fotos.length} foto{fotos.length !== 1 ? 's' : ''} selecionada{fotos.length !== 1 ? 's' : ''}
-              </p>
-            </div>
-
-            <div
-              className="rounded-xl p-4 space-y-2"
-              style={{ background: 'var(--photo-paper)', border: '1px solid rgba(109,32,119,0.10)' }}
-            >
-              <div className="flex justify-between"
-                   style={{ color: 'var(--photo-ink)', fontSize: 'var(--text-base)' }}>
-                <span>Subtotal</span>
-                <span className="font-mono font-bold">{fmt(totais.subtotal)}</span>
-              </div>
-              <div className="flex justify-between"
-                   style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-sm)' }}>
-                <span>Taxa Pix (2,99% + R$0,30)</span>
-                <span className="font-mono">{fmt(totais.taxa)}</span>
-              </div>
-              <hr style={{ borderColor: 'rgba(109,32,119,0.10)', margin: '0.5rem 0' }} />
-              <div className="flex justify-between font-bold"
-                   style={{ color: 'var(--photo-primary)' }}>
-                <span style={{ fontSize: 'var(--text-lg)' }}>Total</span>
-                <span className="font-display" style={{ fontSize: 'var(--text-xl)' }}>
-                  {fmt(totais.total)}
-                </span>
-              </div>
-            </div>
-
-            {pagamentoErro && (
-              <div className="bloco bloco--roxo mt-4">
-                <div className="bloco__titulo">Erro</div>
-                <p style={{ fontSize: 'var(--text-base)' }}>{pagamentoErro}</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ── Step 3: Pagar ── */}
-        {step === 3 && (
-          <div className="card">
-            {payStatus === 'approved' ? (
-              <div className="text-center py-8">
-                <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>✅</div>
-                <div className="bloco bloco--verde mb-4">
-                  <div className="bloco__titulo">Pagamento Confirmado!</div>
-                  <p style={{ fontSize: 'var(--text-base)' }}>
-                    Em breve você receberá o link das fotos no WhatsApp.
-                  </p>
-                </div>
-                <button
-                  onClick={() => { clearCarrinho(); navigate('/'); }}
-                  className="btn btn-roxo btn-full"
-                  style={{ fontSize: 'var(--text-lg)', minHeight: 'var(--touch-lg)' }}
-                >
-                  Voltar à galeria
-                </button>
-              </div>
-            ) : payStatus === 'rejected' || payStatus === 'cancelled' ? (
-              <div className="text-center py-8">
-                <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>❌</div>
-                <div className="bloco bloco--roxo mb-4">
-                  <div className="bloco__titulo">Pagamento não aprovado</div>
-                  <p style={{ fontSize: 'var(--text-base)' }}>
-                    Tente novamente ou use outro método de pagamento.
-                  </p>
-                </div>
-                <button
-                  onClick={() => { setPagamento(null); setStep(2); }}
-                  className="btn btn-primary btn-full"
-                  style={{ fontSize: 'var(--text-lg)', minHeight: 'var(--touch-lg)' }}
-                >
-                  Tentar novamente
-                </button>
-              </div>
-            ) : pagamento ? (
-              <div>
-                <p className="eyebrow mb-2">Pague via PIX</p>
-                <p className="mb-4" style={{ color: 'var(--photo-grafite)', fontSize: 'var(--text-base)' }}>
-                  Total:{' '}
-                  <strong style={{ color: 'var(--photo-ink)', fontSize: 'var(--text-lg)' }}>
-                    {fmt(totais.total)}
-                  </strong>
-                </p>
-                <PixDisplay qrCode={pagamento.qrCode} qrCodeBase64={pagamento.qrCodeBase64} />
-                <p className="text-center mt-4 animate-pulse"
-                   style={{ color: 'var(--photo-sepia)', fontSize: 'var(--text-sm)' }}>
-                  ⏳ Verificando pagamento...
-                </p>
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        {/* Botões de navegação */}
-        <div className="flex gap-3 mt-6">
-          {step > 0 && step < 3 && (
-            <button
-              onClick={voltar}
-              className="btn btn-outline flex-1"
-              style={{ fontSize: 'var(--text-base)' }}
-            >
-              ← Voltar
-            </button>
-          )}
-
-          {step < 2 && (
-            <button
-              onClick={avancar}
-              disabled={step === 0 && fotos.length === 0}
-              className="btn btn-primary flex-1"
-              style={{ fontSize: 'var(--text-lg)', minHeight: 'var(--touch-lg)' }}
-            >
-              Continuar →
-            </button>
-          )}
-
-          {step === 2 && (
-            <button
-              onClick={handleGerarPix}
-              disabled={pagandoLoading}
-              className="btn btn-primary flex-1"
-              style={{ fontSize: 'var(--text-lg)', minHeight: 'var(--touch-lg)' }}
-            >
-              {pagandoLoading ? '⏳ Gerando QR Pix...' : '📲 Gerar QR Pix'}
-            </button>
-          )}
-        </div>
-
+    <main className="checkout-page">
+      <div className="checkout-heading">
+        <Link to="/buscar">Voltar aos eventos</Link>
+        <p className="hero-kicker">Compra segura</p>
+        <h1>Finalizar compra</h1>
+        <p>Pagamento processado no ambiente protegido do Stripe.</p>
       </div>
-    </section>
+      {!fotos.length ? (
+        <div className="empty-checkout">
+          <h2>Seu carrinho esta vazio</h2>
+          <Link className="primary-link" to="/buscar">Encontrar fotos</Link>
+        </div>
+      ) : (
+        <div className="checkout-columns">
+          <section className="checkout-form">
+            <h2>1. Suas fotos</h2>
+            <div className="cart-items">
+              {fotos.map((photo) => (
+                <div key={photo.id} className="cart-photo">
+                  <img src={photo.url} alt="" draggable="false" />
+                  <div><strong>{photo.event}</strong><span>{money(photo.price)}</span></div>
+                  <button type="button" onClick={() => removeFoto(photo.id)}>Remover</button>
+                </div>
+              ))}
+            </div>
+            <h2>2. Identificacao e entrega</h2>
+            <label>Nome completo<input value={buyer.name} onChange={(e) => change('name', e.target.value)} /></label>
+            <div className="form-pair">
+              <label>E-mail<input type="email" value={buyer.email} onChange={(e) => change('email', e.target.value)} /></label>
+              <label>WhatsApp<input type="tel" value={buyer.whatsapp} onChange={(e) => change('whatsapp', e.target.value.replace(/\D/g, ''))} placeholder="99982061089" /></label>
+            </div>
+            <p className="delivery-note">O e-mail recebe os links automaticamente. O WhatsApp sera usado pela secretaria para envio assistido.</p>
+            <h2>3. Forma de pagamento</h2>
+            <div className="payment-options">
+              {methods.map(({ id, label, hint, detail }) => (
+                <label className={`payment-option${method === id ? ' selected' : ''}`} key={id}>
+                  <input type="radio" name="payment-method" checked={method === id} onChange={() => setMethod(id)} />
+                  <span className="payment-check" aria-hidden="true" />
+                  <span className="payment-icon"><PaymentIcon method={id} /></span>
+                  <span className="payment-copy">
+                    <strong>{label}</strong>
+                    <small>{detail}</small>
+                    <em>{hint}</em>
+                  </span>
+                </label>
+              ))}
+            </div>
+            <h2>4. Cupom pastoral</h2>
+            <label>Cupom de desconto<input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Ex.: PASTORAL10" /></label>
+            <p className="delivery-note">Cupons e pacotes são validados pelo sistema da paróquia antes do pagamento.</p>
+          </section>
+          <aside className="order-summary">
+            <p className="hero-kicker">Resumo</p>
+            <h2>{fotos.length} foto{fotos.length !== 1 ? 's' : ''}</h2>
+            <div className="total-row"><span>Subtotal</span><strong>{pricing ? money(pricing.subtotal) : '--'}</strong></div>
+            {pricing?.discountTotal > 0 && <div className="total-row discount"><span>Desconto aplicado</span><strong>-{money(pricing.discountTotal)}</strong></div>}
+            {pricing?.couponApplied && <div className="total-row muted"><span>Cupom</span><strong>{pricing.couponApplied.code}</strong></div>}
+            {pricing?.packageApplied && <div className="total-row muted"><span>Pacote</span><strong>{pricing.packageApplied.description || pricing.packageApplied.id}</strong></div>}
+            <div className="total-row"><span>Taxa de servico</span><strong>{pricing ? money(pricing.serviceFee) : '--'}</strong></div>
+            {hints.service && <small>{hints.service}</small>}
+            <div className="total-row"><span>Taxa de comodidade</span><strong>{pricing ? money(pricing.convenienceFee) : '--'}</strong></div>
+            {hints.convenience && <small>{hints.convenience}</small>}
+            <div className="total-row final"><span>Total</span><strong>{pricing ? money(pricing.total) : '--'}</strong></div>
+            {quoteError && <p className="form-error">{quoteError}</p>}
+            {formError && <p className="form-error">{formError}</p>}
+            <button className="payment-button" type="button" disabled={!pricing || loading} onClick={pay}>
+              {loading ? 'Abrindo Stripe...' : 'Pagar no Stripe'}
+            </button>
+            <small>As duas taxas repassam o custo do Stripe para o meio escolhido e mudam entre Pix e cartão. O valor das fotos vai integralmente para a paróquia.</small>
+          </aside>
+        </div>
+      )}
+    </main>
   );
 }

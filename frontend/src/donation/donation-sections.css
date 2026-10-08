@@ -1,0 +1,131 @@
+/* Pagina de doacao (/doar): secoes de conteudo, rodape, telas simples e movimento. */
+
+.doar-trust { display: flex; flex-wrap: wrap; gap: 0.75rem 1.75rem; padding-block: clamp(1.75rem, 4vw, 2.75rem); }
+.doar-trust li { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 700; color: var(--d-purple-900); }
+.doar-trust .doar-icon { color: var(--d-gold-800); }
+
+.doar-section { padding-block: clamp(2.75rem, 7vw, 5.5rem); border-top: 1px solid var(--d-line); }
+.doar-section h2 { font-size: clamp(1.75rem, 1.4vw + 1.3rem, 2.5rem); line-height: 1.15; color: var(--d-purple-900); }
+.doar-section h3 { font-size: 1.3rem; line-height: 1.25; color: var(--d-ink); }
+.doar-lede { margin-top: 0.9rem; max-width: 60ch; font-size: 1.1875rem; color: var(--d-muted); text-wrap: pretty; }
+
+/* Destinos: lista numerada, sem cartoes. */
+.doar-destinos { margin-top: 2rem; }
+.doar-destinos li { display: grid; grid-template-columns: 3.75rem minmax(0, 1fr); gap: 0.5rem 1rem; padding-block: 1.4rem; border-top: 1px solid var(--d-line); }
+.doar-destinos li:first-child { border-top: 0; padding-top: 0.5rem; }
+.doar-destino-number { font-family: var(--d-font-display); font-size: 2.25rem; line-height: 1; color: var(--d-gold-800); font-variant-numeric: lining-nums tabular-nums; }
+.doar-destinos p { margin-top: 0.35rem; max-width: 52ch; color: var(--d-muted); }
+
+/* Fundamentos */
+.doar-fundamentos-photo { display: block; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); border-radius: var(--d-radius); overflow: hidden; }
+.doar-fundamentos-photo img { width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: 50% 40%; }
+.doar-canons { margin-top: 2.25rem; }
+.doar-canons > div { display: grid; gap: 0.4rem; padding-block: 1.35rem; border-top: 1px solid var(--d-line); }
+.doar-canons dt { font-family: var(--d-font-display); font-size: 1.3rem; font-weight: 700; line-height: 1.25; }
+.doar-canon-ref { display: block; margin-bottom: 0.3rem; font-family: var(--d-font-body); font-size: 0.875rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; color: var(--d-gold-800); }
+.doar-canons dd { max-width: 58ch; color: var(--d-muted); }
+.doar-free { margin-top: 1.5rem; padding: clamp(1.4rem, 3vw, 2rem); border-radius: var(--d-radius); background: var(--d-purple-900); color: var(--d-card); }
+.doar-free h3 { color: var(--d-gold-500); }
+.doar-free p { margin-top: 0.5rem; max-width: 56ch; line-height: 1.65; }
+.doar-sources { margin-top: 1.5rem; font-size: 0.9375rem; color: var(--d-muted); }
+
+@media (min-width: 46rem) {
+  .doar-canons > div { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 1.5rem; }
+}
+@media (min-width: 60rem) and (max-width: 78rem) {
+  .doar-canons > div { grid-template-columns: minmax(0, 1fr); gap: 0.4rem; }
+}
+
+/* Como funciona */
+.doar-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1.75rem; margin-top: 2rem; counter-reset: none; }
+.doar-step-number { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin-bottom: 0.9rem; border: 1.5px solid var(--d-purple-700); border-radius: 999px; font-family: var(--d-font-display); font-size: 1.25rem; font-weight: 700; color: var(--d-purple-700); }
+.doar-steps p { margin-top: 0.35rem; color: var(--d-muted); }
+
+/* Outras formas */
+.doar-ways { display: grid; gap: 1.5rem; margin-top: 2rem; }
+.doar-ways li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1rem; align-items: start; }
+.doar-ways .doar-icon { margin-top: 0.2rem; color: var(--d-purple-700); }
+.doar-ways p { margin-top: 0.2rem; color: var(--d-muted); }
+
+/* Perguntas frequentes */
+.doar-faq { margin-top: 1.75rem; border-top: 1px solid var(--d-line); }
+.doar-faq details { border-bottom: 1px solid var(--d-line); }
+.doar-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4rem; padding-block: 0.9rem; font-family: var(--d-font-display); font-size: 1.2rem; font-weight: 700; line-height: 1.3; cursor: pointer; list-style: none; }
+.doar-faq summary::-webkit-details-marker { display: none; }
+.doar-faq summary .doar-icon { color: var(--d-purple-700); transition: transform 300ms var(--d-ease); }
+.doar-faq details[open] summary .doar-icon { transform: rotate(180deg); }
+.doar-faq details p { padding-bottom: 1.4rem; max-width: 60ch; color: var(--d-muted); }
+
+/* Rodape */
+.doar-footer { background: var(--d-purple-950); color: color-mix(in srgb, var(--d-card) 86%, transparent); }
+.doar-footer-inner { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 2rem; max-width: var(--d-max); margin-inline: auto; padding: clamp(2.5rem, 6vw, 4rem) var(--d-gutter) 1.5rem; }
+.doar-footer-name { display: block; font-family: var(--d-font-display); font-size: 1.4rem; color: var(--d-card); }
+.doar-footer ul { display: grid; gap: 0.6rem; }
+.doar-footer li { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; }
+.doar-footer nav { display: grid; gap: 0.6rem; align-content: start; }
+.doar .doar-footer a { color: var(--d-card); }
+.doar .doar-footer :focus-visible { box-shadow: 0 0 0 3px var(--d-purple-950), 0 0 0 6px var(--d-gold-500); }
+.doar-footer-note { max-width: var(--d-max); margin-inline: auto; padding: 1.25rem var(--d-gutter); border-top: 1px solid color-mix(in srgb, var(--d-card) 16%, transparent); font-size: 0.9375rem; }
+.doar-footer-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem 1.5rem; max-width: var(--d-max); margin-inline: auto; padding: 0 var(--d-gutter) 1.5rem; font-size: 0.875rem; color: color-mix(in srgb, var(--d-card) 70%, transparent); }
+.doar .doar-footer-legal a { color: inherit; }
+/* Lema da paroquia, igual ao rodape do site. */
+.doar-footer-motto { display: flex; justify-content: center; padding: clamp(2.25rem, 4.5vw, 3.75rem) var(--d-gutter) calc(clamp(2.5rem, 5.5vw, 4.5rem) + env(safe-area-inset-bottom)); border-top: 1px solid color-mix(in srgb, var(--d-card) 10%, transparent); user-select: none; pointer-events: none; }
+.doar-footer-motto img { width: min(100%, 75rem); height: auto; opacity: 0.12; }
+
+/* Barra fixa no celular: aparece quando o formulario sai da tela. */
+.doar-bar {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 30;
+  padding: 0.75rem var(--d-gutter) calc(0.75rem + env(safe-area-inset-bottom));
+  background: var(--d-card);
+  border-top: 1px solid var(--d-line);
+  box-shadow: 0 -12px 30px -18px color-mix(in srgb, var(--d-purple-950) 45%, transparent);
+  transform: translateY(110%);
+  visibility: hidden;
+  transition: transform 450ms var(--d-ease), visibility 0s linear 450ms;
+}
+.doar-bar.is-visible { transform: translateY(0); visibility: visible; transition: transform 450ms var(--d-ease), visibility 0s; }
+@media (min-width: 60rem) { .doar-bar { display: none; } }
+@media (max-width: 59.99rem) { .doar-footer-motto { padding-bottom: calc(6.5rem + env(safe-area-inset-bottom)); } }
+
+/* Telas simples: obrigado e gerenciar doacao mensal. */
+.doar-simple { display: flex; flex-direction: column; }
+.doar-simple .doar-header { width: 100%; max-width: 42rem; }
+.doar-panel { display: grid; gap: 1.25rem; width: 100%; max-width: 42rem; margin-inline: auto; padding: clamp(1.5rem, 6vw, 4rem) var(--d-gutter) clamp(3rem, 8vw, 5rem); }
+.doar-panel h1 { font-size: clamp(2.1rem, 3vw + 1.2rem, 3.25rem); line-height: 1.1; color: var(--d-purple-900); }
+.doar-badge { display: inline-flex; align-items: center; gap: 0.4rem; justify-self: start; padding: 0.4rem 0.9rem; border-radius: 999px; background: var(--d-paper-2); font-size: 0.9375rem; font-weight: 700; color: var(--d-ink); }
+.doar-badge.is-ok { background: var(--d-green-tint); color: var(--d-green); }
+.doar-receipt { border-top: 1px solid var(--d-line); }
+.doar-receipt > div { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; padding-block: 0.85rem; border-bottom: 1px solid var(--d-line); }
+.doar-receipt dt { color: var(--d-muted); }
+.doar-receipt dd { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.doar-receipt .is-total dd { font-family: var(--d-font-display); font-size: 1.6rem; color: var(--d-purple-900); }
+.doar-code { font-size: 0.9375rem; word-break: break-all; }
+.doar-panel-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-top: 0.5rem; }
+.doar .doar-button { display: inline-flex; align-items: center; justify-content: center; min-height: 3.25rem; padding: 0.6rem 1.5rem; border: 1.5px solid var(--d-purple-900); border-radius: 999px; background: var(--d-purple-900); color: var(--d-card); font-weight: 700; text-decoration: none; cursor: pointer; transition: background-color 250ms var(--d-ease), transform 250ms var(--d-ease); }
+.doar .doar-button:hover { background: var(--d-purple-700); }
+.doar .doar-button:active { transform: scale(0.98); }
+.doar .doar-button:focus-visible { border-radius: 999px; }
+.doar .doar-button.is-quiet { justify-self: start; background: transparent; color: var(--d-purple-900); }
+.doar .doar-button.is-quiet:hover { background: var(--d-purple-100); }
+.doar .doar-button.is-danger { border-color: var(--d-red); background: var(--d-red); }
+.doar .doar-button[disabled] { opacity: 0.7; cursor: progress; }
+.doar .doar-link { min-height: 2.75rem; padding: 0.5rem 0; border: 0; background: none; color: var(--d-purple-700); font-weight: 700; text-decoration: underline; text-underline-offset: 0.18em; cursor: pointer; }
+.doar-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; padding: 1.25rem; border-radius: 1rem; background: var(--d-red-tint); }
+.doar-confirm p { flex-basis: 100%; font-weight: 700; }
+
+/* Movimento: uma entrada orquestrada na abertura e revelacao suave das secoes. */
+@media (prefers-reduced-motion: no-preference) {
+  .doar-hero-text > *, .doar-aside { animation: doar-rise 900ms var(--d-ease) both; }
+  .doar-hero-text > :nth-child(2) { animation-delay: 80ms; }
+  .doar-hero-text > :nth-child(3) { animation-delay: 160ms; }
+  .doar-hero-text > :nth-child(4) { animation-delay: 240ms; }
+  .doar-aside { animation-delay: 200ms; }
+  .doar [data-reveal].is-armed { opacity: 0; transform: translateY(1.75rem); transition: opacity 800ms var(--d-ease), transform 800ms var(--d-ease); }
+  .doar [data-reveal].is-armed.is-in { opacity: 1; transform: none; }
+}
+@keyframes doar-rise {
+  from { opacity: 0; transform: translateY(1.5rem); }
+  to { opacity: 1; transform: none; }
+}

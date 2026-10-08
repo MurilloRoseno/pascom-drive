@@ -1,5 +1,6 @@
 const sharp = require('sharp');
 const { downloadFile, downloadFileAsJpeg, updateFile } = require('../lib/google-drive');
+const { authorizeWorker } = require('../lib/worker-auth');
 
 const SUPPORTED = new Set([
   'image/jpeg', 'image/png', 'image/webp', 'image/tiff',
@@ -16,9 +17,10 @@ function sendJson(res, status, body) {
 module.exports = async function handler(req, res, next) {
   if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
 
-  const secret = process.env.WATERMARK_API_SECRET;
-  if (!secret || req.headers['x-watermark-secret'] !== secret) {
-    console.warn(JSON.stringify({ event: 'preprocess_unauthorized', ip: req.ip, ts: new Date().toISOString() }));
+  if (!authorizeWorker(req, {
+    legacyHeader: 'x-watermark-secret',
+    legacySecret: process.env.WATERMARK_API_SECRET,
+  })) {
     return sendJson(res, 401, { error: 'Não autorizado' });
   }
 

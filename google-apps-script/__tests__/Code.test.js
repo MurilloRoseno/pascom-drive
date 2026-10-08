@@ -1,44 +1,46 @@
-// Mock globals called by Code.js
-global.listNewFiles = jest.fn().mockReturnValue([]);
-global.processarFoto = jest.fn();
 global.processarEntregas = jest.fn();
+const { criarTriggers, entregarFotos, processarEventos } = require('../Code');
 
-const { criarTriggers, processarFotosNovas, entregarFotos } = require('../Code');
+beforeEach(() => jest.clearAllMocks());
 
-beforeEach(() => {
-  jest.clearAllMocks();
-  global.listNewFiles.mockReturnValue([]);
-  global.processarFoto.mockReset();
+it('instala somente o trigger de processamento oculto de eventos', () => {
+  const existing = {};
+  ScriptApp.getProjectTriggers.mockReturnValue([existing]);
+  criarTriggers();
+  expect(ScriptApp.deleteTrigger).toHaveBeenCalledWith(existing);
+  expect(ScriptApp.newTrigger).toHaveBeenCalledWith('processarEventos');
+  expect(ScriptApp.newTrigger).not.toHaveBeenCalledWith('entregarFotos');
 });
 
-describe('criarTriggers', () => {
-  it('deletes existing triggers then creates two new ones', () => {
-    const mockTrigger = {};
-    ScriptApp.getProjectTriggers.mockReturnValue([mockTrigger]);
-    criarTriggers();
-    expect(ScriptApp.deleteTrigger).toHaveBeenCalledWith(mockTrigger);
-    expect(ScriptApp.newTrigger).toHaveBeenCalledWith('processarFotosNovas');
-    expect(ScriptApp.newTrigger).toHaveBeenCalledWith('entregarFotos');
-  });
+it('mantem o entregador legado inativo para nao liberar link permanente', () => {
+  entregarFotos();
+  expect(global.processarEntregas).not.toHaveBeenCalled();
 });
 
-describe('processarFotosNovas', () => {
-  it('calls listNewFiles and processarFoto for each file', () => {
-    const { mockFile } = global.__mocks__;
-    global.listNewFiles.mockReturnValue([mockFile, mockFile]);
-    processarFotosNovas();
-    expect(global.processarFoto).toHaveBeenCalledTimes(2);
+it('preserva pasta de evento futuro enquanto ainda nao houver fotos', () => {
+  global.sincronizarConfiguracoesAdministrativas = jest.fn();
+  global.getEventosSheet = jest.fn().mockReturnValue({
+    getDataRange: jest.fn().mockReturnValue({
+      getValues: jest.fn().mockReturnValue([['EventoID', 'FolderID', 'StatusProcessamento', 'PastaRemovida']]),
+    }),
   });
+  global.listarEventosNovos = jest.fn().mockReturnValue([
+    { folderId: 'future-folder', nomePasta: 'ordem__2026-06-01__missa-futura' },
+  ]);
+  global.interpretarNomePasta = jest.fn().mockReturnValue({
+    nomeNormalizado: 'ordem__2026-06-01__missa-futura',
+  });
+  global.gerarEventoId = jest.fn().mockReturnValue('EVENTO_FUTURO');
+  global.acquireLock = jest.fn().mockReturnValue(true);
+  global.listarArquivosDoEvento = jest.fn().mockReturnValue([]);
+  global.registrarEvento = jest.fn();
+  global.atualizarStatusEvento = jest.fn();
+  global.releaseLock = jest.fn();
 
-  it('does nothing when no new files', () => {
-    processarFotosNovas();
-    expect(global.processarFoto).not.toHaveBeenCalled();
-  });
-});
+  processarEventos();
 
-describe('entregarFotos', () => {
-  it('calls processarEntregas', () => {
-    entregarFotos();
-    expect(global.processarEntregas).toHaveBeenCalledTimes(1);
-  });
+  expect(global.registrarEvento).not.toHaveBeenCalled();
+  expect(global.atualizarStatusEvento).not.toHaveBeenCalled();
+  expect(DriveApp.getFolderById).not.toHaveBeenCalledWith('future-folder');
+  expect(global.releaseLock).toHaveBeenCalled();
 });

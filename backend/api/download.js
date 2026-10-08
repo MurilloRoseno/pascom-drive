@@ -1,75 +1,109 @@
-// download.js — GET /api/download?token=<jwt>
-// Returns the original photo file streamed from Google Drive.
-// The JWT must be signed with DOWNLOAD_JWT_SECRET, not expired, and not marked used.
+const crypto = require('crypto');
 const { z } = require('zod');
 const { verifyToken } = require('../lib/jwt-utils');
+const { prepararDownload, registrarUsoDownload } = require('../lib/google-sheets');
 const { downloadFile } = require('../lib/google-drive');
+const {
+  applyForensicWatermark,
+  createFingerprintId,
+  hashFingerprint,
+} = require('../lib/forensic-watermark');
 
-const schema = z.object({
-  token: z.string().min(10),
-});
+const schema = z.object({ token: z.string().min(10) });
 
-function sendJson(res, status, body) {
-  res.writeHead(status, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(body));
+function logDownload(event, details = {}) {
+  console.log(JSON.stringify({
+    event,
+    severity: details.severity || 'info',
+    downloadId: details.downloadId || '',
+    pedidoId: details.pedidoId || '',
+    fotoId: details.fotoId || '',
+    reason: details.reason || '',
+    ts: new Date().toISOString(),
+  }));
 }
 
 module.exports = async function handler(req, res, next) {
-  if (req.method !== 'GET') return sendJson(res, 405, { error: 'Method not allowed' });
-
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  const params = schema.safeParse(req.query);
+  if (!params.success) {
+    logDownload('download_denied', { severity: 'warning', reason: 'invalid_params' });
+    return res.status(400).json({ error: 'Parametros invalidos.' });
+  }
+  const secret = process.env.DOWNLOAD_JWT_SECRET;
+  if (!secret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
   try {
-    const params = schema.parse(req.query);
-    const secret = process.env.DOWNLOAD_JWT_SECRET;
-    if (!secret) {
-      return sendJson(res, 500, { error: 'Configuração de servidor inválida' });
+    const payload = verifyToken(params.data.token, secret);
+    if (!payload.downloadId || payload.exp <= Date.now()) {
+      logDownload('download_denied', { severity: 'warning', downloadId: payload.downloadId, reason: 'expired_token' });
+      return res.status(401).json({ error: 'Link expirado.' });
     }
-
-    let payload;
+    const tokenHash = crypto.createHash('sha256').update(params.data.token).digest('hex');
+    const authorized = await prepararDownload(payload.downloadId, tokenHash);
+    if (!authorized) {
+      logDownload('download_denied', { severity: 'warning', downloadId: payload.downloadId, reason: 'not_authorized_or_consumed' });
+      return res.status(410).json({ error: 'Link expirado ou limite de uso atingido.' });
+    }
+    const forensicSecret = process.env.FORENSIC_WATERMARK_SECRET;
+    if (!forensicSecret) return res.status(500).json({ error: 'Configuracao de servidor invalida' });
+    let original;
     try {
-      payload = verifyToken(params.token, secret);
-    } catch (_err) {
-      console.warn(JSON.stringify({
-        event: 'download_invalid_token',
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-        reason: _err.message,
-      }));
-      return sendJson(res, 401, { error: 'Token inválido ou assinatura incorreta' });
+      original = await downloadFile(authorized.originalFileId);
+    } catch (error) {
+      if (!/Drive download failed \(404\)/.test(error.message)) throw error;
+      logDownload('download_original_missing', {
+        severity: 'critical',
+        downloadId: authorized.downloadId,
+        pedidoId: authorized.pedidoId,
+        fotoId: authorized.fotoId,
+        reason: 'original_not_found_in_drive',
+      });
+      return res.status(503).json({ error: 'Sua foto esta temporariamente indisponivel. O link continua valido: fale com a secretaria paroquial.' });
     }
-
-    if (Date.now() > payload.exp) {
-      console.warn(JSON.stringify({
-        event: 'download_invalid_token',
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-        reason: 'Token expirado',
-      }));
-      return sendJson(res, 401, { error: 'Token expirado' });
-    }
-
-    if (payload.used === true) {
-      console.warn(JSON.stringify({
-        event: 'download_token_reuse',
-        fotoId: payload.fotoId,
-        ip: req.ip || req.headers['x-forwarded-for'],
-        timestamp: new Date().toISOString(),
-      }));
-      return sendJson(res, 410, { error: 'Token já utilizado' });
-    }
-
-    const { buffer } = await downloadFile(payload.fotoId);
-
-    res.writeHead(200, {
-      'Content-Type': 'image/jpeg',
-      'Content-Disposition': `attachment; filename="foto-${payload.fotoId}.jpg"`,
+    const { buffer, mimeType } = original;
+    const fingerprintId = authorized.fingerprintId || createFingerprintId(forensicSecret, {
+      pedidoId: authorized.pedidoId,
+      fotoId: authorized.fotoId,
+      downloadId: authorized.downloadId,
     });
-    res.end(buffer);
-  } catch (err) {
-    console.error('[download] Error:', err.message, err.stack);
-    if (err.name === 'ZodError') {
-      return sendJson(res, 400, { error: 'Parâmetros inválidos', details: err.errors });
+    let output;
+    try {
+      output = await applyForensicWatermark(buffer, { fingerprintId, mimeType });
+    } catch (error) {
+      console.error(JSON.stringify({
+        event: 'forensic_download_failed',
+        severity: 'error',
+        downloadId: authorized.downloadId,
+        pedidoId: authorized.pedidoId,
+        fotoId: authorized.fotoId,
+        message: error.message,
+        ts: new Date().toISOString(),
+      }));
+      return res.status(503).json({ error: 'Nao foi possivel preparar o download agora. Tente novamente.' });
     }
-    if (typeof next === 'function') return next(err);
-    return sendJson(res, 500, { error: err.message || 'Erro interno ao processar download' });
+    await registrarUsoDownload(payload.downloadId, tokenHash, {
+      fingerprintId,
+      fingerprintHash: hashFingerprint(fingerprintId),
+      fingerprintVersion: output.fingerprintVersion,
+      status: 'Aplicado',
+      appliedAt: new Date().toISOString(),
+    });
+    res.setHeader('Cache-Control', 'private, no-store');
+    res.setHeader('Content-Type', output.mimeType);
+    const extension = output.mimeType === 'image/png' ? 'png' : 'jpg';
+    res.setHeader('Content-Disposition', `attachment; filename="foto-${authorized.fotoId}.${extension}"`);
+    res.setHeader('X-Content-Protection', 'forensic-fingerprint');
+    logDownload('download_completed', {
+      downloadId: authorized.downloadId,
+      pedidoId: authorized.pedidoId,
+      fotoId: authorized.fotoId,
+    });
+    return res.end(output.buffer);
+  } catch (error) {
+    if (/assinatura|Token/i.test(error.message)) {
+      logDownload('download_denied', { severity: 'warning', reason: 'invalid_signature' });
+      return res.status(401).json({ error: 'Link invalido.' });
+    }
+    next(error);
   }
 };

@@ -1,0 +1,11 @@
+# Only production Apps Script files may be uploaded.
+**/*
+!appsscript.json
+!Code.js
+!Drive.js
+!EmailTemplates.js
+!EventQueue.js
+!Sheet.js
+!Security.js
+!Watermark.js
+!WhatsApp.js

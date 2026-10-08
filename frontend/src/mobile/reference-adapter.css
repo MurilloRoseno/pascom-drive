@@ -1,0 +1,68 @@
+#root {
+  min-height: 100dvh;
+}
+
+.app {
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--brand);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.photo-add {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--brand-d);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+.input-with-icon input {
+  width: 100%;
+  background: transparent;
+}
+
+.field > span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.btn[disabled] {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.devtools-open .photo-blur-target {
+  filter: blur(20px);
+  transition: filter 0.3s ease;
+}
+
+.wm::after,
+.protected-preview-frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  pointer-events: none;
+}
+
+.protected-preview-frame {
+  position: relative;
+}

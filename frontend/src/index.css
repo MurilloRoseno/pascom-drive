@@ -3,7 +3,7 @@
    Paleta Diocese de Imperatriz (roxo litúrgico + dourado)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -33,7 +33,7 @@
 
   /* ───────── Typography ───────── */
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
-  --font-body:    'Nunito', system-ui, -apple-system, sans-serif;
+  --font-body:    'Lato', system-ui, -apple-system, sans-serif;
   --font-mono:    'JetBrains Mono', ui-monospace, Menlo, monospace;
 
   /* ───────── Escala tipográfica acessível ───────── */
@@ -192,7 +192,7 @@ body {
   padding: 0 1rem;
   border: 2px solid #d1cac0;
   border-radius: 0.5rem;
-  font-family: 'Nunito', sans-serif;
+  font-family: var(--font-body);
   background: white;
   transition: border-color 0.2s, box-shadow 0.2s;
   color: var(--photo-ink);
@@ -227,6 +227,609 @@ a {
 
 .card:hover {
   @apply shadow-lg transition-shadow duration-base;
+}
+
+/* ============================================================
+   Institutional commerce experience
+   ============================================================ */
+.parish-app {
+  min-height: 100vh;
+  background: #fff;
+  color: #28232b;
+}
+
+.parish-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255,255,255,0.97);
+  border-bottom: 1px solid rgba(74,29,122,0.09);
+  backdrop-filter: blur(12px);
+}
+
+.parish-nav {
+  max-width: 1200px;
+  min-height: 78px;
+  margin: auto;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+}
+
+.parish-brand {
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--photo-primary);
+}
+.parish-brand:hover { color: var(--photo-primary); }
+.parish-brand img { width: 52px; height: 52px; object-fit: contain; }
+.parish-brand span {
+  display: block;
+  color: var(--photo-accent-dark);
+  font-size: 0.63rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.parish-brand strong {
+  display: block;
+  font: 700 1.23rem/1.1 var(--font-display);
+}
+.parish-brand small {
+  display: block;
+  color: #756f79;
+  font-size: 0.68rem;
+}
+.parish-links { display: flex; gap: 34px; }
+.parish-links a {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #322f33;
+}
+.parish-links a:hover { color: var(--photo-primary); }
+.header-cart {
+  min-height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--photo-primary);
+  color: #fff;
+  padding: 0 17px;
+  display: inline-flex;
+  gap: 11px;
+  align-items: center;
+  font-weight: 700;
+  cursor: pointer;
+}
+.header-cart span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  border-radius: 99px;
+  color: var(--photo-primary-dark);
+  background: var(--photo-accent);
+}
+
+.gallery-hero {
+  min-height: 548px;
+  display: flex;
+  align-items: center;
+  background:
+    linear-gradient(94deg, rgba(46,15,76,0.98) 0%, rgba(69,24,90,0.9) 37%, rgba(69,24,90,0.42) 67%, rgba(69,24,90,0.14) 100%),
+    url('/assets/church-background.png') center / cover no-repeat;
+}
+.hero-copy {
+  width: min(1200px, 100% - 48px);
+  margin: 0 auto;
+  padding: 78px 0;
+}
+.hero-kicker {
+  color: var(--photo-accent);
+  text-transform: uppercase;
+  letter-spacing: .28em;
+  font-size: .7rem;
+  font-weight: 900;
+  margin-bottom: 13px;
+}
+.hero-copy h1 {
+  max-width: 760px;
+  font: 700 clamp(2.8rem, 5vw, 4.5rem)/1.08 var(--font-display);
+  color: #fff;
+  margin: 0 0 17px;
+}
+.hero-copy h1 span { color: #e3b33c; display: block; }
+.hero-copy > p:not(.hero-kicker) {
+  max-width: 540px;
+  color: rgba(255,255,255,.87);
+  font-size: 1.08rem;
+  margin-bottom: 33px;
+}
+.event-search {
+  width: min(620px, 100%);
+  min-height: 68px;
+  border: 2px solid rgba(255,255,255,.84);
+  padding: 5px;
+  border-radius: 12px;
+  display: flex;
+  background: rgba(255,255,255,.13);
+}
+.event-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0 20px;
+  font-size: 1rem;
+}
+.event-search button, .access-card button {
+  border: 0;
+  border-radius: 8px;
+  min-width: 128px;
+  background: linear-gradient(180deg,#dbb23a,#bd9019);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.catalog-section, .photo-section {
+  max-width: 1200px;
+  margin: auto;
+  padding: 52px 24px 84px;
+}
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 46px;
+}
+.category-chips button {
+  border: 1px solid #e1d8e7;
+  border-radius: 99px;
+  min-height: 44px;
+  padding: 0 20px;
+  background: #fff;
+  color: var(--photo-primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+.category-chips button.active {
+  border-color: var(--photo-primary);
+  color: #fff;
+  background: var(--photo-primary);
+}
+.results-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin-bottom: 30px;
+}
+.results-head h2 {
+  font: 700 clamp(1.7rem, 3vw, 2.25rem) var(--font-display);
+  color: var(--photo-primary-dark);
+}
+.results-head span { color: #71697a; }
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+.event-tile {
+  overflow: hidden;
+  border: 1px solid #ebe3ef;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 8px 25px rgba(46,15,76,.06);
+}
+.event-tile-cover {
+  min-height: 160px;
+  padding: 18px;
+  display: flex;
+  align-items: end;
+  background:
+    linear-gradient(135deg, rgba(48,15,76,.92), rgba(112,49,116,.73)),
+    url('/assets/church-background.png') center / cover;
+}
+.event-tile-cover span {
+  padding: 7px 11px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.17);
+  border: 1px solid rgba(255,255,255,.28);
+  color: #fff;
+  font-size: .73rem;
+  font-weight: 700;
+}
+.event-tile-body { padding: 22px; }
+.event-tile-body p {
+  color: var(--photo-accent-dark);
+  font-size: .68rem;
+  font-weight: 900;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+.event-tile h3 {
+  font: 700 1.3rem/1.25 var(--font-display);
+  margin: 9px 0 10px;
+  color: var(--photo-primary-dark);
+}
+.event-tile time { display: block; color: #71697a; margin-bottom: 14px; }
+.event-tile strong {
+  display: block;
+  color: #417053;
+  font-size: .86rem;
+  margin-bottom: 18px;
+}
+.event-tile a, .primary-link {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  padding: 0 20px;
+  border-radius: 8px;
+  background: var(--photo-primary);
+  color: #fff;
+  font-weight: 700;
+}
+.empty-state {
+  padding: 46px 18px;
+  border-radius: 15px;
+  background: #faf7fb;
+  color: #736c76;
+  text-align: center;
+}
+.event-page { background: #faf8f4; min-height: 65vh; }
+.event-banner {
+  padding: 52px max(calc((100vw - 1152px) / 2), 24px) 45px;
+  color: #fff;
+  background:
+    linear-gradient(95deg, rgba(45,15,76,.96), rgba(80,32,103,.83)),
+    url('/assets/church-background.png') center / cover;
+}
+.event-banner > a { color: rgba(255,255,255,.7); font-size: .9rem; }
+.event-banner .hero-kicker { margin-top: 28px; }
+.event-banner h1 { font: 700 clamp(2.2rem, 4vw, 3.3rem) var(--font-display); margin: 0 0 10px; }
+.event-banner > p:not(.hero-kicker) { color: rgba(255,255,255,.81); }
+.sales-pill {
+  margin-top: 22px;
+  display: inline-flex;
+  background: rgba(230,185,57,.18);
+  border: 1px solid rgba(230,185,57,.48);
+  color: #f2cf72;
+  padding: 8px 14px;
+  border-radius: 99px;
+}
+.sales-pill.muted { border-color: rgba(255,255,255,.24); color: #ddd4e0; }
+.access-card {
+  max-width: 540px;
+  margin: 54px auto 80px;
+  padding: 42px;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(45,15,76,.09);
+}
+.access-card h2 { font: 700 2rem var(--font-display); color: var(--photo-primary-dark); margin-bottom: 10px; }
+.access-card p { color: #706979; margin-bottom: 24px; }
+.access-card form { display: flex; gap: 10px; }
+.access-card input { flex: 1; min-width: 0; border: 1px solid #d7ccdb; min-height: 52px; }
+.access-card button { min-height: 52px; padding: 0 18px; }
+.form-error { color: #9b2742; background: #fff2f5; padding: 12px 14px; border-radius: 8px; margin-top: 15px; }
+.photo-notice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 22px;
+  padding: 20px 24px;
+  margin-bottom: 30px;
+  border-radius: 14px;
+  background: #fff6e2;
+  color: #514328;
+}
+.photo-notice strong { color: var(--photo-primary); }
+.sales-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.sales-photo button {
+  display: block;
+  width: 100%;
+  border: 3px solid transparent;
+  background: #fff;
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 4px 18px rgba(0,0,0,.07);
+}
+.sales-photo button:disabled { cursor: not-allowed; opacity: .88; }
+.sales-photo.is-selected button { border-color: var(--photo-accent-dark); }
+.sales-photo img { display: block; width: 100%; aspect-ratio: 3/4; object-fit: cover; user-select: none; pointer-events: none; }
+.sales-photo button::after,
+.photo-button::after,
+.lightbox-image-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  pointer-events: none;
+}
+.photo-button,
+.lightbox-image-wrap {
+  position: relative;
+}
+.watermark-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: #fff;
+  background: rgba(45,15,76,.75);
+  border-radius: 99px;
+  padding: 5px 9px;
+  font-size: .62rem;
+  font-weight: 800;
+}
+.sales-photo .price {
+  display: block;
+  font-weight: 900;
+  color: var(--photo-primary);
+  padding: 15px 15px 3px;
+}
+.sales-photo button strong { display: block; padding: 0 15px 15px; color: #665b67; font-size: .85rem; }
+.floating-cart {
+  position: fixed;
+  z-index: 30;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: min(580px, calc(100vw - 34px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  background: #fff;
+  padding: 13px 15px 13px 22px;
+  border-radius: 15px;
+  box-shadow: 0 14px 42px rgba(34,13,49,.24);
+}
+.floating-cart strong { display: block; color: var(--photo-primary); }
+.floating-cart span { color: #68606a; font-size: .88rem; }
+.floating-cart button, .payment-button {
+  border: 0;
+  border-radius: 9px;
+  min-height: 50px;
+  padding: 0 22px;
+  background: linear-gradient(180deg,#dab03a,#bf9018);
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+.checkout-page {
+  max-width: 1180px;
+  margin: auto;
+  padding: 54px 24px 94px;
+}
+.checkout-heading { margin-bottom: 40px; }
+.checkout-heading > a { color: #6f6872; }
+.checkout-heading .hero-kicker { margin-top: 28px; }
+.checkout-heading h1 {
+  color: var(--photo-primary-dark);
+  font: 700 clamp(2.2rem,4vw,3rem) var(--font-display);
+}
+.checkout-heading > p:last-child { color: #71697a; }
+.checkout-columns {
+  display: grid;
+  grid-template-columns: 1fr 370px;
+  gap: 35px;
+  align-items: start;
+}
+.checkout-form, .order-summary, .empty-checkout, .return-card {
+  background: #fff;
+  border: 1px solid #ece4ef;
+  border-radius: 18px;
+  padding: 30px;
+  box-shadow: 0 7px 26px rgba(45,15,76,.05);
+}
+.checkout-form h2 {
+  font: 700 1.34rem var(--font-display);
+  color: var(--photo-primary-dark);
+  margin: 0 0 18px;
+}
+.checkout-form h2:not(:first-child) { margin-top: 35px; }
+.cart-items { display: flex; flex-direction: column; gap: 11px; }
+.cart-photo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 10px;
+  border-radius: 11px;
+  background: #faf7fb;
+}
+.cart-photo img { width: 55px; height: 68px; object-fit: cover; border-radius: 7px; }
+.cart-photo div { flex: 1; min-width: 0; }
+.cart-photo strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cart-photo span { color: var(--photo-primary); font-weight: 800; }
+.cart-photo button { border: 0; background: none; color: #8b6373; cursor: pointer; }
+.checkout-form label { display: block; font-size: .9rem; font-weight: 700; color: #554d57; }
+.checkout-form label > input {
+  display: block;
+  margin-top: 7px;
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid #dbd2df;
+}
+.form-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 15px; }
+.delivery-note { margin-top: 14px; font-size: .86rem; color: #736b77; }
+.payment-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.payment-options .payment-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  gap: 12px;
+  min-height: 128px;
+  padding: 18px 14px;
+  border: 1px solid #ded4e1;
+  border-radius: 14px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+.payment-options .payment-option:hover { border-color: #cbbad3; box-shadow: 0 6px 20px rgba(45,15,76,.06); }
+.payment-options .payment-option.selected { border-color: var(--photo-primary); background: #f8f2fa; box-shadow: inset 0 0 0 1px rgba(74,29,122,.08); }
+.payment-options .payment-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.payment-check {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #cbbfd0;
+  border-radius: 50%;
+}
+.payment-option.selected .payment-check { border-color: var(--photo-primary); }
+.payment-option.selected .payment-check::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: var(--photo-primary);
+}
+.payment-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  color: var(--photo-primary);
+  background: #f6eff8;
+}
+.payment-option.selected .payment-icon { color: #fff; background: var(--photo-primary); }
+.payment-icon svg { width: 23px; height: 23px; stroke: currentColor; stroke-width: 1.7; }
+.payment-copy { display: grid; gap: 2px; min-width: 0; }
+.payment-copy strong { color: #382e40; font-size: .9rem; line-height: 1.25; }
+.payment-copy small { color: #70677a; font-size: .76rem; font-weight: 400; }
+.payment-copy em {
+  margin-top: 7px;
+  color: var(--photo-primary);
+  font-size: .7rem;
+  font-style: normal;
+  font-weight: 700;
+}
+.order-summary { position: sticky; top: 102px; }
+.order-summary h2 { font: 700 1.6rem var(--font-display); color: var(--photo-primary-dark); margin-bottom: 22px; }
+.total-row { display: flex; justify-content: space-between; padding: 10px 0; color: #554d57; }
+.total-row.muted { color: #70677a; font-size: .9rem; border-top: 1px dashed #dbd2df; margin-top: 7px; padding-top: 16px; }
+.total-row.final {
+  font-size: 1.2rem;
+  color: var(--photo-primary-dark);
+  border-top: 1px solid #ded4e1;
+  margin-top: 8px;
+  padding-top: 17px;
+}
+.payment-button { width: 100%; margin: 25px 0 13px; }
+.payment-button:disabled { opacity: .48; cursor: not-allowed; }
+.order-summary small { display: block; color: #736b77; line-height: 1.5; }
+.payment-return { padding: 82px 24px; background: #faf8f4; }
+.return-card { max-width: 650px; text-align: center; margin: auto; padding: 52px; }
+.return-card h1 { font: 700 2.35rem var(--font-display); color: var(--photo-primary-dark); }
+.return-card p:not(.hero-kicker) { color: #706879; margin: 17px 0 25px; }
+.return-card small { display: block; color: #817988; margin-bottom: 27px; }
+.parish-footer {
+  padding: 66px 24px 34px;
+  background:
+    radial-gradient(circle at top right, rgba(222,173,43,.12), transparent 28%),
+    #241038;
+  color: rgba(255,255,255,.77);
+}
+.footer-columns {
+  max-width: 1120px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 56px;
+  padding-bottom: 47px;
+  border-bottom: 1px solid rgba(255,255,255,.13);
+}
+.footer-brand img { height: 84px; margin-bottom: 18px; }
+.footer-columns h2 {
+  color: #e4b33c;
+  font-size: .76rem;
+  letter-spacing: .23em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.footer-columns p, .footer-columns a {
+  display: block;
+  color: rgba(255,255,255,.74);
+  line-height: 1.75;
+  font-size: .92rem;
+}
+.footer-columns a:hover { color: #fff; }
+.footer-legal {
+  max-width: 1120px;
+  margin: 31px auto 0;
+  text-align: center;
+  color: rgba(255,255,255,.51);
+  font-size: .78rem;
+}
+.footer-motto {
+  max-width: 1120px;
+  margin: 34px auto 0;
+  padding-top: 33px;
+  border-top: 1px solid rgba(255,255,255,.09);
+  user-select: none;
+  pointer-events: none;
+}
+.footer-motto img {
+  display: block;
+  width: min(100%, 1060px);
+  height: auto;
+  margin: 0 auto;
+  opacity: .1;
+  user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+@media (max-width: 920px) {
+  .parish-nav { gap: 18px; }
+  .parish-links { display: none; }
+  .event-grid { grid-template-columns: repeat(2, 1fr); }
+  .sales-photo-grid { grid-template-columns: repeat(3, 1fr); }
+  .checkout-columns, .footer-columns { grid-template-columns: 1fr; }
+  .order-summary { position: static; }
+}
+@media (max-width: 620px) {
+  .parish-nav { padding: 8px 15px; min-height: 68px; }
+  .parish-brand img { width: 44px; height: 44px; }
+  .parish-brand div { display: none; }
+  .header-cart { padding: 0 12px; }
+  .hero-copy { width: calc(100% - 36px); padding: 60px 0; }
+  .gallery-hero { min-height: 500px; }
+  .event-search { flex-direction: column; gap: 6px; }
+  .event-search input, .event-search button { min-height: 54px; }
+  .catalog-section, .photo-section { padding: 35px 18px 75px; }
+  .event-grid, .sales-photo-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .event-tile-cover { min-height: 118px; }
+  .event-tile-body { padding: 15px; }
+  .event-tile h3 { font-size: 1.08rem; }
+  .access-card { margin: 32px 18px 64px; padding: 25px 19px; }
+  .access-card form, .photo-notice { flex-direction: column; align-items: stretch; }
+  .checkout-page { padding: 34px 18px 86px; }
+  .checkout-form, .order-summary { padding: 20px 16px; }
+  .form-pair, .payment-options { grid-template-columns: 1fr; }
+  .floating-cart { bottom: 12px; }
+  .footer-columns { gap: 34px; }
 }
 
 /* ============================================================

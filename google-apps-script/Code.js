@@ -10,8 +10,33 @@ function criarTriggers() {
     ScriptApp.deleteTrigger(t);
   });
   ScriptApp.newTrigger('processarEventos').timeBased().everyMinutes(5).create();
-  ScriptApp.newTrigger('entregarFotos').timeBased().everyMinutes(1).create();
-  Logger.log('Triggers criados com sucesso.');
+  Logger.log('Trigger de processamento criado. A entrega agora ocorre pelo backend apos o webhook.');
+}
+
+function onOpen() {
+  try {
+    SpreadsheetApp.getUi()
+      .createMenu('Pascom Drive')
+      .addItem('Preparar estrutura segura', 'inicializarEstrutura')
+      .addItem('Normalizar nomes de eventos', 'normalizarMetadadosEventos')
+      .addItem('Reprocessar miniaturas pendentes', 'reprocessarMiniaturasEmLote')
+      .addItem('Organizar miniaturas existentes', 'organizarMiniaturasEmPasta')
+      .addSeparator()
+      .addItem('Publicar evento selecionado', 'publicarEventoSelecionado')
+      .addItem('Autorizar venda selecionada', 'autorizarVendaSelecionada')
+      .addItem('Revogar venda selecionada', 'revogarVendaSelecionada')
+      .addItem('Sincronizar venda com fotos', 'sincronizarVendaSelecionada')
+      .addItem('Alternar visibilidade selecionada', 'alternarVisibilidadeSelecionada')
+      .addSeparator()
+      .addItem('Cadastrar taxas Mercado Pago D0', 'cadastrarRegrasMercadoPagoD0')
+      .addSeparator()
+      .addItem('Gerar codigo de acesso', 'gerarCodigoEventoSelecionado')
+      .addItem('Revogar codigo de acesso', 'revogarCodigoEventoSelecionado')
+      .addItem('Arquivar evento selecionado', 'arquivarEventoSelecionado')
+      .addToUi();
+  } catch (error) {
+    Logger.log('Menu indisponivel em script independente. Use as colunas da aba Eventos e as funcoes administrativas.');
+  }
 }
 
 /**
@@ -25,13 +50,16 @@ function processarFotosNovas() {
 
 /**
  * Trigger principal — roda a cada 5 minutos.
- * Descobre subpastas (eventos) em Fotos_Origem, processa um por vez (lock),
- * remove pasta quando 100% das fotos forem entregues.
+ * Descobre subpastas (eventos) em Fotos_Origem, processa um por vez (lock)
+ * e remove a entrada quando originais privados e previews forem preservados.
  */
 function processarEventos() {
   Logger.log('processarEventos: ' + new Date());
 
-  // 1. Verifica se há eventos prontos para remoção segura (de rodadas anteriores)
+  // Propagate spreadsheet administration to sale flags before exposing photos.
+  sincronizarConfiguracoesAdministrativas();
+
+  // 1. Remove entradas cujas fotos ja foram preservadas em armazenamento privado.
   verificarEventosProntosParaRemover();
 
   // 2. Descobre eventos novos (subpastas)
@@ -43,7 +71,8 @@ function processarEventos() {
 
   // 3. Processa um evento por vez (lock evita paralelismo)
   var evento   = novos[0];
-  var eventoId = gerarEventoId(evento.nomePasta);
+  var metadados = interpretarNomePasta(evento.nomePasta);
+  var eventoId = gerarEventoId(metadados.nomeNormalizado || evento.nomePasta);
 
   if (!acquireLock(eventoId)) {
     var lock = getLockStatus();
@@ -53,13 +82,22 @@ function processarEventos() {
   }
 
   try {
-    // Registra antes de mudar status (garante linha existente para atualizarStatusEvento)
     var arquivos = listarArquivosDoEvento(evento.folderId);
+    if (arquivos.length === 0) {
+      Logger.log('Pasta preservada sem processamento: o evento ainda nao recebeu fotos (' + evento.nomePasta + ').');
+      return;
+    }
+
+    // Registra apenas eventos com fotos, evitando duplicatas para eventos futuros.
     registrarEvento({
       eventoId:   eventoId,
-      nomePasta:  evento.nomePasta,
+      nomePasta:  metadados.nomeNormalizado || evento.nomePasta,
       folderId:   evento.folderId,
       totalFotos: arquivos.length,
+      titulo: metadados.titulo,
+      categoria: metadados.categoria,
+      dataEvento: metadados.dataEvento,
+      erro: metadados.erro,
     });
 
     Logger.log('Iniciando: ' + eventoId + ' (' + arquivos.length + ' fotos)');
@@ -100,17 +138,22 @@ function processarEventos() {
 }
 
 /**
- * Verifica eventos com status Processado que já tiveram todas as fotos entregues
- * e remove a pasta de origem com segurança.
+ * Verifica eventos cujos originais privados e previews ja foram preservados
+ * e remove a pasta de entrada sem criar links permanentes de entrega.
  */
 function verificarEventosProntosParaRemover() {
   var sheet = getEventosSheet();
   var data  = sheet.getDataRange().getValues();
+  var headers = data[0] || [];
+  var eventoIdCol = headers.indexOf('EventoID');
+  var folderIdCol = headers.indexOf('FolderID');
+  var statusCol = headers.indexOf('StatusProcessamento');
+  var pastaRemovidaCol = headers.indexOf('PastaRemovida');
   for (var i = 1; i < data.length; i++) {
-    var eventoId = data[i][0];
-    var folderId = data[i][2];
-    var status   = data[i][3];
-    var removida = data[i][11];
+    var eventoId = data[i][eventoIdCol];
+    var folderId = data[i][folderIdCol];
+    var status   = data[i][statusCol];
+    var removida = data[i][pastaRemovidaCol];
     if (removida === true) continue;
     if (status !== 'Processado') continue;
     if (eventoProntoParaRemover(eventoId)) {
@@ -120,14 +163,16 @@ function verificarEventosProntosParaRemover() {
 }
 
 /**
- * Called every 1 minute.
- * Finds rows with "Pagamento Confirmado" and generates wa.me delivery links.
+ * Legado desativado: pedidos aprovados sao entregues somente pelo backend,
+ * com download temporario persistido e WhatsApp assistido pela secretaria.
  */
 function entregarFotos() {
-  Logger.log('entregarFotos: ' + new Date());
-  processarEntregas();
+  Logger.log('entregarFotos desativado: entrega segura e executada pelo backend.');
 }
 
 if (typeof module !== 'undefined') {
-  module.exports = { criarTriggers, processarFotosNovas, processarEventos, entregarFotos, verificarEventosProntosParaRemover };
+  module.exports = {
+    criarTriggers, onOpen, processarFotosNovas, processarEventos,
+    entregarFotos, verificarEventosProntosParaRemover,
+  };
 }

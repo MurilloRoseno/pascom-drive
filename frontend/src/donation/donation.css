@@ -1,0 +1,377 @@
+/* Pagina de doacao (/doar): tokens, base, cabecalho, abertura e formulario.
+   Tudo fica sob .doar para nao depender do CSS do site de fotos. */
+
+.doar {
+  --d-purple-950: #2b0a37;
+  --d-purple-900: #461356;
+  --d-purple-700: #6d2077;
+  --d-purple-100: #f0e5f2;
+  --d-gold-500: #f7c848;
+  --d-gold-600: #e3b02e;
+  --d-gold-800: #7a5c0a;
+  --d-paper: #faf6ef;
+  --d-paper-2: #f2ebdf;
+  --d-card: #fffdf9;
+  --d-ink: #1c1620;
+  --d-muted: #63596a;
+  --d-line: #e4dae6;
+  --d-green: #2f6b4c;
+  --d-green-tint: #e7f1eb;
+  --d-red: #9a2d1f;
+  --d-red-tint: #fbedea;
+
+  --d-font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --d-font-body: 'Lato', 'Segoe UI', system-ui, sans-serif;
+  --d-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --d-gutter: clamp(1.25rem, 4vw, 3rem);
+  --d-max: 75rem;
+  --d-radius: 1.5rem;
+  --d-focus: 0 0 0 3px var(--d-card), 0 0 0 6px var(--d-purple-700);
+
+  min-height: 100dvh;
+  background: var(--d-paper);
+  color: var(--d-ink);
+  font-family: var(--d-font-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  font-kerning: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+@supports (color: oklch(0 0 0)) {
+  .doar {
+    --d-purple-950: oklch(0.22 0.09 318);
+    --d-purple-900: oklch(0.29 0.12 318);
+    --d-purple-700: oklch(0.4 0.15 322);
+    --d-purple-100: oklch(0.94 0.025 322);
+    --d-gold-500: oklch(0.86 0.15 88);
+    --d-gold-600: oklch(0.79 0.15 85);
+    --d-gold-800: oklch(0.48 0.1 85);
+    --d-paper: oklch(0.975 0.012 85);
+    --d-paper-2: oklch(0.94 0.02 85);
+    --d-card: oklch(0.992 0.006 85);
+    --d-ink: oklch(0.21 0.02 320);
+    --d-muted: oklch(0.47 0.025 320);
+    --d-line: oklch(0.9 0.015 320);
+    --d-green: oklch(0.47 0.08 160);
+    --d-green-tint: oklch(0.95 0.025 160);
+    --d-red: oklch(0.45 0.14 30);
+    --d-red-tint: oklch(0.95 0.025 30);
+  }
+}
+
+body { margin: 0; background: #faf6ef; }
+
+/* Base com especificidade zero (:where), para as classes sempre vencerem. */
+:where(.doar) *, :where(.doar) *::before, :where(.doar) *::after { box-sizing: border-box; }
+:where(.doar) :where(h1, h2, h3, p, ul, ol, dl, dd, figure, blockquote, fieldset) { margin: 0; padding: 0; }
+:where(.doar) :where(ul, ol) { list-style: none; }
+:where(.doar) fieldset { border: 0; min-width: 0; }
+:where(.doar) img { display: block; max-width: 100%; }
+:where(.doar) a { color: var(--d-purple-700); text-underline-offset: 0.18em; }
+:where(.doar) :where(button, input) { font: inherit; color: inherit; }
+:where(.doar) :where(h1, h2, h3) { font-family: var(--d-font-display); font-weight: 700; text-wrap: balance; }
+:where(.doar) :focus-visible { outline: none; box-shadow: var(--d-focus); border-radius: 0.4rem; }
+.doar-icon { flex: none; }
+
+/* Textura de papel: fixa e sem interacao, para nao pesar na rolagem. */
+.doar::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.doar-skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 60;
+  padding: 0.75rem 1rem;
+  background: var(--d-card);
+  border-radius: 0.6rem;
+  font-weight: 700;
+}
+.doar-skip:focus { top: 1rem; }
+
+/* Cabecalho */
+.doar-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: var(--d-max);
+  margin-inline: auto;
+  padding: 1.25rem var(--d-gutter);
+}
+.doar .doar-brand { display: inline-flex; align-items: center; gap: 0.75rem; color: var(--d-card); text-decoration: none; }
+.doar-brand img { width: 2.75rem; height: 2.75rem; object-fit: contain; }
+.doar-brand strong { display: block; font-family: var(--d-font-display); font-size: 1.15rem; line-height: 1.2; white-space: nowrap; }
+.doar-brand small { display: block; font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--d-gold-500); }
+.doar .doar-header-link { color: var(--d-card); font-size: 1rem; font-weight: 700; padding: 0.6rem 0.25rem; white-space: nowrap; }
+@media (max-width: 30rem) {
+  .doar-brand img { width: 2.25rem; height: 2.25rem; }
+  .doar-brand strong { font-size: 1rem; }
+  .doar-brand small { font-size: 0.75rem; letter-spacing: 0.04em; }
+  .doar .doar-header-link { font-size: 0.9375rem; }
+}
+.doar-header.on-paper .doar-brand, .doar-header.on-paper .doar-header-link { color: var(--d-purple-900); }
+.doar-header.on-paper .doar-brand small { color: var(--d-gold-800); }
+
+/* Abertura */
+.doar-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--d-purple-900);
+  color: var(--d-card);
+}
+.doar-hero-photo { position: absolute; inset: 0; z-index: -1; }
+.doar-hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; opacity: 0.3; mix-blend-mode: luminosity; }
+.doar-hero-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--d-purple-900) 8%, transparent 78%), linear-gradient(0deg, var(--d-purple-950), transparent 55%);
+}
+.doar-hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: var(--d-max);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem) var(--d-gutter) clamp(2.5rem, 6vw, 4.5rem);
+}
+.doar-hero-text { max-width: 38rem; }
+.doar-kicker { font-size: 0.875rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--d-gold-500); }
+.doar-hero h1 { margin-top: 0.9rem; font-size: clamp(2.35rem, 3.6vw + 1.2rem, 4rem); line-height: 1.06; letter-spacing: -0.01em; }
+.doar-hero-lead { margin-top: 1.25rem; max-width: 34rem; font-size: clamp(1.0625rem, 0.6vw + 0.95rem, 1.25rem); line-height: 1.6; color: color-mix(in srgb, var(--d-card) 88%, transparent); }
+.doar-verse { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--d-card) 22%, transparent); max-width: 30rem; }
+.doar-verse.is-hero { display: none; }
+.doar-verse.is-content { margin-top: 0; padding: 0 0 clamp(1.75rem, 5vw, 2.5rem); border-top: 0; }
+.doar-verse.is-content blockquote { color: var(--d-purple-900); }
+.doar-verse.is-content figcaption { color: var(--d-muted); }
+.doar-verse blockquote { font-family: var(--d-font-display); font-size: 1.3rem; line-height: 1.45; color: var(--d-gold-500); }
+.doar-verse figcaption { margin-top: 0.5rem; font-size: 0.9375rem; letter-spacing: 0.04em; color: color-mix(in srgb, var(--d-card) 78%, transparent); }
+
+/* Estrutura: no celular o formulario vem logo apos a abertura. */
+.doar-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1.5rem, 5vw, 4.5rem);
+  max-width: var(--d-max);
+  margin-inline: auto;
+  padding-inline: var(--d-gutter);
+}
+.doar-aside { margin-top: -1.5rem; scroll-margin-top: 1rem; }
+.doar-content { min-width: 0; padding-bottom: clamp(3rem, 8vw, 6rem); }
+
+@media (min-width: 60rem) {
+  .doar-hero-inner { grid-template-columns: minmax(0, 1fr) minmax(23.5rem, 27.5rem); column-gap: clamp(2rem, 5vw, 4.5rem); min-height: 31rem; align-content: center; }
+  .doar-layout { grid-template-columns: minmax(0, 1fr) minmax(23.5rem, 27.5rem); align-items: start; }
+  .doar-aside { grid-column: 2; grid-row: 1; margin-top: -28rem; }
+  .doar-verse.is-hero { display: block; }
+  .doar-verse.is-content { display: none; }
+  .doar-content { grid-column: 1; grid-row: 1; }
+}
+/* Cartao fixo. Quando ele e mais alto que a tela, gruda pelo rodape para o
+   botao de doar continuar visivel (--aside-h vem do DonationPage). */
+@media (min-width: 60rem) {
+  .doar-aside { position: sticky; top: min(1.5rem, calc(100dvh - var(--aside-h, 0px) - 1.5rem)); }
+}
+
+/* Formulario */
+.doar-form {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  gap: 1.1rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  background: var(--d-card);
+  border-radius: var(--d-radius);
+  box-shadow:
+    0 0 0 1px var(--d-line),
+    0 0 0 7px color-mix(in srgb, var(--d-card) 32%, transparent),
+    0 40px 80px -40px color-mix(in srgb, var(--d-purple-950) 55%, transparent);
+}
+.doar-form-title { font-size: 1.6rem; line-height: 1.2; color: var(--d-purple-900); }
+.doar-field { display: grid; gap: 0.6rem; }
+.doar-field legend { margin-bottom: 0.45rem; font-size: 1rem; font-weight: 700; color: var(--d-ink); }
+.doar-hint { font-size: 0.9375rem; line-height: 1.5; color: var(--d-muted); }
+.doar-notice { padding: 0.75rem 1rem; border-radius: 0.8rem; background: var(--d-purple-100); color: var(--d-purple-900); font-size: 1rem; }
+.doar-error { font-size: 0.9375rem; font-weight: 700; color: var(--d-red); }
+.doar-error-box { padding: 0.75rem 1rem; border-radius: 0.8rem; background: var(--d-red-tint); }
+
+/* Radios e caixas nativos ficam acessiveis, so nao aparecem. */
+.doar-tile input, .doar-chip input, .doar-segment input, .doar-check input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.doar-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+.doar-tile { position: relative; display: block; cursor: pointer; }
+.doar-tile-body {
+  display: grid;
+  gap: 0.15rem;
+  height: 100%;
+  min-height: 3.9rem;
+  padding: 0.6rem 0.85rem;
+  border: 1.5px solid var(--d-line);
+  border-radius: 0.9rem;
+  background: var(--d-card);
+  transition: border-color 200ms var(--d-ease), background-color 200ms var(--d-ease);
+}
+.doar-tile-body strong { font-size: 1.0625rem; line-height: 1.25; color: var(--d-purple-900); }
+.doar-tile-body small { font-size: 0.875rem; line-height: 1.35; color: var(--d-muted); }
+.doar-tile:hover .doar-tile-body { border-color: var(--d-purple-700); }
+.doar-tile input:checked + .doar-tile-body { border-color: var(--d-purple-700); background: var(--d-purple-100); }
+.doar-tile input:focus-visible + .doar-tile-body { box-shadow: var(--d-focus); }
+
+.doar-amounts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
+.doar-chip { position: relative; display: block; cursor: pointer; }
+.doar-chip span {
+  display: grid;
+  place-items: center;
+  min-height: 3.25rem;
+  border: 1.5px solid var(--d-line);
+  border-radius: 0.9rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: var(--d-purple-900);
+  transition: border-color 200ms var(--d-ease), background-color 200ms var(--d-ease), color 200ms var(--d-ease);
+}
+.doar-chip:hover span { border-color: var(--d-purple-700); }
+.doar-chip input:checked + span { border-color: var(--d-purple-900); background: var(--d-purple-900); color: var(--d-card); }
+.doar-chip input:focus-visible + span { box-shadow: var(--d-focus); }
+
+.doar-custom { display: block; }
+.doar-custom-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.doar-custom-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding-inline: 1rem;
+  border: 1.5px solid var(--d-line);
+  border-radius: 0.9rem;
+  background: var(--d-card);
+  font-weight: 700;
+  color: var(--d-muted);
+  transition: border-color 200ms var(--d-ease);
+}
+.doar-custom-box:focus-within { border-color: var(--d-purple-700); box-shadow: var(--d-focus); }
+.doar-custom-box input { flex: 1; min-width: 0; height: 3rem; border: 0; background: transparent; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--d-ink); }
+.doar-custom-box input:focus-visible { box-shadow: none; }
+.doar-custom-box input::placeholder { color: color-mix(in srgb, var(--d-muted) 70%, transparent); }
+.doar-custom-box:has(input[aria-invalid='true']) { border-color: var(--d-red); }
+
+.doar-segment { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 0.25rem; padding: 0.25rem; border-radius: 999px; background: var(--d-paper-2); }
+.doar-segment label { position: relative; display: block; cursor: pointer; }
+.doar-segment span {
+  display: grid;
+  place-items: center;
+  min-height: 2.9rem;
+  border-radius: 999px;
+  font-weight: 700;
+  color: var(--d-muted);
+  transition: background-color 250ms var(--d-ease), color 250ms var(--d-ease), box-shadow 250ms var(--d-ease);
+}
+.doar-segment input:checked + span { background: var(--d-card); color: var(--d-purple-900); box-shadow: 0 1px 2px color-mix(in srgb, var(--d-purple-950) 18%, transparent), 0 6px 16px -8px color-mix(in srgb, var(--d-purple-950) 30%, transparent); }
+.doar-segment input:focus-visible + span { box-shadow: var(--d-focus); }
+.doar-segment input:disabled + span { opacity: 0.45; cursor: not-allowed; }
+
+.doar-check { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 0.75rem; align-items: start; cursor: pointer; }
+.doar-check::before {
+  content: '';
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.15rem;
+  border: 1.5px solid var(--d-muted);
+  border-radius: 0.4rem;
+  background: var(--d-card) center / 1rem no-repeat;
+  transition: background-color 200ms var(--d-ease), border-color 200ms var(--d-ease);
+}
+.doar-check:has(input:checked)::before {
+  border-color: var(--d-purple-900);
+  background-color: var(--d-purple-900);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fffdf9' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+}
+.doar-check:has(input:focus-visible)::before { box-shadow: var(--d-focus); }
+.doar-check strong { display: block; font-size: 1rem; line-height: 1.4; }
+.doar-check small { display: block; font-size: 0.9375rem; color: var(--d-muted); }
+
+.doar-identify { border-top: 1px solid var(--d-line); padding-top: 1rem; }
+.doar-identify summary { display: flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; font-weight: 700; cursor: pointer; list-style: none; }
+.doar-identify summary::-webkit-details-marker { display: none; }
+.doar-identify summary span { font-weight: 400; color: var(--d-muted); }
+.doar-identify summary .doar-icon { margin-left: auto; transition: transform 300ms var(--d-ease); }
+.doar-identify[open] summary .doar-icon { transform: rotate(180deg); }
+.doar-identify-body { display: grid; gap: 0.4rem; padding-top: 0.5rem; }
+.doar-identify-body label { margin-top: 0.4rem; font-size: 0.9375rem; color: var(--d-muted); }
+.doar-identify-body input { min-height: 3.25rem; padding-inline: 1rem; border: 1.5px solid var(--d-line); border-radius: 0.9rem; background: var(--d-card); }
+.doar-identify-body input:focus-visible { border-color: var(--d-purple-700); border-radius: 0.9rem; }
+.doar-identify-body input[aria-invalid='true'] { border-color: var(--d-red); }
+
+.doar-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--d-line); }
+.doar-summary span { font-size: 0.9375rem; color: var(--d-muted); }
+.doar-summary strong { font-family: var(--d-font-display); font-size: 1.6rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--d-purple-900); white-space: nowrap; }
+
+.doar-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 3.75rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--d-gold-500);
+  color: var(--d-ink);
+  font-size: 1.1875rem;
+  font-weight: 900;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 250ms var(--d-ease), transform 250ms var(--d-ease);
+}
+.doar-cta:hover { background: var(--d-gold-600); }
+.doar-cta:active { transform: scale(0.98); }
+.doar-cta:focus-visible { border-radius: 999px; }
+.doar-cta[disabled] { cursor: progress; opacity: 0.75; }
+.doar-cta-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--d-ink) 12%, transparent);
+  transition: transform 350ms var(--d-ease);
+}
+.doar-cta:hover .doar-cta-icon { transform: translateX(3px); }
+
+.doar-safe { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.9375rem; line-height: 1.45; color: var(--d-muted); }
+.doar-safe .doar-icon { margin-top: 0.15rem; }
+
+/* Frequencia e forma de pagamento lado a lado quando o cartao tem largura. */
+.doar-pair { display: grid; gap: 1.1rem; }
+@media (min-width: 26rem) {
+  .doar-pair { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+  .doar-pair .doar-hint { grid-column: 1 / -1; }
+}
+
+/* Cartao estreito: os destinos mostram so o nome (a descricao esta na secao abaixo). */
+@media (max-width: 30rem) {
+  .doar-tile-body { min-height: 3.25rem; align-content: center; }
+  .doar-tile-body small { display: none; }
+}
+@media (max-width: 23.5rem) {
+  .doar-amounts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

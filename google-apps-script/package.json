@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "validate:release": "node scripts/validate-clasp-release.js",
+    "push:production": "npm run validate:release && npx --yes @google/clasp@3.3.0 push"
   },
   "devDependencies": {
     "jest": "^29.7.0"

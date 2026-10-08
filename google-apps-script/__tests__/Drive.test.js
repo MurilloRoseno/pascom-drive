@@ -2,8 +2,10 @@ const {
   getSourceFolder,
   getOriginaisFolder,
   getAmostrasFolder,
+  getThumbnailsFolder,
   listNewFiles,
   copyFileToFolder,
+  moveFileToFolderIfNeeded,
   getShareableLink,
 } = require('../Drive');
 
@@ -27,6 +29,16 @@ describe('getAmostrasFolder', () => {
   it('fetches folder by AMOSTRAS_FOLDER_ID', () => {
     getAmostrasFolder();
     expect(DriveApp.getFolderById).toHaveBeenCalledWith('amostras-folder-id-test');
+  });
+});
+
+describe('getThumbnailsFolder', () => {
+  it('uses THUMBNAILS_FOLDER_ID when configured', () => {
+    PropertiesService.getScriptProperties().getProperty.mockImplementationOnce((key) => (
+      key === 'THUMBNAILS_FOLDER_ID' ? 'thumbnails-folder-id-test' : null
+    ));
+    getThumbnailsFolder();
+    expect(DriveApp.getFolderById).toHaveBeenCalledWith('thumbnails-folder-id-test');
   });
 });
 
@@ -55,6 +67,19 @@ describe('copyFileToFolder', () => {
     const { mockFile, mockFolder } = global.__mocks__;
     copyFileToFolder(mockFile, mockFolder, 'copy.jpg');
     expect(mockFile.makeCopy).toHaveBeenCalledWith('copy.jpg', mockFolder);
+  });
+});
+
+describe('moveFileToFolderIfNeeded', () => {
+  it('moves an existing thumbnail instead of creating a duplicated file', () => {
+    const destination = { getId: jest.fn().mockReturnValue('thumbnails-folder') };
+    const existingFile = {
+      getParents: jest.fn().mockReturnValue({ hasNext: jest.fn().mockReturnValue(false) }),
+      moveTo: jest.fn(),
+    };
+    DriveApp.getFileById.mockReturnValueOnce(existingFile);
+    expect(moveFileToFolderIfNeeded('thumb-id', destination)).toBe(true);
+    expect(existingFile.moveTo).toHaveBeenCalledWith(destination);
   });
 });
 
